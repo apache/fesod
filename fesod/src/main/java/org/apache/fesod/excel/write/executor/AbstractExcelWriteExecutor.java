@@ -20,6 +20,33 @@
 package org.apache.fesod.excel.write.executor;
 
 import java.util.List;
+import cn.idev.excel.annotation.fill.DynamicColumn;
+import cn.idev.excel.context.WriteContext;
+import cn.idev.excel.converters.Converter;
+import cn.idev.excel.converters.ConverterKeyBuild;
+import cn.idev.excel.converters.NullableObjectConverter;
+import cn.idev.excel.converters.WriteConverterContext;
+import cn.idev.excel.enums.CellDataTypeEnum;
+import cn.idev.excel.enums.WriteDirectionEnum;
+import cn.idev.excel.exception.ExcelWriteDataConvertException;
+import cn.idev.excel.metadata.data.CommentData;
+import cn.idev.excel.metadata.data.FormulaData;
+import cn.idev.excel.metadata.data.HyperlinkData;
+import cn.idev.excel.metadata.data.ImageData;
+import cn.idev.excel.metadata.data.WriteCellData;
+import cn.idev.excel.metadata.property.ExcelContentProperty;
+import cn.idev.excel.support.ExcelTypeEnum;
+import cn.idev.excel.support.cglib.beans.BeanMap;
+import cn.idev.excel.util.BeanMapUtils;
+import cn.idev.excel.util.DateUtils;
+import cn.idev.excel.util.FieldUtils;
+import cn.idev.excel.util.FileTypeUtils;
+import cn.idev.excel.util.ListUtils;
+import cn.idev.excel.util.StyleUtil;
+import cn.idev.excel.util.WorkBookUtil;
+import cn.idev.excel.util.WriteHandlerUtils;
+import cn.idev.excel.write.handler.context.CellWriteHandlerContext;
+import cn.idev.excel.write.metadata.fill.FillConfig;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.context.WriteContext;
 import org.apache.fesod.excel.converters.Converter;
@@ -53,6 +80,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Excel write Executor
  *
@@ -66,12 +97,11 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
     }
 
     /**
-     * Transform the data and then to set into the cell
+     * Transform item
      *
      * @param cellWriteHandlerContext context
-     */
-    protected void converterAndSet(CellWriteHandlerContext cellWriteHandlerContext) {
-
+     * */
+    protected void convertAndSetItem(CellWriteHandlerContext cellWriteHandlerContext) {
         WriteCellData<?> cellData = convert(cellWriteHandlerContext);
         cellWriteHandlerContext.setCellDataList(ListUtils.newArrayList(cellData));
         cellWriteHandlerContext.setFirstCellData(cellData);
@@ -97,7 +127,20 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         if (cellData.getType() == null) {
             cellData.setType(CellDataTypeEnum.EMPTY);
         }
-        Cell cell = cellWriteHandlerContext.getCell();
+        if (null != cellWriteHandlerContext.getCellMap() && cellWriteHandlerContext.getCellMap().size() > 1) {
+            cellWriteHandlerContext.getCellMap().forEach((k,cell) -> {
+                String[] split = k.split("_");
+                int rowIndex = Integer.parseInt(split[0]);
+                int columnIndex = Integer.parseInt(split[1]);
+                setCellValue(cell, cellData, cell.getCell());
+            });
+        }else{
+            Cell cell = cellWriteHandlerContext.getCell();
+            setCellValue(cellWriteHandlerContext, cellData, cell);
+        }
+    }
+
+    private void setCellValue(CellWriteHandlerContext cellWriteHandlerContext, WriteCellData<?> cellData, Cell cell) {
         switch (cellData.getType()) {
             case STRING:
                 cell.setCellValue(cellData.getStringValue());
@@ -123,6 +166,60 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                         "Not supported data:" + cellWriteHandlerContext.getOriginalValue() + " return type:"
                                 + cellData.getType()
                                 + "at row:" + cellWriteHandlerContext.getRowIndex());
+        }
+    }
+
+    /**
+     * Transform the data and then to set into the cell
+     *
+     * @param cellWriteHandlerContext context
+     */
+    protected void converterAndSet(CellWriteHandlerContext cellWriteHandlerContext) {
+        Object originalValue = cellWriteHandlerContext.getOriginalValue();
+        Field field = cellWriteHandlerContext.getExcelContentProperty().getField();
+        if (null != field && field.isAnnotationPresent(DynamicColumn.class)) {
+            Map<String, Object> dynamicColumnMap = (Map<String, Object>) originalValue;
+            FillConfig fillConfig = cellWriteHandlerContext.getFillConfig();
+            if(null == fillConfig || CollectionUtils.isEmpty(fillConfig.getDynamicColumnKeys())){
+                throw new ExcelWriteDataConvertException(cellWriteHandlerContext, "DynamicColumn annotation must be used with FillConfig.dynamicColumnKeys,FillConfig.dynamicColumnGroupSize");
+            }
+            List<String> dynamicColumnKeys = fillConfig.getDynamicColumnKeys();
+            Integer columnIndex = cellWriteHandlerContext.getColumnIndex();
+            Integer rowIndex = cellWriteHandlerContext.getRowIndex();
+            for (int i = 0; i < dynamicColumnKeys.size(); i++) {
+                String key =  dynamicColumnKeys.get(i);
+                Object o = dynamicColumnMap.get(key);
+                String originalVariable = cellWriteHandlerContext.getOriginalVariable();
+                if(originalVariable.contains(".")){
+                    key = originalVariable.split("\\.")[1];
+                    Object itemBean = o;
+                    BeanMap beanMap = BeanMapUtils.create(itemBean);
+                    o = beanMap.get(key);
+                }
+
+                Integer dynamicColumnGroupSize = fillConfig.getDynamicColumnGroupSize();
+                WriteDirectionEnum direction = fillConfig.getDirection();
+                int currentRowIndex = rowIndex;
+                int currentColumnIndex = columnIndex;
+                if(WriteDirectionEnum.VERTICAL.equals(direction)){
+                    currentColumnIndex = columnIndex + dynamicColumnGroupSize * i;
+                }else{
+                    currentRowIndex = rowIndex + dynamicColumnGroupSize*i;
+                }
+
+                Map<String, CellWriteHandlerContext> cellMap = cellWriteHandlerContext.getCellMap();
+                CellWriteHandlerContext currentCellWriteHandlerContext = cellMap.get(currentRowIndex + "_" + currentColumnIndex);
+                currentCellWriteHandlerContext.setOriginalValue(o);
+                currentCellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(o));
+                convertAndSetItem(currentCellWriteHandlerContext);
+                if (i == 0) {
+                    cellWriteHandlerContext.setOriginalValue(o);
+                    cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(o));
+                    convertAndSetItem(cellWriteHandlerContext);
+                }
+            }
+        } else {
+            convertAndSetItem(cellWriteHandlerContext);
         }
     }
 

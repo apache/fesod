@@ -17,6 +17,9 @@
  * under the License.
  */
 
+import cn.idev.excel.annotation.fill.DynamicColumn;
+import cn.idev.excel.enums.WriteDirectionEnum;
+import com.sun.istack.internal.Nullable;
 package org.apache.fesod.excel.write.metadata.fill;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +30,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.fesod.excel.enums.WriteDirectionEnum;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Fill config
@@ -41,6 +46,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FillConfig {
+    public static final String DEFAULT_DYNAMIC_INFO_KEY = "default";
     private WriteDirectionEnum direction;
     /**
      * Create a new row each time you use the list parameter.The default create if necessary.
@@ -59,8 +65,18 @@ public class FillConfig {
 
     private boolean hasInit;
 
-    private List<String> dynamicColumnKeys;
-    private Integer dynamicColumnGroupSize;
+    /**
+     * dynamic column info
+     * */
+    private Map<String,DynamicColumnInfo> dynamicColumnInfoMap;
+
+    public DynamicColumnInfo getDynamicColumnInfo(@Nullable String fieldName) {
+        if (null == fieldName || !dynamicColumnInfoMap.containsKey(fieldName)) {
+            return dynamicColumnInfoMap.get(DEFAULT_DYNAMIC_INFO_KEY);
+        }else{
+            return dynamicColumnInfoMap.get(fieldName);
+        }
+    }
 
     public void init() {
         if (hasInit) {
@@ -75,9 +91,25 @@ public class FillConfig {
         if (autoStyle == null) {
             autoStyle = Boolean.TRUE;
         }
-        if (dynamicColumnGroupSize == null) {
-            dynamicColumnGroupSize = 1;
-        }
         hasInit = true;
+    }
+
+    public static class FillConfigBuilder {
+        public FillConfigBuilder addDynamicInfo(List<String> keys, Integer groupSize, String fieldName) {
+            if (null == dynamicColumnInfoMap) {
+                dynamicColumnInfoMap = new HashMap<>();
+            }
+            dynamicColumnInfoMap.put(fieldName, new DynamicColumnInfo(keys, groupSize));
+            return this;
+        }
+
+        public FillConfigBuilder addDefaultDynamicInfo(List<String> keys) {
+            return addDynamicInfo(keys, 1, DEFAULT_DYNAMIC_INFO_KEY);
+        }
+
+        public FillConfigBuilder addDefaultDynamicInfo(List<String> keys, Integer groupSize) {
+            return addDynamicInfo(keys, groupSize, DEFAULT_DYNAMIC_INFO_KEY);
+        }
+
     }
 }

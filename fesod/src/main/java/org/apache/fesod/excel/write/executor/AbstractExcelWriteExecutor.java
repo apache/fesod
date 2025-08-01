@@ -46,6 +46,7 @@ import cn.idev.excel.util.StyleUtil;
 import cn.idev.excel.util.WorkBookUtil;
 import cn.idev.excel.util.WriteHandlerUtils;
 import cn.idev.excel.write.handler.context.CellWriteHandlerContext;
+import cn.idev.excel.write.metadata.fill.DynamicColumnInfo;
 import cn.idev.excel.write.metadata.fill.FillConfig;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.context.WriteContext;
@@ -180,14 +181,14 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         if (null != field && field.isAnnotationPresent(DynamicColumn.class)) {
             Map<String, Object> dynamicColumnMap = (Map<String, Object>) originalValue;
             FillConfig fillConfig = cellWriteHandlerContext.getFillConfig();
-            if(null == fillConfig || CollectionUtils.isEmpty(fillConfig.getDynamicColumnKeys())){
-                throw new ExcelWriteDataConvertException(cellWriteHandlerContext, "DynamicColumn annotation must be used with FillConfig.dynamicColumnKeys,FillConfig.dynamicColumnGroupSize");
+            if(null == fillConfig || null == fillConfig.getDynamicColumnInfoMap()){
+                throw new ExcelWriteDataConvertException(cellWriteHandlerContext, "DynamicColumn annotation must be used with FillConfig.dynamicColumnInfoMap");
             }
-            List<String> dynamicColumnKeys = fillConfig.getDynamicColumnKeys();
+            DynamicColumnInfo dynamicColumnInfo = fillConfig.getDynamicColumnInfo(field.getName());
             Integer columnIndex = cellWriteHandlerContext.getColumnIndex();
             Integer rowIndex = cellWriteHandlerContext.getRowIndex();
-            for (int i = 0; i < dynamicColumnKeys.size(); i++) {
-                String key =  dynamicColumnKeys.get(i);
+            for (int i = 0; i < dynamicColumnInfo.getKeys().size(); i++) {
+                String key =  dynamicColumnInfo.getKeys().get(i);
                 Object o = dynamicColumnMap.get(key);
                 String originalVariable = cellWriteHandlerContext.getOriginalVariable();
                 if(originalVariable.contains(".")){
@@ -197,7 +198,7 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                     o = beanMap.get(key);
                 }
 
-                Integer dynamicColumnGroupSize = fillConfig.getDynamicColumnGroupSize();
+                Integer dynamicColumnGroupSize = dynamicColumnInfo.getGroupSize();
                 WriteDirectionEnum direction = fillConfig.getDirection();
                 int currentRowIndex = rowIndex;
                 int currentColumnIndex = columnIndex;

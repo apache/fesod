@@ -129,8 +129,10 @@ public class FillTempTest {
 
         ExcelWriter excelWriter = EasyExcel.write(fileName).withTemplate(templateFileName).build();
         WriteSheet writeSheet = EasyExcel.writerSheet().build();
-        excelWriter.fill(new FillWrapper("dataList", fillDataList), FillConfig.builder().dynamicColumnKeys(dateList).forceNewRow(true).build(), writeSheet);
-        excelWriter.fill(new FillWrapper("dataObjList", fillDataList), FillConfig.builder().dynamicColumnGroupSize(2).dynamicColumnKeys(dateList).forceNewRow(true).build(), writeSheet);
+        excelWriter.fill(new FillWrapper("dataList", fillDataList), FillConfig.builder().forceNewRow(true).addDynamicInfo(dateList,1,"qtyMap")
+                .addDefaultDynamicInfo(dateList,1)
+                .build(), writeSheet);
+        excelWriter.fill(new FillWrapper("dataObjList", fillDataList), FillConfig.builder().addDefaultDynamicInfo(dateList,2).forceNewRow(true).build(), writeSheet);
         excelWriter.fill(new FillWrapper("dateListMap", dateListMap), FillConfig.builder().direction(HORIZONTAL).build(), writeSheet);
         // Do not forget to close the stream
         excelWriter.finish();

@@ -100,6 +100,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
     private static final String FILL_SUFFIX = "}";
     private static final char IGNORE_CHAR = '\\';
     private static final String COLLECTION_PREFIX = ".";
+    private static final String FILL_VARIABLE_SELF = "$";
     /**
      * Fields to replace in the template
      */
@@ -296,7 +297,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 String originalVariable = analysisCell.getVariableList().get(0);
                 String variable = originalVariable;
                 Object value = null;
-                if (dataKeySet.contains(variable)) {
+                if (FILL_VARIABLE_SELF.equals(variable)) {
+                    value = oneRowData;
+                }else if (dataKeySet.contains(variable)) {
                     value = dataMap.get(variable);
                 }else if(variable.contains(COLLECTION_PREFIX)){
                     variable = variable.split("\\.")[0];
@@ -346,7 +349,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 for (String variable : analysisCell.getVariableList()) {
                     cellValueBuild.append(analysisCell.getPrepareDataList().get(index++));
                     Object value = null;
-                    if (dataKeySet.contains(variable)) {
+                    if (FILL_VARIABLE_SELF.equals(variable)) {
+                        value = oneRowData;
+                    }else if (dataKeySet.contains(variable)) {
                         value = dataMap.get(variable);
                     }
                     ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(

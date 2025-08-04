@@ -111,17 +111,6 @@ public class FillTempTest {
         fillDataList.add(fillData1);
         fillDataList.add(fillData2);
 
-        ArrayList dateListMap = new ArrayList<>();
-        HashMap<Object, Object> date1 = new HashMap<>();
-        date1.put("date", "2023-01-01");
-        dateListMap.add(date1);
-        HashMap<Object, Object> date2 = new HashMap<>();
-        date2.put("date", "2023-01-02");
-        dateListMap.add(date2);
-        HashMap<Object, Object> date3 = new HashMap<>();
-        date3.put("date", "2023-01-03");
-        dateListMap.add(date3);
-
         ArrayList dateList = new ArrayList<>();
         dateList.add("2023-01-01");
         dateList.add("2023-01-02");
@@ -133,7 +122,7 @@ public class FillTempTest {
                 .addDefaultDynamicInfo(dateList,1)
                 .build(), writeSheet);
         excelWriter.fill(new FillWrapper("dataObjList", fillDataList), FillConfig.builder().addDefaultDynamicInfo(dateList,2).forceNewRow(true).build(), writeSheet);
-        excelWriter.fill(new FillWrapper("dateListMap", dateListMap), FillConfig.builder().direction(HORIZONTAL).build(), writeSheet);
+        excelWriter.fill(new FillWrapper("dateList", dateList), FillConfig.builder().direction(HORIZONTAL).build(), writeSheet);
         // Do not forget to close the stream
         excelWriter.finish();
 

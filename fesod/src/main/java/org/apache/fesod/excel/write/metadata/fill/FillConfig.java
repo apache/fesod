@@ -70,7 +70,16 @@ public class FillConfig {
      * */
     private Map<String,DynamicColumnInfo> dynamicColumnInfoMap;
 
-    public DynamicColumnInfo getDynamicColumnInfo(@Nullable String fieldName) {
+    /**
+     * get dynamic column info
+     *
+     * if field name is null or not exist, return default dynamic column info
+     * else return dynamic column info by field name
+     *
+     * @param fieldName field name nullable
+     * @return dynamic column info
+     * */
+    public DynamicColumnInfo getDynamicColumnInfo(String fieldName) {
         if (null == fieldName || !dynamicColumnInfoMap.containsKey(fieldName)) {
             return dynamicColumnInfoMap.get(DEFAULT_DYNAMIC_INFO_KEY);
         }else{

@@ -128,17 +128,8 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         if (cellData.getType() == null) {
             cellData.setType(CellDataTypeEnum.EMPTY);
         }
-        if (null != cellWriteHandlerContext.getCellMap() && cellWriteHandlerContext.getCellMap().size() > 1) {
-            cellWriteHandlerContext.getCellMap().forEach((k,cell) -> {
-                String[] split = k.split("_");
-                int rowIndex = Integer.parseInt(split[0]);
-                int columnIndex = Integer.parseInt(split[1]);
-                setCellValue(cell, cellData, cell.getCell());
-            });
-        }else{
-            Cell cell = cellWriteHandlerContext.getCell();
-            setCellValue(cellWriteHandlerContext, cellData, cell);
-        }
+        Cell cell = cellWriteHandlerContext.getCell();
+        setCellValue(cellWriteHandlerContext, cellData, cell);
     }
 
     private void setCellValue(CellWriteHandlerContext cellWriteHandlerContext, WriteCellData<?> cellData, Cell cell) {

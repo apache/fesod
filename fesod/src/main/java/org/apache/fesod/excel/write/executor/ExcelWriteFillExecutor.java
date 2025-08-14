@@ -331,6 +331,12 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                                 if (cellWriteHandlerContext.getCellMap() != null && cellWriteHandlerContext.getCellMap().size() > 1) {
                                     cellWriteHandlerContext.getCellMap().values().forEach(cell -> cell.getFirstCellData().setOriginCellStyle(style));
                                 }else{
+                                    if(fillConfig.getDirection() == WriteDirectionEnum.HORIZONTAL){
+                                        Integer orginColumnIndex = analysisCell.getColumnIndex();
+                                        Sheet sheet = writeContext.writeSheetHolder().getSheet();
+                                        int columnWidth = sheet.getColumnWidth(orginColumnIndex);
+                                        sheet.setColumnWidth(cellWriteHandlerContext.getColumnIndex(), columnWidth);
+                                    }
                                     cellData.setOriginCellStyle(style);
                                 }
                             });

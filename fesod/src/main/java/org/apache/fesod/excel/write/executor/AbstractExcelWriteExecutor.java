@@ -185,8 +185,12 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                 if(originalVariable.contains(".")){
                     key = originalVariable.split("\\.")[1];
                     Object itemBean = o;
-                    BeanMap beanMap = BeanMapUtils.create(itemBean);
-                    o = beanMap.get(key);
+                    if (null == itemBean) {
+                        o = null;
+                    }else{
+                        BeanMap beanMap = BeanMapUtils.create(itemBean);
+                        o = beanMap.get(key);
+                    }
                 }
 
                 Integer dynamicColumnGroupSize = dynamicColumnInfo.getGroupSize();

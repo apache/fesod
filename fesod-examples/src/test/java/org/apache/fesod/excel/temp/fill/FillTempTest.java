@@ -115,6 +115,15 @@ public class FillTempTest {
         dateList.add("2023-01-01");
         dateList.add("2023-01-02");
         dateList.add("2023-01-03");
+        dateList.add("2023-01-04");
+        dateList.add("2023-01-05");
+        dateList.add("2023-01-06");
+        dateList.add("2023-01-07");
+        dateList.add("2023-01-08");
+        dateList.add("2023-01-09");
+        dateList.add("2023-01-10");
+        dateList.add("2023-01-11");
+        dateList.add("2023-01-12");
 
         ExcelWriter excelWriter = EasyExcel.write(fileName).withTemplate(templateFileName).build();
         WriteSheet writeSheet = EasyExcel.writerSheet().build();

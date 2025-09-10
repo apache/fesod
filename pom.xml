@@ -21,6 +21,7 @@
         <module>fastexcel</module>
         <module>fastexcel-support</module>
         <module>fastexcel-examples</module>
+        <module>fastexcel-benchmark</module>
     </modules>
 
     <properties>

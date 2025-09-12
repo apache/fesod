@@ -3,6 +3,9 @@ package cn.idev.excel.benchmark.comparison;
 import cn.idev.excel.EasyExcel;
 import cn.idev.excel.ExcelReader;
 import cn.idev.excel.ExcelWriter;
+import cn.idev.excel.benchmark.analyzer.BenchmarkReportGenerator;
+import cn.idev.excel.benchmark.analyzer.BenchmarkResultCollector;
+import cn.idev.excel.benchmark.analyzer.ComparisonAnalysis;
 import cn.idev.excel.benchmark.core.AbstractBenchmark;
 import cn.idev.excel.benchmark.core.BenchmarkConfiguration;
 import cn.idev.excel.benchmark.data.BenchmarkData;
@@ -15,7 +18,6 @@ import cn.idev.excel.write.metadata.WriteSheet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -46,13 +49,21 @@ import org.openjdk.jmh.infra.Blackhole;
  * Comprehensive comparison benchmarks between FastExcel (EasyExcel) and Apache POI.
  * Tests performance across different operations and dataset sizes.
  */
-@BenchmarkMode(Mode.All)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(iterations = 2, time = 3, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
+
+    // Static result collector to accumulate results across all benchmark runs
+    private static final BenchmarkResultCollector resultCollector = new BenchmarkResultCollector(Mode.AverageTime);
+    private static final BenchmarkReportGenerator reportGenerator = new BenchmarkReportGenerator();
+
+    // Session ID for file-based result collection (to avoid fork issues)
+    private static String sessionId;
+    private static File resultOutputDir;
 
     @Param({"SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE"})
     private String datasetSize;
@@ -63,15 +74,47 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
     private File testFile;
     private List<BenchmarkData> testDataList;
     private MemoryProfiler memoryProfiler;
+    private List<ComparisonResult> localResults = new ArrayList<>();
 
     @Setup(Level.Trial)
     public void setupTrial() throws Exception {
         super.setupTrial();
 
+        // Initialize session ID and result directory (only once per trial)
+        if (sessionId == null) {
+            sessionId = System.getProperty("benchmark.session.id", String.valueOf(System.currentTimeMillis()));
+
+            String resultDirPath = System.getProperty("benchmark.result.dir", "target/benchmark-results");
+            resultOutputDir = new File(resultDirPath, sessionId);
+            if (!resultOutputDir.exists()) {
+                resultOutputDir.mkdirs();
+            }
+
+            System.out.printf("Benchmark session ID: %s%n", sessionId);
+            System.out.printf("Result output directory: %s%n", resultOutputDir.getAbsolutePath());
+        }
+
+        // Configure Apache POI to handle large files
+        // Increase the maximum byte array size limit to 1GB (default is 100MB)
+        IOUtils.setByteArrayMaxOverride(1024 * 1024 * 1024); // 1GB
+
+        // Also set other relevant limits for large file processing
+        System.setProperty("poi.bytearray.max.override", "1073741824"); // 1GB
+        System.setProperty("poi.scratchpad.keep.oleentry", "false"); // Reduce memory usage
+
         // Generate test data
         BenchmarkConfiguration.DatasetSize size = BenchmarkConfiguration.DatasetSize.valueOf(datasetSize);
         int rowCount = size.getRowCount();
         testDataList = DataGenerator.generateTestData(size);
+
+        BenchmarkConfiguration.FileFormat format = BenchmarkConfiguration.FileFormat.valueOf(fileFormat);
+        if (format == BenchmarkConfiguration.FileFormat.XLS && rowCount > 65535) {
+            System.out.printf(
+                    "WARN: XLS format supports max 65536 rows, but dataset size is %d. Truncating data to 65534 rows for benchmark.%n",
+                    rowCount);
+            testDataList = testDataList.subList(0, 65534);
+            rowCount = testDataList.size();
+        }
 
         // Create test file
         String fileName = String.format("comparison_%s.%s", datasetSize.toLowerCase(), fileFormat.toLowerCase());
@@ -95,6 +138,9 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
         if (testFile != null && testFile.exists()) {
             testFile.delete();
         }
+
+        // Write collected results to individual files for this trial
+        writeResultsToFiles();
 
         super.tearDownTrial();
     }
@@ -163,9 +209,11 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
         long endTime = System.currentTimeMillis();
 
-        return new ComparisonResult(
+        ComparisonResult result = new ComparisonResult(
                 "FastExcel",
                 "Write",
+                datasetSize,
+                fileFormat,
                 testDataList.size(),
                 endTime - startTime,
                 snapshot.getMaxUsedMemory(),
@@ -179,6 +227,12 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 stats.getStdDevMemory(),
                 stats.getP95Memory(),
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
+
+        // Collect result for analysis
+        resultCollector.addResult(result);
+        localResults.add(result);
+
+        return result;
     }
 
     /**
@@ -243,9 +297,11 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
         long endTime = System.currentTimeMillis();
 
-        return new ComparisonResult(
+        ComparisonResult result = new ComparisonResult(
                 "Apache POI",
                 "Write",
+                datasetSize,
+                fileFormat,
                 testDataList.size(),
                 endTime - startTime,
                 snapshot.getMaxUsedMemory(),
@@ -259,6 +315,12 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 stats.getStdDevMemory(),
                 stats.getP95Memory(),
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
+
+        // Collect result for analysis
+        resultCollector.addResult(result);
+        localResults.add(result);
+
+        return result;
     }
 
     // ============================================================================
@@ -271,7 +333,7 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
     @Benchmark
     public ComparisonResult benchmarkFastExcelRead(Blackhole blackhole) {
         // First, create a test file with FastExcel
-        createTestFileWithFastExcel();
+        // createTestFileWithFastExcel();
 
         long startTime = System.currentTimeMillis();
 
@@ -312,9 +374,11 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
         long endTime = System.currentTimeMillis();
 
-        return new ComparisonResult(
+        ComparisonResult result = new ComparisonResult(
                 "FastExcel",
                 "Read",
+                datasetSize,
+                fileFormat,
                 processedRows.get(),
                 endTime - startTime,
                 snapshot.getMaxUsedMemory(),
@@ -328,6 +392,12 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 stats.getStdDevMemory(),
                 stats.getP95Memory(),
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
+
+        // Collect result for analysis
+        resultCollector.addResult(result);
+        localResults.add(result);
+
+        return result;
     }
 
     /**
@@ -336,7 +406,7 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
     @Benchmark
     public ComparisonResult benchmarkPoiRead(Blackhole blackhole) {
         // First, create a test file with POI
-        createTestFileWithPoi();
+        // createTestFileWithPoi();
 
         long startTime = System.currentTimeMillis();
 
@@ -376,9 +446,11 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
         long endTime = System.currentTimeMillis();
 
-        return new ComparisonResult(
+        ComparisonResult result = new ComparisonResult(
                 "Apache POI",
                 "Read",
+                datasetSize,
+                fileFormat,
                 processedRows,
                 endTime - startTime,
                 snapshot.getMaxUsedMemory(),
@@ -392,6 +464,12 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 stats.getStdDevMemory(),
                 stats.getP95Memory(),
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
+
+        // Collect result for analysis
+        resultCollector.addResult(result);
+        localResults.add(result);
+
+        return result;
     }
 
     // ============================================================================
@@ -403,7 +481,7 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
      */
     @Benchmark
     public ComparisonResult benchmarkFastExcelStreamingRead(Blackhole blackhole) {
-        createTestFileWithFastExcel();
+        // createTestFileWithFastExcel();
 
         long startTime = System.currentTimeMillis();
 
@@ -454,9 +532,11 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
         long endTime = System.currentTimeMillis();
 
-        return new ComparisonResult(
+        ComparisonResult result = new ComparisonResult(
                 "FastExcel",
                 "StreamingRead",
+                datasetSize,
+                fileFormat,
                 processedRows.get(),
                 endTime - startTime,
                 snapshot.getMaxUsedMemory(),
@@ -470,6 +550,12 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 stats.getStdDevMemory(),
                 stats.getP95Memory(),
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
+
+        // Collect result for analysis
+        resultCollector.addResult(result);
+        localResults.add(result);
+
+        return result;
     }
 
     /**
@@ -477,7 +563,7 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
      */
     @Benchmark
     public ComparisonResult benchmarkPoiStreamingRead(Blackhole blackhole) {
-        createTestFileWithPoi();
+        // createTestFileWithPoi();
 
         long startTime = System.currentTimeMillis();
 
@@ -545,9 +631,11 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
         long endTime = System.currentTimeMillis();
 
-        return new ComparisonResult(
+        ComparisonResult result = new ComparisonResult(
                 "Apache POI",
                 "StreamingRead",
+                datasetSize,
+                fileFormat,
                 processedRows,
                 endTime - startTime,
                 snapshot.getMaxUsedMemory(),
@@ -561,11 +649,74 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 stats.getStdDevMemory(),
                 stats.getP95Memory(),
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
+
+        // Collect result for analysis
+        resultCollector.addResult(result);
+        localResults.add(result);
+
+        return result;
     }
 
     // ============================================================================
     // UTILITY METHODS
     // ============================================================================
+
+    /**
+     * Write local results to individual files for cross-fork communication
+     */
+    private void writeResultsToFiles() {
+        if (resultOutputDir == null || localResults.isEmpty()) {
+            return;
+        }
+
+        try {
+            for (int i = 0; i < localResults.size(); i++) {
+                ComparisonResult result = localResults.get(i);
+                String fileName = String.format(
+                        "result_%s_%s_%s_%s_%d.json",
+                        result.library.replace(" ", "_"), result.operation, datasetSize, fileFormat, i);
+                File resultFile = new File(resultOutputDir, fileName);
+
+                // Write result as JSON
+                writeResultAsJson(result, resultFile);
+            }
+
+            System.out.printf("Wrote %d results to %s%n", localResults.size(), resultOutputDir.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("Error writing results to files: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Write a single result as JSON to file
+     */
+    private void writeResultAsJson(ComparisonResult result, File file) throws Exception {
+        try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
+            writer.write("{\n");
+            writer.write(String.format("  \"library\": \"%s\",\n", result.library));
+            writer.write(String.format("  \"operation\": \"%s\",\n", result.operation));
+            writer.write(String.format("  \"datasetSize\": \"%s\",\n", result.datasetSize));
+            writer.write(String.format("  \"fileFormat\": \"%s\",\n", result.fileFormat));
+            writer.write(String.format("  \"processedRows\": %d,\n", result.processedRows));
+            writer.write(String.format("  \"executionTimeMs\": %d,\n", result.executionTimeMs));
+            writer.write(String.format("  \"memoryUsageBytes\": %d,\n", result.memoryUsageBytes));
+            writer.write(String.format("  \"peakMemoryUsageBytes\": %d,\n", result.peakMemoryUsageBytes));
+            writer.write(String.format("  \"avgMemoryUsageBytes\": %d,\n", result.avgMemoryUsageBytes));
+            writer.write(String.format("  \"memoryAllocatedBytes\": %d,\n", result.memoryAllocatedBytes));
+            writer.write(String.format("  \"gcCount\": %d,\n", result.gcCount));
+            writer.write(String.format("  \"gcTimeMs\": %d,\n", result.gcTimeMs));
+            writer.write(String.format("  \"fileSizeBytes\": %d,\n", result.fileSizeBytes));
+            writer.write(String.format("  \"minMemoryUsageBytes\": %d,\n", result.minMemoryUsageBytes));
+            writer.write(String.format("  \"stdDevMemoryUsageBytes\": %d,\n", result.stdDevMemoryUsageBytes));
+            writer.write(String.format("  \"p95MemoryUsageBytes\": %d,\n", result.p95MemoryUsageBytes));
+            writer.write(String.format("  \"memoryGrowthRate\": %.4f,\n", result.memoryGrowthRate));
+            writer.write(String.format("  \"throughputRowsPerSecond\": %.2f,\n", result.getThroughputRowsPerSecond()));
+            writer.write(String.format("  \"memoryEfficiencyRatio\": %.2e,\n", result.getMemoryEfficiencyRatio()));
+            writer.write(String.format("  \"throughputMBPerSecond\": %.2f\n", result.getThroughputMBPerSecond()));
+            writer.write("}\n");
+        }
+    }
 
     /**
      * Create appropriate workbook based on file format
@@ -586,53 +737,60 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
     }
 
     /**
-     * Create test file using FastExcel
+     * Generate comprehensive analysis report after all benchmarks complete
      */
-    private void createTestFileWithFastExcel() {
+    public static void generateAnalysisReport() {
         try {
-            EasyExcel.write(testFile, BenchmarkData.class).sheet("TestData").doWrite(testDataList);
+            String separator = "================================================================================";
+            System.out.println("\n" + separator);
+            System.out.println("BENCHMARK ANALYSIS REPORT");
+            System.out.println(separator);
+
+            // Print summary to console
+            String summary = resultCollector.getSummaryReport();
+            System.out.println(summary);
+
+            // Generate comparison analysis
+            ComparisonAnalysis analysis = resultCollector.getComparisonAnalysis();
+            System.out.println(analysis.getSummary());
+
+            // Generate structured reports
+            java.nio.file.Path outputDir = java.nio.file.Paths.get("target/benchmark-reports");
+            java.nio.file.Files.createDirectories(outputDir);
+
+            // Generate JSON report
+            reportGenerator.generateJsonReport(analysis, outputDir.resolve("benchmark-comparison.json"));
+            System.out.printf("JSON report generated: %s%n", outputDir.resolve("benchmark-comparison.json"));
+
+            // Generate CSV report
+            reportGenerator.generateCsvReport(analysis, outputDir.resolve("benchmark-comparison.csv"));
+            System.out.printf("CSV report generated: %s%n", outputDir.resolve("benchmark-comparison.csv"));
+
+            // Generate HTML report
+            reportGenerator.generateHtmlReport(
+                    analysis, resultCollector, outputDir.resolve("benchmark-comparison.html"));
+            System.out.printf("HTML report generated: %s%n", outputDir.resolve("benchmark-comparison.html"));
+
+            System.out.println(separator);
+
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create test file with FastExcel", e);
+            System.err.println("Error generating analysis report: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     /**
-     * Create test file using Apache POI
+     * Get the current result collector (for external access)
      */
-    private void createTestFileWithPoi() {
-        try (FileOutputStream fos = new FileOutputStream(testFile)) {
-            Workbook workbook = createWorkbook();
-            Sheet sheet = workbook.createSheet("TestData");
+    public static BenchmarkResultCollector getResultCollector() {
+        return resultCollector;
+    }
 
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            String[] headers = {"ID", "String Value", "Int Value", "Double Value", "Date Value", "Boolean Value"};
-            for (int i = 0; i < headers.length; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-            }
-
-            // Write data rows
-            for (int i = 0; i < testDataList.size(); i++) {
-                BenchmarkData data = testDataList.get(i);
-                Row row = sheet.createRow(i + 1);
-
-                row.createCell(0).setCellValue(data.getId() != null ? data.getId() : 0);
-                row.createCell(1).setCellValue(data.getStringData() != null ? data.getStringData() : "");
-                row.createCell(2).setCellValue(data.getIntValue() != null ? data.getIntValue() : 0);
-                row.createCell(3).setCellValue(data.getDoubleValue() != null ? data.getDoubleValue() : 0.0);
-                if (data.getDateValue() != null) {
-                    row.createCell(4).setCellValue(data.getDateValue());
-                }
-                row.createCell(5).setCellValue(data.getBooleanFlag() != null ? data.getBooleanFlag() : false);
-            }
-
-            workbook.write(fos);
-            workbook.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create test file with POI", e);
-        }
+    /**
+     * Clear collected results (useful for testing)
+     */
+    public static void clearResults() {
+        resultCollector.clear();
     }
 
     /**
@@ -641,6 +799,8 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
     public static class ComparisonResult {
         public final String library;
         public final String operation;
+        public final String datasetSize;
+        public final String fileFormat;
         public final long processedRows;
         public final long executionTimeMs;
         public final long memoryUsageBytes;
@@ -658,12 +818,16 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
         public ComparisonResult(
                 String library,
                 String operation,
+                String datasetSize,
+                String fileFormat,
                 long processedRows,
                 long executionTimeMs,
                 long memoryUsageBytes,
                 long fileSizeBytes) {
             this.library = library;
             this.operation = operation;
+            this.datasetSize = datasetSize;
+            this.fileFormat = fileFormat;
             this.processedRows = processedRows;
             this.executionTimeMs = executionTimeMs;
             this.memoryUsageBytes = memoryUsageBytes;
@@ -682,6 +846,8 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
         public ComparisonResult(
                 String library,
                 String operation,
+                String datasetSize,
+                String fileFormat,
                 long processedRows,
                 long executionTimeMs,
                 long peakMemoryUsageBytes,
@@ -693,6 +859,8 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 long fileSizeBytes) {
             this.library = library;
             this.operation = operation;
+            this.datasetSize = datasetSize;
+            this.fileFormat = fileFormat;
             this.processedRows = processedRows;
             this.executionTimeMs = executionTimeMs;
             this.peakMemoryUsageBytes = peakMemoryUsageBytes;
@@ -711,6 +879,8 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
         public ComparisonResult(
                 String library,
                 String operation,
+                String datasetSize,
+                String fileFormat,
                 long processedRows,
                 long executionTimeMs,
                 long peakMemoryUsageBytes,
@@ -726,6 +896,8 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 double memoryGrowthRate) {
             this.library = library;
             this.operation = operation;
+            this.datasetSize = datasetSize;
+            this.fileFormat = fileFormat;
             this.processedRows = processedRows;
             this.executionTimeMs = executionTimeMs;
             this.peakMemoryUsageBytes = peakMemoryUsageBytes;

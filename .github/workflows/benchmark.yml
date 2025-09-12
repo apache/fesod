@@ -1,11 +1,12 @@
 name: Comparison Benchmark
 
 on:
-  pull_request:
-    paths:
-      - 'fastexcel/**'
-      - 'fastexcel-benchmark/**'
   workflow_dispatch:
+    inputs:
+      scripts:
+        description: 'Benchmark scripts parameters'
+        required: false
+        default: '--profile standard'
 
 jobs:
   benchmark:
@@ -27,7 +28,7 @@ jobs:
         run: chmod +x fastexcel-benchmark/scripts/benchmark-runner.sh
 
       - name: Run Benchmark
-        run: ./fastexcel-benchmark/scripts/benchmark-runner.sh --profile standard
+        run: ./fastexcel-benchmark/scripts/benchmark-runner.sh ${{ github.event.inputs.scripts }}
 
       - name: Upload Benchmark Results
         if: always()

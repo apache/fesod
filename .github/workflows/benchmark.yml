@@ -24,13 +24,15 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build FastExcel Benchmark Module
-        run: mvn clean package -DskipTests -pl fastexcel-benchmark
+      - name: Build FastExcel Project
+        run: mvn clean package -DskipTests
 
       - name: Run Comparison Benchmark Runner
         run: |
           cd fastexcel-benchmark
-          mvn exec:java -Dexec.mainClass="cn.idev.excel.benchmark.comparison.ComparisonBenchmarkRunner" -Dexec.classpathScope=compile
+          mvn dependency:build-classpath -Dmdep.outputFile=cp.txt
+          CLASSPATH=$(cat cp.txt):target/classes
+          java -cp "$CLASSPATH" cn.idev.excel.benchmark.comparison.ComparisonBenchmarkRunner
 
       - name: Upload Benchmark Results
         if: always()

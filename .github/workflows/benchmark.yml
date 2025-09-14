@@ -10,7 +10,7 @@ on:
 
 jobs:
   benchmark:
-    name: Run All Benchmark
+    name: Run Comparison Benchmark
     runs-on: ubuntu-latest
 
     steps:
@@ -24,15 +24,20 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Make benchmark runner executable
-        run: chmod +x fastexcel-benchmark/scripts/benchmark-runner.sh
+      - name: Build FastExcel Benchmark Module
+        run: mvn clean package -DskipTests -pl fastexcel-benchmark
 
-      - name: Run Benchmark
-        run: ./fastexcel-benchmark/scripts/benchmark-runner.sh ${{ github.event.inputs.scripts }}
+      - name: Run Comparison Benchmark Runner
+        run: |
+          cd fastexcel-benchmark
+          mvn exec:java -Dexec.mainClass="cn.idev.excel.benchmark.comparison.ComparisonBenchmarkRunner" -Dexec.classpathScope=compile
 
       - name: Upload Benchmark Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results
-          path: fastexcel-benchmark/benchmark-results/
+          path: |
+            fastexcel-benchmark/target/benchmark-results/
+            fastexcel-benchmark/target/benchmark-reports/
+            fastexcel-benchmark/target/jmh-results-*.json

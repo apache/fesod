@@ -2,11 +2,6 @@ name: Comparison Benchmark
 
 on:
   workflow_dispatch:
-    inputs:
-      scripts:
-        description: 'Benchmark scripts parameters'
-        required: false
-        default: '--profile standard'
 
 jobs:
   benchmark:

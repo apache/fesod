@@ -50,8 +50,12 @@ public class ComparisonBenchmarkRunner {
                 .param("fileFormat", "XLSX")
                 .forks(1)
                 .warmupIterations(2)
-                .measurementIterations(3)
-                .jvmArgs("-Dbenchmark.session.id=" + sessionId, "-Dbenchmark.result.dir=" + resultDirPath)
+                .measurementIterations(5)
+                .jvmArgs(
+                        "-Xmx6g",
+                        "-XX:+UseG1GC",
+                        "-Dbenchmark.session.id=" + sessionId,
+                        "-Dbenchmark.result.dir=" + resultDirPath)
                 .result("target/jmh-results-" + sessionId + ".json")
                 .resultFormat(ResultFormatType.JSON)
                 .build();

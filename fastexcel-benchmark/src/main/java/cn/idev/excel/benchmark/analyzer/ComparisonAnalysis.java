@@ -27,23 +27,27 @@ public class ComparisonAnalysis {
     private List<ComparisonResult> generateComparisons() {
         List<ComparisonResult> results = new ArrayList<>();
 
-        // Group by operation
-        Map<String, List<BenchmarkStatistics>> byOperation = new HashMap<>();
+        // Group by operation, dataset size, and file format
+        Map<String, List<BenchmarkStatistics>> byConfig = new HashMap<>();
         for (BenchmarkStatistics stats : statistics.values()) {
-            byOperation.computeIfAbsent(stats.operation, k -> new ArrayList<>()).add(stats);
+            String configKey = String.format(
+                    "%s-%s-%s",
+                    stats.operation,
+                    stats.datasetSize != null ? stats.datasetSize : "UNKNOWN",
+                    stats.fileFormat != null ? stats.fileFormat : "UNKNOWN");
+            byConfig.computeIfAbsent(configKey, k -> new ArrayList<>()).add(stats);
         }
 
-        // Compare within each operation
-        for (Map.Entry<String, List<BenchmarkStatistics>> entry : byOperation.entrySet()) {
-            String operation = entry.getKey();
-            List<BenchmarkStatistics> operationStats = entry.getValue();
+        // Compare within each configuration
+        for (Map.Entry<String, List<BenchmarkStatistics>> entry : byConfig.entrySet()) {
+            List<BenchmarkStatistics> configStats = entry.getValue();
 
-            if (operationStats.size() >= 2) {
+            if (configStats.size() >= 2) {
                 // Find FastExcel and Apache POI statistics for consistent comparison order
                 BenchmarkStatistics fastExcelStats = null;
                 BenchmarkStatistics apachePoiStats = null;
 
-                for (BenchmarkStatistics stats : operationStats) {
+                for (BenchmarkStatistics stats : configStats) {
                     if ("FastExcel".equals(stats.library)) {
                         fastExcelStats = stats;
                     } else if ("Apache POI".equals(stats.library)) {
@@ -54,6 +58,8 @@ public class ComparisonAnalysis {
                 // Only create comparison if both FastExcel and Apache POI are present
                 if (fastExcelStats != null && apachePoiStats != null) {
                     // Always compare FastExcel vs Apache POI (consistent order)
+                    String[] parts = entry.getKey().split("-");
+                    String operation = parts[0];
                     ComparisonResult comparison = compareTwo(fastExcelStats, apachePoiStats, operation);
                     results.add(comparison);
                 }

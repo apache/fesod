@@ -27,7 +27,7 @@ jobs:
           cd fastexcel-benchmark
           mvn dependency:build-classpath -Dmdep.outputFile=cp.txt
           CLASSPATH=$(cat cp.txt):target/classes
-          java -Xmx6g -XX:+UseG1GC -cp "$CLASSPATH" cn.idev.excel.benchmark.comparison.ComparisonBenchmarkRunner
+          java -cp "$CLASSPATH" cn.idev.excel.benchmark.comparison.ComparisonBenchmarkRunner
 
       - name: Upload Benchmark Results
         if: always()

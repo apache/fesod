@@ -39,15 +39,23 @@ public class ComparisonAnalysis {
             List<BenchmarkStatistics> operationStats = entry.getValue();
 
             if (operationStats.size() >= 2) {
-                // Create comparison results
-                for (int i = 0; i < operationStats.size(); i++) {
-                    for (int j = i + 1; j < operationStats.size(); j++) {
-                        BenchmarkStatistics stats1 = operationStats.get(i);
-                        BenchmarkStatistics stats2 = operationStats.get(j);
+                // Find FastExcel and Apache POI statistics for consistent comparison order
+                BenchmarkStatistics fastExcelStats = null;
+                BenchmarkStatistics apachePoiStats = null;
 
-                        ComparisonResult comparison = compareTwo(stats1, stats2, operation);
-                        results.add(comparison);
+                for (BenchmarkStatistics stats : operationStats) {
+                    if ("FastExcel".equals(stats.library)) {
+                        fastExcelStats = stats;
+                    } else if ("Apache POI".equals(stats.library)) {
+                        apachePoiStats = stats;
                     }
+                }
+
+                // Only create comparison if both FastExcel and Apache POI are present
+                if (fastExcelStats != null && apachePoiStats != null) {
+                    // Always compare FastExcel vs Apache POI (consistent order)
+                    ComparisonResult comparison = compareTwo(fastExcelStats, apachePoiStats, operation);
+                    results.add(comparison);
                 }
             }
         }
@@ -86,6 +94,8 @@ public class ComparisonAnalysis {
                 stats1.library,
                 stats2.library,
                 operation,
+                stats1.datasetSize != null ? stats1.datasetSize : "N/A",
+                stats1.fileFormat != null ? stats1.fileFormat : "N/A",
                 throughputRatio,
                 throughputSignificant,
                 memoryRatio,
@@ -181,6 +191,8 @@ public class ComparisonAnalysis {
         public final String library1;
         public final String library2;
         public final String operation;
+        public final String datasetSize;
+        public final String fileFormat;
         public final double throughputRatio; // library1 / library2
         public final boolean throughputSignificant;
         public final double memoryRatio; // library1 / library2
@@ -196,6 +208,8 @@ public class ComparisonAnalysis {
                 String library1,
                 String library2,
                 String operation,
+                String datasetSize,
+                String fileFormat,
                 double throughputRatio,
                 boolean throughputSignificant,
                 double memoryRatio,
@@ -209,6 +223,8 @@ public class ComparisonAnalysis {
             this.library1 = library1;
             this.library2 = library2;
             this.operation = operation;
+            this.datasetSize = datasetSize;
+            this.fileFormat = fileFormat;
             this.throughputRatio = throughputRatio;
             this.throughputSignificant = throughputSignificant;
             this.memoryRatio = memoryRatio;
@@ -224,7 +240,7 @@ public class ComparisonAnalysis {
         @Override
         public String toString() {
             return String.format(
-                    "%s vs %s (%s):\n" + "  Throughput: %.2fx %s\n"
+                    "%s vs %s (%s - %s, %s):\n" + "  Throughput: %.2fx %s\n"
                             + "  Memory: %.2fx %s\n"
                             + "  Execution Time: %.2fx %s\n"
                             + "  Performance Scores: %.1f vs %.1f\n"
@@ -233,6 +249,8 @@ public class ComparisonAnalysis {
                     library1,
                     library2,
                     operation,
+                    datasetSize,
+                    fileFormat,
                     throughputRatio,
                     throughputSignificant ? "(significant)" : "(not significant)",
                     memoryRatio,

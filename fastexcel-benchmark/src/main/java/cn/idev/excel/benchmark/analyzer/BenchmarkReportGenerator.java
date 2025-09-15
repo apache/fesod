@@ -234,15 +234,17 @@ public class BenchmarkReportGenerator {
      * Generate comparison table for HTML report
      */
     private void generateComparisonTable(ComparisonAnalysis analysis, PrintWriter writer) {
-        writer.println("        <table class=\"comparison-table\">");
+        writer.println("        <table id=\"comparisonTable\" class=\"comparison-table sortable\">");
         writer.println("            <thead>");
         writer.println("                <tr>");
-        writer.println("                    <th>Comparison</th>");
-        writer.println("                    <th>Operation</th>");
-        writer.println("                    <th>Throughput Ratio</th>");
-        writer.println("                    <th>Memory Ratio</th>");
-        writer.println("                    <th>Winner</th>");
-        writer.println("                    <th>Recommendation</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(0)\">Comparison ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(1)\">Operation ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(2)\">Dataset Size ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(3)\">File Format ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(4)\">Throughput Ratio ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(5)\">Memory Ratio ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(6)\">Winner ↕</th>");
+        writer.println("                    <th onclick=\"sortComparisonTable(7)\">Recommendation ↕</th>");
         writer.println("                </tr>");
         writer.println("            </thead>");
         writer.println("            <tbody>");
@@ -251,6 +253,8 @@ public class BenchmarkReportGenerator {
             writer.println("                <tr>");
             writer.printf("                    <td>%s vs %s</td>%n", comparison.library1, comparison.library2);
             writer.printf("                    <td>%s</td>%n", comparison.operation);
+            writer.printf("                    <td>%s</td>%n", comparison.datasetSize);
+            writer.printf("                    <td>%s</td>%n", comparison.fileFormat);
             writer.printf(
                     "                    <td class=\"%s\">%.2fx %s</td>%n",
                     comparison.throughputSignificant ? "significant" : "not-significant",
@@ -362,7 +366,54 @@ public class BenchmarkReportGenerator {
                 + "        const bValue = b.getElementsByTagName('td')[columnIndex].textContent.trim();\n"
                 + "        \n"
                 + "        // Try to parse as number for numeric columns\n"
-                + "        if (columnIndex >= 2 && columnIndex <= 5) {\n"
+                + "        if (columnIndex >= 4 && columnIndex <= 7) {\n"
+                + "            const aNum = parseFloat(aValue);\n"
+                + "            const bNum = parseFloat(bValue);\n"
+                + "            if (!isNaN(aNum) && !isNaN(bNum)) {\n"
+                + "                return isAscending ? aNum - bNum : bNum - aNum;\n"
+                + "            }\n"
+                + "        }\n"
+                + "        \n"
+                + "        // String comparison for text columns\n"
+                + "        if (isAscending) {\n"
+                + "            return aValue.localeCompare(bValue);\n"
+                + "        } else {\n"
+                + "            return bValue.localeCompare(aValue);\n"
+                + "        }\n"
+                + "    });\n"
+                + "    \n"
+                + "    // Clear tbody and re-append sorted rows\n"
+                + "    tbody.innerHTML = '';\n"
+                + "    rows.forEach(row => tbody.appendChild(row));\n"
+                + "    \n"
+                + "    // Update header indicators\n"
+                + "    const headers = table.getElementsByTagName('th');\n"
+                + "    for (let i = 0; i < headers.length; i++) {\n"
+                + "        const header = headers[i];\n"
+                + "        const text = header.textContent.replace(' ↑', '').replace(' ↓', '').replace(' ↕', '');\n"
+                + "        if (i === columnIndex) {\n"
+                + "            header.textContent = text + (isAscending ? ' ↑' : ' ↓');\n"
+                + "        } else {\n"
+                + "            header.textContent = text + ' ↕';\n"
+                + "        }\n"
+                + "    }\n"
+                + "}\n\n"
+                + "function sortComparisonTable(columnIndex) {\n"
+                + "    const table = document.getElementById('comparisonTable');\n"
+                + "    const tbody = table.getElementsByTagName('tbody')[0];\n"
+                + "    const rows = Array.from(tbody.getElementsByTagName('tr'));\n"
+                + "    \n"
+                + "    // Determine sort direction\n"
+                + "    const isAscending = table.getAttribute('data-sort-direction') !== 'asc';\n"
+                + "    table.setAttribute('data-sort-direction', isAscending ? 'asc' : 'desc');\n"
+                + "    \n"
+                + "    // Sort rows\n"
+                + "    rows.sort((a, b) => {\n"
+                + "        const aValue = a.getElementsByTagName('td')[columnIndex].textContent.trim();\n"
+                + "        const bValue = b.getElementsByTagName('td')[columnIndex].textContent.trim();\n"
+                + "        \n"
+                + "        // Try to parse as number for ratio columns\n"
+                + "        if (columnIndex === 4 || columnIndex === 5) {\n"
                 + "            const aNum = parseFloat(aValue);\n"
                 + "            const bNum = parseFloat(bValue);\n"
                 + "            if (!isNaN(aNum) && !isNaN(bNum)) {\n"

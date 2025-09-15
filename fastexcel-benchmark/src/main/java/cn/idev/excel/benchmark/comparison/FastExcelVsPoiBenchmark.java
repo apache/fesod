@@ -3,9 +3,7 @@ package cn.idev.excel.benchmark.comparison;
 import cn.idev.excel.EasyExcel;
 import cn.idev.excel.ExcelReader;
 import cn.idev.excel.ExcelWriter;
-import cn.idev.excel.benchmark.analyzer.BenchmarkReportGenerator;
 import cn.idev.excel.benchmark.analyzer.BenchmarkResultCollector;
-import cn.idev.excel.benchmark.analyzer.ComparisonAnalysis;
 import cn.idev.excel.benchmark.core.AbstractBenchmark;
 import cn.idev.excel.benchmark.core.BenchmarkConfiguration;
 import cn.idev.excel.benchmark.data.BenchmarkData;
@@ -15,6 +13,8 @@ import cn.idev.excel.benchmark.utils.MemoryProfiler;
 import cn.idev.excel.context.AnalysisContext;
 import cn.idev.excel.event.AnalysisEventListener;
 import cn.idev.excel.write.metadata.WriteSheet;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -59,7 +59,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
     // Static result collector to accumulate results across all benchmark runs
     private static final BenchmarkResultCollector resultCollector = new BenchmarkResultCollector(Mode.AverageTime);
-    private static final BenchmarkReportGenerator reportGenerator = new BenchmarkReportGenerator();
 
     // Session ID for file-based result collection (to avoid fork issues)
     private static String sessionId;
@@ -481,8 +480,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
      */
     @Benchmark
     public ComparisonResult benchmarkFastExcelStreamingRead(Blackhole blackhole) {
-        // createTestFileWithFastExcel();
-
         long startTime = System.currentTimeMillis();
 
         // Start memory profiling
@@ -563,8 +560,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
      */
     @Benchmark
     public ComparisonResult benchmarkPoiStreamingRead(Blackhole blackhole) {
-        // createTestFileWithPoi();
-
         long startTime = System.currentTimeMillis();
 
         // Start memory profiling
@@ -692,29 +687,31 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
      * Write a single result as JSON to file
      */
     private void writeResultAsJson(ComparisonResult result, File file) throws Exception {
+        // Use fastjson2 for writing JSON instead of manual string building
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("library", result.library);
+        jsonObject.put("operation", result.operation);
+        jsonObject.put("datasetSize", result.datasetSize);
+        jsonObject.put("fileFormat", result.fileFormat);
+        jsonObject.put("processedRows", result.processedRows);
+        jsonObject.put("executionTimeMs", result.executionTimeMs);
+        jsonObject.put("memoryUsageBytes", result.memoryUsageBytes);
+        jsonObject.put("peakMemoryUsageBytes", result.peakMemoryUsageBytes);
+        jsonObject.put("avgMemoryUsageBytes", result.avgMemoryUsageBytes);
+        jsonObject.put("memoryAllocatedBytes", result.memoryAllocatedBytes);
+        jsonObject.put("gcCount", result.gcCount);
+        jsonObject.put("gcTimeMs", result.gcTimeMs);
+        jsonObject.put("fileSizeBytes", result.fileSizeBytes);
+        jsonObject.put("minMemoryUsageBytes", result.minMemoryUsageBytes);
+        jsonObject.put("stdDevMemoryUsageBytes", result.stdDevMemoryUsageBytes);
+        jsonObject.put("p95MemoryUsageBytes", result.p95MemoryUsageBytes);
+        jsonObject.put("memoryGrowthRate", result.memoryGrowthRate);
+        jsonObject.put("throughputRowsPerSecond", result.getThroughputRowsPerSecond());
+        jsonObject.put("memoryEfficiencyRatio", result.getMemoryEfficiencyRatio());
+        jsonObject.put("throughputMBPerSecond", result.getThroughputMBPerSecond());
+
         try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
-            writer.write("{\n");
-            writer.write(String.format("  \"library\": \"%s\",\n", result.library));
-            writer.write(String.format("  \"operation\": \"%s\",\n", result.operation));
-            writer.write(String.format("  \"datasetSize\": \"%s\",\n", result.datasetSize));
-            writer.write(String.format("  \"fileFormat\": \"%s\",\n", result.fileFormat));
-            writer.write(String.format("  \"processedRows\": %d,\n", result.processedRows));
-            writer.write(String.format("  \"executionTimeMs\": %d,\n", result.executionTimeMs));
-            writer.write(String.format("  \"memoryUsageBytes\": %d,\n", result.memoryUsageBytes));
-            writer.write(String.format("  \"peakMemoryUsageBytes\": %d,\n", result.peakMemoryUsageBytes));
-            writer.write(String.format("  \"avgMemoryUsageBytes\": %d,\n", result.avgMemoryUsageBytes));
-            writer.write(String.format("  \"memoryAllocatedBytes\": %d,\n", result.memoryAllocatedBytes));
-            writer.write(String.format("  \"gcCount\": %d,\n", result.gcCount));
-            writer.write(String.format("  \"gcTimeMs\": %d,\n", result.gcTimeMs));
-            writer.write(String.format("  \"fileSizeBytes\": %d,\n", result.fileSizeBytes));
-            writer.write(String.format("  \"minMemoryUsageBytes\": %d,\n", result.minMemoryUsageBytes));
-            writer.write(String.format("  \"stdDevMemoryUsageBytes\": %d,\n", result.stdDevMemoryUsageBytes));
-            writer.write(String.format("  \"p95MemoryUsageBytes\": %d,\n", result.p95MemoryUsageBytes));
-            writer.write(String.format("  \"memoryGrowthRate\": %.4f,\n", result.memoryGrowthRate));
-            writer.write(String.format("  \"throughputRowsPerSecond\": %.2f,\n", result.getThroughputRowsPerSecond()));
-            writer.write(String.format("  \"memoryEfficiencyRatio\": %.2e,\n", result.getMemoryEfficiencyRatio()));
-            writer.write(String.format("  \"throughputMBPerSecond\": %.2f\n", result.getThroughputMBPerSecond()));
-            writer.write("}\n");
+            writer.write(jsonObject.toJSONString(JSONWriter.Feature.PrettyFormat));
         }
     }
 
@@ -734,63 +731,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
         } catch (Exception e) {
             throw new RuntimeException("Failed to write test file", e);
         }
-    }
-
-    /**
-     * Generate comprehensive analysis report after all benchmarks complete
-     */
-    public static void generateAnalysisReport() {
-        try {
-            String separator = "================================================================================";
-            System.out.println("\n" + separator);
-            System.out.println("BENCHMARK ANALYSIS REPORT");
-            System.out.println(separator);
-
-            // Print summary to console
-            String summary = resultCollector.getSummaryReport();
-            System.out.println(summary);
-
-            // Generate comparison analysis
-            ComparisonAnalysis analysis = resultCollector.getComparisonAnalysis();
-            System.out.println(analysis.getSummary());
-
-            // Generate structured reports
-            java.nio.file.Path outputDir = java.nio.file.Paths.get("target/benchmark-reports");
-            java.nio.file.Files.createDirectories(outputDir);
-
-            // Generate JSON report
-            reportGenerator.generateJsonReport(analysis, outputDir.resolve("benchmark-comparison.json"));
-            System.out.printf("JSON report generated: %s%n", outputDir.resolve("benchmark-comparison.json"));
-
-            // Generate CSV report
-            reportGenerator.generateCsvReport(analysis, outputDir.resolve("benchmark-comparison.csv"));
-            System.out.printf("CSV report generated: %s%n", outputDir.resolve("benchmark-comparison.csv"));
-
-            // Generate HTML report
-            reportGenerator.generateHtmlReport(
-                    analysis, resultCollector, outputDir.resolve("benchmark-comparison.html"));
-            System.out.printf("HTML report generated: %s%n", outputDir.resolve("benchmark-comparison.html"));
-
-            System.out.println(separator);
-
-        } catch (Exception e) {
-            System.err.println("Error generating analysis report: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Get the current result collector (for external access)
-     */
-    public static BenchmarkResultCollector getResultCollector() {
-        return resultCollector;
-    }
-
-    /**
-     * Clear collected results (useful for testing)
-     */
-    public static void clearResults() {
-        resultCollector.clear();
     }
 
     /**

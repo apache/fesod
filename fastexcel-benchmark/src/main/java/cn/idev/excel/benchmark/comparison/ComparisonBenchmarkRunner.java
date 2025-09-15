@@ -3,6 +3,8 @@ package cn.idev.excel.benchmark.comparison;
 import cn.idev.excel.benchmark.analyzer.BenchmarkReportGenerator;
 import cn.idev.excel.benchmark.analyzer.BenchmarkResultCollector;
 import cn.idev.excel.benchmark.analyzer.ComparisonAnalysis;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -190,113 +192,31 @@ public class ComparisonBenchmarkRunner {
      * Parse a ComparisonResult from a JSON file
      */
     private static FastExcelVsPoiBenchmark.ComparisonResult parseResultFromJsonFile(File file) throws IOException {
-        StringBuilder content = new StringBuilder();
         try (FileReader reader = new FileReader(file)) {
-            char[] buffer = new char[1024];
-            int length;
-            while ((length = reader.read(buffer)) != -1) {
-                content.append(buffer, 0, length);
-            }
-        }
-
-        // Simple JSON parsing (could use a JSON library for more robust parsing)
-        String json = content.toString();
-
-        try {
-            String library = extractJsonValue(json, "library");
-            String operation = extractJsonValue(json, "operation");
-            String datasetSize = extractJsonValue(json, "datasetSize");
-            String fileFormat = extractJsonValue(json, "fileFormat");
-            long processedRows = Long.parseLong(extractJsonValue(json, "processedRows"));
-            long executionTimeMs = Long.parseLong(extractJsonValue(json, "executionTimeMs"));
-            long memoryUsageBytes = Long.parseLong(extractJsonValue(json, "memoryUsageBytes"));
-            long peakMemoryUsageBytes = Long.parseLong(extractJsonValue(json, "peakMemoryUsageBytes"));
-            long avgMemoryUsageBytes = Long.parseLong(extractJsonValue(json, "avgMemoryUsageBytes"));
-            long memoryAllocatedBytes = Long.parseLong(extractJsonValue(json, "memoryAllocatedBytes"));
-            long gcCount = Long.parseLong(extractJsonValue(json, "gcCount"));
-            long gcTimeMs = Long.parseLong(extractJsonValue(json, "gcTimeMs"));
-            long fileSizeBytes = Long.parseLong(extractJsonValue(json, "fileSizeBytes"));
-            long minMemoryUsageBytes = Long.parseLong(extractJsonValue(json, "minMemoryUsageBytes"));
-            long stdDevMemoryUsageBytes = Long.parseLong(extractJsonValue(json, "stdDevMemoryUsageBytes"));
-            long p95MemoryUsageBytes = Long.parseLong(extractJsonValue(json, "p95MemoryUsageBytes"));
-            double memoryGrowthRate = Double.parseDouble(extractJsonValue(json, "memoryGrowthRate"));
+            // Use fastjson2 for parsing JSON instead of custom implementation
+            JSONObject jsonObject = JSON.parseObject(reader);
 
             return new FastExcelVsPoiBenchmark.ComparisonResult(
-                    library,
-                    operation,
-                    datasetSize,
-                    fileFormat,
-                    processedRows,
-                    executionTimeMs,
-                    peakMemoryUsageBytes,
-                    avgMemoryUsageBytes,
-                    memoryUsageBytes,
-                    memoryAllocatedBytes,
-                    gcCount,
-                    gcTimeMs,
-                    fileSizeBytes,
-                    minMemoryUsageBytes,
-                    stdDevMemoryUsageBytes,
-                    p95MemoryUsageBytes,
-                    memoryGrowthRate);
-
+                    jsonObject.getString("library"),
+                    jsonObject.getString("operation"),
+                    jsonObject.getString("datasetSize"),
+                    jsonObject.getString("fileFormat"),
+                    jsonObject.getLongValue("processedRows"),
+                    jsonObject.getLongValue("executionTimeMs"),
+                    jsonObject.getLongValue("peakMemoryUsageBytes"),
+                    jsonObject.getLongValue("avgMemoryUsageBytes"),
+                    jsonObject.getLongValue("memoryUsageBytes"),
+                    jsonObject.getLongValue("memoryAllocatedBytes"),
+                    jsonObject.getLongValue("gcCount"),
+                    jsonObject.getLongValue("gcTimeMs"),
+                    jsonObject.getLongValue("fileSizeBytes"),
+                    jsonObject.getLongValue("minMemoryUsageBytes"),
+                    jsonObject.getLongValue("stdDevMemoryUsageBytes"),
+                    jsonObject.getLongValue("p95MemoryUsageBytes"),
+                    jsonObject.getDoubleValue("memoryGrowthRate"));
         } catch (Exception e) {
             System.err.println("Error parsing JSON values from file " + file.getName() + ": " + e.getMessage());
             return null;
-        }
-    }
-
-    /**
-     * Extract a value from simple JSON string
-     */
-    private static String extractJsonValue(String json, String key) {
-        // Use a more flexible pattern to find the key
-        String searchPattern = "\"" + key + "\"";
-        int keyIndex = json.indexOf(searchPattern);
-        if (keyIndex == -1) {
-            throw new RuntimeException(
-                    "Key not found: " + key + " in JSON: " + json.substring(0, Math.min(500, json.length())));
-        }
-
-        // Find the colon after the key
-        int colonIndex = json.indexOf(':', keyIndex);
-        if (colonIndex == -1) {
-            throw new RuntimeException("Colon not found after key: " + key);
-        }
-
-        // Skip whitespace after colon
-        int start = colonIndex + 1;
-        while (start < json.length() && Character.isWhitespace(json.charAt(start))) {
-            start++;
-        }
-
-        int end;
-        if (start < json.length() && json.charAt(start) == '"') {
-            // String value
-            start++; // Skip opening quote
-            end = start;
-            while (end < json.length() && json.charAt(end) != '"') {
-                if (json.charAt(end) == '\\') {
-                    end++; // Skip escaped character
-                }
-                end++;
-            }
-            if (end >= json.length()) {
-                throw new RuntimeException("Unterminated string value for key: " + key);
-            }
-            return json.substring(start, end);
-        } else {
-            // Numeric value
-            end = start;
-            while (end < json.length()) {
-                char c = json.charAt(end);
-                if (Character.isDigit(c) || c == '.' || c == '-' || c == 'E' || c == 'e' || c == '+') {
-                    end++;
-                } else {
-                    break;
-                }
-            }
-            return json.substring(start, end).trim();
         }
     }
 }

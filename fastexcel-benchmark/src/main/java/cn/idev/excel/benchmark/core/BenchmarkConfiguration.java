@@ -70,8 +70,4 @@ public class BenchmarkConfiguration {
     // Memory monitoring configuration
     public static final boolean ENABLE_MEMORY_PROFILING = true;
     public static final long MEMORY_SAMPLING_INTERVAL_MS = 100;
-
-    // Performance thresholds for regression detection
-    public static final double PERFORMANCE_REGRESSION_THRESHOLD = 0.15; // 15% degradation
-    public static final double MEMORY_REGRESSION_THRESHOLD = 0.20; // 20% increase
 }

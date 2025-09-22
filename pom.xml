@@ -49,7 +49,7 @@
         <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.13</jacoco.version>
         <junit.version>5.13.4</junit.version>
-        <mockito.version>4.11.0</mockito.version>
+        <mockito.version>5.20.0</mockito.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <jazzer.junit.version>0.25.0</jazzer.junit.version>

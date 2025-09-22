@@ -3,21 +3,21 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 
 const branch = 'main';
-const repoUrl = `https://github.com/fast-excel/fastexcel`;
+const repoUrl = `https://github.com/fast-excel/fesod`;
 
 const config = {
-    title: 'FastExcel',
+    title: 'Fesod',
     favicon: 'img/favicon.ico',
 
     // Set the production url of your site here
     url: 'https://fast-excel.github.io',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/fastexcel/',
+    baseUrl: '/fesod/',
 
     // GitHub pages deployment config.
     organizationName: 'fast-excel',
-    projectName: 'fastexcel',
+    projectName: 'fesod',
     deploymentBranch: 'gh-pages',
 
     onBrokenLinks: 'throw',

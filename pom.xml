@@ -28,7 +28,7 @@
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven-compiler-plugin>3.14.0</maven-compiler-plugin>
+        <maven-compiler-plugin>3.14.1</maven-compiler-plugin>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <gpg.skip>true</gpg.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -40,7 +40,7 @@
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <lombok.version>1.18.42</lombok.version>
         <spring-core.version>5.3.37</spring-core.version>
-        <fastjson2.version>2.0.58</fastjson2.version>
+        <fastjson2.version>2.0.59</fastjson2.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>

@@ -69,6 +69,16 @@ public class ExcelXmlConstants {
     public static final String ATTRIBUTE_RID = "r:id";
 
     /**
+     * shared attribute
+     */
+    public static final String ATTRIBUTE_SHARED = "shared";
+
+    /**
+     * shared attribute index
+     */
+    public static final String ATTRIBUTE_SHARED_INDEX = "si";
+
+    /**
      * Cell range split
      */
     public static final String CELL_RANGE_SPLIT = ":";

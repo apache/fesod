@@ -52,7 +52,7 @@
         <mockito.version>4.11.0</mockito.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <surefire.jdk9plus.args></surefire.jdk9plus.args>
-        <jazzer.junit.version>0.25.0</jazzer.junit.version>
+        <jazzer.junit.version>0.25.1</jazzer.junit.version>
         <argLine></argLine>
     </properties>
 

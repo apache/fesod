@@ -137,7 +137,7 @@ public class WriteBenchmark extends AbstractBenchmark {
         consumeData(fileSize, blackhole);
     }
 
-    // CSV Write Benchmarks - Different sizes
+    @Benchmark
     public void writeXlsSmall(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLS, BenchmarkConfiguration.DatasetSize.SMALL, "WriteBenchmark");
@@ -246,7 +246,7 @@ public class WriteBenchmark extends AbstractBenchmark {
         consumeData(fileSize, blackhole);
     }
 
-    // Output stream writing
+    @Benchmark
     public void writeXlsxToOutputStream(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX,
@@ -261,7 +261,7 @@ public class WriteBenchmark extends AbstractBenchmark {
         consumeData(fileSize, blackhole);
     }
 
-    // Table-based writing
+    @Benchmark
     public void writeXlsxTableFormat(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX,
@@ -283,7 +283,7 @@ public class WriteBenchmark extends AbstractBenchmark {
         consumeData(fileSize, blackhole);
     }
 
-    // Memory efficient batch writing
+    @Benchmark
     public void writeXlsxMemoryEfficientBatches(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX,

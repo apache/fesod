@@ -3,7 +3,6 @@ package cn.idev.excel.benchmark.comparison;
 import cn.idev.excel.EasyExcel;
 import cn.idev.excel.ExcelReader;
 import cn.idev.excel.ExcelWriter;
-import cn.idev.excel.benchmark.analyzer.BenchmarkResultCollector;
 import cn.idev.excel.benchmark.core.AbstractBenchmark;
 import cn.idev.excel.benchmark.core.BenchmarkConfiguration;
 import cn.idev.excel.benchmark.data.BenchmarkData;
@@ -56,9 +55,6 @@ import org.openjdk.jmh.infra.Blackhole;
 @Measurement(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
-
-    // Static result collector to accumulate results across all benchmark runs
-    private static final BenchmarkResultCollector resultCollector = new BenchmarkResultCollector(Mode.AverageTime);
 
     // Session ID for file-based result collection (to avoid fork issues)
     private static String sessionId;
@@ -228,7 +224,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
 
         // Collect result for analysis
-        resultCollector.addResult(result);
         localResults.add(result);
 
         return result;
@@ -316,7 +311,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
 
         // Collect result for analysis
-        resultCollector.addResult(result);
         localResults.add(result);
 
         return result;
@@ -393,7 +387,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
 
         // Collect result for analysis
-        resultCollector.addResult(result);
         localResults.add(result);
 
         return result;
@@ -465,7 +458,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
 
         // Collect result for analysis
-        resultCollector.addResult(result);
         localResults.add(result);
 
         return result;
@@ -549,7 +541,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
 
         // Collect result for analysis
-        resultCollector.addResult(result);
         localResults.add(result);
 
         return result;
@@ -646,7 +637,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
                 snapshot.getMaxUsedMemory() > 0 ? (double) snapshot.getMaxUsedMemory() / stats.getAvgMemory() : 0.0);
 
         // Collect result for analysis
-        resultCollector.addResult(result);
         localResults.add(result);
 
         return result;

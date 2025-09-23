@@ -13,9 +13,7 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
@@ -27,7 +25,6 @@ import org.slf4j.LoggerFactory;
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.SECONDS)
-@State(Scope.Benchmark)
 @Warmup(iterations = BenchmarkConfiguration.DEFAULT_WARMUP_ITERATIONS, time = 1)
 @Measurement(iterations = BenchmarkConfiguration.DEFAULT_MEASUREMENT_ITERATIONS, time = 1)
 @Fork(BenchmarkConfiguration.DEFAULT_FORK_COUNT)
@@ -142,6 +139,17 @@ public abstract class AbstractBenchmark {
                     snapshot.getAllocatedMemoryMB(),
                     snapshot.getGcCount(),
                     snapshot.getGcTime());
+            System.out.println("Memory usage - Max: "
+                    + snapshot.getMaxUsedMemoryMB()
+                    + " MB, Avg: "
+                    + snapshot.getAvgUsedMemoryMB()
+                    + " MB, Allocated: "
+                    + snapshot.getAllocatedMemoryMB()
+                    + " MB, GC Count: "
+                    + snapshot.getGcCount()
+                    + ", GC Time: "
+                    + snapshot.getGcTime()
+                    + " ms");
         }
     }
 
@@ -203,21 +211,5 @@ public abstract class AbstractBenchmark {
     protected long getCurrentMemoryUsage() {
         Runtime runtime = Runtime.getRuntime();
         return runtime.totalMemory() - runtime.freeMemory();
-    }
-
-    /**
-     * Get the benchmark result template with common metrics
-     */
-    protected BenchmarkResult createResultTemplate(String operationType, String fileFormat, int datasetSize) {
-        BenchmarkResult result = new BenchmarkResult(benchmarkName, operationType, fileFormat, datasetSize);
-
-        // Set system information
-        result.setJvmVersion(System.getProperty("java.version"));
-        result.setOsInfo(System.getProperty("os.name") + " " + System.getProperty("os.version"));
-        result.setWarmupIterations(BenchmarkConfiguration.DEFAULT_WARMUP_ITERATIONS);
-        result.setMeasurementIterations(BenchmarkConfiguration.DEFAULT_MEASUREMENT_ITERATIONS);
-        result.setForkCount(BenchmarkConfiguration.DEFAULT_FORK_COUNT);
-
-        return result;
     }
 }

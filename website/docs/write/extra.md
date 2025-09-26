@@ -186,9 +186,13 @@ Custom merge strategy
 ```java
 public class CustomMergeStrategy extends AbstractMergeStrategy {
     @Override
-    protected void merge(Sheet sheet, WriteSheetHolder writeSheetHolder) {
-        // Custom merge rules
-        sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 1)); // Example merge range
+    protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
+        // merge method will be called for each cell, ensuring that the same cell is merged only once
+        if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
+            int startRow = relativeRowIndex + 1; // Row 0 is the header, data starts from row 1
+            int endRow = startRow + 1; // Merge current row and next row
+            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
+        }
     }
 }
 ```

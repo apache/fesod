@@ -186,9 +186,13 @@ public class DemoMergeData {
 ```java
 public class CustomMergeStrategy extends AbstractMergeStrategy {
     @Override
-    protected void merge(Sheet sheet, WriteSheetHolder writeSheetHolder) {
-        // 自定义合并规则
-        sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 1)); // 示例合并范围
+    protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
+        // merge方法会为每个单元格都调用一次，确保相同单元格只执行一次合并
+        if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
+            int startRow = relativeRowIndex + 1; // 第0行是表头，数据从第1行开始
+            int endRow = startRow + 1; // 合并当前行和下一行
+            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
+        }
     }
 }
 ```

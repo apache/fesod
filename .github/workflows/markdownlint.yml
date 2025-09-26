@@ -50,10 +50,3 @@ jobs:
           else
             echo "No markdown files changed, skipping lint."
           fi
-      - name: Create PR comment with lint result
-        if: failure() && steps.lint.conclusion == 'failure' && github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body-file: comment-body.txt

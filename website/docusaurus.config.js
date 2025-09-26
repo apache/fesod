@@ -1,32 +1,31 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 const branch = 'main';
-const repoUrl = `https://github.com/fast-excel/fesod`;
+const repoUrl = `https://github.com/apache/fesod`;
 
 const config = {
     title: 'Fesod',
     favicon: 'img/favicon.ico',
 
-    // Set the production url of your site here
-    url: 'https://fast-excel.github.io',
-    // Set the /<baseUrl>/ pathname under which your site is served
-    // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/fesod/',
+    url: 'https://fesod.apache.org',
+    baseUrl: "/",
 
-    // GitHub pages deployment config.
-    organizationName: 'fast-excel',
-    projectName: 'fesod',
-    deploymentBranch: 'gh-pages',
-
-    onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
+    trailingSlash: true,
 
     future: {
-        v4: true,
         // Improve compatibility with the upcoming Docusaurus v4
+        v4: true,
     },
+
+    markdown: {
+        hooks: {
+            onBrokenLinks: 'throw',
+            onBrokenMarkdownLinks: 'throw',
+        }
+    },
+
     customFields: {
         repoUrl,
     },
@@ -106,13 +105,13 @@ const config = {
         metadata: [
             {
                 name: 'keywords',
-                content: 'fastexcel, fast-excel, excel, poi, opensource',
+                content: 'apache, fesod, poi, opensource',
             }
         ],
         footer: {
             style: 'dark',
             links: [],
-            copyright: `Copyright © ${new Date().getFullYear()} FastExcel, Licensed under the Apache License, Version 2.0.`,
+            copyright: `Copyright © ${new Date().getFullYear()} The Apache Software Foundation, Licensed under the Apache License, Version 2.0.`,
         },
         prism: {
             theme: prismThemes.github,

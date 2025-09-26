@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Check License Header
+        uses: korandoru/hawkeye@v6
       - name: Cache Local Maven Repository
         uses: actions/cache@v4
         with:

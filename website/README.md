@@ -10,55 +10,46 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 ## Installation
 
 ```bash
-yarn install
-# yarn install --registry=https://registry.npmmirror.com
+pnpm install
 ```
 
 ## Local Development
 
-```bash
-# English
-yarn start
+Preview the English website locally:
 
-# Chinese
-yarn start --locale zh-cn
+```bash
+pnpm start
+```
+
+Preview the Chinese website locally:
+
+```bash
+pnpm start --locale zh-cn
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-## I18N
+## Internationalization
+
+To write Chinese translation files, run:
 
 ```bash
-# Chinese
-yarn write-translations --locale zh-cn
+pnpm write-translations --locale zh-cn
+```
 
-# English
-yarn write-translations --locale en
+To write English translation files, run:
+
+```bash
+pnpm write-translations --locale en
 ```
 
 ## Build
 
 ```bash
-yarn build
+pnpm build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-## Deployment
-
-Using SSH:
-
-```bash
-USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
 
 ## Directory Structure
 

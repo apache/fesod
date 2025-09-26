@@ -2,21 +2,43 @@ name: Deploy Docusaurus to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # 或 master，取决于你的默认分支
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: 18
-      - run: cd website && npm install
-      - run: cd website && npm run build
-      - uses: peaceiris/actions-gh-pages@v3
+          version: 8
+          run_install: false
+
+      - uses: actions/setup-node@v4
         with:
-          github_token: ${{ secrets.DOC_PAT_TOKEN }}
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: "website/pnpm-lock.yaml"
+
+      - name: Corepack
+        working-directory: website
+        run: npm i -g --force corepack && corepack enable
+
+      - name: Install Dependencies
+        working-directory: website
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        working-directory: website
+        run: pnpm build
+
+      - name: Copy asf file
+        run: cp .asf.yaml ./website/build/.asf.yaml
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: website/build

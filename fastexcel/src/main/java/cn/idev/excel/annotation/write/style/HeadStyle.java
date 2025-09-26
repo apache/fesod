@@ -5,6 +5,9 @@ import cn.idev.excel.enums.poi.BorderStyleEnum;
 import cn.idev.excel.enums.poi.FillPatternTypeEnum;
 import cn.idev.excel.enums.poi.HorizontalAlignmentEnum;
 import cn.idev.excel.enums.poi.VerticalAlignmentEnum;
+import cn.idev.excel.write.handler.impl.HiddenShellWriteHandler;
+import cn.idev.excel.write.metadata.holder.WriteSheetHolder;
+import cn.idev.excel.write.metadata.holder.WriteWorkbookHolder;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -31,6 +34,7 @@ public @interface HeadStyle {
 
     /**
      * Set the cell's using this style to be hidden
+     * @see HiddenShellWriteHandler#afterSheetCreate(WriteWorkbookHolder writeWorkbookHolder, WriteSheetHolder writeSheetHolder)
      */
     BooleanEnum hidden() default BooleanEnum.DEFAULT;
 

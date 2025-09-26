@@ -23,6 +23,7 @@ import cn.idev.excel.write.handler.chain.RowHandlerExecutionChain;
 import cn.idev.excel.write.handler.chain.SheetHandlerExecutionChain;
 import cn.idev.excel.write.handler.chain.WorkbookHandlerExecutionChain;
 import cn.idev.excel.write.handler.context.CellWriteHandlerContext;
+import cn.idev.excel.write.handler.impl.HiddenShellWriteHandler;
 import cn.idev.excel.write.merge.LoopMergeStrategy;
 import cn.idev.excel.write.merge.OnceAbsoluteMergeStrategy;
 import cn.idev.excel.write.metadata.WriteBasicParameter;
@@ -281,6 +282,9 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
         if (hasColumnWidth) {
             dealColumnWidth(handlerList);
         }
+
+        // fix #116
+        handlerList.add(new HiddenShellWriteHandler());
 
         dealStyle(handlerList);
         dealRowHigh(handlerList);

@@ -26,8 +26,8 @@
 
 ## Introduction
 
-Apache Fesod (Incubating) is a Fast, Concise, Java tool for processing Excel files that solves memory overflow issues
-with large files.
+**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing Excel
+files, designed to simplify development and ensure reliability.
 
 Fesod can provide developers and enterprises with great freedom and flexibility. We plan to introduce more new features
 in the future to continually enhance user experience and tool usability. Fesod is committed to being your best choice
@@ -45,8 +45,9 @@ for handling Excel files.
 
 ## Installation
 
-We strongly recommend using the latest version of Fesod, as performance optimizations, bug fixes, and new features
-in the latest version will enhance your experience.
+Fesod requires **Java 1.8** or later. Using the latest LTS release of Java is encouraged. We strongly recommend using
+the latest version of Fesod, as performance optimizations, bug fixes, and new features in the latest version will
+enhance your experience.
 
 > Currently, Fesod uses POI as its underlying package. If your project already includes POI-related components, you
 > will need to manually exclude POI-related jar files.
@@ -148,8 +149,7 @@ public static void main(String[] args) {
 ### Contributors
 
 Contributors are welcomed to join the Apache Fesod. Please
-check [Contributing Guide](https://fesod.apache.org/community/contribution/) about how to
-contribute to this project.
+check [Contributing Guide](https://fesod.apache.org/community/contribution/) about how to contribute to this project.
 
 Thank you to all the people who already contributed to the Apache Fesod!
 

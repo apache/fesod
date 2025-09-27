@@ -328,7 +328,7 @@
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
-                    <version>2.46.1</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -475,6 +475,10 @@
                 <artifactId>spotless-maven-plugin</artifactId>
                 <configuration>
                     <java>
+                        <licenseHeader>
+                            <file>license-header.txt</file>
+                            <delimiter>package |import |module </delimiter>
+                        </licenseHeader>
                         <palantirJavaFormat>
                             <version>2.72.0</version>
                         </palantirJavaFormat>

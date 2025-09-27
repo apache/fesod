@@ -29,27 +29,32 @@
 **Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing Excel
 files, designed to simplify development and ensure reliability.
 
-Fesod can provide developers and enterprises with great freedom and flexibility. We plan to introduce more new features
-in the future to continually enhance user experience and tool usability. Fesod is committed to being your best choice
-for handling Excel files.
+Apache Fesod (Incubating) can provide developers and enterprises with great freedom and flexibility. We plan to
+introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod (
+Incubating) is committed to being your best choice for handling Excel files.
+
+The name fesod(pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents" expresses the
+project's origin, background and vision.
 
 ### Features
 
-- **High-performance Reading and Writing**: Fesod focuses on performance optimization, capable of efficiently
-  handling large-scale Excel data. Compared to some traditional Excel processing libraries, it can significantly reduce
-  memory consumption.
+- **High-performance Reading and Writing**: Apache Fesod (Incubating) focuses on performance optimization, capable of
+  efficiently handling large-scale Excel data. Compared to some traditional Excel processing libraries, it can
+  significantly reduce memory consumption.
 - **Simplicity and Ease of Use**: The library offers a simple and intuitive API, allowing developers to easily integrate
   it into projects, whether for simple Excel operations or complex data processing.
-- **Stream Operations**: Fesod supports stream reading, minimizing the problem of loading large amounts of data at
-  once. This design is especially important when dealing with hundreds of thousands or even millions of rows of data.
+- **Stream Operations**: Apache Fesod (Incubating) supports stream reading, minimizing the problem of loading large
+  amounts of data at once. This design is especially important when dealing with hundreds of thousands or even millions
+  of rows of data.
 
 ## Installation
 
-Fesod requires **Java 1.8** or later. Using the latest LTS release of Java is encouraged. We strongly recommend using
-the latest version of Fesod, as performance optimizations, bug fixes, and new features in the latest version will
-enhance your experience.
+Apache Fesod (Incubating) requires **Java 1.8** or later. Using the latest LTS release of Java is encouraged. We
+strongly recommend using the latest version of Apache Fesod (Incubating), as performance optimizations, bug fixes, and
+new features in the latest version will enhance your experience.
 
-> Currently, Fesod uses POI as its underlying package. If your project already includes POI-related components, you
+> Currently, Apache Fesod (Incubating) uses POI as its underlying package. If your project already includes POI-related
+> components, you
 > will need to manually exclude POI-related jar files.
 
 ### Maven
@@ -148,10 +153,10 @@ public static void main(String[] args) {
 
 ### Contributors
 
-Contributors are welcomed to join the Apache Fesod. Please
+Contributors are welcomed to join the Apache Fesod (Incubating). Please
 check [Contributing Guide](https://fesod.apache.org/community/contribution/) about how to contribute to this project.
 
-Thank you to all the people who already contributed to the Apache Fesod!
+Thank you to all the people who already contributed to the Apache Fesod (Incubating) !
 
 <a href="https://github.com/apache/fesod/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=apache/fesod"/>
@@ -175,4 +180,3 @@ list.
 ## License
 
 Apache Fesod (Incubating) project is licensed under the [Apache License 2.0](LICENSE).
-

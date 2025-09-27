@@ -19,9 +19,9 @@
 
 package org.apache.fesod.excel.util;
 
-import org.apache.fesod.excel.metadata.data.ImageData;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.fesod.excel.metadata.data.ImageData;
 
 /**
  * file type utils

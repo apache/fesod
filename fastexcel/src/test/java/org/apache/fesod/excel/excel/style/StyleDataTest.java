@@ -19,15 +19,18 @@
 
 package org.apache.fesod.excel.excel.style;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.fesod.excel.FastExcel;
 import org.apache.fesod.excel.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.excel.annotation.write.style.HeadStyle;
+import org.apache.fesod.excel.excel.util.StyleTestUtils;
+import org.apache.fesod.excel.excel.util.TestFileUtil;
 import org.apache.fesod.excel.metadata.Head;
 import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.fesod.excel.metadata.property.FontProperty;
 import org.apache.fesod.excel.metadata.property.StyleProperty;
-import org.apache.fesod.excel.excel.util.StyleTestUtils;
-import org.apache.fesod.excel.excel.util.TestFileUtil;
 import org.apache.fesod.excel.write.merge.LoopMergeStrategy;
 import org.apache.fesod.excel.write.merge.OnceAbsoluteMergeStrategy;
 import org.apache.fesod.excel.write.metadata.style.WriteCellStyle;
@@ -36,9 +39,6 @@ import org.apache.fesod.excel.write.style.AbstractVerticalCellStyleStrategy;
 import org.apache.fesod.excel.write.style.HorizontalCellStyleStrategy;
 import org.apache.fesod.excel.write.style.column.SimpleColumnWidthStyleStrategy;
 import org.apache.fesod.excel.write.style.row.SimpleRowHeightStyleStrategy;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;

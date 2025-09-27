@@ -19,8 +19,8 @@
 
 package org.apache.fesod.excel.metadata.property;
 
-import org.apache.fesod.excel.annotation.format.NumberFormat;
 import java.math.RoundingMode;
+import org.apache.fesod.excel.annotation.format.NumberFormat;
 
 /**
  * Configuration from annotations

@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.write.metadata.fill;
 
-import org.apache.fesod.excel.enums.WriteDirectionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.excel.enums.WriteDirectionEnum;
 
 /**
  * Fill config

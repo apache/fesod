@@ -19,9 +19,9 @@
 
 package org.apache.fesod.excel.read.metadata.property;
 
+import java.util.List;
 import org.apache.fesod.excel.metadata.ConfigurationHolder;
 import org.apache.fesod.excel.metadata.property.ExcelHeadProperty;
-import java.util.List;
 
 /**
  * Define the header attribute of excel

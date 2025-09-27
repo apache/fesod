@@ -19,9 +19,9 @@
 
 package org.apache.fesod.excel.write.handler.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.write.handler.RowWriteHandler;
 import org.apache.fesod.excel.write.handler.context.RowWriteHandlerContext;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Default row handler.

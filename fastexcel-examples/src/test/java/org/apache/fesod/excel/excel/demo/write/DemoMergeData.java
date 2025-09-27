@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.excel.demo.write;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.write.style.ContentLoopMerge;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.write.style.ContentLoopMerge;
 
 /**
  * 样式的数据类

@@ -19,9 +19,9 @@
 
 package org.apache.fesod.excel.excel.demo.read;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.context.AnalysisContext;
 import org.apache.fesod.excel.read.listener.ReadListener;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A data listener example that specifies the header type through generics.

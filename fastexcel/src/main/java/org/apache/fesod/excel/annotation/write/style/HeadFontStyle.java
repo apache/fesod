@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.annotation.write.style;
 
-import org.apache.fesod.excel.enums.BooleanEnum;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.apache.fesod.excel.enums.BooleanEnum;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.ss.usermodel.Font;

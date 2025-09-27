@@ -19,6 +19,8 @@
 
 package org.apache.fesod.excel.context;
 
+import java.io.InputStream;
+import java.util.List;
 import org.apache.fesod.excel.event.AnalysisEventListener;
 import org.apache.fesod.excel.read.metadata.ReadSheet;
 import org.apache.fesod.excel.read.metadata.holder.ReadHolder;
@@ -27,8 +29,6 @@ import org.apache.fesod.excel.read.metadata.holder.ReadSheetHolder;
 import org.apache.fesod.excel.read.metadata.holder.ReadWorkbookHolder;
 import org.apache.fesod.excel.read.processor.AnalysisEventProcessor;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
-import java.io.InputStream;
-import java.util.List;
 
 /**
  *

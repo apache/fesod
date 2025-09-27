@@ -19,9 +19,9 @@
 
 package org.apache.fesod.excel.excel.demo.read;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import java.util.Date;
 import lombok.Data;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 /**
  * Compatible header data class.

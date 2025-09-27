@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.metadata.csv;
 
-import org.apache.fesod.excel.metadata.data.DataFormatData;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Color;

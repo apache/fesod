@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.excel.temp.issue1662;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 @Getter
 @Setter

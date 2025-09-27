@@ -19,14 +19,14 @@
 
 package org.apache.fesod.excel.metadata.data;
 
-import org.apache.fesod.excel.util.ListUtils;
-import org.apache.fesod.excel.write.metadata.style.WriteFont;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.excel.util.ListUtils;
+import org.apache.fesod.excel.write.metadata.style.WriteFont;
 
 /**
  * rich text string

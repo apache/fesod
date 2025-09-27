@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.excel.bom;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 @Getter
 @Setter

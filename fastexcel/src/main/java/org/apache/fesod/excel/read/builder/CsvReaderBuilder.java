@@ -19,15 +19,15 @@
 
 package org.apache.fesod.excel.read.builder;
 
+import java.util.List;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.QuoteMode;
 import org.apache.fesod.excel.ExcelReader;
 import org.apache.fesod.excel.event.SyncReadListener;
 import org.apache.fesod.excel.exception.ExcelGenerateException;
 import org.apache.fesod.excel.read.metadata.ReadSheet;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
-import java.util.List;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.QuoteMode;
 
 /**
  * Builder for CSV file reading

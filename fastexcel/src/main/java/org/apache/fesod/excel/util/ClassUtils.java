@@ -19,26 +19,7 @@
 
 package org.apache.fesod.excel.util;
 
-import org.apache.fesod.excel.annotation.ExcelIgnore;
-import org.apache.fesod.excel.annotation.ExcelIgnoreUnannotated;
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.format.DateTimeFormat;
-import org.apache.fesod.excel.annotation.format.NumberFormat;
-import org.apache.fesod.excel.annotation.write.style.ContentFontStyle;
-import org.apache.fesod.excel.annotation.write.style.ContentStyle;
-import org.apache.fesod.excel.converters.AutoConverter;
-import org.apache.fesod.excel.converters.Converter;
-import org.apache.fesod.excel.exception.ExcelCommonException;
-import org.apache.fesod.excel.metadata.ConfigurationHolder;
-import org.apache.fesod.excel.metadata.FieldCache;
-import org.apache.fesod.excel.metadata.FieldWrapper;
-import org.apache.fesod.excel.metadata.property.DateTimeFormatProperty;
-import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
-import org.apache.fesod.excel.metadata.property.FontProperty;
-import org.apache.fesod.excel.metadata.property.NumberFormatProperty;
-import org.apache.fesod.excel.metadata.property.StyleProperty;
 import cn.idev.excel.support.cglib.beans.BeanMap;
-import org.apache.fesod.excel.write.metadata.holder.WriteHolder;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -59,6 +40,25 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.excel.annotation.ExcelIgnore;
+import org.apache.fesod.excel.annotation.ExcelIgnoreUnannotated;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.format.DateTimeFormat;
+import org.apache.fesod.excel.annotation.format.NumberFormat;
+import org.apache.fesod.excel.annotation.write.style.ContentFontStyle;
+import org.apache.fesod.excel.annotation.write.style.ContentStyle;
+import org.apache.fesod.excel.converters.AutoConverter;
+import org.apache.fesod.excel.converters.Converter;
+import org.apache.fesod.excel.exception.ExcelCommonException;
+import org.apache.fesod.excel.metadata.ConfigurationHolder;
+import org.apache.fesod.excel.metadata.FieldCache;
+import org.apache.fesod.excel.metadata.FieldWrapper;
+import org.apache.fesod.excel.metadata.property.DateTimeFormatProperty;
+import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
+import org.apache.fesod.excel.metadata.property.FontProperty;
+import org.apache.fesod.excel.metadata.property.NumberFormatProperty;
+import org.apache.fesod.excel.metadata.property.StyleProperty;
+import org.apache.fesod.excel.write.metadata.holder.WriteHolder;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more

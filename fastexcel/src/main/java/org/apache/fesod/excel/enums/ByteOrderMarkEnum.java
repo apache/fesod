@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.enums;
 
-import org.apache.fesod.excel.util.MapUtils;
 import java.nio.charset.Charset;
 import java.util.Map;
 import lombok.Getter;
 import org.apache.commons.io.ByteOrderMark;
+import org.apache.fesod.excel.util.MapUtils;
 
 /**
  * byte order mark

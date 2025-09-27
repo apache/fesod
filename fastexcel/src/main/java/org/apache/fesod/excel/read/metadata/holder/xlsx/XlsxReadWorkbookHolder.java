@@ -19,17 +19,17 @@
 
 package org.apache.fesod.excel.read.metadata.holder.xlsx;
 
+import java.util.Map;
+import javax.xml.parsers.SAXParserFactory;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.excel.constant.BuiltinFormats;
 import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.read.metadata.holder.ReadWorkbookHolder;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
 import org.apache.fesod.excel.util.MapUtils;
-import java.util.Map;
-import javax.xml.parsers.SAXParserFactory;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.xssf.model.StylesTable;

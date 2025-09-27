@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.excel.temp;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 /**
  * 基础数据类

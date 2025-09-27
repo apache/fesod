@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.excel.demo.write;
 
-import org.apache.fesod.excel.annotation.ExcelIgnore;
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelIgnore;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 /**
  * Basic data class

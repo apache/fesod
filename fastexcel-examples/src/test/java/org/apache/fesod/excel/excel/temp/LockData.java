@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.excel.temp;
 
-import org.apache.fesod.excel.annotation.format.NumberFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.format.NumberFormat;
 
 /**
  * 基础数据类.这里的排序和excel里面的排序一致

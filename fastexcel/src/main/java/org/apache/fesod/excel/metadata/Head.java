@@ -19,17 +19,17 @@
 
 package org.apache.fesod.excel.metadata;
 
-import org.apache.fesod.excel.exception.ExcelGenerateException;
-import org.apache.fesod.excel.metadata.property.ColumnWidthProperty;
-import org.apache.fesod.excel.metadata.property.FontProperty;
-import org.apache.fesod.excel.metadata.property.LoopMergeProperty;
-import org.apache.fesod.excel.metadata.property.StyleProperty;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.exception.ExcelGenerateException;
+import org.apache.fesod.excel.metadata.property.ColumnWidthProperty;
+import org.apache.fesod.excel.metadata.property.FontProperty;
+import org.apache.fesod.excel.metadata.property.LoopMergeProperty;
+import org.apache.fesod.excel.metadata.property.StyleProperty;
 
 /**
  * excel head

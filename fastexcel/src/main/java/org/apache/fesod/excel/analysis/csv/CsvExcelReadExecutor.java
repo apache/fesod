@@ -19,20 +19,6 @@
 
 package org.apache.fesod.excel.analysis.csv;
 
-import org.apache.fesod.excel.analysis.ExcelReadExecutor;
-import org.apache.fesod.excel.context.csv.CsvReadContext;
-import org.apache.fesod.excel.enums.ByteOrderMarkEnum;
-import org.apache.fesod.excel.enums.CellDataTypeEnum;
-import org.apache.fesod.excel.enums.RowTypeEnum;
-import org.apache.fesod.excel.exception.ExcelAnalysisException;
-import org.apache.fesod.excel.exception.ExcelAnalysisStopSheetException;
-import org.apache.fesod.excel.metadata.Cell;
-import org.apache.fesod.excel.metadata.data.ReadCellData;
-import org.apache.fesod.excel.read.metadata.ReadSheet;
-import org.apache.fesod.excel.read.metadata.holder.ReadRowHolder;
-import org.apache.fesod.excel.read.metadata.holder.csv.CsvReadWorkbookHolder;
-import org.apache.fesod.excel.util.SheetUtils;
-import org.apache.fesod.excel.util.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,6 +35,20 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.fesod.excel.analysis.ExcelReadExecutor;
+import org.apache.fesod.excel.context.csv.CsvReadContext;
+import org.apache.fesod.excel.enums.ByteOrderMarkEnum;
+import org.apache.fesod.excel.enums.CellDataTypeEnum;
+import org.apache.fesod.excel.enums.RowTypeEnum;
+import org.apache.fesod.excel.exception.ExcelAnalysisException;
+import org.apache.fesod.excel.exception.ExcelAnalysisStopSheetException;
+import org.apache.fesod.excel.metadata.Cell;
+import org.apache.fesod.excel.metadata.data.ReadCellData;
+import org.apache.fesod.excel.read.metadata.ReadSheet;
+import org.apache.fesod.excel.read.metadata.holder.ReadRowHolder;
+import org.apache.fesod.excel.read.metadata.holder.csv.CsvReadWorkbookHolder;
+import org.apache.fesod.excel.util.SheetUtils;
+import org.apache.fesod.excel.util.StringUtils;
 
 /**
  * CSV Excel Read Executor, responsible for reading and processing CSV files.

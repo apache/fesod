@@ -19,15 +19,15 @@
 
 package org.apache.fesod.excel.converters.url;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import org.apache.fesod.excel.converters.Converter;
 import org.apache.fesod.excel.metadata.GlobalConfiguration;
 import org.apache.fesod.excel.metadata.data.WriteCellData;
 import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
 import org.apache.fesod.excel.util.IoUtils;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * Url and image converter

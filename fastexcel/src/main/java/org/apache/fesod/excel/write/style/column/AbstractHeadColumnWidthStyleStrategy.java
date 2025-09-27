@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.write.style.column;
 
+import java.util.List;
 import org.apache.fesod.excel.metadata.Head;
 import org.apache.fesod.excel.metadata.data.WriteCellData;
 import org.apache.fesod.excel.write.metadata.holder.WriteSheetHolder;
-import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**

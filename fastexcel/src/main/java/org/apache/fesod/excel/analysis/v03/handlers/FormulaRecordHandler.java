@@ -19,6 +19,9 @@
 
 package org.apache.fesod.excel.analysis.v03.handlers;
 
+import java.math.BigDecimal;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.excel.constant.BuiltinFormats;
 import org.apache.fesod.excel.constant.FastExcelConstants;
@@ -29,9 +32,6 @@ import org.apache.fesod.excel.metadata.Cell;
 import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.fesod.excel.metadata.data.FormulaData;
 import org.apache.fesod.excel.metadata.data.ReadCellData;
-import java.math.BigDecimal;
-import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;

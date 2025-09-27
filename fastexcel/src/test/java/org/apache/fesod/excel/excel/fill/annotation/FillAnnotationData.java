@@ -19,16 +19,16 @@
 
 package org.apache.fesod.excel.excel.fill.annotation;
 
+import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.excel.annotation.ExcelProperty;
 import org.apache.fesod.excel.annotation.format.DateTimeFormat;
 import org.apache.fesod.excel.annotation.format.NumberFormat;
 import org.apache.fesod.excel.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.excel.converters.string.StringImageConverter;
-import java.util.Date;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *

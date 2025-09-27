@@ -19,6 +19,7 @@
 
 package org.apache.fesod.excel.context;
 
+import java.io.OutputStream;
 import org.apache.fesod.excel.enums.WriteTypeEnum;
 import org.apache.fesod.excel.write.metadata.WriteSheet;
 import org.apache.fesod.excel.write.metadata.WriteTable;
@@ -26,7 +27,6 @@ import org.apache.fesod.excel.write.metadata.holder.WriteHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteTableHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
-import java.io.OutputStream;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 

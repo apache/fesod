@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.excel.fill;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.format.NumberFormat;
-import org.apache.fesod.excel.converters.doubleconverter.DoubleStringConverter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.format.NumberFormat;
+import org.apache.fesod.excel.converters.doubleconverter.DoubleStringConverter;
 
 /**
  *

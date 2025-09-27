@@ -19,6 +19,11 @@
 
 package org.apache.fesod.excel.read.processor;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.fesod.excel.context.AnalysisContext;
 import org.apache.fesod.excel.enums.CellDataTypeEnum;
 import org.apache.fesod.excel.enums.HeadKindEnum;
@@ -34,11 +39,6 @@ import org.apache.fesod.excel.read.metadata.property.ExcelReadHeadProperty;
 import org.apache.fesod.excel.util.BooleanUtils;
 import org.apache.fesod.excel.util.ConverterUtils;
 import org.apache.fesod.excel.util.StringUtils;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 
 /**
  * Analysis event

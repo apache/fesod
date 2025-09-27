@@ -19,6 +19,10 @@
 
 package org.apache.fesod.excel.excel.annotation;
 
+import java.util.Date;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.excel.annotation.ExcelIgnore;
 import org.apache.fesod.excel.annotation.ExcelProperty;
 import org.apache.fesod.excel.annotation.format.DateTimeFormat;
@@ -26,10 +30,6 @@ import org.apache.fesod.excel.annotation.format.NumberFormat;
 import org.apache.fesod.excel.annotation.write.style.ColumnWidth;
 import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.excel.annotation.write.style.HeadRowHeight;
-import java.util.Date;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *

@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.metadata.property;
 
-import org.apache.fesod.excel.annotation.format.DateTimeFormat;
-import org.apache.fesod.excel.util.BooleanUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.format.DateTimeFormat;
+import org.apache.fesod.excel.util.BooleanUtils;
 
 /**
  * Configuration from annotations

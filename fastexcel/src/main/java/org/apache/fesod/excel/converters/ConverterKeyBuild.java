@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.converters;
 
-import org.apache.fesod.excel.enums.CellDataTypeEnum;
-import org.apache.fesod.excel.util.MapUtils;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.enums.CellDataTypeEnum;
+import org.apache.fesod.excel.util.MapUtils;
 
 /**
  * Converter unique key.Consider that you can just use class as the key.

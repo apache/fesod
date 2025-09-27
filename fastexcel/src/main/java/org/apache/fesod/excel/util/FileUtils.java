@@ -19,8 +19,6 @@
 
 package org.apache.fesod.excel.util;
 
-import org.apache.fesod.excel.exception.ExcelAnalysisException;
-import org.apache.fesod.excel.exception.ExcelCommonException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+import org.apache.fesod.excel.exception.ExcelAnalysisException;
+import org.apache.fesod.excel.exception.ExcelCommonException;
 import org.apache.poi.util.TempFile;
 
 public class FileUtils {

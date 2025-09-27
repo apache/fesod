@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.excel.encrypt;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 /**
  *

@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.constant;
 
-import org.apache.fesod.excel.util.MapUtils;
-import org.apache.fesod.excel.util.StringUtils;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.fesod.excel.util.MapUtils;
+import org.apache.fesod.excel.util.StringUtils;
 
 /**
  * Excel's built-in format conversion.Currently only supports Chinese.

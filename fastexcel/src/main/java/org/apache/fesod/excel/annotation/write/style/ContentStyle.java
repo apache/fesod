@@ -19,16 +19,16 @@
 
 package org.apache.fesod.excel.annotation.write.style;
 
-import org.apache.fesod.excel.enums.BooleanEnum;
-import org.apache.fesod.excel.enums.poi.BorderStyleEnum;
-import org.apache.fesod.excel.enums.poi.FillPatternTypeEnum;
-import org.apache.fesod.excel.enums.poi.HorizontalAlignmentEnum;
-import org.apache.fesod.excel.enums.poi.VerticalAlignmentEnum;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.apache.fesod.excel.enums.BooleanEnum;
+import org.apache.fesod.excel.enums.poi.BorderStyleEnum;
+import org.apache.fesod.excel.enums.poi.FillPatternTypeEnum;
+import org.apache.fesod.excel.enums.poi.HorizontalAlignmentEnum;
+import org.apache.fesod.excel.enums.poi.VerticalAlignmentEnum;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;

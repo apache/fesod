@@ -19,9 +19,9 @@
 
 package org.apache.fesod.excel.write.metadata.holder;
 
+import java.util.Collection;
 import org.apache.fesod.excel.metadata.ConfigurationHolder;
 import org.apache.fesod.excel.write.property.ExcelWriteHeadProperty;
-import java.util.Collection;
 
 /**
  * Get the corresponding Holder

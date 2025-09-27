@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.metadata.data;
 
-import org.apache.fesod.excel.util.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.util.StringUtils;
 
 /**
  * data format

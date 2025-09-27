@@ -19,15 +19,15 @@
 
 package org.apache.fesod.excel.write.style;
 
-import org.apache.fesod.excel.metadata.data.WriteCellData;
-import org.apache.fesod.excel.util.ListUtils;
-import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
-import org.apache.fesod.excel.write.metadata.style.WriteCellStyle;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.excel.metadata.data.WriteCellData;
+import org.apache.fesod.excel.util.ListUtils;
+import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
+import org.apache.fesod.excel.write.metadata.style.WriteCellStyle;
 
 /**
  * Use the same style for the row

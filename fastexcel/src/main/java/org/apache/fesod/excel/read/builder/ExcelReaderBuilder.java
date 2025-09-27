@@ -19,6 +19,12 @@
 
 package org.apache.fesod.excel.read.builder;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.List;
+import javax.xml.parsers.SAXParserFactory;
 import org.apache.fesod.excel.ExcelReader;
 import org.apache.fesod.excel.cache.ReadCache;
 import org.apache.fesod.excel.cache.selector.ReadCacheSelector;
@@ -31,12 +37,6 @@ import org.apache.fesod.excel.event.SyncReadListener;
 import org.apache.fesod.excel.read.listener.ModelBuildEventListener;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.List;
-import javax.xml.parsers.SAXParserFactory;
 
 /**
  * Build ExcelReader

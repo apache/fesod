@@ -19,6 +19,7 @@
 
 package org.apache.fesod.excel.analysis.v03.handlers;
 
+import java.util.Map;
 import org.apache.fesod.excel.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.excel.cache.ReadCache;
 import org.apache.fesod.excel.context.xls.XlsReadContext;
@@ -27,7 +28,6 @@ import org.apache.fesod.excel.metadata.Cell;
 import org.apache.fesod.excel.metadata.GlobalConfiguration;
 import org.apache.fesod.excel.metadata.data.ReadCellData;
 import org.apache.fesod.excel.util.StringUtils;
-import java.util.Map;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 

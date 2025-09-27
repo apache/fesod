@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.write.metadata.fill;
 
-import org.apache.fesod.excel.enums.WriteTemplateAnalysisCellTypeEnum;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.enums.WriteTemplateAnalysisCellTypeEnum;
 
 /**
  * Read the cells of the template while populating the data.

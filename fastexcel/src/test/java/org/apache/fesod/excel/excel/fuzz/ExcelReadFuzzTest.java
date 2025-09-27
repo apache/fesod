@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.excel.fuzz;
 
-import org.apache.fesod.excel.FastExcelFactory;
-import org.apache.fesod.excel.read.builder.ExcelReaderBuilder;
 import com.code_intelligence.jazzer.junit.FuzzTest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import lombok.SneakyThrows;
+import org.apache.fesod.excel.FastExcelFactory;
+import org.apache.fesod.excel.read.builder.ExcelReaderBuilder;
 
 /**
  * Fuzzes the generic read path with arbitrary bytes to discover parsing issues.

@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.excel.demo.read;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.format.DateTimeFormat;
-import org.apache.fesod.excel.annotation.format.NumberFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.format.DateTimeFormat;
+import org.apache.fesod.excel.annotation.format.NumberFormat;
 
 /**
  * Basic data class. The order here is consistent with the order in the Excel file.

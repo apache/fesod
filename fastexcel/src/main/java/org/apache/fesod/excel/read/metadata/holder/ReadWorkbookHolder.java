@@ -19,6 +19,16 @@
 
 package org.apache.fesod.excel.read.metadata.holder;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.fesod.excel.cache.ReadCache;
 import org.apache.fesod.excel.cache.selector.EternalReadCacheSelector;
 import org.apache.fesod.excel.cache.selector.ReadCacheSelector;
@@ -32,16 +42,6 @@ import org.apache.fesod.excel.exception.ExcelAnalysisException;
 import org.apache.fesod.excel.read.metadata.ReadSheet;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Workbook holder

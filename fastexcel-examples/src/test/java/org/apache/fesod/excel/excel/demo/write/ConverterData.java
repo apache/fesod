@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.excel.demo.write;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.format.DateTimeFormat;
-import org.apache.fesod.excel.annotation.format.NumberFormat;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.format.DateTimeFormat;
+import org.apache.fesod.excel.annotation.format.NumberFormat;
 
 /**
  * 基础数据类.这里的排序和excel里面的排序一致

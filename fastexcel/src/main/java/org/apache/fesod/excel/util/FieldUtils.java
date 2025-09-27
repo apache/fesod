@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.util;
 
-import org.apache.fesod.excel.metadata.NullObject;
 import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import org.apache.fesod.excel.metadata.NullObject;
 
 public class FieldUtils {
 

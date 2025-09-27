@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.excel.demo.read;
 
-import org.apache.fesod.excel.metadata.data.CellData;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.metadata.data.CellData;
 
 /**
  * Basic data class. The order here is consistent with the order in Excel

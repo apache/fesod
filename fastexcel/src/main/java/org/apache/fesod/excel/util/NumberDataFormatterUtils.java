@@ -19,10 +19,10 @@
 
 package org.apache.fesod.excel.util;
 
-import org.apache.fesod.excel.metadata.GlobalConfiguration;
-import org.apache.fesod.excel.metadata.format.DataFormatter;
 import java.math.BigDecimal;
 import java.util.Locale;
+import org.apache.fesod.excel.metadata.GlobalConfiguration;
+import org.apache.fesod.excel.metadata.format.DataFormatter;
 
 /**
  * Convert number data, including date.

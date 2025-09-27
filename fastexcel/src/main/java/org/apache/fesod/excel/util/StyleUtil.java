@@ -19,6 +19,10 @@
 
 package org.apache.fesod.excel.util;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.constant.BuiltinFormats;
 import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.fesod.excel.metadata.data.HyperlinkData;
@@ -27,10 +31,6 @@ import org.apache.fesod.excel.support.ExcelTypeEnum;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.fesod.excel.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.excel.write.metadata.style.WriteFont;
-import java.util.Optional;
-import java.util.function.Consumer;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;

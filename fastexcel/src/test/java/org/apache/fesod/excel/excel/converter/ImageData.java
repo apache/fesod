@@ -19,15 +19,15 @@
 
 package org.apache.fesod.excel.excel.converter;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.write.style.ColumnWidth;
-import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
-import org.apache.fesod.excel.converters.string.StringImageConverter;
 import java.io.File;
 import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.write.style.ColumnWidth;
+import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
+import org.apache.fesod.excel.converters.string.StringImageConverter;
 
 /**
  *

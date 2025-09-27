@@ -19,14 +19,14 @@
 
 package org.apache.fesod.excel.excel.temp.simple;
 
-import org.apache.fesod.excel.annotation.ExcelIgnore;
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.write.style.HeadStyle;
-import org.apache.fesod.excel.enums.poi.FillPatternTypeEnum;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelIgnore;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.write.style.HeadStyle;
+import org.apache.fesod.excel.enums.poi.FillPatternTypeEnum;
 
 @Getter
 @Setter

@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.analysis.v03.handlers;
 
+import java.math.BigDecimal;
 import org.apache.fesod.excel.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.excel.constant.BuiltinFormats;
 import org.apache.fesod.excel.context.xls.XlsReadContext;
 import org.apache.fesod.excel.enums.RowTypeEnum;
 import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.fesod.excel.metadata.data.ReadCellData;
-import java.math.BigDecimal;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 

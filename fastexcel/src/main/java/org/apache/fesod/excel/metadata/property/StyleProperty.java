@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.metadata.property;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.excel.annotation.write.style.ContentStyle;
 import org.apache.fesod.excel.annotation.write.style.HeadStyle;
 import org.apache.fesod.excel.metadata.data.DataFormatData;
 import org.apache.fesod.excel.write.metadata.style.WriteFont;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FillPatternType;

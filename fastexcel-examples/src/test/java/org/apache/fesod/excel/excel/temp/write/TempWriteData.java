@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.excel.temp.write;
 
+import lombok.Data;
 import org.apache.fesod.excel.annotation.ExcelProperty;
 import org.apache.fesod.excel.annotation.write.style.ContentStyle;
 import org.apache.fesod.excel.annotation.write.style.HeadStyle;
 import org.apache.fesod.excel.enums.BooleanEnum;
-import lombok.Data;
 
 @Data
 // @Accessors(chain = true)

@@ -19,14 +19,6 @@
 
 package org.apache.fesod.excel.metadata.property;
 
-import org.apache.fesod.excel.enums.HeadKindEnum;
-import org.apache.fesod.excel.metadata.ConfigurationHolder;
-import org.apache.fesod.excel.metadata.FieldCache;
-import org.apache.fesod.excel.metadata.FieldWrapper;
-import org.apache.fesod.excel.metadata.Head;
-import org.apache.fesod.excel.util.ClassUtils;
-import org.apache.fesod.excel.util.StringUtils;
-import org.apache.fesod.excel.write.metadata.holder.AbstractWriteHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +28,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.fesod.excel.enums.HeadKindEnum;
+import org.apache.fesod.excel.metadata.ConfigurationHolder;
+import org.apache.fesod.excel.metadata.FieldCache;
+import org.apache.fesod.excel.metadata.FieldWrapper;
+import org.apache.fesod.excel.metadata.Head;
+import org.apache.fesod.excel.util.ClassUtils;
+import org.apache.fesod.excel.util.StringUtils;
+import org.apache.fesod.excel.write.metadata.holder.AbstractWriteHolder;
 
 /**
  * Define the header attribute of excel

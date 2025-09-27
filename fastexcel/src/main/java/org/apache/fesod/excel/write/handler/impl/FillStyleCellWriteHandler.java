@@ -19,6 +19,7 @@
 
 package org.apache.fesod.excel.write.handler.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.constant.OrderConstant;
 import org.apache.fesod.excel.metadata.data.WriteCellData;
 import org.apache.fesod.excel.util.BooleanUtils;
@@ -26,7 +27,6 @@ import org.apache.fesod.excel.write.handler.CellWriteHandler;
 import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.fesod.excel.write.metadata.style.WriteCellStyle;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 /**

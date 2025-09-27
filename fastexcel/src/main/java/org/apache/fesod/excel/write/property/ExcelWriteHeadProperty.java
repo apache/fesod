@@ -19,6 +19,15 @@
 
 package org.apache.fesod.excel.write.property;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.excel.annotation.write.style.ColumnWidth;
 import org.apache.fesod.excel.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
@@ -37,15 +46,6 @@ import org.apache.fesod.excel.metadata.property.LoopMergeProperty;
 import org.apache.fesod.excel.metadata.property.OnceAbsoluteMergeProperty;
 import org.apache.fesod.excel.metadata.property.RowHeightProperty;
 import org.apache.fesod.excel.metadata.property.StyleProperty;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Define the header attribute of excel

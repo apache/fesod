@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.excel.demo.write;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
-import org.apache.fesod.excel.annotation.write.style.HeadFontStyle;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+import org.apache.fesod.excel.annotation.write.style.HeadFontStyle;
 import org.apache.poi.ss.usermodel.Font;
 
 /**

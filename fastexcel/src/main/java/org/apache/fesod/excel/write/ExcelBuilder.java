@@ -19,12 +19,12 @@
 
 package org.apache.fesod.excel.write;
 
+import java.util.Collection;
 import org.apache.fesod.excel.context.WriteContext;
 import org.apache.fesod.excel.write.merge.OnceAbsoluteMergeStrategy;
 import org.apache.fesod.excel.write.metadata.WriteSheet;
 import org.apache.fesod.excel.write.metadata.WriteTable;
 import org.apache.fesod.excel.write.metadata.fill.FillConfig;
-import java.util.Collection;
 
 /**
  *

@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.analysis.v03.handlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.excel.context.xls.XlsReadContext;
 import org.apache.fesod.excel.metadata.data.CellData;
 import org.apache.fesod.excel.read.metadata.holder.xls.XlsReadSheetHolder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
 

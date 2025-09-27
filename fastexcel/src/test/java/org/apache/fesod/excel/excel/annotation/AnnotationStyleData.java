@@ -19,15 +19,15 @@
 
 package org.apache.fesod.excel.excel.annotation;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.excel.annotation.ExcelProperty;
 import org.apache.fesod.excel.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.excel.annotation.write.style.ContentStyle;
 import org.apache.fesod.excel.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.excel.annotation.write.style.HeadStyle;
 import org.apache.fesod.excel.enums.poi.FillPatternTypeEnum;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *

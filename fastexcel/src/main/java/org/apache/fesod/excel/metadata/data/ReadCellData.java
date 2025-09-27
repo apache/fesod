@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.metadata.data;
 
-import org.apache.fesod.excel.constant.FastExcelConstants;
-import org.apache.fesod.excel.enums.CellDataTypeEnum;
 import java.math.BigDecimal;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.excel.constant.FastExcelConstants;
+import org.apache.fesod.excel.enums.CellDataTypeEnum;
 
 /**
  * read cell data

@@ -19,7 +19,6 @@
 
 package org.apache.fesod.excel.write.metadata;
 
-import org.apache.fesod.excel.support.ExcelTypeEnum;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +27,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.fesod.excel.support.ExcelTypeEnum;
 
 /**
  * Workbook

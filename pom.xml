@@ -39,7 +39,6 @@
 
     <modules>
         <module>fastexcel</module>
-        <module>fastexcel-support</module>
         <module>fastexcel-examples</module>
     </modules>
 

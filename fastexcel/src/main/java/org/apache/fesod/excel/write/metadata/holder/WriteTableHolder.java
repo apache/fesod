@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.write.metadata.holder;
 
-import org.apache.fesod.excel.enums.HolderEnum;
-import org.apache.fesod.excel.write.metadata.WriteTable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.enums.HolderEnum;
+import org.apache.fesod.excel.write.metadata.WriteTable;
 
 /**
  * sheet holder

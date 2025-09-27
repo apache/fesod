@@ -19,13 +19,13 @@
 
 package org.apache.fesod.excel.metadata;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import java.lang.reflect.Field;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 /**
  * filed wrapper

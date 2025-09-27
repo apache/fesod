@@ -19,11 +19,11 @@
 
 package org.apache.fesod.excel.excel.converter;
 
-import org.apache.fesod.excel.annotation.ExcelProperty;
 import java.sql.Timestamp;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
 
 @Getter
 @Setter

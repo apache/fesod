@@ -19,8 +19,8 @@
 
 package org.apache.fesod.excel.util;
 
-import org.apache.fesod.excel.support.cglib.beans.BeanMap;
-import org.apache.fesod.excel.support.cglib.core.DefaultNamingPolicy;
+import cn.idev.excel.support.cglib.beans.BeanMap;
+import cn.idev.excel.support.cglib.core.DefaultNamingPolicy;
 
 /**
  * bean utils

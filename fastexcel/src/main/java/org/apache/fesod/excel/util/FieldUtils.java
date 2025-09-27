@@ -19,7 +19,7 @@
 
 package org.apache.fesod.excel.util;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
+import org.apache.fesod.excel.support.cglib.beans.BeanMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;

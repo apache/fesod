@@ -19,7 +19,7 @@
 
 package org.apache.fesod.excel.write.executor;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
+import org.apache.fesod.excel.support.cglib.beans.BeanMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;

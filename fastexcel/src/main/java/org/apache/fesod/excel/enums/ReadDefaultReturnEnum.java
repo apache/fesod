@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import org.apache.fesod.excel.metadata.data.ReadCellData;
 
 /**
- * Read not to {@code cn.idev.excel.metadata.BasicParameter#clazz} value, the default will return type.
+ * Read not to {@code org.apache.fesod.excel.metadata.BasicParameter#clazz} value, the default will return type.
  *
  *
  */

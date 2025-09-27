@@ -77,7 +77,7 @@ public @interface ExcelProperty {
 
     /**
      *
-     * default @see cn.idev.excel.util.TypeUtil if default is not meet you can set format
+     * default @see org.apache.fesod.excel.util.TypeUtil if default is not meet you can set format
      *
      * @return Format string
      * @deprecated please use {@link DateTimeFormat}

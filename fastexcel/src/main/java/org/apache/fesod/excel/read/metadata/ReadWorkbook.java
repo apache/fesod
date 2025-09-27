@@ -119,7 +119,7 @@ public class ReadWorkbook extends ReadBasicParameter {
     private Boolean useDefaultListener;
 
     /**
-     * Read not to {@code cn.idev.excel.metadata.BasicParameter#clazz} value, the default will return type.
+     * Read not to {@code org.apache.fesod.excel.metadata.BasicParameter#clazz} value, the default will return type.
      * Is only effective when set `useDefaultListener=true` or `useDefaultListener=null`.
      *
      * @see ReadDefaultReturnEnum

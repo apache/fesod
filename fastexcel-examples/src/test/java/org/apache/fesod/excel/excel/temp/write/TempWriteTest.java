@@ -19,7 +19,7 @@
 
 package org.apache.fesod.excel.excel.temp.write;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
+import org.apache.fesod.excel.support.cglib.beans.BeanMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;

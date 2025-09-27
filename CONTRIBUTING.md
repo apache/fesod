@@ -1,162 +1,277 @@
-# 为 FastExcel 做贡献
+# Contribution Guidelines
 
-FastExcel 欢迎社区的每一位用户和开发者成为贡献者。无论是报告问题、改进文档、提交代码，还是提供技术支持，您的参与都将帮助 FastExcel 变得更好。
-
----
-
-## 报告问题
-
-我们鼓励用户在使用 FastExcel 的过程中随时提供反馈。您可以通过 [NEW ISSUE](https://github.com/fast-excel/fastexcel/issues/new/choose) 提交问题。
-
-### 高质量问题报告
-
-为了提高沟通效率，请在提交问题前：
-
-1. **搜索现有问题**：检查您的问题是否已被报告。如果存在，请直接在现有问题下评论补充详细信息，而不是创建新问题。
-2. **使用问题模板**：问题模板位于 [ISSUE TEMPLATE](./.github/ISSUE_TEMPLATE)，请按照模板要求填写，以确保问题描述准确且完整。
-
-以下情况适合提交新问题：
-
-- Bug 报告
-- 新功能需求
-- 性能问题
-- 功能提案或设计
-- 文档改进
-- 测试覆盖率优化
-- 需要技术支持
-- 其他与项目相关的问题
-
-> **注意**：请勿在问题中包含敏感信息，如密码、密钥、服务器地址或私人数据。
+Welcome every user and developer in the community to become contributors. Whether it's reporting issues, improving
+documentation, submitting code, or providing technical support, your participation will help make the Apache Fesod (
+Incubating) better.
 
 ---
 
-## 贡献代码与文档
+## Contribution Directions
 
-所有对 FastExcel 的改进均可通过 Pull Request (PR) 实现。无论是修复 Bug、优化代码、增强功能，还是改进文档，都非常欢迎！
+There are many ways to contribute to Apache Fesod (Incubating):
 
-### 您可以贡献的方向
+- Fix typos
+- Fix bugs
+- Remove redundant code
+- Add test cases
+- Enhance functionality
+- Add comments to improve code readability
+- Optimize code structure
+- Improve or refine documentation
 
-- 修复错别字
-- 修复 Bug
-- 删除冗余代码
-- 添加测试用例
-- 增强功能
-- 添加注释以提升代码可读性
-- 优化代码结构
-- 改进或完善文档
+**Principle**:
 
-**原则**：**任何有助于项目改进的 PR 都值得鼓励！**
-
-在提交 PR 前，请熟悉以下指南：
-
-1. [工作区准备](#工作区准备)
-2. [分支定义](#分支定义)
-3. [提交规则](#提交规则)
-4. [PR 说明](#PR-说明)
+- Any pull request that contributes to the improvement of the project should be encouraged.
+- Before contributing a new feature, please propose and discuss it in an `issue` or `discussion`. We will not merge
+  features that have not been discussed and confirmed.
 
 ---
 
-### 工作区准备
+## Contributing Code
 
-开发 FastExcel 需要 **3.8.1及以上版本的Maven** 和 **17及以上版本的JDK (Java Development Kit)** 。目前，开发环境推荐 **3.9.0** 及以上版本的Maven和 **21** 及以上的版本Java，但在编译过程中必须使用 **Java 1.8** 兼容的语言特性，保证 FastExcel 能在 Java 1.8 及以上版本环境中运行。
+All improvements can be implemented through Pull Request (PR). Before submitting a Pull Request, please familiarise
+yourself with the following guidelines:
 
-您可以使用 [SDKMAN](https://sdkman.io/) 等工具配置多版本的 Java 工具链。如果使用 IntelliJ IDEA 开发，可以设置项目 [Language Level](https://www.jetbrains.com/help/idea/project-settings-and-structure.html#language-level) 为 8 以确保后向兼容。
+### Workspace Preparation
 
-确保您已注册 GitHub 账号，并按照以下步骤完成本地开发环境配置：
+To develop Apache Fesod (Incubating), you need **Maven 3.9 or above** and **JDK (Java Development Kit) 17 or above**.
+However, you must
+use **Java 1.8** compatible language features during compilation to ensure Apache Fesod (Incubating) can run in
+environments with Java
+1.8 or above.
 
-1. **Fork 仓库**：在 FastExcel 的 [GitHub 页面](https://github.com/fast-excel/fastexcel) 点击 `Fork` 按钮，将项目复制到您的 GitHub 账户下，例如：`https://github.com/<your-username>/fastexcel`。
-2. **克隆代码库**：运行以下命令将 Fork 的项目克隆到本地：
-   ```bash
-   git clone git@github.com:<your-username>/fastexcel.git
-   ```
-3. **设置上游仓库**：将官方仓库设置为 `upstream`，方便同步更新：
-   ```bash
-   git remote add upstream git@github.com:fast-excel/fastexcel.git
-   git remote set-url --push upstream no-pushing
-   ```
-   运行 `git remote -v` 可检查配置是否正确。
+> You can use tools such as [SDKMAN](https://sdkman.io/) to configure multiple versions of the Java toolchain.
 
----
+### Fork the repository
 
-### 分支定义
+Ensure that you have registered a GitHub account and follow the steps below to configure your local development
+environment:
 
-在 FastExcel 中，所有贡献应基于 `main` 开发分支。此外，还有以下分支类型：
+**Fork the repository**: Click the `Fork` button on the Apache Fesod (
+Incubating) [GitHub page](https://github.com/apache/fesod) to copy the project to your GitHub account.
 
-- **release 分支**：用于版本发布（如 `0.6.0`, `0.6.1`）。
-- **feature 分支**：用于开发较大的功能。
-- **hotfix 分支**：用于修复重要 Bug。
+```bash
+https://github.com/<your-username>/fesod 
+```
 
-提交 PR 时，请确保变更基于 `main` 分支。
+**Clone Repository**: Run the following command to clone the forked project to your local machine:
 
----
+```bash
+git clone git@github.com:<your-username>/fesod.git
+```
 
-### 提交规则
+**Set Upstream Repository**: Set the official repository as `upstream` for easy synchronization of updates:
 
-#### 提交信息
+```bash
+git remote add upstream git@github.com:apahce/fesod.git
+git remote set-url --push upstream no-pushing
+```
 
-请确保提交消息清晰且具有描述性，遵循以下格式：
+Running `git remote -v` can verify if the configuration is correct.
 
-- **docs**: 更新文档，例如 `docs: 更新 PR 提交指南`。
-- **feature**: 新功能，例如 `feature: 支持 并发写入`。
-- **bugfix**: 修复 Bug，例如 `bugfix: 修复空指针异常`。
-- **refactor**: 重构代码，例如 `refactor: 优化数据处理逻辑`。
-- **test**: 增加或改进测试，例如 `test: 添加单元测试`。
+### Branch definition
 
-不建议使用模糊的提交信息，如：
+In Apache Fesod (Incubating), all contributions should be based on the `main` development branch. Additionally, there
+are the following branch types:
 
-- ~~修复问题~~
-- ~~更新代码~~
+- **release branches**: Used for version releases (e.g., `1.1.0`, `1.1.1`).
+- **feature branches**: Used for developing major features.
+- **hotfix branches**: Used for fixing critical bugs.
 
-如果需要帮助，请参考 [如何编写 Git 提交消息](http://chris.beams.io/posts/git-commit/)。
+When submitting a PR, please ensure that the changes are based on the `main` branch.
 
-#### 提交内容
+### Commit Rules
 
-一次提交应包含完整且可审查的更改，确保：
+#### Commit Message
 
-- 避免提交过于庞大的改动。
-- 每次提交内容独立且可通过 CI 测试。
+Please ensure that commit messages are clear and descriptive, use **English**, and do not exceed 100 characters.
 
-另外，请确保提交时配置正确的 Git 用户信息：
+The following types of commit messages are allowed and must follow the following format:
+
+- **docs**: Update documentation, e.g., `docs: update README.md`
+- **feature/feat**: New features, e.g., `feature: support for xxx`
+- **bugfix/fix**: Bug fixes, e.g., `fix: fix NPE in the A class`
+- **refactor**: Code refactoring (no functional changes), e.g., `refactor: optimise data processing logic`
+- **style**: Code formatting, e.g., `style: update code style`
+- **test**: Adding or improving tests, e.g., `test: add new test cases`
+- **chore**: Changes to the build process or auxiliary tools, e.g., `chore: improve issue template`
+- **dependency**: Modifications to third-party dependency libraries, e.g., `dependency: upgrade poi version to 5.4.1`
+
+Avoid using vague commit messages like:
+
+- ~~fixed issue~~
+- ~~update code~~
+
+For assistance, refer to [How to Write a Git Commit Message](http://chris.beams.io/posts/git-commit/).
+
+#### Commit Content
+
+Each commit should contain complete and reviewable changes, ensuring:
+
+- Avoid committing overly large changes.
+- Each commit content is independent and can pass CI tests.
+
+Also, ensure the correct Git user information is configured when committing:
 
 ```bash
 git config --get user.name
 git config --get user.email
 ```
 
----
+### PR Description
 
-### PR 说明
-
-为了帮助审阅者快速了解 PR 的内容和目的，请使用 [PR 模板](.github/pull_request_template.md)。详细的描述将极大提高代码审阅效率。
-
----
-
-## 测试用例贡献
-
-任何测试用例的贡献都值得鼓励，尤其是单元测试。建议在对应模块的 `test` 目录中创建 `XXXTest.java` 文件，推荐使用 JUnit5 框架。
+To help reviewers quickly understand the content and purpose of the PR, use
+the [pull_request_template](https://github.com/apache/fesod/blob/main/.github/pull_request_template.md). A
+detailed description greatly improves code review efficiency.
 
 ---
 
-## 其他参与方式
+## Contribution of Test Cases
 
-除了直接贡献代码，以下方式同样是对 FastExcel 的宝贵支持：
-
-- 回答其他用户的问题。
-- 帮助审阅他人的 PR。
-- 提出改进建议。
-- 撰写技术博客，宣传 FastExcel。
-- 在社区中分享项目相关知识。
+Any contribution of test cases is encouraged, especially unit tests. It is recommended to create `XXXTest.java` files in
+the corresponding module's `test` directory, preferably using the `JUnit5` framework.
 
 ---
 
-## 代码风格
+## Contribution Document
 
-FastExcel 使用 [Spotless](https://github.com/diffplug/spotless) 作为代码格式化工具。请确保在提交前运行以下命令以自动格式化代码：
+Documentation is an important component of the Apache Fesod (Incubating) official website and serves as a vital bridge
+between the
+project and the community.The Apache Fesod (Incubating) official website is built
+using [Docusaurus](https://docusaurus.io/), and the
+documentation is maintained in the [website](https://github.com/apache/fesod/tree/main/website) directory.
 
-```shell
-./mvnw spotless:apply
+### Requirements
+
+- [Node.js](https://nodejs.org/en/download/) version 18.0 or above (which can be checked by running `node -v`). You can
+  use [nvm](https://github.com/nvm-sh/nvm) for managing multiple Node versions on a single machine installed.
+- When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+
+### Directory Structure Description
+
+Docusaurus supports I18n. The main documentation directory structure that needs to be maintained is as follows:
+
+```bash
+.
+├── community      # Community(English)
+├── docs           # Documentation(English)
+└── i18n           # I18n
+    └── zh-cn
+        ├── docusaurus-plugin-content-docs
+        │   └── current   # Documentation(Simplified Chinese)
+        └── docusaurus-plugin-content-docs-community
+            └── current   # Community(Simplified Chinese)
+```
+
+The directory structure for single-language documents is as follows:
+
+```bash
+.
+├── quickstart     # 1. Quick Start
+├── read           # 2. Read
+├── write          # 3. Write
+├── fill           # 4. Fill
+├── community      # 5. Community
+└── help           # 6. FAQ
+```
+
+### Documentation Writing Guidelines
+
+- Use file paths with the `.md` extension
+
+```markdown
+[Example](docs/quickstart/example.md)
+```
+
+- Use paths relative to the docs/ directory
+
+```markdown
+[Example](docs/quickstart/example.md)
+```
+
+- Image files must be stored in the `static/img` directory and referenced using relative directory paths.
+
+```markdown
+[img](/img/docs/fill/listFill_file.png)
+```
+
+### Preview and generate static files
+
+Enter the `website` directory and execute the command
+
+#### Installation
+
+```bash
+yarn install
+```
+
+#### Local Development
+
+```bash
+# English
+yarn start
+
+# Simplified Chinese
+yarn start --locale zh-cn
+```
+
+This command starts a local development server and opens up a browser window. Most changes are reflected live without
+having to restart the server.
+
+> Only one language version can be run at a time.
+
+#### Build(Optional)
+
+```bash
+yarn build
+```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting
+service.
+
+### Document Format Inspection
+
+Apache Fesod (Incubating) uses [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) to check document
+formatting. After writing the relevant Markdown articles, you can run the following command locally to pre-check whether
+the Markdown formatting meets the requirements:
+
+```bash
+cd website && yarn
+
+yarn md-lint
+
+# If the documentation is wrong, you can use the following command to attempt an automatic repair.
+yarn md-lint-fix
+```
+
+- For formatting rules for Markdown articles you can refer
+  to: [Markdown-lint-rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)
+- Markdown format configuration file in the
+  project: [.markdownlint-cli2.jsonc](https://github.com/apache/fesod/blob/main/website/.markdownlint-cli2.jsonc)
+
+---
+
+## Other Ways to Contribute
+
+Apart from directly contributing code, the following ways are also valuable support for Apache Fesod (Incubating):
+
+- Answering other users' questions.
+- Assisting in reviewing others' PRs.
+- Providing improvement suggestions.
+- Writing technical blogs to promote.
+- Sharing project-related knowledge in the community.
+
+---
+
+## Code Style
+
+Apache Fesod (Incubating) uses [Spotless](https://github.com/diffplug/spotless) as its code formatting tool. Please
+ensure you run the following command to automatically format your code before submitting:
+
+```bash
+mvn spotless:apply
 ```
 
 ---
 
-**最后，感谢您对 FastExcel 的支持！每一份帮助，都是我们前进的动力。**
+Finally, thank you for your support of Apache Fesod (Incubating)!

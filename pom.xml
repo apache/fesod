@@ -33,13 +33,12 @@
     <packaging>pom</packaging>
 
     <name>fastexcel-parent</name>
-    <description>Fastexcel is an Excel handle tools written in Java</description>
-    <url>https://github.com/fast-excel/fastexcel</url>
-    <inceptionYear>2024</inceptionYear>
+    <description>Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability.</description>
+    <url>https://github.com/apache/fesod</url>
+    <inceptionYear>2025</inceptionYear>
 
     <modules>
         <module>fastexcel</module>
-        <module>fastexcel-support</module>
         <module>fastexcel-examples</module>
     </modules>
 
@@ -77,33 +76,41 @@
     </properties>
 
     <scm>
-        <url>https://github.com/fast-excel/fastexcel</url>
-        <connection>scm:git:https://git@github.com/fast-excel/fastexcel.git</connection>
+        <connection>scm:git:git://github.com/apache/fesod.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/fesod.git</developerConnection>
+        <url>scm:git:git@github.com:apache/fesod.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <organization>
-        <name>fast-excel</name>
-        <url>https://github.com/fast-excel</url>
+        <name>Apache Software Foundation</name>
+        <url>https://www.apache.org</url>
     </organization>
 
-    <developers>
-        <developer>
-            <id>jipengfei</id>
-            <name>jipengfei</name>
-            <email>1558143046@qq.com</email>
-        </developer>
-        <developer>
-            <id>zhuangjiaju</id>
-            <name>Jiaju Zhuang</name>
-            <email>zhuangjiaju@qq.com</email>
-        </developer>
-    </developers>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/apache/fesod/issues</url>
+    </issueManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Fesod Developer List</name>
+            <post>dev@fesod.apache.org</post>
+            <subscribe>dev-subscribe@fesod.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@fesod.apache.org</unsubscribe>
+        </mailingList>
+        <mailingList>
+            <name>Fesod Commits List</name>
+            <subscribe>commits-subscribe@fesod.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@fesod.apache.org</unsubscribe>
+            <post>commits@fesod.apache.org</post>
+        </mailingList>
+    </mailingLists>
 
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
         </license>
     </licenses>
 
@@ -112,6 +119,10 @@
             <id>ossrh</id>
             <url>https://central.sonatype.com/repository/maven-snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>oss</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <dependencyManagement>

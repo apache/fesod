@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <name>fastexcel-parent</name>
-    <description>Apache Fesod (Incubating). Fast. Easy. Done. Processing Excels without worrying about large files causing OOM.</description>
+    <description>Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability.</description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
 
@@ -121,7 +121,7 @@
             <url>https://central.sonatype.com/repository/maven-snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
+            <id>oss</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>

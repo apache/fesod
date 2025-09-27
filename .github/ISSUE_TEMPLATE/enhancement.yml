@@ -27,10 +27,10 @@ body:
     attributes:
       label: Search before asking
       description: >
-        Please search [issues](https://github.com/fast-excel/fastexcel/issues) to check if your issue has already been reported.
+        Please search [issues](https://github.com/apache/fesod/issues) to check if your issue has already been reported.
       options:
         - label: >
-            I searched in the [issues](https://github.com/fast-excel/fastexcel/issues) and found nothing similar.
+            I searched in the [issues](https://github.com/apache/fesod/issues) and found nothing similar.
           required: true
   - type: textarea
     attributes:
@@ -53,7 +53,7 @@ body:
     attributes:
       label: Are you willing to submit a PR?
       description: >
-        We look forward to the community of developers or users helping solve Fastexcel problems together. If you are willing to submit a PR to implement the enhancement, please check the box.
+        We look forward to the community of developers or users helping solve problems together. If you are willing to submit a PR to implement the enhancement, please check the box.
       options:
         - label: I'm willing to submit a PR!
   - type: markdown

@@ -18,8 +18,8 @@
 blank_issues_enabled: true
 contact_links:
   - name: Ask a question or get support
-    url: https://github.com/fast-excel/fastexcel/discussions
-    about: Ask a question or request support for using Fastexcel
-  - name: 用户问题或提出建议
-    url: https://github.com/fast-excel/fastexcel/discussions
-    about: 反馈使用 Fastexcel 时遇到的问题，或对 Fastexcel 的建议
+    url: https://github.com/apache/fesod/discussions
+    about: Ask a question or request support for using Fesod
+  - name: User questions or suggestions
+    url: https://github.com/apache/fesod/discussions
+    about: Report issues encountered while using Fesod, or provide suggestions for Fesod.

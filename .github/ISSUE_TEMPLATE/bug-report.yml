@@ -18,7 +18,7 @@
 name: Bug report
 title: "[Bug] "
 description: Problems with the software
-labels: [bug]
+labels: [ bug ]
 body:
   - type: markdown
     attributes:
@@ -27,21 +27,21 @@ body:
 
         For suggestions or help, please consider:
         1. [WeChat User Group](https://github.com/user-attachments/assets/b40aebe8-0552-4fb2-b184-4cb64a5b1229);
-        2. [Github Discussion](https://github.com/fast-excel/fastexcel/discussions).
+        2. [Github Discussion](https://github.com/apache/fesod/discussions).
   - type: checkboxes
     attributes:
       label: Search before asking
       description: >
-        Please search [issues](https://github.com/fast-excel/fastexcel/issues) to check if your issue has already been reported.
+        Please search [issues](https://github.com/apache/fesod/issues) to check if your issue has already been reported.
       options:
         - label: >
-            I searched in the [issues](https://github.com/fast-excel/fastexcel/issues) and found nothing similar.
+            I searched in the [issues](https://github.com/apache/fesod/issues) and found nothing similar.
           required: true
   - type: input
     id: version
     attributes:
-      label: Fastexcel version
-      placeholder: Please provide the Fastexcel version you are using.
+      label: Fesod version
+      placeholder: Please provide the version you are using.
     validations:
       required: true
   - type: input
@@ -79,7 +79,7 @@ body:
     attributes:
       label: Are you willing to submit a PR?
       description: >
-        We look forward to the community of developers or users helping solve Fastexcel problems together. If you are willing to submit a PR to fix this problem, please check the box.
+        We look forward to the community of developers or users helping solve problems together. If you are willing to submit a PR to fix this problem, please check the box.
       options:
         - label: I'm willing to submit a PR!
   - type: markdown

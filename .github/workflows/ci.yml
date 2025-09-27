@@ -74,13 +74,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
       - name: Test with Maven
-        run: ./mvnw test -B -Dmaven.test.skip=false -pl fastexcel
+        run: ./mvnw test -B -Dmaven.test.skip=false -pl fesod
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: (!cancelled())
         with:
           files: "**/target/surefire-reports/*.xml"
       - name: Maven Build
-        run: ./mvnw install -B -V -pl fastexcel
+        run: ./mvnw install -B -V -pl fesod
       - name: Java Doc
         run: ./mvnw javadoc:javadoc

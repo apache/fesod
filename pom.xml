@@ -26,20 +26,20 @@
 >
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.idev.excel</groupId>
-    <artifactId>fastexcel-parent</artifactId>
+    <groupId>org.apache.fesod</groupId>
+    <artifactId>fesod-parent</artifactId>
     <version>1.3.0</version>
 
     <packaging>pom</packaging>
 
-    <name>fastexcel-parent</name>
+    <name>fesod-parent</name>
     <description>Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability.</description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
 
     <modules>
-        <module>fastexcel</module>
-        <module>fastexcel-examples</module>
+        <module>fesod</module>
+        <module>fesod-examples</module>
     </modules>
 
     <properties>

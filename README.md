@@ -164,9 +164,9 @@ Thank you to all the people who already contributed to the Apache Fesod!
 Mail List is the most recognized form of communication in the Apache community. Contact us through the following mailing
 list.
 
-| Name                                                | Scope                           |                                                    |                                                        |
-|:----------------------------------------------------|:--------------------------------|:---------------------------------------------------|:-------------------------------------------------------|
-| [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | Development-related discussions | [Subscribe](mailto:dev-subscribe@fesod.apache.org) | [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org) |
+| Name                                                | Mailing list                                                                                                  |
+|:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
+| [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [Subscribe](mailto:dev-subscribe@fesod.apache.org)  ｜  [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org) |
 
 ### Star History
 

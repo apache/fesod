@@ -29,10 +29,9 @@
 Apache Fesod (Incubating) is a Fast, Concise, Java tool for processing Excel files that solves memory overflow issues
 with large files.
 
-Fesod will always be free and open source, use the business-friendly Apache license, making it suitable for any
-commercial scenarios. This provides developers and enterprises with great freedom and flexibility.
-We plan to introduce more new features in the future to continually enhance user experience and tool usability.
-Fesod is committed to being your best choice for handling Excel files.
+Fesod can provide developers and enterprises with great freedom and flexibility. We plan to introduce more new features
+in the future to continually enhance user experience and tool usability. Fesod is committed to being your best choice
+for handling Excel files.
 
 ### Features
 

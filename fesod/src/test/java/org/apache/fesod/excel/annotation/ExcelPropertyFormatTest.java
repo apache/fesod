@@ -60,12 +60,12 @@ public class ExcelPropertyFormatTest {
     public void testSingleFormatSampleWriteAndRead(@TempDir Path tempDir) throws IOException {
         List<FormatSample> singleElementList = new LinkedList<>();
         FormatSample sample = new FormatSample();
-        sample.setDate2(new Date()); // 指定日期
-        sample.setDateLocalDate2(LocalDate.of(2025, 2, 1)); // 指定日期
+        sample.setDate2(new Date());
+        sample.setDateLocalDate2(LocalDate.of(2025, 2, 1));
         singleElementList.add(sample);
         String fileName =
                 tempDir.resolve(System.currentTimeMillis() + "_single.xlsx").toString();
-        FastExcel.write(fileName, FormatSample.class).sheet("单元测试").doWrite(singleElementList);
+        FastExcel.write(fileName, FormatSample.class).sheet("UnitTest").doWrite(singleElementList);
         try (FileInputStream fis = new FileInputStream(fileName);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row dataRow = workbook.getSheetAt(0).getRow(1);
@@ -75,7 +75,7 @@ public class ExcelPropertyFormatTest {
     }
 
     /**
-     * 测试含有中文字符的日期格式模式写入后的单元格格式串。
+     * Test cell format string after writing date format pattern with Chinese characters.
      */
     @Data
     static class ChinesePatternSample {
@@ -94,7 +94,9 @@ public class ExcelPropertyFormatTest {
         sample.setFullDate(new Date());
         sample.setLocalDate(LocalDate.of(2025, 1, 2));
         String fileName = tempDir.resolve("chinese_pattern.xlsx").toString();
-        FastExcel.write(fileName, ChinesePatternSample.class).sheet("中文格式").doWrite(Collections.singletonList(sample));
+        FastExcel.write(fileName, ChinesePatternSample.class)
+                .sheet("ChineseFormat")
+                .doWrite(Collections.singletonList(sample));
         try (FileInputStream fis = new FileInputStream(fileName);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row dataRow = workbook.getSheetAt(0).getRow(1);
@@ -105,7 +107,7 @@ public class ExcelPropertyFormatTest {
     }
 
     /**
-     * 测试不同字段使用不同格式。
+     * Test different fields with different formats.
      */
     @Data
     static class MultiPatternSample {
@@ -129,7 +131,7 @@ public class ExcelPropertyFormatTest {
         s.setDateDash(LocalDate.of(2024, 12, 31));
         s.setDateTimeMinute(LocalDateTime.of(2025, 3, 4, 15, 20));
         String file = tempDir.resolve("multi_pattern.xlsx").toString();
-        FastExcel.write(file, MultiPatternSample.class).sheet("多格式").doWrite(Collections.singletonList(s));
+        FastExcel.write(file, MultiPatternSample.class).sheet("MultiFormat").doWrite(Collections.singletonList(s));
         try (FileInputStream fis = new FileInputStream(file);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row row = workbook.getSheetAt(0).getRow(1);
@@ -140,7 +142,7 @@ public class ExcelPropertyFormatTest {
     }
 
     /**
-     * 写入 Date 使用模式, 读取到 String 字段上同样使用注解指定模式, 验证读出的字符串与格式化后的一致。
+     * Write Date with pattern, read to String field with annotation pattern, verify the read string matches the formatted value.
      */
     @Data
     static class WriteDateModel {
@@ -153,7 +155,7 @@ public class ExcelPropertyFormatTest {
     static class ReadStringModel {
         @ExcelProperty
         @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
-        private String eventTime; // 读取时应被格式化为字符串
+        private String eventTime; // Should be formatted as string when reading
     }
 
     static class CapturingListener implements ReadListener<ReadStringModel> {
@@ -173,7 +175,7 @@ public class ExcelPropertyFormatTest {
     }
 
     /**
-     * 测试空日期字段: 不设置值应该写出空单元格且不抛异常。
+     * Test null date field: should write blank cell and not throw exception if value is not set.
      */
     @Data
     static class NullDateSample {
@@ -184,14 +186,16 @@ public class ExcelPropertyFormatTest {
 
     @Test
     public void testNullDateFieldWritesBlank(@TempDir Path tempDir) throws IOException {
-        NullDateSample sample = new NullDateSample(); // mayBeNull 保持为 null
+        NullDateSample sample = new NullDateSample();
         String file = tempDir.resolve("null_date.xlsx").toString();
-        FastExcel.write(file, NullDateSample.class).sheet("空").doWrite(Collections.singletonList(sample));
+        FastExcel.write(file, NullDateSample.class).sheet("Null").doWrite(Collections.singletonList(sample));
         try (FileInputStream fis = new FileInputStream(file);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row row = workbook.getSheetAt(0).getRow(1);
-            assertNotNull(row, "数据行应存在");
-            assertTrue(StringUtils.isBlank(row.getCell(0).getStringCellValue()), "空日期字段应写出为空单元格");
+            assertNotNull(row, "expect row existing");
+            assertTrue(
+                    StringUtils.isBlank(row.getCell(0).getStringCellValue()),
+                    "Empty date field should write as blank cell");
         }
     }
 }

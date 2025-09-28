@@ -19,12 +19,6 @@
 
 package org.apache.fesod.excel.temp.fill;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.fesod.excel.ExcelWriter;
 import org.apache.fesod.excel.FastExcel;
 import org.apache.fesod.excel.demo.fill.FillData;
@@ -35,7 +29,12 @@ import org.apache.fesod.excel.write.metadata.fill.FillConfig;
 import org.apache.fesod.excel.write.metadata.fill.FillWrapper;
 import org.junit.jupiter.api.Test;
 
-import static cn.idev.excel.enums.WriteDirectionEnum.HORIZONTAL;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Example of filling data into Excel templates.
@@ -125,13 +124,13 @@ public class FillTempTest {
         dateList.add("2023-01-11");
         dateList.add("2023-01-12");
 
-        ExcelWriter excelWriter = EasyExcel.write(fileName).withTemplate(templateFileName).build();
-        WriteSheet writeSheet = EasyExcel.writerSheet().build();
+        ExcelWriter excelWriter = FastExcel.write(fileName).withTemplate(templateFileName).build();
+        WriteSheet writeSheet = FastExcel.writerSheet().build();
         excelWriter.fill(new FillWrapper("dataList", fillDataList), FillConfig.builder().forceNewRow(true).addDynamicInfo(dateList,1,"qtyMap")
                 .addDefaultDynamicInfo(dateList,1)
                 .build(), writeSheet);
         excelWriter.fill(new FillWrapper("dataObjList", fillDataList), FillConfig.builder().addDefaultDynamicInfo(dateList,2).forceNewRow(true).build(), writeSheet);
-        excelWriter.fill(new FillWrapper("dateList", dateList), FillConfig.builder().direction(HORIZONTAL).build(), writeSheet);
+        excelWriter.fill(new FillWrapper("dateList", dateList), FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build(), writeSheet);
         // Do not forget to close the stream
         excelWriter.finish();
 

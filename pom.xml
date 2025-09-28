@@ -476,7 +476,7 @@
                 <configuration>
                     <java>
                         <licenseHeader>
-                            <file>license-header.txt</file>
+                            <file>tools/spotless/license-header.txt</file>
                             <delimiter>package |import |module </delimiter>
                         </licenseHeader>
                         <palantirJavaFormat>

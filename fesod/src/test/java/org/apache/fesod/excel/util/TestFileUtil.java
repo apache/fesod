@@ -21,18 +21,23 @@ package org.apache.fesod.excel.util;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class TestFileUtil {
 
     public static InputStream getResourcesFileInputStream(String fileName) {
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream("" + fileName);
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        return contextClassLoader == null ? null : contextClassLoader.getResourceAsStream(fileName);
     }
 
     public static String getPath() {
-        return TestFileUtil.class.getResource("/").getPath();
+        return resolveRootPath();
     }
 
     public static TestPathBuild pathBuild() {
@@ -40,7 +45,7 @@ public class TestFileUtil {
     }
 
     public static File createNewFile(String pathName) {
-        File file = new File(getPath() + pathName);
+        File file = pathFromRoot(pathName).toFile();
         if (file.exists()) {
             file.delete();
         } else {
@@ -52,7 +57,7 @@ public class TestFileUtil {
     }
 
     public static File readFile(String pathName) {
-        return new File(getPath() + pathName);
+        return pathFromRoot(pathName).toFile();
     }
 
     public static File readUserHomeFile(String pathName) {
@@ -75,19 +80,71 @@ public class TestFileUtil {
         }
 
         public String getPath() {
+            String rootPath = resolveRootPath();
             if (CollectionUtils.isEmpty(subPath)) {
-                return TestFileUtil.class.getResource("/").getPath();
+                return rootPath;
             }
             if (subPath.size() == 1) {
-                return TestFileUtil.class.getResource("/").getPath() + subPath.get(0);
+                return rootPath + subPath.get(0);
             }
-            StringBuilder path =
-                    new StringBuilder(TestFileUtil.class.getResource("/").getPath());
+            StringBuilder path = new StringBuilder(rootPath);
             path.append(subPath.get(0));
             for (int i = 1; i < subPath.size(); i++) {
                 path.append(File.separator).append(subPath.get(i));
             }
             return path.toString();
         }
+    }
+
+    private static String resolveRootPath() {
+        Path codeSourceLocation = resolveFromCodeSource();
+        if (codeSourceLocation != null) {
+            return appendSeparator(codeSourceLocation.toString());
+        }
+
+        URL resource = null;
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+            resource = contextClassLoader.getResource("");
+        }
+        if (resource == null) {
+            resource = TestFileUtil.class.getResource("/");
+        }
+        URL finalResource = Objects.requireNonNull(resource, "Unable to locate test resources root");
+        String path = finalResource.getPath();
+        if ("file".equals(finalResource.getProtocol())) {
+            if (path.startsWith("file:")) {
+                path = path.substring("file:".length());
+            }
+        }
+        return appendSeparator(path);
+    }
+
+    private static Path pathFromRoot(String relativePath) {
+        return Paths.get(resolveRootPath(), relativePath);
+    }
+
+    private static Path resolveFromCodeSource() {
+        try {
+            if (TestFileUtil.class.getProtectionDomain() == null
+                    || TestFileUtil.class.getProtectionDomain().getCodeSource() == null) {
+                return null;
+            }
+            Path location = Paths.get(TestFileUtil.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI());
+            if (!location.toFile().isDirectory()) {
+                return null;
+            }
+            return location;
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private static String appendSeparator(String path) {
+        return path.endsWith(File.separator) ? path : path + File.separator;
     }
 }

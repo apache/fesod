@@ -175,45 +175,78 @@
         </plugins>
     </build>
 
-        <profiles>
-            <profile>
-                <id>java9-modules</id>
-                <activation>
-                    <jdk>[9,)</jdk>
-                </activation>
-                <properties>
-                    <surefire.jdk9plus.args>
-                        --add-opens org.apache.poi.ooxml/org.apache.poi.xssf.streaming=org.apache.fesod
-                        --add-opens org.apache.poi.ooxml/org.apache.poi.xssf.usermodel=org.apache.fesod
-                        --add-opens org.apache.poi.ooxml/org.apache.poi.xssf.usermodel.helpers=org.apache.fesod
-                        --add-opens org.apache.poi.ooxml/org.apache.poi.openxml4j.opc.internal=org.apache.fesod
-                        --add-opens org.apache.poi.poi/org.apache.poi.hssf.usermodel=org.apache.fesod
-                        --add-opens java.base/sun.reflect.annotation=org.apache.fesod
-                    </surefire.jdk9plus.args>
-                </properties>
-                <build>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-compiler-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>compile-module-info</id>
-                                    <phase>compile</phase>
-                                    <goals>
-                                        <goal>compile</goal>
-                                    </goals>
-                                    <configuration>
-                                        <release>9</release>
-                                        <compileSourceRoots>
-                                            <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
-                                        </compileSourceRoots>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </build>
-            </profile>
-        </profiles>
+    <profiles>
+        <profile>
+            <id>java9-modules</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <surefire.jdk9plus.args>
+                    --add-opens org.apache.poi.ooxml/org.apache.poi.xssf.streaming=org.apache.fesod
+                    --add-opens org.apache.poi.ooxml/org.apache.poi.xssf.usermodel=org.apache.fesod
+                    --add-opens org.apache.poi.ooxml/org.apache.poi.xssf.usermodel.helpers=org.apache.fesod
+                    --add-opens org.apache.poi.ooxml/org.apache.poi.openxml4j.opc.internal=org.apache.fesod
+                    --add-opens org.apache.poi.poi/org.apache.poi.hssf.usermodel=org.apache.fesod
+                    --add-opens java.base/sun.reflect.annotation=org.apache.fesod
+                </surefire.jdk9plus.args>
+                <maven.test.skip>false</maven.test.skip>
+                <skipTests>false</skipTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <!-- keep main source at 1.8; only module-info compiled via execution below -->
+                            <testRelease>9</testRelease>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>compile-module-info</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <release>9</release>
+                                    <compileSourceRoots>
+                                        <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                                    </compileSourceRoots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-java9-test-sources</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.basedir}/src/test/java9</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <useModulePath>true</useModulePath>
+                            <argLine>${surefire.jvm.args} ${surefire.jdk9plus.args} ${argLine}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

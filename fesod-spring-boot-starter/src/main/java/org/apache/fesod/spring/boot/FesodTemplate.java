@@ -46,14 +46,12 @@ public class FesodTemplate {
     private final List<FesodReaderBuilderCustomizer> readerCustomizers;
 
     public FesodTemplate(
-        FesodProperties properties,
-        List<FesodWriterBuilderCustomizer> writerCustomizers,
-        List<FesodReaderBuilderCustomizer> readerCustomizers) {
-    this.properties = properties != null ? properties : new FesodProperties();
-    this.writerCustomizers =
-        writerCustomizers == null ? Collections.emptyList() : writerCustomizers;
-    this.readerCustomizers =
-        readerCustomizers == null ? Collections.emptyList() : readerCustomizers;
+            FesodProperties properties,
+            List<FesodWriterBuilderCustomizer> writerCustomizers,
+            List<FesodReaderBuilderCustomizer> readerCustomizers) {
+        this.properties = properties != null ? properties : new FesodProperties();
+        this.writerCustomizers = writerCustomizers == null ? Collections.emptyList() : writerCustomizers;
+        this.readerCustomizers = readerCustomizers == null ? Collections.emptyList() : readerCustomizers;
     }
 
     public ExcelWriterBuilder writer() {
@@ -156,10 +154,9 @@ public class FesodTemplate {
         if (locale != null) {
             builder.locale(locale);
         }
-    if (global.getUseScientificFormat() != null
-        && builder instanceof AbstractExcelReaderParameterBuilder) {
-        AbstractExcelReaderParameterBuilder<?, ?> readerBuilder =
-            (AbstractExcelReaderParameterBuilder<?, ?>) builder;
+        if (global.getUseScientificFormat() != null && builder instanceof AbstractExcelReaderParameterBuilder) {
+            AbstractExcelReaderParameterBuilder<?, ?> readerBuilder =
+                    (AbstractExcelReaderParameterBuilder<?, ?>) builder;
             readerBuilder.useScientificFormat(global.getUseScientificFormat());
         }
         if (global.getFiledCacheLocation() != null) {

@@ -20,7 +20,6 @@
 package org.apache.fesod.spring.boot.autoconfigure;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import org.apache.fesod.excel.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.write.builder.ExcelWriterBuilder;
@@ -33,12 +32,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 class FesodAutoConfigurationTest {
 
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(FesodAutoConfiguration.class));
+    private final ApplicationContextRunner contextRunner =
+            new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(FesodAutoConfiguration.class));
 
     @Test
-        void contextProvidesFesodTemplate() {
-                contextRunner.run(context -> assertThat(context).hasSingleBean(FesodTemplate.class));
+    void contextProvidesFesodTemplate() {
+        contextRunner.run(context -> assertThat(context).hasSingleBean(FesodTemplate.class));
     }
 
     @Test

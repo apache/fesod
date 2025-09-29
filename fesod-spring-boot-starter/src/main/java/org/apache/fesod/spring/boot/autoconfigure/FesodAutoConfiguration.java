@@ -37,7 +37,7 @@ public class FesodAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-        public FesodTemplate fesodTemplate(
+    public FesodTemplate fesodTemplate(
             FesodProperties properties,
             ObjectProvider<FesodWriterBuilderCustomizer> writerCustomizers,
             ObjectProvider<FesodReaderBuilderCustomizer> readerCustomizers) {
@@ -45,6 +45,6 @@ public class FesodAutoConfiguration {
                 writerCustomizers.orderedStream().collect(Collectors.toList());
         List<FesodReaderBuilderCustomizer> reader =
                 readerCustomizers.orderedStream().collect(Collectors.toList());
-                return new FesodTemplate(properties, writer, reader);
+        return new FesodTemplate(properties, writer, reader);
     }
 }

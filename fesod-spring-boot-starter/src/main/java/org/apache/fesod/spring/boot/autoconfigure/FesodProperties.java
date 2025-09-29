@@ -24,13 +24,29 @@ import org.apache.fesod.excel.enums.CacheLocationEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * {@link ConfigurationProperties} that drive the default behaviour of the Fesod Spring Boot starter.
+ * Root configuration properties for Fesod Spring Boot starter.
+ * <p>
+ * All properties are bound under the prefix {@code fesod}.
+ * Example (application.yml):
+ * <pre>
+ * fesod:
+ *   global:
+ *     auto-trim: true
+ *     locale: en_US
+ *   reader:
+ *     ignore-empty-row: true
+ *   writer:
+ *     in-memory: true
+ * </pre>
  */
 @ConfigurationProperties(prefix = "fesod")
 public class FesodProperties {
 
+    /** Global shared configuration applied to both reading and writing. */
     private Global global = new Global();
+    /** Reader specific configuration. */
     private Reader reader = new Reader();
+    /** Writer specific configuration. */
     private Writer writer = new Writer();
 
     public Global getGlobal() {
@@ -57,12 +73,33 @@ public class FesodProperties {
         this.writer = writer;
     }
 
+    /**
+     * Global configuration options that affect both reading and writing operations.
+     */
     public static class Global {
+        /**
+         * Whether to automatically trim leading and trailing whitespace from cell string values.
+         */
         private Boolean autoTrim;
+        /**
+         * Whether to automatically remove invisible / special control characters (strip) from cell values.
+         */
         private Boolean autoStrip;
+        /**
+         * Whether to interpret dates using the 1904 date windowing (common in older Mac Excel files).
+         */
         private Boolean use1904Windowing;
+        /**
+         * Whether numeric values which are large or small should be written using scientific notation.
+         */
         private Boolean useScientificFormat;
+        /**
+         * The default locale to use for formatting and parsing (e.g. number, date patterns). If not set, JVM default is used.
+         */
         private Locale locale;
+        /**
+         * Where to cache temporary file based data structures when writing / reading large workbooks.
+         */
         private CacheLocationEnum filedCacheLocation;
 
         public Boolean getAutoTrim() {
@@ -114,9 +151,21 @@ public class FesodProperties {
         }
     }
 
+    /**
+     * Reader specific configuration options.
+     */
     public static class Reader {
+        /**
+         * Whether empty rows (all cells empty) should be ignored during reading.
+         */
         private Boolean ignoreEmptyRow;
+        /**
+         * Whether the underlying input stream should be closed automatically after reading completes.
+         */
         private Boolean autoCloseStream;
+        /**
+         * Whether reading must be performed strictly from an InputStream (instead of file path / other sources).
+         */
         private Boolean mandatoryUseInputStream;
 
         public Boolean getIgnoreEmptyRow() {
@@ -144,10 +193,25 @@ public class FesodProperties {
         }
     }
 
+    /**
+     * Writer specific configuration options.
+     */
     public static class Writer {
+        /**
+         * Whether the underlying output stream should be closed automatically after writing completes.
+         */
         private Boolean autoCloseStream;
+        /**
+         * Whether to write a UTF-8 BOM (Byte Order Mark) for CSV/text outputs where applicable.
+         */
         private Boolean withBom;
+        /**
+         * Whether writing operations should be performed entirely in memory (might increase memory usage for large files).
+         */
         private Boolean inMemory;
+        /**
+         * Whether the Excel file should still be written/flushed when an exception occurs during writing.
+         */
         private Boolean writeExcelOnException;
 
         public Boolean getAutoCloseStream() {

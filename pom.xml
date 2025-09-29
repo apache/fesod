@@ -529,18 +529,6 @@
     </build>
     <profiles>
         <profile>
-            <id>jdk9plus</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <properties>
-                <surefire.jdk9plus.args>--add-opens=java.base/java.lang=ALL-UNNAMED
-                    --add-opens=java.base/java.util=ALL-UNNAMED
-                    --add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED
-                </surefire.jdk9plus.args>
-            </properties>
-        </profile>
-        <profile>
             <id>jdk8</id>
             <activation>
                 <jdk>1.8</jdk>

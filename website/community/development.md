@@ -66,3 +66,12 @@ FastExcel uses [Spotless](https://github.com/diffplug/spotless) as its code form
 ```bash
 mvn spotless:apply
 ```
+
+## Maintaining the Java Module Descriptor
+
+Fesod ships an optional Java Platform Module System (JPMS) descriptor that is compiled when the build runs on JDK 9 or newer. When you add a new public package or rely on additional reflective access, remember to:
+
+- Update `fesod/src/main/java9/module-info.java` and export any new public packages that should be reachable by module consumers.
+- Extend the Java 9+ Surefire arguments (`surefire.jdk9plus.args` property in `fesod/pom.xml`) if new reflective code requires `--add-opens` access to JDK or third-party modules.
+- Run `ModuleDefinitionTest` to confirm the module stays open and reflective access continues to work. Maven will execute it automatically via `./mvnw test -pl fesod` on JDK 11+.
+- Keep Java 8 compatibility: all new code must still compile with the Java 8 toolchain even after updating the module descriptor.

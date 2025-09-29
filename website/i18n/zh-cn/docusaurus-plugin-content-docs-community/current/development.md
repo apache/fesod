@@ -66,3 +66,12 @@ FastExcel 使用 [Spotless](https://github.com/diffplug/spotless) 检查并修�
 ```bash
 mvn spotless:apply
 ```
+
+## 模块化维护注意事项
+
+Fesod 在 JDK 9 及以上版本会额外编译 JPMS 模块描述文件。新增对外公开的包或依赖新的反射访问时，请同步完成以下调整：
+
+- 修改 `fesod/src/main/java9/module-info.java`，为需要暴露给使用方的包添加新的 `exports`。
+- 如果新增代码需要访问 JDK 或三方模块的内部类型，请在 `fesod/pom.xml` 的 `surefire.jdk9plus.args` 中补充相应的 `--add-opens`。
+- 运行或关注 `ModuleDefinitionTest`，确保模块保持 `open` 状态且反射能力未被破坏；在 JDK 11+ 环境执行 `./mvnw test -pl fesod` 时会自动覆盖该测试。
+- 继续保持 Java 8 兼容性：即使更新了模块描述符，新代码仍需通过 Java 8 编译器编译。

@@ -130,8 +130,11 @@ public class TestFileUtil {
                     || TestFileUtil.class.getProtectionDomain().getCodeSource() == null) {
                 return null;
             }
-            Path location =
-                    Paths.get(TestFileUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            Path location = Paths.get(TestFileUtil.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI());
             if (!location.toFile().isDirectory()) {
                 return null;
             }

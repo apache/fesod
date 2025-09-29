@@ -540,9 +540,9 @@ public class DateUtils {
      */
     public static boolean isInternalDateFormat(short format) {
         switch (format) {
-            // Internal Date Formats as described on page 427 in
-            // Microsoft Excel Dev's Kit...
-            // 14-22
+                // Internal Date Formats as described on page 427 in
+                // Microsoft Excel Dev's Kit...
+                // 14-22
             case 0x0e:
             case 0x0f:
             case 0x10:
@@ -552,7 +552,7 @@ public class DateUtils {
             case 0x14:
             case 0x15:
             case 0x16:
-            // 45-47
+                // 45-47
             case 0x2d:
             case 0x2e:
             case 0x2f:

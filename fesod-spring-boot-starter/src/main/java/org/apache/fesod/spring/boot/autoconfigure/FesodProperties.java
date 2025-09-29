@@ -98,7 +98,7 @@ public class FesodProperties {
          */
         private Locale locale;
         /**
-         * Where to cache temporary file based data structures when writing / reading large workbooks.
+         * The cache used when parsing fields such as head.
          */
         private CacheLocationEnum filedCacheLocation;
 

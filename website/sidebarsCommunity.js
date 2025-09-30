@@ -39,6 +39,7 @@ const sidebarsCommunity = {
                 'contribution/commit-format',
                 'contribution/contribute-code',
                 'contribution/contribute-doc',
+                'contribution/code-review-guide',
             ]
         },
         {

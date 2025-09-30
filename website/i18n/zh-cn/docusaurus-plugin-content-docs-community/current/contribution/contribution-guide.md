@@ -7,7 +7,7 @@ title: '概述'
 
 ## 贡献方向
 
-对 FastExcel 贡献，贡献方向有很多:
+对 Apache Fesod (Incubating) 贡献，贡献方向有很多:
 
 - 修复错别字
 - 修复 Bug
@@ -67,7 +67,7 @@ title: '概述'
 
 ## 贡献文档
 
-文档是 FastExcel 官方网站的重要构建内容，是项目与社区之间的重要桥梁。FastExcel 官方网站使用 [Docusaurus](https://docusaurus.io/) 进行构建，其中文档在 [website](https://github.com/apache/fesod/tree/main/website) 目录中进行维护。
+文档是 Apache Fesod (Incubating) 官方网站的重要构建内容，是项目与社区之间的重要桥梁。Apache Fesod (Incubating) 官方网站使用 [Docusaurus](https://docusaurus.io/) 进行构建，其中文档在 [website](https://github.com/apache/fesod/tree/main/website) 目录中进行维护。
 
 ## 其他参与方式
 
@@ -76,5 +76,5 @@ title: '概述'
 - 回答其他用户的问题。
 - 帮助审阅他人的 PR。
 - 提出改进建议。
-- 撰写技术博客，宣传 FastExcel。
+- 撰写技术博客，宣传 Apache Fesod (Incubating)。
 - 在社区中分享项目相关知识。

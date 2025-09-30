@@ -45,6 +45,11 @@ public class WriteConverterContext<T> {
     private T value;
 
     /**
+     * Java row level record
+     */
+    private Object record;
+
+    /**
      * Content property.Nullable.
      */
     private ExcelContentProperty contentProperty;

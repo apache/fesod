@@ -1,0 +1,65 @@
+{
+  "pmc": [
+    {
+      "githubId": "29803617",
+      "gitUrl": "https://github.com/dave2wave",
+      "name": "Dave Fisher",
+      "isMentor": true
+    },
+    {
+      "githubId": "13284744",
+      "gitUrl": "https://github.com/wolfboys",
+      "name": "Huajie Wang",
+      "isMentor": true
+    },
+    {
+      "githubId": "11783444",
+      "gitUrl": "https://github.com/pjfanning",
+      "name": "PJ Fanning",
+      "isMentor": true
+    },
+    {
+      "githubId": "18818196",
+      "gitUrl": "https://github.com/tisonkun",
+      "name": "Zili Chen",
+      "isMentor": true
+    },
+    {
+      "githubId": "18475586",
+      "gitUrl": "https://github.com/zhuangjiaju",
+      "name": "Jiaju Zhuang",
+      "isMentor": false
+    },
+    {
+      "githubId": "198714007",
+      "gitUrl": "https://github.com/jipengfei-jpf",
+      "name": "Pengfei Ji",
+      "isMentor": false
+    },
+    {
+      "githubId": "10711694",
+      "gitUrl": "https://github.com/psxjoy",
+      "name": "Shuxin Pan",
+      "isMentor": false
+    },
+    {
+      "githubId": "5753992",
+      "gitUrl": "https://github.com/tmlx1990",
+      "name": "Xin Yan",
+      "isMentor": false
+    },
+    {
+      "githubId": "3264250",
+      "gitUrl": "https://github.com/alaahong",
+      "name": "Zhe Zhang",
+      "isMentor": false
+    },
+    {
+      "githubId": "17263766",
+      "gitUrl": "https://github.com/delei",
+      "name": "Ziqiu Guo",
+      "isMentor": false
+    }
+  ],
+  "committer": []
+}

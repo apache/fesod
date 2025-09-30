@@ -1,6 +1,6 @@
 {
-  "copyright": {
-    "message": "Copyright © 2025 FastExcel, Licensed under the Apache License, Version 2.0.",
-    "description": "The footer copyright"
+  "logo.alt": {
+    "message": "Apache Incubator logo",
+    "description": "The alt text of footer logo"
   }
 }

@@ -1,30 +1,30 @@
 {
   "site.description": {
-    "message": "Fast, Concise, Java tool for processing Excel files that solves memory overflow issues with large files"
+    "message": "A high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability."
   },
   "quickstart": {
-    "message": "Quick Start"
+    "message": "Get Start"
   },
   "github": {
     "message": "GitHub"
   },
   "homepage.feature.quick.title": {
-    "message": "Quick"
+    "message": "High-performance"
   },
   "homepage.feature.quick.description": {
-    "message": "Quickly read data from Excel"
+    "message": "Focuses on performance optimization, capable of efficiently handling large-scale Excel data.\n Compared to some traditional Excel processing libraries, it can significantly reduce memory consumption."
   },
   "homepage.feature.simple.title": {
-    "message": "Simple"
+    "message": "Simplicity and Ease of Use"
   },
   "homepage.feature.simple.description": {
-    "message": "Mapping Excel and entity classes to make the code more concise"
+    "message": "The library offers a simple and intuitive API, allowing developers to easily integrate it into projects, whether for simple Excel operations or complex data processing."
   },
   "homepage.feature.bigdata": {
-    "message": "Large Files"
+    "message": "Stream Operations"
   },
   "homepage.feature.bigdata.description": {
-    "message": "When reading and writing large files, use the disk as a cache to save memory."
+    "message": "Supports stream reading, minimizing the problem of loading large amounts of data at once. This design is especially important when dealing with hundreds of thousands or even millions of rows of data."
   },
   "theme.ErrorPageContent.title": {
     "message": "This page crashed.",
@@ -348,5 +348,21 @@
   "theme.tags.tagsPageTitle": {
     "message": "Tags",
     "description": "The title of the tag list page"
+  },
+  "theme.IconExternalLink.ariaLabel": {
+    "message": "(opens in new tab)",
+    "description": "The ARIA label for the external link icon"
+  },
+  "team.name": {
+    "message": "Team"
+  },
+  "team.desc": {
+    "message": "Apache Fesod (Incubating) team is comprised of Members and Contributors. We embrace the community philosophy of openness and collaboration, welcoming more people to join us and grow together with the community."
+  },
+  "team.tip": {
+    "message": "(In no particular order)"
+  },
+  "team.thanks": {
+    "message": "Thanks to all wonderful contributor, who already contributed to Apache Fesod (Incubating)."
   }
 }

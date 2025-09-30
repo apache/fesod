@@ -6,5 +6,53 @@
   "item.label.Community": {
     "message": "社区",
     "description": "Navbar item with label Community"
+  },
+  "item.label.Blog": {
+    "message": "博客",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.Download": {
+    "message": "下载",
+    "description": "Navbar item with label Download"
+  },
+  "item.label.ASF": {
+    "message": "ASF",
+    "description": "Navbar item with label ASF"
+  },
+  "item.label.Foundation": {
+    "message": "Foundation",
+    "description": "Navbar item with label Foundation"
+  },
+  "item.label.License": {
+    "message": "License",
+    "description": "Navbar item with label License"
+  },
+  "item.label.Events": {
+    "message": "Events",
+    "description": "Navbar item with label Events"
+  },
+  "item.label.Privacy": {
+    "message": "Privacy",
+    "description": "Navbar item with label Privacy"
+  },
+  "item.label.Security": {
+    "message": "Security",
+    "description": "Navbar item with label Security"
+  },
+  "item.label.Sponsorship": {
+    "message": "Sponsorship",
+    "description": "Navbar item with label Sponsorship"
+  },
+  "item.label.Thanks": {
+    "message": "Thanks",
+    "description": "Navbar item with label Thanks"
+  },
+  "item.label.Code of Conduct": {
+    "message": "Code of Conduct",
+    "description": "Navbar item with label Code of Conduct"
+  },
+  "item.label.Team": {
+    "message": "团队",
+    "description": "Navbar item with label Team"
   }
 }

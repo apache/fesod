@@ -64,7 +64,7 @@ Hi, i accept. Thanks for invitaion.
 
 ### 订阅邮件列表
 
-请参考 [订阅邮件列表](../index.md#how-to-subscribe-to-a-mailing-list)
+请参考 [订阅邮件列表](../index.md#如何订阅邮件列表)
 
 ## 在 GitHub 上启用双因素认证
 

@@ -35,7 +35,7 @@ const sidebarsCommunity = {
             type: 'category',
             label: 'Contribution',
             items: [
-                'contribution/contribution',
+                'contribution',
                 'contribution/commit-format',
                 'contribution/contribute-code',
                 'contribution/contribute-doc',

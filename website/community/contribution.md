@@ -33,7 +33,7 @@ Of course, if you have a good idea, you can also propose it directly on GitHub D
 
 ### Discuss
 
-Please refer to [Issue Feedback](../feedback.md) to create an issue or discussion and endeavour to reach consensus.
+Please refer to [Issue Feedback](./feedback.md) to create an issue or discussion and endeavour to reach consensus.
 
 **Note**: To request an issue, please note that it is not just a "please assign it to me", you need to explain your understanding of the issue, and your design, and if possible, you need to provide your POC code.
 
@@ -42,7 +42,7 @@ Please refer to [Issue Feedback](../feedback.md) to create an issue or discussio
 Implement the change according to the approach agreed upon in the issue.
 
 - Only start working on the implementation if there is consensus on the approach (e.g. you are assigned to the ticket)
-- If you are newer, can refer to [Code Contribution](./contribute-code.md) to setup a dev environment.
+- If you are newer, can refer to [Code Contribution](./contribution/contribute-code.md) to setup a dev environment.
 
 ### Review
 
@@ -59,7 +59,8 @@ Create the pull request and work with the reviewer.
 
 ## Contribution Code
 
-All improvements can be implemented through Pull Request (PR). Before submitting a Pull Request, please refer to [Code Contribution](./contribute-code.md) to setup a dev environment.
+All improvements can be implemented through Pull Request (PR). Before submitting a Pull Request.
+Please refer to [Code Contribution](./contribution/contribute-code.md) for information on how to contribute code.
 
 ## Contribution of Test Cases
 
@@ -67,7 +68,7 @@ Any contribution of test cases is encouraged, especially unit tests. It is recom
 
 ## Contribution Document
 
-Documentation is an important component of the project official website and serves as a vital bridge between the project and the community.The project official website is built using [Docusaurus](https://docusaurus.io/), and the documentation is maintained in the [website](https://github.com/apache/fesod/tree/main/website) directory.
+Documentation is an important component of the project official website and serves as a vital bridge between the project and the community. Please refer to [Docs Contribution](./contribution/contribute-code.md) for information on how to contribute document.
 
 ## Other Ways to Contribute
 

@@ -33,7 +33,7 @@ title: '概述'
 
 ### 讨论
 
-请参考[问题反馈](../feedback.md)来创建一个问题或讨论，并努力达成共识。
+请参考[问题反馈](./feedback.md)来创建一个问题或讨论，并努力达成共识。
 
 **注意**：如果申请分配这个问题时，请注意这并非简单的“请分配给我”，您需要阐述对问题的理解、设计方案，并在可能的情况下提供您的概念验证代码。
 
@@ -42,7 +42,7 @@ title: '概述'
 根据问题中商定的方案实施变更。
 
 - 仅在方案达成共识时才开始实施工作（例如：您已被指派处理该工单）
-- 若您是新成员，可参考[代码贡献指南](./contribute-code.md)来搭建开发环境。
+- 若您是新成员，可参考[代码贡献指南](./contribution/contribute-code.md)来搭建开发环境。
 
 ### 审核
 
@@ -55,11 +55,11 @@ title: '概述'
 
 ### 合并
 
-社区 committer 需要根据[如何成为Committer](../committer/become-committer.md)中的指南，负责检查贡献是否满足要求，并将代码合并到代码库中。
+社区 committer 需要根据[Code Review指南](./contribution/code-review-guide.md)中的指南，负责检查贡献是否满足要求，并将代码合并到代码库中。
 
 ## 贡献代码
 
-所有改进均可通过 Pull Request (PR) 实现。在提交 Pull Request 前，请参考[代码贡献指南](./contribute-code.md)。
+所有改进均可通过 Pull Request (PR) 实现。在提交 Pull Request 前，请参考[代码贡献指南](./contribution/contribute-code.md)了解如何贡献代码。
 
 ## 测试用例贡献
 
@@ -67,7 +67,7 @@ title: '概述'
 
 ## 贡献文档
 
-文档是 Apache Fesod (Incubating) 官方网站的重要构建内容，是项目与社区之间的重要桥梁。Apache Fesod (Incubating) 官方网站使用 [Docusaurus](https://docusaurus.io/) 进行构建，其中文档在 [website](https://github.com/apache/fesod/tree/main/website) 目录中进行维护。
+文档是 Apache Fesod (Incubating) 官方网站的重要构建内容，是项目与社区之间的重要桥梁。请参考[文档贡献指南](./contribution/contribute-doc.md)了解如何贡献文档。
 
 ## 其他参与方式
 

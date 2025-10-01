@@ -51,7 +51,7 @@ Best regards,
 ${NOMINATOR}
 ```
 
-投票将在今天**一周后**结束, 即：
+投票将在今天开始的**一周后**结束, 即：
 
 - [midnight UTC on YYYY-MM-DD](https://www.timeanddate.com/counters/customcounter.html?year=YYYY&month=MM&day=DD)
 - [Apache Voting Guidelines](https://community.apache.org/newcommitter.html)
@@ -172,7 +172,7 @@ establishing you as a committer.
 ${NOMINATOR} (as represents of The Apache Fesod (Incubating) PPMC)
 ```
 
-## 该候选人接受了邀请
+## 候选人接受邀请
 
 如果接受邀请，该候选人将会收到来自 ASF 的一封电子邮件。
 
@@ -228,7 +228,7 @@ The Apache Fesod (Incubating) PPMC
 
 ## 将候选人添加至提交者名单
 
-候选人接受邀请并完成iCLA记录后，请通过whimsy roster tools](<https://whimsy.apache.org/roster/committee/fesod)将其添加至提交者名单。>
+候选人接受邀请并完成iCLA记录后，请通过[whimsy roster tools](https://whimsy.apache.org/roster/committee/fesod)将其添加至提交者名单。
 
 ![Roster](/img/community/roster-add-committer.png)
 

@@ -1,11 +1,9 @@
 ---
-id: 'bug-report'
+id: 'feedback'
 title: 'Feedback'
 ---
 
-# Feedback
-
-We appreciate all the feedback and suggestions you have. If you find any bugs during use, you can submit the issue through the [NEW ISSUE](https://github.com/fast-excel/fastexcel/issues/new/choose) page.
+We appreciate all the feedback and suggestions you have. If you find any bugs during use, you can submit the issue through the [NEW ISSUE](https://github.com/apache/fesod/issues/new/choose) page.
 
 ## Before Submitting
 
@@ -17,7 +15,7 @@ Before creating a new issue, please ensure you have completed the following prep
 
 ### Search Existing Issues
 
-- Visit the [Issue List](https://github.com/fast-excel/fastexcel/issues) and search for keywords.
+- Visit the [Issue List](https://github.com/apache/fesod/issues) and search for keywords.
 - If you find a similar issue, please **comment and provide additional details** under that issue instead of creating a new one.
 - If an unresolved issue is closed for some reason, please **comment and provide additional details** to reopen it.
 
@@ -25,11 +23,9 @@ Before creating a new issue, please ensure you have completed the following prep
 
 Please make sure you are using the latest stable version of the project or the latest code from the main branch. Many issues have been resolved in newer versions.
 
----
-
 ## Creating a New Issue
 
-If you confirm that your issue has not been reported, please submit a new issue through the [NEW ISSUE](https://github.com/fast-excel/fastexcel/issues/new/choose) page.
+If you confirm that your issue has not been reported, please submit a new issue through the [NEW ISSUE](https://github.com/apache/fesod/issues/new/choose) page.
 
 **Please use the issue template** and provide as much information as possible, such as:
 
@@ -48,8 +44,6 @@ The following situations are appropriate for submitting a new issue:
 - Optimization of test coverage
 - Need for technical support
 - Other issues related to the project
-
----
 
 ## Notes
 

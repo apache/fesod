@@ -17,34 +17,21 @@
  * under the License.
  */
 
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
-import { themes as prismThemes } from 'prism-react-renderer';
+import {themes as prismThemes} from 'prism-react-renderer';
 
 const branch = 'main';
 const repoUrl = `https://github.com/apache/fesod`;
 
 const config = {
-    title: 'Fesod',
+    title: 'Apache Fesod (Incubating)',
     favicon: 'img/favicon.ico',
-
     url: 'https://fesod.apache.org',
-    baseUrl: "/",
-
+    baseUrl: '/',
     trailingSlash: true,
 
     future: {
-        // Improve compatibility with the upcoming Docusaurus v4
         v4: true,
     },
-
-    markdown: {
-        hooks: {
-            onBrokenLinks: 'throw',
-            onBrokenMarkdownLinks: 'throw',
-        }
-    },
-
     customFields: {
         repoUrl,
     },
@@ -71,6 +58,16 @@ const config = {
                     sidebarPath: './sidebars.js',
                     editUrl: `${repoUrl}/edit/${branch}/website/`,
                     editLocalizedFiles: true
+                },
+                blog: {
+                    showReadingTime: false,
+                    postsPerPage: 5,
+                    feedOptions: {
+                        type: 'all',
+                    },
+                    editUrl: `${repoUrl}/edit/${branch}/website/`,
+                    editLocalizedFiles: true,
+                    blogSidebarCount: 'ALL'
                 },
                 theme: {
                     customCss: './src/css/custom.css'
@@ -102,13 +99,67 @@ const config = {
             items: [
                 {
                     label: 'Docs',
-                    position: 'left',
+                    position: 'right',
                     to: '/docs/',
                 },
                 {
+                    label: 'Blog',
+                    position: 'right',
+                    to: '/blog/',
+                },
+                {
+                    label: 'Download',
+                    position: 'right',
+                    to: '/docs/download',
+                },
+                {
+                    label: 'Team',
+                    position: 'right',
+                    to: '/team',
+                },
+                {
                     label: 'Community',
-                    position: 'left',
-                    to: '/community/contact',
+                    position: 'right',
+                    to: '/community',
+                },
+                {
+                    label: 'ASF',
+                    type: 'dropdown',
+                    position: 'right',
+                    items: [
+                        {
+                            label: 'Foundation',
+                            to: 'https://www.apache.org/',
+                        },
+                        {
+                            label: 'License',
+                            to: 'https://www.apache.org/licenses/',
+                        },
+                        {
+                            label: 'Events',
+                            to: 'https://www.apache.org/events/current-event.html',
+                        },
+                        {
+                            label: 'Privacy',
+                            to: 'https://privacy.apache.org/policies/privacy-policy-public.html',
+                        },
+                        {
+                            label: 'Security',
+                            to: 'https://www.apache.org/security/',
+                        },
+                        {
+                            label: 'Sponsorship',
+                            to: 'https://www.apache.org/foundation/sponsorship.html',
+                        },
+                        {
+                            label: 'Thanks',
+                            to: 'https://www.apache.org/foundation/thanks.html',
+                        },
+                        {
+                            label: 'Code of Conduct',
+                            to: 'https://www.apache.org/foundation/policies/conduct.html',
+                        },
+                    ]
                 },
                 {
                     type: 'localeDropdown',
@@ -121,6 +172,11 @@ const config = {
                 },
             ],
         },
+        blog: {
+            sidebar: {
+                groupByYear: true,
+            },
+        },
         metadata: [
             {
                 name: 'keywords',
@@ -128,9 +184,14 @@ const config = {
             }
         ],
         footer: {
-            style: 'dark',
+            logo: {
+                width: 200,
+                src: '/img/apache-incubator.svg',
+                href: 'https://incubator.apache.org/',
+                alt: 'Apache Incubator logo'
+            },
             links: [],
-            copyright: `Copyright © ${new Date().getFullYear()} The Apache Software Foundation, Licensed under the Apache License, Version 2.0.`,
+            copyright: `<br><p>Apache Fesod (Incubating) is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.</p><p>Copyright © ${new Date().getFullYear()} The Apache Software Foundation, Licensed under the Apache License, Version 2.0.</p><p>Apache, the names of Apache projects, and the feather logo are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries. All other marks mentioned may be trademarks or registered trademarks of their respective owners.</p>`,
         },
         prism: {
             theme: prismThemes.github,

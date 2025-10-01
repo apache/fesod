@@ -1,11 +1,9 @@
 ---
-id: 'bug-report'
-title: '反馈问题'
+id: 'feedback'
+title: '问题反馈'
 ---
 
-# 反馈问题
-
-我们非常欢迎社区用户对项目提出宝贵的反馈和意见。如果您在使用过程中发现任何问题，您可以通过 [NEW ISSUE](https://github.com/fast-excel/fastexcel/issues/new/choose) 页面提交问题。
+我们非常欢迎社区用户对项目提出宝贵的反馈和意见。如果您在使用过程中发现任何问题，您可以通过 [NEW ISSUE](https://github.com/apach/fesod/issues/new/choose) 页面提交问题。
 
 ## 提交之前
 
@@ -17,7 +15,7 @@ title: '反馈问题'
 
 ### 搜索现有问题
 
-- 访问 [问题列表](https://github.com/fast-excel/fastexcel/issues) 搜索关键词。
+- 访问 [问题列表](https://github.com/apache/fesod/issues) 搜索关键词。
 - 如果发现类似问题，请在该问题下 **评论并补充详细信息**，而不是重新创建新问题。
 - 如果未解决的问题，因为某些原因已处于已关闭的状态，请 **评论并补充详细信息** 重新打开这个问题。
 
@@ -25,11 +23,9 @@ title: '反馈问题'
 
 确保您正在使用的是项目的最新稳定版或主分支的最新代码。很多问题在新版本中已经被修复了。
 
----
-
 ## 创建新问题
 
-如果确认您的问题尚未被报告，请通过 [NEW ISSUE](https://github.com/fast-excel/fastexcel/issues/new/choose) 页面提交新问题。
+如果确认您的问题尚未被报告，请通过 [NEW ISSUE](https://github.com/apache/fesod/issues/new/choose) 页面提交新问题。
 
 **请务必使用问题模板**，并尽可能地提供完整的信息，如：
 
@@ -48,8 +44,6 @@ title: '反馈问题'
 - 测试覆盖率优化
 - 需要技术支持
 - 其他与项目相关的问题
-
----
 
 ## 注意事项
 

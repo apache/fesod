@@ -3,13 +3,13 @@ id: 'icla'
 title: '签署 ICLA 指南'
 ---
 
-Apache CLA 是 Apache贡 献者许可协议的缩写，该协议旨在明确界定向ASF贡献知识产权的条款，从而使我们在未来软件发生法律纠纷时能够为项目提供法律保障。个人在获得任何ASF项目的提交权限前，必须提交经签署的ICLA文件存档。
+Apache CLA 是 Apache贡献者许可协议的缩写，该协议旨在明确界定向ASF贡献知识产权的条款，从而使我们在未来软件发生法律纠纷时能够为项目提供法律保障。个人在获得任何 ASF 项目的提交权限前，必须提交经签署的 ICLA 文件存档。
 
 提交 ICLA 的流程如下：
 
 ## 下载模板
 
-点击链接[贡献者许可协议](https://www.apache.org/licenses/contributor-agreements.html#clas)，在贡献者许可协议部分找到ICLA。
+点击链接[贡献者许可协议](https://www.apache.org/licenses/contributor-agreements.html#clas)，在贡献者许可协议部分找到 ICLA。
 
 ![ICLA](/img/community/icla-01.png)
 
@@ -21,15 +21,15 @@ Apache CLA 是 Apache贡 献者许可协议的缩写，该协议旨在明确界�
 
 - 全名
 
-  请填写真实姓名。名字在前，姓氏在后。每个单词的首字母需大写。（注：姓氏与名字之间需留空格，请注意首字母大写，姓氏需置于首位。）
+  请填写真实姓名。名字在前，姓氏在后。每个单词的首字母需大写。
 
 - 公开名称
 
-  公开名称应为真实姓名或笔名，不可使用用户ID。
+  公开名称应为真实姓名或笔名，不能和 Apache ID 重复。
 
 - 邮寄地址
 
-  英文地址需详细至门牌号。
+  英文地址，且需详细至门牌号。
 
 - 国家
 

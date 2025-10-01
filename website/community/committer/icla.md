@@ -41,7 +41,7 @@ Fill in the following columns in English.
 
 - (optional) preferred Apache id(s)
 
-  You need to choose a unique ApacheID that hasn't been taken. Check [ASF Committers by ID](https://people.apache.org/committer-index.html) to see which IDs are still available.
+  You need to choose a unique Apache ID that hasn't been taken. Check [ASF Committers by ID](https://people.apache.org/committer-index.html) to see which IDs are still available.
 
 - (optional) notify project:
 

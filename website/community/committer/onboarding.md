@@ -17,7 +17,7 @@ We require all contributors to sign a Contributor License Agreement (CLA). This 
 
 ## Setup ASF Account
 
-Go to [Apache Account Utility](https://id.apache.org/reset/enter) and enter your ApacheID.
+Go to [Apache Account Utility](https://id.apache.org/reset/enter) and enter your Apache ID.
 
 ![Reset Password](/img/community/reset-passwd.png)
 
@@ -27,13 +27,13 @@ After clicking "Send Email", a prompt will appear indicating that the email has 
 
 ![Link GitHub](/img/community/link-github.png)
 
-1. Navigate to [ASF Boxer](https://gitbox.apache.org/boxer/) and enter your ApacheID and password.
+1. Navigate to [ASF Boxer](https://gitbox.apache.org/boxer/) and enter your Apache ID and password.
 2. Click "Link GitHub username to ASF id" and follow the given instructions to link your ASF account to GitHub.
 3. Check your email titled "[GitHub] @asfgit has invited you to join the @apache organization" and accept the invitation.
 4. Wait momentarily, and the website will refresh on its own.
 5. (If you do not enable 2FA on GitHub) Please follow the [instruction](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication).
 
-Your ApacheID and GitHub ID will now both appear on [ASF Boxer](https://gitbox.apache.org/boxer/). Congrats on successfully linking your ASF account to GitHub!
+Your Apache ID and GitHub ID will now both appear on [ASF Boxer](https://gitbox.apache.org/boxer/). Congrats on successfully linking your ASF account to GitHub!
 
 ## Email Settings
 

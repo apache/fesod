@@ -3,7 +3,7 @@ id: 'committer-onboarding'
 title: 'Committer 须知'
 ---
 
-收到 Apache Fesod (Incubating) PMC 的邀请邮件后，新的 Committer 应考虑是否接受邀请。
+收到 Apache Fesod (Incubating) PPMC 的邀请邮件后，新的 Committer 应考虑是否接受邀请。
 
 若决定接受，请选择 **回复所有** 并表明最终决定。回复邮件请包含以下参考内容：
 
@@ -33,7 +33,7 @@ Hi, i accept. Thanks for invitaion.
 4. 请稍候片刻，网站将自动刷新。
 5. （若您尚未在GitHub启用双重验证）请遵循[操作指南](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication)。
 
-您的 ApacheID 和 GitHub ID 现已同时显示在 [ASF Boxer](https://gitbox.apache.org/boxer/) 上。恭喜您成功将 ASF 账户与 GitHub 关联！
+您的 Apache ID 和 GitHub ID 现已同时显示在 [ASF Boxer](https://gitbox.apache.org/boxer/) 上。恭喜您成功将 ASF 账户与 GitHub 关联！
 
 ## 邮箱设置
 

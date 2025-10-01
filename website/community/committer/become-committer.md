@@ -13,7 +13,7 @@ Anyone being supportive of the community and working in any of the CoPDoC areas 
   of the authors
 - **(C)ode** - discussion goes nowhere without code
 
-Apache Fesod (Incubating) community strives to be meritocratic. Thus, once someone has contributed sufficiently to any area of CoPDoC they can be a candidate for committer-ship and at last voted in as an Apache Fesod (Incubating) committer. Being an Apache Fesod (Incubating) committer does not necessarily mean you must commit code with your commit privilege to the codebase; it means you are committed to the Apache Fesod (Incubating) project and are productively contributing to our community's success.
+Apache Fesod (Incubating) community strives to be meritocratic. Thus, once someone has contributed sufficiently to any area of CoPDoC they can be a candidate for committer-ship and at last voted in as an Apache Fesod (Incubating) committer. Being an Apache Fesod (Incubating) committer does not necessarily mean you must commit code with your commit privilege to the codebase, it means you are committed to the Apache Fesod (Incubating) project and are productively contributing to our community's success.
 
 ## Committer requirements
 

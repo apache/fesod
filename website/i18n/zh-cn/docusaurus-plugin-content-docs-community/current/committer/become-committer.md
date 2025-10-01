@@ -10,7 +10,7 @@ title: '如何成为 Committer'
 - **(Do)cumentation** - 没有它，内容只会停留在作者的头脑中。
 - **(C)ode** - 没有代码，讨论就毫无意义。
 
-Apache Fesod (Incubating) 社区努力追求基于功绩的原则。因此，一旦有人在 CoPDoC 的任何领域有了足够的贡献，他们就可以成为 Committer 的候选人，最终被投票选为 Apache Fesod (Incubating) 的 Committer。成为 Apache Fesod (Incubating) 的 Committer 并不一定意味着你必须使用你的提交权限向代码库提交代码；它意味着你致力于 Apache Fesod (Incubating) 项目并为我们社区的成功做出了积极的贡献。
+Apache Fesod (Incubating) 社区努力追求基于功绩的原则。因此，一旦有人在 CoPDoC 的任何领域有了足够的贡献，他们就可以成为 Committer 的候选人，最终被投票选为 Apache Fesod (Incubating) 的 Committer。成为 Apache Fesod (Incubating) 的 Committer 并不一定意味着你必须使用你的提交权限向代码库提交代码，它意味着你致力于 Apache Fesod (Incubating) 项目并为我们社区的成功做出了积极的贡献。
 
 ## Committer 的要求
 
@@ -37,19 +37,19 @@ Committer 的候选人应该持续参与并为 Apache Fesod (Incubating) 做出�
 ## 日常工作
 
 - 查看社区待处理的 Pull Request 和 Issue 列表，负责问题的处理
-  - 包括标记 issue，回复 issue，关闭 issue 等；
+  - 包括标记、回复、关闭 issue 等；
   - 将 issue 分配至熟悉该模块的贡献者；
-- Assignee 在被分配 issue 后，需要进行如下判断：
+- 分配 issue 后，需要进行如下判断：
   - 判断是否是长期 issue，如是，则标记为 `pending`；
   - 判断 issue 类型，如：bug，enhancement，discussion 等；
   - 标记 Milestone。
 - Committer 提交的 PR，需要根据 PR 类型和当前发布的周期标注 Label 和 Milestone。
-- Committer review PR 时，可以进行 squash and merge to master 的操作，如果有问题可以加上 change request 或者 @ 相关人员协助处理。
+- Committer 审核通过 PR 时，可以进行 “squash and merge” 的操作，如果有问题可以加上 change request 或者 @ 相关人员协助处理。
 
 ## 福利权益
 
 每个 Apache Committer 都有资格获得免费 JetBrains 订阅，使他们能够访问 JetBrains 产品包，如 IntelliJ IDEA、PyCharm 和其他桌面工具。
 
-如果您是 Apache ShardingSphere 提交者，但未收到免费的 JetBrains 订阅，请使用您的 @apache.org 电子邮件地址 [All Products Packs for Apache committers](https://www.jetbrains.com/shop/eform/apache?product=ALL) 以便于 Apache Fesod (Incubating) 的后续开发。
+如果您已是一名 Apache Committer，但未收到免费的 JetBrains 订阅，请使用您的 @apache.org 电子邮件地址 [All Products Packs for Apache committers](https://www.jetbrains.com/shop/eform/apache?product=ALL) 以便于 Apache Fesod (Incubating) 的后续开发。
 
 如果您已经使用了免费的 JetBrains 订阅，遇到 License 到期，可以使用您的 @apache.org 电子邮件地址 续订免费的所有产品包，并在您的 JetBrains 桌面工具（例如 IntelliJ IDEA） 中点击 `Refresh license list` 刷新订阅。

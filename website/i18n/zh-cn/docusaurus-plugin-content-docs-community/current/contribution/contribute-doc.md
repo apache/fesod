@@ -9,7 +9,7 @@ title: '文档贡献指南'
 
 提交拉取请求的具体方法请参阅：
 
-- [代码贡献指南](./contribution-guide.md)
+- [代码贡献指南](./contribute-code.md)
 - [Commit格式规范](./commit-format.md)
 
 ## 环境要求

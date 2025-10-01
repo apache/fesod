@@ -9,7 +9,7 @@ The official website is built using [Docusaurus](https://docusaurus.io/), and th
 
 For how to submit pull requests, please refer to
 
-- [How to Contribute](./contribution-guide.md)
+- [Code Contribution](./contribute-code.md)
 - [Commit Format Specification](./commit-format.md)
 
 ## Requirements

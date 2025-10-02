@@ -81,6 +81,12 @@ public class LoopMergeStrategy implements RowWriteHandler {
                     columnIndex,
                     columnIndex + columnExtend - 1);
             context.getWriteSheetHolder().getSheet().addMergedRegionUnsafe(cellRangeAddress);
+        } else {
+            // Iterate through the columns to clear the content of merged cells
+            for (int i = 0; i < columnExtend; i++) {
+                // Access the cell at the specified column index in the current row and set it to blank
+                context.getRow().getCell(columnIndex + i).setBlank();
+            }
         }
     }
 }

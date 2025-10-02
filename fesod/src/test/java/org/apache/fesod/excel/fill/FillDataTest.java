@@ -231,8 +231,8 @@ public class FillDataTest {
         }
         List<Object> list = FastExcel.read(file).sheet().headRowNumber(3).doReadSync();
         Assertions.assertEquals(list.size(), 21L);
-        Map<String, String> map19 = (Map<String, String>) list.get(19);
-        Assertions.assertEquals("Zhang San", map19.get(0));
+        Map<String, String> map18 = (Map<String, String>) list.get(18);
+        Assertions.assertEquals("Zhang San", map18.get(0));
     }
 
     private void fill(File file, File template) {

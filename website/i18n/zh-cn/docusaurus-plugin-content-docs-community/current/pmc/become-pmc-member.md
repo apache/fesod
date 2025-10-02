@@ -1,6 +1,6 @@
 ---
 id: 'become-pmc-member'
-title: '如何成为 PMC 成员'
+title: '如何成为 PPMC 成员'
 ---
 
 任何支持社区并在 CoPDoC 领域中工作的人都可以成为 Apache Fesod (Incubating) 的 Committer。CoPDoC 是以下四点的缩写，用来描述我们如何不仅仅通过代码来认识到您的贡献：

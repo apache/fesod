@@ -1,21 +1,21 @@
 ---
 id: 'icla'
-title: '签署 ICLA 指南'
+title: '签署 iCLA 指南'
 ---
 
-Apache CLA 是 Apache贡献者许可协议的缩写，该协议旨在明确界定向ASF贡献知识产权的条款，从而使我们在未来软件发生法律纠纷时能够为项目提供法律保障。个人在获得任何 ASF 项目的提交权限前，必须提交经签署的 ICLA 文件存档。
+Apache CLA 是 Apache贡献者许可协议的缩写，该协议旨在明确界定向ASF贡献知识产权的条款，从而使我们在未来软件发生法律纠纷时能够为项目提供法律保障。个人在获得任何 ASF 项目的提交权限前，必须提交经签署的 iCLA 文件存档。
 
-提交 ICLA 的流程如下：
+提交 iCLA 的流程如下：
 
 ## 下载模板
 
-点击链接[贡献者许可协议](https://www.apache.org/licenses/contributor-agreements.html#clas)，在贡献者许可协议部分找到 ICLA。
+点击链接[贡献者许可协议](https://www.apache.org/licenses/contributor-agreements.html#clas)，在贡献者许可协议部分找到 iCLA。
 
-![ICLA](/img/community/icla-01.png)
+![iCLA](/img/community/icla-01.png)
 
 ## 填写内容
 
-![ICLA](/img/community/icla-02.png)
+![iCLA](/img/community/icla-02.png)
 
 请用英文填写以下栏目。
 
@@ -49,11 +49,11 @@ Apache CLA 是 Apache贡献者许可协议的缩写，该协议旨在明确界�
 
 参考此案例
 
-![ICLA](/img/community/icla-03.png)
+![iCLA](/img/community/icla-03.png)
 
 ## 署名
 
-![ICLA](/img/community/icla-04.png)
+![iCLA](/img/community/icla-04.png)
 
 - Please sign:
 
@@ -69,7 +69,7 @@ Apache CLA 是 Apache贡献者许可协议的缩写，该协议旨在明确界�
 
 ```text
 Hello Apache,
-  I am willing contribute to the ASF. The attachment is my ICLA information. My Github account is : https://github.com/xxxx.
+  I am willing contribute to the ASF. The attachment is my iCLA information. My Github account is : https://github.com/xxxx.
 Thanks !
 ```
 

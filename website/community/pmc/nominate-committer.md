@@ -109,7 +109,7 @@ Content:
 ```text
 Hello ${CANDIDATE_NAME},
 
-The Apache Fesod (Incubating) (PMC)hereby offers you 
+The Apache Fesod (Incubating) (PPMC)hereby offers you 
 committer privileges to the project.
 
 These privileges are offered on the understanding that
@@ -168,7 +168,7 @@ B. If there is not already an ICLA on file, you need to submit an ICLA:
     unique Apache ID. Look to see if your preferred
     ID is already taken at
     https://people.apache.org/committer-index.html
-    This will allow the Secretary to notify the PMC
+    This will allow the Secretary to notify the PPMC
     when your ICLA has been recorded.
 
 When recording of your ICLA is noted, you will

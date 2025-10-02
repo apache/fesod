@@ -103,7 +103,7 @@ Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
 ```text
 Hello ${CANDIDATE_NAME},
 
-The Apache Fesod (Incubating) (PMC)hereby offers you 
+The Apache Fesod (Incubating) (PPMC)hereby offers you 
 committer privileges to the project.
 
 These privileges are offered on the understanding that

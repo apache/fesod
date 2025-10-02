@@ -24,11 +24,11 @@ const sidebarsCommunity = {
             type: "doc",
         },
         {
-            id: "feedback",
+            id: "maturity",
             type: "doc",
         },
         {
-            id: "maturity",
+            id: "feedback",
             type: "doc",
         },
         {
@@ -53,7 +53,7 @@ const sidebarsCommunity = {
         },
         {
             type: 'category',
-            label: 'PMC Members',
+            label: 'PPMC Members',
             items: [
                 'pmc/become-pmc-member',
                 'pmc/pmc-onboarding',

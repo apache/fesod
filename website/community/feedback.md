@@ -47,7 +47,7 @@ The following situations are appropriate for submitting a new issue:
 
 ## Notes
 
-- The title of the issue should be clear and concise, and should be no longer than 50 characters.
+- The title of the issue should be clear and concise, written in **English**, and should be no longer than 50 characters.
 - Please use polite language in the issue description and content.
 - Each issue should focus on a single topic, please do not combine multiple issues into one.
 - Unless a specific developer has been explicitly assigned to the issue in advance, please do not arbitrarily assign it to a particular developer.

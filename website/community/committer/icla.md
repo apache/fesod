@@ -1,21 +1,21 @@
 ---
 id: 'icla'
-title: 'Sign ICLA Guide'
+title: 'Sign iCLA Guide'
 ---
 
 Apache CLA short for Apache Contributor License Agreement, the purpose of this agreement is to clearly define the terms under which intellectual property has been contributed to the ASF and thereby allow us to defend the project should there be a legal dispute regarding the software at some future time. A signed ICLA is required to be on file before an individual is given commit rights to any ASF project.
 
-The process of submitting ICLA are:
+The process of submitting iCLA are:
 
 ## Download
 
-Click the link [Contributor License Agreements](https://www.apache.org/licenses/contributor-agreements.html#clas) and find ICLA under the Contributor License Agreements section.
+Click the link [Contributor License Agreements](https://www.apache.org/licenses/contributor-agreements.html#clas) and find iCLA under the Contributor License Agreements section.
 
-![ICLA](/img/community/icla-01.png)
+![iCLA](/img/community/icla-01.png)
 
 ## Fill the content
 
-![ICLA](/img/community/icla-02.png)
+![iCLA](/img/community/icla-02.png)
 
 Fill in the following columns in English.
 
@@ -49,11 +49,11 @@ Fill in the following columns in English.
 
 Refer to this case
 
-![ICLA](/img/community/icla-03.png)
+![iCLA](/img/community/icla-03.png)
 
 ## Sign
 
-![ICLA](/img/community/icla-04.png)
+![iCLA](/img/community/icla-04.png)
 
 - Please sign:
 
@@ -69,7 +69,7 @@ Please send the email to `secretary@apache.org` and also forward it to `private@
 
 ```text
 Hello Apache,
-  I am willing contribute to the ASF. The attachment is my ICLA information. My Github account is : https://github.com/xxxx.
+  I am willing contribute to the ASF. The attachment is my iCLA information. My Github account is : https://github.com/xxxx.
 Thanks !
 ```
 

@@ -17,8 +17,8 @@ For the first time in Apache Fesod (Incubating) community, you can:
 
 ## Mailing list
 
-| Name                     | Desc                            | Subscribe                                              | Unsubscribe                                                | Post                                | Archive                                                                |
-|--------------------------|---------------------------------|--------------------------------------------------------|------------------------------------------------------------|-------------------------------------|------------------------------------------------------------------------|
+| Name                       | Desc                            | Subscribe                                              | Unsubscribe                                                | Post                                | Archive                                                                |
+|----------------------------|---------------------------------|--------------------------------------------------------|------------------------------------------------------------|-------------------------------------|------------------------------------------------------------------------|
 | <dev@fesod.apache.org>     | Development related discussions | [Subscribe](mailto:dev-subscribe@fesod.apache.org)     | [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org)     | [Post](mailto:dev@fesod.apache.org) | [Archive](https://lists.apache.org/list.html?dev@fesod.apache.org)     |
 | <commits@fesod.apache.org> | All commits to our repositories | [Subscribe](mailto:commits-subscribe@fesod.apache.org) | [Unsubscribe](mailto:commits-unsubscribe@fesod.apache.org) | Read only list                      | [Archive](https://lists.apache.org/list.html?commits@fesod.apache.org) |
 

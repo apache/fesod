@@ -1,6 +1,6 @@
 ---
 id: 'become-pmc-member'
-title: 'Become A PMC member'
+title: 'Become A PPMC member'
 ---
 
 Anyone being supportive of the community and working in any of the CoPDoC areas can become an Apache Fesod (Incubating) PPMC member. The CoPDoC is an acronym from ASF to describe how we recognize your contributions not only by code.
@@ -19,7 +19,7 @@ There are no strict rules for becoming a committer or PPMC member.Candidates for
 
 ### Continuous contributions
 
-PMC member candidates should have a decent amount of continuous engagements and contributions (fixing bugs, adding new features, writing documentation, maintaining issues boards, code review, or answering community questions) to the Apache Fesod (Incubating).
+PPMC member candidates should have a decent amount of continuous engagements and contributions (fixing bugs, adding new features, writing documentation, maintaining issues boards, code review, or answering community questions) to the Apache Fesod (Incubating).
 
 - 12+ months with activity and engagement.
 

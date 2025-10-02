@@ -1,6 +1,6 @@
 ---
 id: 'icla'
-title: 'Sign ICLA Guide'
+title: 'Sign iCLA Guide'
 ---
 
 Apache CLA short for Apache Contributor License Agreement, the purpose of this agreement is to clearly define the terms under which intellectual property has been contributed to the ASF and thereby allow us to defend the project should there be a legal dispute regarding the software at some future time. A signed ICLA is required to be on file before an individual is given commit rights to any ASF project.

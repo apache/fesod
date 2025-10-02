@@ -16,6 +16,7 @@ Apache Software Foundation 在消除其软件项目中的安全问题方面采�
 因此，有关 Apache Fesod (Incubating) 依赖项的建议不会自动被视为关键建议。但是，如果您进一步分析表明 Apache Fesod (Incubating) 可能受到依赖项漏洞的影响，请将您的发现报告至 `security@apache.org` 。
 
 如果发现依赖性建议：
+
 1. 验证我们的 DependencyCheck 抑制是否包含相关详细信息。
 2. 查看我们的 Issue 页面以了解有关此建议的讨论
 3. 分析以确定 Apache Fesod (Incubating) 是否受到影响

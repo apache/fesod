@@ -24,11 +24,11 @@ const sidebarsCommunity = {
             type: "doc",
         },
         {
-            id: "feedback",
+            id: "maturity",
             type: "doc",
         },
         {
-            id: "maturity",
+            id: "feedback",
             type: "doc",
         },
         {

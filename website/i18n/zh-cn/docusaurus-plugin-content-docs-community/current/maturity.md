@@ -1,6 +1,6 @@
 ---
 id: 'maturity'
-title: 'The Apache Project Maturity Model'
+title: 'Maturity'
 ---
 
 # Maturity

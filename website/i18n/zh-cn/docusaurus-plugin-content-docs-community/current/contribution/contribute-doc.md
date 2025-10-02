@@ -5,7 +5,7 @@ title: '文档贡献指南'
 
 本文档贡献指南主要说明如何修改文档并进行贡献。
 
-官方网站采用[Docusaurus](https://docusaurus.io/)构建，文档维护于[网站](https://github.com/apache/fesod/tree/main/website)目录。请注意，无论是历史版本还是最新版本的文档，所有修改均应通过向`apache/fesod`仓库提交拉取请求实现。
+官方网站采用[Docusaurus](https://docusaurus.io/)构建，文档维护于[website](https://github.com/apache/fesod/tree/main/website)目录。请注意，无论是历史版本还是最新版本的文档，所有修改均应通过向`apache/fesod`仓库提交拉取请求实现。
 
 提交拉取请求的具体方法请参阅：
 

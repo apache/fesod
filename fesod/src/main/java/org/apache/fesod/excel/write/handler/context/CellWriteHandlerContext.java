@@ -19,7 +19,6 @@
 
 package org.apache.fesod.excel.write.handler.context;
 
-import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +33,8 @@ import org.apache.fesod.excel.write.metadata.holder.WriteTableHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+
+import java.util.List;
 
 /**
  * cell context
@@ -103,6 +104,11 @@ public class CellWriteHandlerContext {
      * Field annotation configuration information.
      */
     private ExcelContentProperty excelContentProperty;
+
+    /**
+     * The record of the original
+     */
+    private Object originalRecord;
 
     /**
      * The value of the original

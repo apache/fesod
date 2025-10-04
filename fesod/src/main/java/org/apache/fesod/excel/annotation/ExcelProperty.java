@@ -24,7 +24,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apache.fesod.excel.annotation.format.DateTimeFormat;
 import org.apache.fesod.excel.converters.AutoConverter;
 import org.apache.fesod.excel.converters.Converter;
 
@@ -74,14 +73,4 @@ public @interface ExcelProperty {
      * @return Converter
      */
     Class<? extends Converter<?>> converter() default AutoConverter.class;
-
-    /**
-     *
-     * default @see org.apache.fesod.excel.util.TypeUtil if default is not meet you can set format
-     *
-     * @return Format string
-     * @deprecated please use {@link DateTimeFormat}
-     */
-    @Deprecated
-    String format() default "";
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Apache Fesod (Incubating) Blog</title>
+        <link>https://fesod.apache.org/zh-cn/blog/</link>
+        <description>Apache Fesod (Incubating) Blog</description>
+        <lastBuildDate>Wed, 17 Sep 2025 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>zh-cn</language>
+        <item>
+            <title><![CDATA[官宣! Fesod 成功进入 Apache 孵化器]]></title>
+            <link>https://fesod.apache.org/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator/</link>
+            <guid>https://fesod.apache.org/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator/</guid>
+            <pubDate>Wed, 17 Sep 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[Fesod successfully entered Apache Incubator.]]></description>
+            <content:encoded><![CDATA[<p><a href="https://github.com/apache/fesod" target="_blank" rel="noopener noreferrer">Fesod</a> 于2025年09月17日顺利通过投票，正式成为了全球最大的开源基金会 <a href="https://www.apache.org/" target="_blank" rel="noopener noreferrer">Apache 软件基金会</a> (ASF)的孵化项目。09月25日，Fesod 仓库正式迁移至 Apache 软件基金会。</p>]]></content:encoded>
+            <category>announcement</category>
+        </item>
+    </channel>
+</rss>

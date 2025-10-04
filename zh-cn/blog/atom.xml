@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://fesod.apache.org/zh-cn/blog/</id>
+    <title>Apache Fesod (Incubating) Blog</title>
+    <updated>2025-09-17T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://fesod.apache.org/zh-cn/blog/"/>
+    <subtitle>Apache Fesod (Incubating) Blog</subtitle>
+    <icon>https://fesod.apache.org/zh-cn/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[官宣! Fesod 成功进入 Apache 孵化器]]></title>
+        <id>https://fesod.apache.org/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator/</id>
+        <link href="https://fesod.apache.org/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator/"/>
+        <updated>2025-09-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Fesod successfully entered Apache Incubator.]]></summary>
+        <content type="html"><![CDATA[<p><a href="https://github.com/apache/fesod" target="_blank" rel="noopener noreferrer">Fesod</a> 于2025年09月17日顺利通过投票，正式成为了全球最大的开源基金会 <a href="https://www.apache.org/" target="_blank" rel="noopener noreferrer">Apache 软件基金会</a> (ASF)的孵化项目。09月25日，Fesod 仓库正式迁移至 Apache 软件基金会。</p>]]></content>
+        <category label="announcement" term="announcement"/>
+    </entry>
+</feed>

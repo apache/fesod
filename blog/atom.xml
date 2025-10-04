@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://fesod.apache.org/blog/</id>
+    <title>Apache Fesod (Incubating) Blog</title>
+    <updated>2025-09-17T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://fesod.apache.org/blog/"/>
+    <subtitle>Apache Fesod (Incubating) Blog</subtitle>
+    <icon>https://fesod.apache.org/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Way to Go: Fesod successfully entered Apache Incubator]]></title>
+        <id>https://fesod.apache.org/blog/2025/09/17/fesod-entered-apache-incubator/</id>
+        <link href="https://fesod.apache.org/blog/2025/09/17/fesod-entered-apache-incubator/"/>
+        <updated>2025-09-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Fesod successfully entered Apache Incubator.]]></summary>
+        <content type="html"><![CDATA[<p>On September 17th, 2025, the <a href="https://github.com/apache/fesod" target="_blank" rel="noopener noreferrer">Fesod</a> project achieved a milestone by winning the approval to join the incubator of the <a href="https://www.apache.org/" target="_blank" rel="noopener noreferrer">Apache Software Foundation</a> (ASF), the world's leading open source software organization. On September 25th, the Fesod project was officially transferred to the Apache Software Foundation.</p>]]></content>
+        <category label="announcement" term="announcement"/>
+    </entry>
+</feed>

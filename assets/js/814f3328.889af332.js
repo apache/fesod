@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[7472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Way to Go: Fesod successfully entered Apache Incubator","permalink":"/blog/2025/09/17/fesod-entered-apache-incubator","unlisted":false,"date":"2025-09-17T00:00:00.000Z"}]}')}}]);

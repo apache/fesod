@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[710],{7569:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/zh-cn/blog","page":1,"postsPerPage":5,"totalPages":1,"totalCount":1,"blogDescription":"\u535a\u5ba2","blogTitle":"\u535a\u5ba2"}}')}}]);

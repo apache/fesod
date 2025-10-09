@@ -1,64 +1,61 @@
-<p align="center">
-    <img src="logo.svg"/>
-</p>
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
 
-<p align="center">
-    <a href="README.md">English</a> | <a href="README_ZH.md">中文</a> | <a href="README_JP.md">日本語</a>
-</p>
+# Apache Fesod (Incubating)
 
-<p align="center">
-    <a href="https://github.com/fast-excel/fastexcel/actions/workflows/ci.yml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/fast-excel/fastexcel/ci.yml?style=flat-square&logo=github"></a>
-    <a href="https://github.com/fast-excel/fastexcel/actions/workflows/nightly.yml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/fast-excel/fastexcel/nightly.yml?style=flat-square&logo=github&label=nightly"></a>
-    <a href="https://github.com/fast-excel/fastexcel/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/fast-excel/fastexcel?logo=apache&style=flat-square"></a>
-    <a href="https://mvnrepository.com/artifact/cn.idev.excel/fastexcel"><img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/cn.idev.excel/fastexcel?logo=apachemaven&style=flat-square"></a>
-</p>
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/apache/fesod/ci.yml?style=flat-square&logo=github)](https://github.com/apache/fesod/actions/workflows/ci.yml)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/apache/fesod/nightly.yml?style=flat-square&logo=github&label=nightly)](https://github.com/apache/fesod/actions/workflows/nightly.yml)
+[![GitHub License](https://img.shields.io/github/license/apache/fesod?logo=apache&style=flat-square)](https://github.com/apache/fesod/blob/main/LICENSE)
+![Maven Central Version](https://img.shields.io/maven-central/v/org.apache.fesod/fesod?logo=apachemaven&style=flat-square)
+[![Document](https://img.shields.io/github/actions/workflow/status/apache/fesod/ci.yml?style=flat-square&logo=read-the-docs&label=Document)](https://fesod.apache.org/)
+[![DeepWiki](https://img.shields.io/badge/DeepWiki-apache%2Ffesod-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==)](https://deepwiki.com/apache/fesod)
 
-<p align="center">
-    <a href="https://fast-excel.github.io/fastexcel/"><img alt="Document" src="https://img.shields.io/github/actions/workflow/status/fast-excel/fastexcel/ci.yml?style=flat-square&logo=read-the-docs&label=Document"></a>
-    <a href="https://deepwiki.com/fast-excel/fastexcel"><img src="https://img.shields.io/badge/DeepWiki-fast--excel%2Ffastexcel-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==" alt="DeepWiki"></a>
-    <a href="https://readmex.com/fast-excel/fastexcel"><img src="https://raw.githubusercontent.com/CodePhiliaX/resource-trusteeship/main/readmex.svg" alt="ReadmeX"></a>
-</p>
+## Introduction
 
-## What is FastExcel
+**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing Excel
+files, designed to simplify development and ensure reliability.
 
-Fast, Concise, Java tool for processing Excel files that solves memory overflow issues with large files.
+Apache Fesod (Incubating) can provide developers and enterprises with great freedom and flexibility. We plan to
+introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod (
+Incubating) is committed to being your best choice for handling Excel files.
 
-FastExcel will always be free and open source, use the business-friendly Apache license, making it suitable for any
-commercial scenarios. This provides developers and enterprises with great freedom and flexibility.
-We plan to introduce more new features in the future to continually enhance user experience and tool usability. Stay
-tuned to "Programmer Xiao Lan's" public account for updates on the development of FastExcel. FastExcel is committed to
-being your best choice for handling Excel files.
+The name fesod(pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents" expresses the
+project's origin, background and vision.
 
-## Features
+### Features
 
-- **High-performance Reading and Writing**: FastExcel focuses on performance optimization, capable of efficiently
-  handling large-scale Excel data. Compared to some traditional Excel processing libraries, it can significantly reduce
-  memory consumption.
+- **High-performance Reading and Writing**: Apache Fesod (Incubating) focuses on performance optimization, capable of
+  efficiently handling large-scale Excel data. Compared to some traditional Excel processing libraries, it can
+  significantly reduce memory consumption.
 - **Simplicity and Ease of Use**: The library offers a simple and intuitive API, allowing developers to easily integrate
   it into projects, whether for simple Excel operations or complex data processing.
-- **Stream Operations**: FastExcel supports stream reading, minimizing the problem of loading large amounts of data at
-  once. This design is especially important when dealing with hundreds of thousands or even millions of rows of data.
+- **Stream Operations**: Apache Fesod (Incubating) supports stream reading, minimizing the problem of loading large
+  amounts of data at once. This design is especially important when dealing with hundreds of thousands or even millions
+  of rows of data.
 
 ## Installation
 
-The following table lists the minimum Java language version requirements for each version of the FastExcel library:
+Apache Fesod (Incubating) requires **Java 1.8** or later. Using the latest LTS release of Java is encouraged. We
+strongly recommend using the latest version of Apache Fesod (Incubating), as performance optimizations, bug fixes, and
+new features in the latest version will enhance your experience.
 
-| Version | JDK Version Support Range | Notes |
-|---------|:-------------------------:|-------|
-| 1.2.x   |       JDK8 - JDK21        |       |
-| 1.1.x   |       JDK8 - JDK21        |       |
-| 1.0.x   |       JDK8 - JDK21        |       |
-
-We strongly recommend using the latest version of FastExcel, as performance optimizations, bug fixes, and new features
-in the latest version will enhance your experience.
-
-> Currently, FastExcel uses POI as its underlying package. If your project already includes POI-related components, you
+> Currently, Apache Fesod (Incubating) uses POI as its underlying package. If your project already includes POI-related
+> components, you
 > will need to manually exclude POI-related jar files.
-
-### Version Update
-
-For detailed update logs, refer to [Details of version updates](./CHANGELOG.md). You can also find all available
-versions in the [Maven Central Repository](https://mvnrepository.com/artifact/cn.idev.excel/fastexcel).
 
 ### Maven
 
@@ -67,8 +64,8 @@ If you are using Maven for project building, add the following configuration in 
 ```xml
 
 <dependency>
-    <groupId>cn.idev.excel</groupId>
-    <artifactId>fastexcel</artifactId>
+    <groupId>org.apache.fesod</groupId>
+    <artifactId>fesod</artifactId>
     <version>version</version>
 </dependency>
 ```
@@ -79,25 +76,25 @@ If you are using Gradle for project building, add the following configuration in
 
 ```gradle
 dependencies {
-    implementation 'cn.idev.excel:fastexcel:version'
+    implementation 'org.apache.fesod:fesod:version'
 }
 ```
 
-## Example
+## QuickStart
 
-### Reading Excel Files
+### Read
 
 Below is an example of reading an Excel document:
 
 ```java
 // Implement the ReadListener interface to set up operations for reading data
 public class DemoDataListener implements ReadListener<DemoData> {
-    
+
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
         System.out.println("Parsed a data entry" + JSON.toJSONString(data));
     }
-    
+
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         System.out.println("All data parsed!");
@@ -107,27 +104,27 @@ public class DemoDataListener implements ReadListener<DemoData> {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // Read Excel file
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    Fesod.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
-### Creating Excel Files
+### Write
 
 Below is a simple example of creating an Excel document:
 
 ```java
 // Sample data class
 public class DemoData {
-    
+
     @ExcelProperty("String Title")
     private String string;
-    
+
     @ExcelProperty("Date Title")
     private Date date;
-    
+
     @ExcelProperty("Number Title")
     private Double doubleData;
-    
+
     @ExcelIgnore
     private String ignore;
 }
@@ -148,28 +145,38 @@ private static List<DemoData> data() {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // Create a "Template" sheet and write data
-    FastExcel.write(fileName, DemoData.class).sheet("Template").doWrite(data());
+    Fesod.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 }
 ```
 
-## Contributing
+## Community
 
-Contributors are welcomed to join the FastExcel project. Please check [Contributing Guide](./CONTRIBUTING.md) about how
-to contribute to this project.
+### Contributors
 
-Thank you to all the people who already contributed to FastExcel!
+Contributors are welcomed to join the Apache Fesod (Incubating). Please
+check [Contributing Guide](./CONTRIBUTING.md) about how to contribute to this project.
 
-<a href="https://github.com/fast-excel/fastexcel/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=fast-excel/fastexcel"/>
+Thank you to all the people who already contributed to the Apache Fesod (Incubating) !
+
+<a href="https://github.com/apache/fesod/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=apache/fesod"/>
 </a>
 
 > Note: Showing the first 100 contributors only due to GitHub image size limitations
 
-## Star History
+### Subscribe Mailing Lists
 
-[![Star History Chart](https://api.star-history.com/svg?repos=fast-excel/fastexcel&type=Date)](https://www.star-history.com/#fast-excel/fastexcel&Date)
+Mail List is the most recognized form of communication in the Apache community. Contact us through the following mailing
+list.
+
+| Name                                                | Mailing list                                                                                                  |
+|:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
+| [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [Subscribe](mailto:dev-subscribe@fesod.apache.org)  ｜  [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org) |
+
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=apache/fesod&type=Date)](https://www.star-history.com/#apache/fesod&Date)
 
 ## License
 
-The project is licensed under the [Apache License 2.0](LICENSE).
-
+Apache Fesod (Incubating) project is licensed under the [Apache License 2.0](LICENSE).

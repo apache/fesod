@@ -1,5 +1,5 @@
 <!--
-Thanks very much for contributing to FastExcel! Please make sure that your code changes
+Thanks very much for contributing to Apache Fesod (Incubating)! Please make sure that your code changes
 are covered with tests. And in case of new features or big changes
 remember to adjust the documentation.
 
@@ -22,6 +22,6 @@ Related: #ISSUE
 
 ## Checklist
 
-- [ ] I have read the [Contributor Guide](https://fast-excel.github.io/fastexcel/community/contribution).
+- [ ] I have read the [Contributor Guide](https://fesod.apache.org/community/contribution/).
 - [ ] I have written the necessary doc or comment.
 - [ ] I have added the necessary unit tests and all cases have passed.

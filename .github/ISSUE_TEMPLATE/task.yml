@@ -1,0 +1,56 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: Task
+title: "[Task] "
+description: Used to create tasks for the community.
+labels: [ "help wanted","discussion welcome" ]
+body:
+  - type: textarea
+    attributes:
+      label: Motivation
+      description: Describe the motivations for this task.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: How to complete
+      description: Description of the task processing steps.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Task List
+      description: List all tasks that need to be completed.
+      placeholder: |
+        - [ ] Task1...
+        - [ ] Task2...
+        - [ ] Task3...
+        - [ ] Task4...
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: >
+        Links? References? Anything that will give us more context about the issue you are encountering!
+
+          Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+  - type: markdown
+    attributes:
+      value: |
+        Please read the [Contribution Guideline](https://fesod.apache.org/community/contribution/) before submitting the PR.

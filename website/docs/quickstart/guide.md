@@ -11,6 +11,7 @@ The following table lists the minimum Java language version requirements for eac
 
 | Version | JDK Version Support Range | Notes |
 |---------|---------------------------|-------|
+| 1.3.x   | JDK8 - JDK25              |       |
 | 1.2.x   | JDK8 - JDK21              |       |
 | 1.1.x   | JDK8 - JDK21              |       |
 | 1.0.x   | JDK8 - JDK21              |       |

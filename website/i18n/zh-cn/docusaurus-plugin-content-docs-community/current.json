@@ -2,5 +2,21 @@
   "version.label": {
     "message": "Next",
     "description": "The label for version current"
+  },
+  "sidebar.community.category.Contribution": {
+    "message": "贡献指南",
+    "description": "The label for category Contribution in sidebar community"
+  },
+  "sidebar.community.category.Committers": {
+    "message": "Committers",
+    "description": "The label for category Committers in sidebar community"
+  },
+  "sidebar.community.category.PMC Members": {
+    "message": "PPMC 成员",
+    "description": "The label for category PMC Members in sidebar community"
+  },
+  "sidebar.community.category.Release": {
+    "message": "版本发布",
+    "description": "The label for category Release in sidebar community"
   }
 }

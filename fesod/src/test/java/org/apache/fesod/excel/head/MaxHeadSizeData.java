@@ -1,0 +1,48 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.apache.fesod.excel.head;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+
+@Getter
+@Setter
+@EqualsAndHashCode
+public class MaxHeadSizeData {
+    @ExcelProperty({"名称"})
+    private String string0;
+
+    @ExcelProperty({"区域"})
+    private String string1;
+
+    @ExcelProperty({"所属项目"})
+    private String string2;
+
+    @ExcelProperty({"所属维保单位"})
+    private String string3;
+
+    @ExcelProperty({"序列号"})
+    private String string4;
+
+    @ExcelProperty({"到期时间"})
+    private String string5;
+}

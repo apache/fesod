@@ -28,6 +28,9 @@
     --ifm-code-font-size: 95%;
     --ifm-navbar-height: 80px;
     --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+    --search-local-modal-width: 480px;
+    --search-local-modal-width-sm: 300px;
+    --search-local-highlight-color: #2e8555;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -41,6 +44,7 @@
     --ifm-color-primary-lightest: #4fddbf;
     --ifm-footer-background-color: #242526;
     --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+    --search-local-highlight-color: #25c2a0;
 }
 
 .hero {

@@ -206,7 +206,25 @@ const config = {
             jsLoader: 'matomo.js',
         }
     }),
-    themes: ['@docusaurus/theme-mermaid'],
+    themes: [
+        '@docusaurus/theme-mermaid',
+        [
+            require.resolve("@easyops-cn/docusaurus-search-local"),
+            /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
+            ({
+                hashed: true,
+                indexDocs: true,
+                indexBlog: true,
+                indexPages: true,
+                highlightSearchTermsOnTargetPage: false,
+                explicitSearchResultPath: true,
+                searchBarPosition: "right",
+                searchBarShortcutHint: false,
+                language: ["zh", "en"],
+                hideSearchBarWithNoSearchContext: true,
+            }),
+        ],
+    ],
     headTags: [],
     markdown: {
         format: 'md',

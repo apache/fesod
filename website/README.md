@@ -1,10 +1,10 @@
-# FastExcel Website
+# Apache Fesod (Incubating) Website
 
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above (which can be checked by running `node -v`). You can use [nvm](https://github.com/nvm-sh/nvm) for managing multiple Node versions on a single machine installed.
+- [Node.js](https://nodejs.org/en/download/) version 20.0 or above (which can be checked by running `node -v`). You can use [nvm](https://github.com/nvm-sh/nvm) for managing multiple Node versions on a single machine installed.
 - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
 
 ## Installation

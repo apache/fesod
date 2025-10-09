@@ -395,8 +395,8 @@ Core Features:
 |------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | `invoke(T data, AnalysisContext context)`                                                | Triggered when a line of data is read. `data` is the parsed current line object, and `context` contains the read context information. |
 | `doAfterAllAnalysed(AnalysisContext context)`                                            | Called after all data parsing is complete, used for resource cleanup or post-processing of batch operations.                          |
-| `onException(Exception exception, AnalysisContext context)` *(Optinal)*                  | Capture and handle exceptions thrown during parsing to facilitate error data handling.                                                |
-| `invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(Optinal)* | Retrieve Excel header data, commonly used for dynamic header processing.                                                              |
+| `onException(Exception exception, AnalysisContext context)` *(Optional)*                 | Capture and handle exceptions thrown during parsing to facilitate error data handling.                                                |
+| `invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(Optional)* | Retrieve Excel header data, commonly used for dynamic header processing.                                                              |
 
 ### Use Cases
 

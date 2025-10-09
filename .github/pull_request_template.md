@@ -22,6 +22,6 @@ Related: #ISSUE
 
 ## Checklist
 
-- [ ] I have read the [Contributor Guide](https://fesod.apache.org/community/contribution).
+- [ ] I have read the [Contributor Guide](https://fesod.apache.org/community/contribution/).
 - [ ] I have written the necessary doc or comment.
 - [ ] I have added the necessary unit tests and all cases have passed.

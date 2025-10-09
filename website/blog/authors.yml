@@ -1,0 +1,53 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+jipengfei:
+  name: jipengfei
+  url: https://github.com/jipengfei-jpf
+  image_url: /img/team/198714007.png
+  socials:
+    github: jipengfei-jpf
+zhuangjiaju:
+  name: zhuangjiaju
+  url: https://github.com/zhuangjiaju
+  image_url: /img/team/18475586.png
+  socials:
+    github: zhuangjiaju
+psxjoy:
+  name: psxjoy
+  url: https://github.com/psxjoy
+  image_url: /img/team/10711694.png
+  socials:
+    github: psxjoy
+delei:
+  name: delei
+  url: https://github.com/delei
+  image_url: /img/team/17263766.png
+  socials:
+    github: delei
+alaahong:
+  name: alaahong
+  url: https://github.com/alaahong
+  image_url: /img/team/3264250.png
+  socials:
+    github: alaahong
+tmlx1990:
+  name: tmlx1990
+  url: https://github.com/tmlx1990
+  image_url: /img/team/5753992.png
+  socials:
+    github: tmlx1990

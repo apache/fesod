@@ -154,7 +154,7 @@ public static void main(String[] args) {
 ### Contributors
 
 Contributors are welcomed to join the Apache Fesod (Incubating). Please
-check [Contributing Guide](https://fesod.apache.org/community/contribution/) about how to contribute to this project.
+check [Contributing Guide](./CONTRIBUTING.md) about how to contribute to this project.
 
 Thank you to all the people who already contributed to the Apache Fesod (Incubating) !
 

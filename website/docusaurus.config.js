@@ -86,7 +86,8 @@ const config = {
                 editUrl: `${repoUrl}/edit/${branch}/website/`,
                 editLocalizedFiles: true,
             },
-        ]
+        ],
+        'docusaurus-plugin-matomo'
     ],
     themeConfig: ({
         image: 'img/logo.svg',
@@ -197,31 +198,16 @@ const config = {
             theme: prismThemes.github,
             darkTheme: prismThemes.oneDark,
             additionalLanguages: ['java', 'bash']
+        },
+        matomo: {
+            matomoUrl: 'https://analytics.apache.org/',
+            siteId: '83',
+            phpLoader: 'matomo.php',
+            jsLoader: 'matomo.js',
         }
     }),
     themes: ['@docusaurus/theme-mermaid'],
-    headTags: [
-        {
-            tagName: 'script',
-            attributes: {
-                type: 'text/javascript',
-            },
-            innerHTML: `
-              var _paq = window._paq = window._paq || [];
-               /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-              _paq.push(["disableCookies"]);
-              _paq.push(['trackPageView']);
-              _paq.push(['enableLinkTracking']);
-              (function() {
-                var u="https://analytics.apache.org/";
-                _paq.push(['setTrackerUrl', u+'matomo.php']);
-                _paq.push(['setSiteId', '83']);
-                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-              })();
-            `,
-        },
-    ],
+    headTags: [],
     markdown: {
         format: 'md',
         mermaid: true,

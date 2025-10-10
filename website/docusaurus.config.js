@@ -35,7 +35,6 @@ const config = {
     customFields: {
         repoUrl,
     },
-    clientModules: [require.resolve('./src/analytics.ts')],
     i18n: {
         defaultLocale: 'en',
         locales: ['en', 'zh-cn'],

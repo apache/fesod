@@ -17,39 +17,61 @@
  * under the License.
  */
 
-// @ts-check
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-/**
- * Creating a sidebar enables you to:
- - create an ordered group of docs
- - render a sidebar for each doc of that group
- - provide next/previous navigation
-
- The sidebars can be generated from the filesystem, or explicitly defined here.
-
- Create as many sidebars as you want.
-
- @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
- */
 const sidebarsCommunity = {
     community: [
         {
-            id: "contact",
+            id: "community",
             type: "doc",
         },
         {
-            id: "bug-report",
+            id: "maturity",
             type: "doc",
         },
         {
-            id: "contribution",
+            id: "feedback",
             type: "doc",
         },
         {
-            id: "development",
+            type: 'category',
+            label: 'Contribution',
+            items: [
+                'contribution',
+                'contribution/commit-format',
+                'contribution/contribute-code',
+                'contribution/contribute-doc',
+                'contribution/code-review-guide',
+            ]
+        },
+        {
+            type: 'category',
+            label: 'Committers',
+            items: [
+                'committer/become-committer',
+                'committer/icla',
+                'committer/committer-onboarding',
+            ]
+        },
+        {
+            type: 'category',
+            label: 'PPMC Members',
+            items: [
+                'pmc/become-pmc-member',
+                'pmc/pmc-onboarding',
+                'pmc/nominate-committer',
+            ]
+        },
+        {
+            type: 'category',
+            label: 'Release',
+            items: [
+                'release/release-version',
+                'release/verify-release',
+            ]
+        },
+        {
+            id: "security",
             type: "doc",
-        }
+        },
     ]
 };
-
 export default sidebarsCommunity;

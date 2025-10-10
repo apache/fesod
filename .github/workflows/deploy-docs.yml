@@ -44,7 +44,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: website
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build
         working-directory: website

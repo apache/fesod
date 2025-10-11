@@ -19,16 +19,6 @@
 
 package org.apache.fesod.excel.write.executor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,25 +31,16 @@ import org.apache.fesod.excel.enums.WriteTemplateAnalysisCellTypeEnum;
 import org.apache.fesod.excel.exception.ExcelGenerateException;
 import org.apache.fesod.excel.metadata.data.WriteCellData;
 import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
-import org.apache.fesod.excel.util.BeanMapUtils;
-import org.apache.fesod.excel.util.ClassUtils;
-import org.apache.fesod.excel.util.FieldUtils;
-import org.apache.fesod.excel.util.ListUtils;
-import org.apache.fesod.excel.util.MapUtils;
-import org.apache.fesod.excel.util.PoiUtils;
-import org.apache.fesod.excel.util.StringUtils;
-import org.apache.fesod.excel.util.WriteHandlerUtils;
+import org.apache.fesod.excel.util.*;
 import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.excel.write.handler.context.RowWriteHandlerContext;
 import org.apache.fesod.excel.write.metadata.fill.AnalysisCell;
 import org.apache.fesod.excel.write.metadata.fill.FillConfig;
 import org.apache.fesod.excel.write.metadata.fill.FillWrapper;
 import org.apache.fesod.excel.write.metadata.holder.WriteSheetHolder;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
+
+import java.util.*;
 
 /**
  * Fill the data into excel
@@ -248,6 +229,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 cellWriteHandlerContext.setExcelContentProperty(excelContentProperty);
 
                 createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext);
+                cellWriteHandlerContext.setOriginalRecord(oneRowData);
                 cellWriteHandlerContext.setOriginalValue(value);
                 cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
 
@@ -285,6 +267,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                                     .getHeadClazz(),
                             variable,
                             writeContext.currentWriteHolder());
+
+                    cellWriteHandlerContext.setOriginalRecord(oneRowData);
                     cellWriteHandlerContext.setOriginalValue(value);
                     cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
                     cellWriteHandlerContext.setExcelContentProperty(excelContentProperty);

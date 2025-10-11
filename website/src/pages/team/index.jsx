@@ -44,7 +44,7 @@ export default function () {
         <BrowserOnly>
             {() => {
                 return <Layout>
-                    <div className="block team_page" style={{padding: "10px 0 30px"}}>
+                    <div className="container team_page">
                         <h1><Translate>team.name</Translate></h1>
                         <p className="team_desc team_indent"><Translate>team.desc</Translate></p>
 
@@ -56,17 +56,17 @@ export default function () {
                             {
                                 dataSource.pmc.map((item, i) => (
                                     <div className='team-box' key={i} data-aos="fade-up" data-aos-delay={i * 100}>
-                                        <div style={{textAlign: "center"}}>
-                                            <div style={{overflow: "hidden", zIndex: 1}}>
+                                        <div style={{ textAlign: "center" }}>
+                                            <div style={{ overflow: "hidden", zIndex: 1 }}>
                                                 <img className="team-user-img" src={avatarUrl(item.githubId)} title=""
-                                                     alt=""/>
+                                                    alt="" />
                                             </div>
                                             <div className={item.isMentor ? 'team-mentor bg-team' : 'bg-team'}>
                                                 <h5 className="team-name">{item.name}</h5>
                                                 <small>{getGitName(item.gitUrl)}</small>
                                                 <div>
                                                     <a className="team-link" href={item.gitUrl}>
-                                                        <Github className="github-icon"/>
+                                                        <Github className="github-icon" />
                                                     </a>
                                                 </div>
                                             </div>
@@ -83,18 +83,18 @@ export default function () {
                             {
                                 dataSource.committer.map((item, i) => (
                                     <div className='team-box' key={i} data-aos="fade-up" data-aos-delay={i * 100}>
-                                        <div style={{textAlign: "center"}}>
-                                            <div style={{overflow: "hidden", zIndex: 1}}>
+                                        <div style={{ textAlign: "center" }}>
+                                            <div style={{ overflow: "hidden", zIndex: 1 }}>
                                                 <img className="team-user-img" src={avatarUrl(item.githubId)}
-                                                     title=""
-                                                     alt=""/>
+                                                    title=""
+                                                    alt="" />
                                             </div>
                                             <div className="bg-team">
                                                 <h5 className="team-name">{item.name}</h5>
                                                 <small>{getGitName(item.gitUrl)}</small>
                                                 <div>
                                                     <a className="team-link" href={item.gitUrl}>
-                                                        <Github className="github-icon"/>
+                                                        <Github className="github-icon" />
                                                     </a>
                                                 </div>
                                             </div>

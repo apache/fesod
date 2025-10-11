@@ -40,6 +40,7 @@
     <modules>
         <module>fesod</module>
         <module>fesod-examples</module>
+        <module>fesod-spring-boot-starter</module>
     </modules>
 
     <properties>

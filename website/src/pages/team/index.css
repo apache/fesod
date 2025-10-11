@@ -112,7 +112,7 @@
   background-color: #dfdfdf;
 }
 
-@media (max-width: 780px) {
+@media (max-width: 768px) {
   .team-box {
     width: 50% !important;
   }

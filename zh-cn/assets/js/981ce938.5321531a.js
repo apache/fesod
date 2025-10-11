@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkwebsite=globalThis.webpackChunkwebsite||[]).push([[679],{66713:e=>{e.exports=JSON.parse('{"tags":[{"label":"announcement","permalink":"/zh-cn/blog/tags/announcement","count":1}]}')}}]);

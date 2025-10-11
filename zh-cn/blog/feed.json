@@ -1,0 +1,19 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "Apache Fesod (Incubating) Blog",
+    "home_page_url": "https://fesod.apache.org/zh-cn/blog/",
+    "description": "Apache Fesod (Incubating) Blog",
+    "items": [
+        {
+            "id": "https://fesod.apache.org/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator/",
+            "content_html": "<p><a href=\"https://github.com/apache/fesod\" target=\"_blank\" rel=\"noopener noreferrer\">Fesod</a> 于2025年09月17日顺利通过投票，正式成为了全球最大的开源基金会 <a href=\"https://www.apache.org/\" target=\"_blank\" rel=\"noopener noreferrer\">Apache 软件基金会</a> (ASF)的孵化项目。09月25日，Fesod 仓库正式迁移至 Apache 软件基金会。</p>",
+            "url": "https://fesod.apache.org/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator/",
+            "title": "官宣! Fesod 成功进入 Apache 孵化器",
+            "summary": "Fesod successfully entered Apache Incubator.",
+            "date_modified": "2025-09-17T00:00:00.000Z",
+            "tags": [
+                "announcement"
+            ]
+        }
+    ]
+}

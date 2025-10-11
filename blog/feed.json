@@ -1,0 +1,19 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "Apache Fesod (Incubating) Blog",
+    "home_page_url": "https://fesod.apache.org/blog/",
+    "description": "Apache Fesod (Incubating) Blog",
+    "items": [
+        {
+            "id": "https://fesod.apache.org/blog/2025/09/17/fesod-entered-apache-incubator/",
+            "content_html": "<p>On September 17th, 2025, the <a href=\"https://github.com/apache/fesod\" target=\"_blank\" rel=\"noopener noreferrer\">Fesod</a> project achieved a milestone by winning the approval to join the incubator of the <a href=\"https://www.apache.org/\" target=\"_blank\" rel=\"noopener noreferrer\">Apache Software Foundation</a> (ASF), the world's leading open source software organization. On September 25th, the Fesod project was officially transferred to the Apache Software Foundation.</p>",
+            "url": "https://fesod.apache.org/blog/2025/09/17/fesod-entered-apache-incubator/",
+            "title": "Way to Go: Fesod successfully entered Apache Incubator",
+            "summary": "Fesod successfully entered Apache Incubator.",
+            "date_modified": "2025-09-17T00:00:00.000Z",
+            "tags": [
+                "announcement"
+            ]
+        }
+    ]
+}

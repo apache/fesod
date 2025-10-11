@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkwebsite=globalThis.webpackChunkwebsite||[]).push([[7472],{55513:e=>{e.exports=JSON.parse('{"title":"\u6700\u8fd1\u66f4\u65b0","items":[{"title":"\u5b98\u5ba3! Fesod \u6210\u529f\u8fdb\u5165 Apache \u5b75\u5316\u5668","permalink":"/zh-cn/blog/2025/09/17/fesod-entered-apache-incubator","unlisted":false,"date":"2025-09-17T00:00:00.000Z"}]}')}}]);

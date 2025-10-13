@@ -125,7 +125,7 @@ public void escapeDemo() {
 
 ```java
 @Test
-public void escapeDemo() {
+public void csvFormatDemo() {
 
     CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
     String csvFile = "path/to/your.csv";

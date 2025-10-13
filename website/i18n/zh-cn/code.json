@@ -12,19 +12,19 @@
     "message": "快速"
   },
   "homepage.feature.quick.description": {
-    "message": "快速的读写 Excel 中的数据"
+    "message": "专注于性能优化，能够高效处理大规模的 Excel 数据。相比一些传统的 Excel 处理库，它能显著降低内存占用"
   },
   "homepage.feature.simple.title": {
     "message": "简洁"
   },
   "homepage.feature.simple.description": {
-    "message": "映射 Excel 和实体类，让代码变的更加简洁"
+    "message": "提供了简洁直观的 API，使得开发者可以轻松集成到项目中，无论是简单的 Excel 操作还是复杂的数据处理都能快速上手"
   },
   "homepage.feature.bigdata": {
     "message": "大文件"
   },
   "homepage.feature.bigdata.description": {
-    "message": "读写大文件的时候使用缓存，更加的节省内存"
+    "message": "支持流式读取，将一次性加载大量数据的问题降到最低"
   },
   "theme.ErrorPageContent.title": {
     "message": "页面已崩溃。",
@@ -348,5 +348,21 @@
   "theme.tags.tagsPageTitle": {
     "message": "标签",
     "description": "The title of the tag list page"
+  },
+  "theme.IconExternalLink.ariaLabel": {
+    "message": "(opens in new tab)",
+    "description": "The ARIA label for the external link icon"
+  },
+  "team.name": {
+    "message": "团队"
+  },
+  "team.desc": {
+    "message": "Apache Fesod (Incubating) 团队由成员和贡献者组成。我们秉持开放和协作的社区理念，欢迎更多的人加入我们，与社区共同成长。"
+  },
+  "team.tip": {
+    "message": "(排名不分先后)"
+  },
+  "team.thanks": {
+    "message": "感谢所有参与贡献的人们。"
   }
 }

@@ -37,7 +37,7 @@ public class RecordCellWriteHandler implements CellWriteHandler {
 
         if (BooleanUtils.isFalse(context.getHead()) && cell.getColumnIndex() != 0) {
             RecordData record = context.getOriginalRecord();
-            log.info("写入数据：{}", record);
+            log.debug("写入数据：{}", record);
         }
     }
 }

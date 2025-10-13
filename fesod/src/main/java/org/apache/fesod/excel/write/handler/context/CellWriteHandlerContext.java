@@ -19,6 +19,8 @@
 
 package org.apache.fesod.excel.write.handler.context;
 
+import java.util.List;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,9 +36,6 @@ import org.apache.fesod.excel.write.metadata.holder.WriteTableHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * cell context
@@ -79,7 +78,7 @@ public class CellWriteHandlerContext implements Cloneable {
      * cellMap use by DynamicColumn
      * key rowIndex_columnIndex
      */
-    private Map<String,CellWriteHandlerContext> cellMap;
+    private Map<String, CellWriteHandlerContext> cellMap;
     /**
      * index
      */
@@ -159,8 +158,7 @@ public class CellWriteHandlerContext implements Cloneable {
                 this.cellDataList,
                 this.firstCellData,
                 this.head,
-                this.excelContentProperty
-        );
+                this.excelContentProperty);
         return cellWriteHandlerContext;
     }
 

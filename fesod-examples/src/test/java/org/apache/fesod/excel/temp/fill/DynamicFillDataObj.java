@@ -30,6 +30,4 @@ public class DynamicFillDataObj {
 
     private String qty;
     private double price;
-
-
 }

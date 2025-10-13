@@ -20,7 +20,6 @@
 package org.apache.fesod.excel.write.executor;
 
 import java.lang.reflect.Field;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -154,8 +152,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
     }
 
-    private void shiftCellsIfNecessary(FillConfig fillConfig, Collection<?> collectionData, List<AnalysisCell> analysisCellList) {
-        if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && CollectionUtils.isNotEmpty(collectionData) && collectionData.size() > 1) {
+    private void shiftCellsIfNecessary(
+            FillConfig fillConfig, Collection<?> collectionData, List<AnalysisCell> analysisCellList) {
+        if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection())
+                && CollectionUtils.isNotEmpty(collectionData)
+                && collectionData.size() > 1) {
             Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
             Object item = collectionData.iterator().next();
             Class<?> itemClass = item.getClass();
@@ -166,29 +167,39 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     dynamicFieldMap.put(declaredField.getName(), declaredField);
                 }
             }
-            analysisCellList.stream().sorted(Comparator.comparingInt(AnalysisCell::getColumnIndex).reversed()).forEach(analysisCell -> {
-                int rowIndex = analysisCell.getRowIndex();
-                int columnIndex = analysisCell.getColumnIndex();
-                Row row = sheet.getRow(rowIndex);
-                List<String> variableList = analysisCell.getVariableList();
-                for (String fieldName : dynamicFieldMap.keySet()) {
-                    for (String variable : variableList) {
-                        int dotIndex = variable.indexOf('.');
-                        if (dotIndex <= 0) {
-                            continue;
+            analysisCellList.stream()
+                    .sorted(Comparator.comparingInt(AnalysisCell::getColumnIndex)
+                            .reversed())
+                    .forEach(analysisCell -> {
+                        int rowIndex = analysisCell.getRowIndex();
+                        int columnIndex = analysisCell.getColumnIndex();
+                        Row row = sheet.getRow(rowIndex);
+                        List<String> variableList = analysisCell.getVariableList();
+                        for (String fieldName : dynamicFieldMap.keySet()) {
+                            for (String variable : variableList) {
+                                int dotIndex = variable.indexOf('.');
+                                if (dotIndex <= 0) {
+                                    continue;
+                                }
+                                String variableFieldName = variable.substring(0, dotIndex);
+                                if (StringUtils.equals(fieldName, variableFieldName)) {
+                                    List<String> headers = fillConfig
+                                            .getDynamicColumnInfo(fieldName)
+                                            .getKeys();
+                                    Integer columnGroupSize = fillConfig
+                                            .getDynamicColumnInfo(fieldName)
+                                            .getGroupSize();
+                                    row.shiftCellsRight(
+                                            columnIndex + columnGroupSize, row.getLastCellNum(), headers.size() - 1);
+                                    analysisCellList.stream()
+                                            .filter(ac -> ac.getColumnIndex() > (columnIndex + columnGroupSize - 1))
+                                            .forEach(ac -> {
+                                                ac.setColumnIndex(ac.getColumnIndex() + headers.size() - 1);
+                                            });
+                                }
+                            }
                         }
-                        String variableFieldName = variable.substring(0, dotIndex);
-                        if (StringUtils.equals(fieldName, variableFieldName)) {
-                            List<String> headers = fillConfig.getDynamicColumnInfo(fieldName).getKeys();
-                            Integer columnGroupSize = fillConfig.getDynamicColumnInfo(fieldName).getGroupSize();
-                            row.shiftCellsRight(columnIndex + columnGroupSize, row.getLastCellNum(), headers.size() - 1);
-                            analysisCellList.stream().filter(ac -> ac.getColumnIndex() > (columnIndex + columnGroupSize - 1)).forEach(ac -> {
-                                ac.setColumnIndex(ac.getColumnIndex() + headers.size() - 1);
-                            });
-                        }
-                    }
-                }
-            });
+                    });
         }
     }
 
@@ -313,12 +324,18 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     Optional.ofNullable(collectionFieldStyleCache.get(currentUniqueDataFlag))
                             .map(collectionFieldStyleMap -> collectionFieldStyleMap.get(analysisCell))
                             .ifPresent(style -> {
-                                if (cellWriteHandlerContext.getCellMap() != null && cellWriteHandlerContext.getCellMap().size() > 1) {
-                                    cellWriteHandlerContext.getCellMap().values().forEach(cell -> cell.getFirstCellData().setOriginCellStyle(style));
+                                if (cellWriteHandlerContext.getCellMap() != null
+                                        && cellWriteHandlerContext.getCellMap().size() > 1) {
+                                    cellWriteHandlerContext
+                                            .getCellMap()
+                                            .values()
+                                            .forEach(cell ->
+                                                    cell.getFirstCellData().setOriginCellStyle(style));
                                 } else {
                                     if (fillConfig.getDirection() == WriteDirectionEnum.HORIZONTAL) {
                                         Integer orginColumnIndex = analysisCell.getColumnIndex();
-                                        Sheet sheet = writeContext.writeSheetHolder().getSheet();
+                                        Sheet sheet =
+                                                writeContext.writeSheetHolder().getSheet();
                                         int columnWidth = sheet.getColumnWidth(orginColumnIndex);
                                         sheet.setColumnWidth(cellWriteHandlerContext.getColumnIndex(), columnWidth);
                                     }
@@ -392,8 +409,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                             .ifPresent(cell::setCellStyle);
                 }
             }
-            if (cellWriteHandlerContext.getCellMap() != null && cellWriteHandlerContext.getCellMap().size() > 1) {
-                //trigger afterCellDispose for every dynamicColumns
+            if (cellWriteHandlerContext.getCellMap() != null
+                    && cellWriteHandlerContext.getCellMap().size() > 1) {
+                // trigger afterCellDispose for every dynamicColumns
                 cellWriteHandlerContext.getCellMap().values().forEach(WriteHandlerUtils::afterCellDispose);
             } else {
                 WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
@@ -486,7 +504,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             cellWriteHandlerContext.getCellMap().put(lastRowIndex + "_" + lastColumnIndex, cellWriteHandlerContext);
             DynamicColumnInfo dynamicColumnInfo = fillConfig.getDynamicColumnInfo(field.getName());
             if (null == dynamicColumnInfo || CollectionUtils.isEmpty(dynamicColumnInfo.getKeys())) {
-                throw new ExcelGenerateException(String.format("Please set dynamic column keys for %s in fillConfig", field.getName()));
+                throw new ExcelGenerateException(
+                        String.format("Please set dynamic column keys for %s in fillConfig", field.getName()));
             }
             for (int i = 1; i < dynamicColumnInfo.getKeys().size(); i++) {
                 switch (fillConfig.getDirection()) {
@@ -499,7 +518,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     default:
                         throw new ExcelGenerateException("The wrong direction.");
                 }
-                Row newRow = createRowIfNecessary(sheet, cachedSheet, lastRowIndex, fillConfig, analysisCell, false, rowWriteHandlerContext);
+                Row newRow = createRowIfNecessary(
+                        sheet, cachedSheet, lastRowIndex, fillConfig, analysisCell, false, rowWriteHandlerContext);
                 CellWriteHandlerContext cloneContext = cellWriteHandlerContext.clone();
                 cloneContext.setColumnIndex(lastColumnIndex);
                 cloneContext.setRowIndex(row.getRowNum());
@@ -513,7 +533,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             Map<AnalysisCell, CellStyle> collectionFieldStyleMap =
                     collectionFieldStyleCache.computeIfAbsent(currentUniqueDataFlag, key -> MapUtils.newHashMap());
             collectionFieldStyleMap.put(analysisCell, cell.getCellStyle());
-            if (cellWriteHandlerContext.getCellMap() != null && cellWriteHandlerContext.getCellMap().size() > 1) {
+            if (cellWriteHandlerContext.getCellMap() != null
+                    && cellWriteHandlerContext.getCellMap().size() > 1) {
                 cellWriteHandlerContext.getCellMap().forEach((k, cellContext) -> {
                     Integer currentColumnIndex = cellContext.getColumnIndex();
                     int columnWidth = sheet.getColumnWidth(cellWriteHandlerContext.getColumnIndex());

@@ -20,6 +20,9 @@
 package org.apache.fesod.excel.write.executor;
 
 import cn.idev.excel.support.cglib.beans.BeanMap;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.annotation.fill.DynamicColumn;
 import org.apache.fesod.excel.context.WriteContext;
@@ -58,10 +61,6 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Excel write Executor
@@ -150,24 +149,26 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         if (null != field && field.isAnnotationPresent(DynamicColumn.class)) {
             Map<String, Object> dynamicColumnMap = (Map<String, Object>) originalValue;
             FillConfig fillConfig = cellWriteHandlerContext.getFillConfig();
-            if(null == fillConfig || null == fillConfig.getDynamicColumnInfoMap()){
-                throw new ExcelWriteDataConvertException(cellWriteHandlerContext, "DynamicColumn annotation must be used with FillConfig.dynamicColumnInfoMap");
+            if (null == fillConfig || null == fillConfig.getDynamicColumnInfoMap()) {
+                throw new ExcelWriteDataConvertException(
+                        cellWriteHandlerContext,
+                        "DynamicColumn annotation must be used with FillConfig.dynamicColumnInfoMap");
             }
             DynamicColumnInfo dynamicColumnInfo = fillConfig.getDynamicColumnInfo(field.getName());
             Integer columnIndex = cellWriteHandlerContext.getColumnIndex();
             Integer rowIndex = cellWriteHandlerContext.getRowIndex();
             for (int i = 0; i < dynamicColumnInfo.getKeys().size(); i++) {
-                String key =  dynamicColumnInfo.getKeys().get(i);
+                String key = dynamicColumnInfo.getKeys().get(i);
                 Object o = dynamicColumnMap.get(key);
                 String originalVariable = cellWriteHandlerContext.getOriginalVariable();
-                if(originalVariable.contains(".")){
+                if (originalVariable.contains(".")) {
                     int dotIndex = originalVariable.indexOf('.');
                     if (dotIndex > 0) {
                         key = originalVariable.substring(dotIndex + 1);
                         Object itemBean = o;
                         if (null == itemBean) {
                             o = null;
-                        }else{
+                        } else {
                             BeanMap beanMap = BeanMapUtils.create(itemBean);
                             o = beanMap.get(key);
                         }
@@ -178,14 +179,15 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                 WriteDirectionEnum direction = fillConfig.getDirection();
                 int currentRowIndex = rowIndex;
                 int currentColumnIndex = columnIndex;
-                if(WriteDirectionEnum.VERTICAL.equals(direction)){
+                if (WriteDirectionEnum.VERTICAL.equals(direction)) {
                     currentColumnIndex = columnIndex + dynamicColumnGroupSize * i;
-                }else{
-                    currentRowIndex = rowIndex + dynamicColumnGroupSize*i;
+                } else {
+                    currentRowIndex = rowIndex + dynamicColumnGroupSize * i;
                 }
 
                 Map<String, CellWriteHandlerContext> cellMap = cellWriteHandlerContext.getCellMap();
-                CellWriteHandlerContext currentCellWriteHandlerContext = cellMap.get(currentRowIndex + "_" + currentColumnIndex);
+                CellWriteHandlerContext currentCellWriteHandlerContext =
+                        cellMap.get(currentRowIndex + "_" + currentColumnIndex);
                 currentCellWriteHandlerContext.setOriginalValue(o);
                 currentCellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(o));
                 convertAndSetItem(currentCellWriteHandlerContext);

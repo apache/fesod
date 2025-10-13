@@ -19,12 +19,11 @@
 
 package org.apache.fesod.excel.write.metadata.fill;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -41,5 +40,4 @@ public class DynamicColumnInfo {
      * dynamic column group size
      * */
     private Integer groupSize;
-
 }

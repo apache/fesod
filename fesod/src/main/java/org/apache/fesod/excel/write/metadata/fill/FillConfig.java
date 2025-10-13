@@ -19,6 +19,9 @@
 
 package org.apache.fesod.excel.write.metadata.fill;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,10 +29,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.fesod.excel.enums.WriteDirectionEnum;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Fill config
@@ -65,7 +64,7 @@ public class FillConfig {
     /**
      * dynamic column info
      * */
-    private Map<String,DynamicColumnInfo> dynamicColumnInfoMap;
+    private Map<String, DynamicColumnInfo> dynamicColumnInfoMap;
 
     /**
      * get dynamic column info
@@ -82,7 +81,7 @@ public class FillConfig {
         }
         if (null == fieldName || !dynamicColumnInfoMap.containsKey(fieldName)) {
             return dynamicColumnInfoMap.get(DEFAULT_DYNAMIC_INFO_KEY);
-        }else{
+        } else {
             return dynamicColumnInfoMap.get(fieldName);
         }
     }
@@ -119,6 +118,5 @@ public class FillConfig {
         public FillConfigBuilder addDefaultDynamicInfo(List<String> keys, Integer groupSize) {
             return addDynamicInfo(keys, groupSize, DEFAULT_DYNAMIC_INFO_KEY);
         }
-
     }
 }

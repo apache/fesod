@@ -173,7 +173,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 List<String> variableList = analysisCell.getVariableList();
                 for (String fieldName : dynamicFieldMap.keySet()) {
                     for (String variable : variableList) {
-                        String variableFieldName = variable.split("\\.")[0];
+                        int dotIndex = variable.indexOf('.');
+                        if (dotIndex <= 0) {
+                            continue;
+                        }
+                        String variableFieldName = variable.substring(0, dotIndex);
                         if (StringUtils.equals(fieldName, variableFieldName)) {
                             List<String> headers = fillConfig.getDynamicColumnInfo(fieldName).getKeys();
                             Integer columnGroupSize = fillConfig.getDynamicColumnInfo(fieldName).getGroupSize();
@@ -280,7 +284,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 } else if (dataKeySet.contains(variable)) {
                     value = dataMap.get(variable);
                 } else if (variable.contains(COLLECTION_PREFIX)) {
-                    variable = variable.split("\\.")[0];
+                    int dotIndex = variable.indexOf('.');
+                    if (dotIndex > 0) {
+                        variable = variable.substring(0, dotIndex);
+                    }
                     value = dataMap.get(variable);
                 }
                 ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
@@ -479,7 +486,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             cellWriteHandlerContext.getCellMap().put(lastRowIndex + "_" + lastColumnIndex, cellWriteHandlerContext);
             DynamicColumnInfo dynamicColumnInfo = fillConfig.getDynamicColumnInfo(field.getName());
             if (null == dynamicColumnInfo || CollectionUtils.isEmpty(dynamicColumnInfo.getKeys())) {
-                throw new ExcelGenerateException(String.format("Plase set dynamic column keys for %s in fillConfig", field.getName()));
+                throw new ExcelGenerateException(String.format("Please set dynamic column keys for %s in fillConfig", field.getName()));
             }
             for (int i = 1; i < dynamicColumnInfo.getKeys().size(); i++) {
                 switch (fillConfig.getDirection()) {

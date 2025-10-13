@@ -77,6 +77,9 @@ public class FillConfig {
      * @return dynamic column info
      * */
     public DynamicColumnInfo getDynamicColumnInfo(String fieldName) {
+        if (null == dynamicColumnInfoMap) {
+            return null;
+        }
         if (null == fieldName || !dynamicColumnInfoMap.containsKey(fieldName)) {
             return dynamicColumnInfoMap.get(DEFAULT_DYNAMIC_INFO_KEY);
         }else{

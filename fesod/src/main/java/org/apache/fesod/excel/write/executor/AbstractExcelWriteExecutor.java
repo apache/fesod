@@ -161,13 +161,16 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                 Object o = dynamicColumnMap.get(key);
                 String originalVariable = cellWriteHandlerContext.getOriginalVariable();
                 if(originalVariable.contains(".")){
-                    key = originalVariable.split("\\.")[1];
-                    Object itemBean = o;
-                    if (null == itemBean) {
-                        o = null;
-                    }else{
-                        BeanMap beanMap = BeanMapUtils.create(itemBean);
-                        o = beanMap.get(key);
+                    int dotIndex = originalVariable.indexOf('.');
+                    if (dotIndex > 0) {
+                        key = originalVariable.substring(dotIndex + 1);
+                        Object itemBean = o;
+                        if (null == itemBean) {
+                            o = null;
+                        }else{
+                            BeanMap beanMap = BeanMapUtils.create(itemBean);
+                            o = beanMap.get(key);
+                        }
                     }
                 }
 

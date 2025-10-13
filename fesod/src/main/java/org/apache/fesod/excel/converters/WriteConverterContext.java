@@ -57,6 +57,9 @@ public class WriteConverterContext<T> {
 
     @SuppressWarnings("unchecked")
     public <E extends Object> E getRecord() {
+        if (record == null) {
+            return null;
+        }
         return (E) record;
     }
 }

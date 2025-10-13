@@ -165,6 +165,9 @@ public class CellWriteHandlerContext {
 
     @SuppressWarnings("unchecked")
     public <E extends Object> E getOriginalRecord() {
+        if (originalRecord == null) {
+            return null;
+        }
         return (E) originalRecord;
     }
 }

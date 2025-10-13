@@ -3,7 +3,7 @@ id: 'download'
 title: '下载'
 ---
 
-这是 Apache Fesod (Incubating)）的官方下载页面。请从以下表格中选择要下载的版本。建议使用最新版本。
+这是 Apache Fesod (Incubating)的官方下载页面。请从以下表格中选择要下载的版本。建议使用最新版本。
 
 :::tip
 

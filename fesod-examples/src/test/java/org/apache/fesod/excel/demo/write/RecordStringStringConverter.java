@@ -52,7 +52,7 @@ public class RecordStringStringConverter implements Converter<String> {
     @Override
     public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
         // 获取原始数据
-        RecordData record = (RecordData) context.getRecord();
+        RecordData record = context.getRecord();
         log.info("原始数据：{}", record);
         return new WriteCellData<>("自定义：" + context.getValue() + "-" + record.getDoubleData());
     }

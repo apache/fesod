@@ -162,4 +162,9 @@ public class CellWriteHandlerContext {
         this.head = head;
         this.excelContentProperty = excelContentProperty;
     }
+
+    @SuppressWarnings("unchecked")
+    public <E extends Object> E getOriginalRecord() {
+        return (E) originalRecord;
+    }
 }

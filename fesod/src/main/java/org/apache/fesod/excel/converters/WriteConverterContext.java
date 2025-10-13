@@ -19,11 +19,7 @@
 
 package org.apache.fesod.excel.converters;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.fesod.excel.context.WriteContext;
 import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
 
@@ -58,4 +54,9 @@ public class WriteConverterContext<T> {
      * write context
      */
     private WriteContext writeContext;
+
+    @SuppressWarnings("unchecked")
+    public <E extends Object> E getRecord() {
+        return (E) record;
+    }
 }

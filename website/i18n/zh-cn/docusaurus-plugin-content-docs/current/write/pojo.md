@@ -57,7 +57,7 @@ public void excludeOrIncludeWrite() {
 
 通过 `@ExcelProperty` 注解的 `index` 属性指定列顺序。
 
-### POJO类
+### POJO 类
 
 ```java
 @Getter

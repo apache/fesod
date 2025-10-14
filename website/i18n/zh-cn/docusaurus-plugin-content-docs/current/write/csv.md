@@ -9,7 +9,7 @@ title: 'CSV'
 
 ## 概述
 
-FastExcel 通过不同的参数设计进行 CSV 的写入。其底层使用了[Apache Commons CSV](https://commons.apache.org/proper/commons-csv)，也支持通过直接设置[CSVFormat](https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html)进行设定来达成写入的目标。
+FastExcel 通过不同的参数设计进行 CSV 的写入。其底层使用了 [Apache Commons CSV](https://commons.apache.org/proper/commons-csv)，也支持通过直接设置 [CSVFormat](https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html) 进行设定来达成写入的目标。
 
 主要的参数如下：
 
@@ -29,7 +29,7 @@ FastExcel 通过不同的参数设计进行 CSV 的写入。其底层使用了[A
 
 ### delimiter
 
-`delimiter` 用于指定 CSV 文件中的字段分隔符。默认值为英文逗号 `,`。同时，FastExcel 提供了一些常量`CsvConstant`，用于简化使用。
+`delimiter` 用于指定 CSV 文件中的字段分隔符。默认值为英文逗号 `,`。同时，FastExcel 提供了一些常量 `CsvConstant`，用于简化使用。
 
 #### 代码示例
 
@@ -100,7 +100,7 @@ public void nullStringDemo() {
 
 ### escape
 
-`escape` 用于指定转义字符。当使用了`escape`，输出的CSV有包含会保留显示。
+`escape` 用于指定转义字符。当使用了 `escape`，输出的 CSV 有包含会保留显示。
 
 #### 代码示例
 
@@ -115,9 +115,9 @@ public void escapeDemo() {
 }
 ```
 
-## CSVFormat设置详解与示例
+## CSVFormat 设置详解与示例
 
-支持直接构建一个`CSVFormat`对象。
+支持直接构建一个 `CSVFormat` 对象。
 > 目前 FastExcel 仍然支持，但并非最推荐的使用方法。
 
 ### 代码示例

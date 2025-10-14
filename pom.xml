@@ -66,7 +66,7 @@
         <log4j-over-slf4j.version>1.7.36</log4j-over-slf4j.version>
         <logback-classic.version>1.5.19</logback-classic.version>
         <mockserver.version>5.15.0</mockserver.version>
-        <jacoco.version>0.8.13</jacoco.version>
+        <jacoco.version>0.8.14</jacoco.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>

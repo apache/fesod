@@ -57,6 +57,9 @@ new features in the latest version will enhance your experience.
 > components, you
 > will need to manually exclude POI-related jar files.
 
+
+> We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache releases. You can see previous verison in this link: https://fesod.apache.org/docs/quickstart/guide/
+
 ### Maven
 
 If you are using Maven for project building, add the following configuration in the `pom.xml` file:

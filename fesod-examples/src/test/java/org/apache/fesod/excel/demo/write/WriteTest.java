@@ -780,6 +780,14 @@ public class WriteTest {
         System.out.println(fileName);
     }
 
+    @Test
+    public void headNameWrite() {
+        String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + "-head-name-write.xlsx";
+        FastExcel.write(fileName, DemoAutoHeadNameWriteData.class)
+                .sheet("表头转换")
+                .doWrite(this::demoAutoHeadNameWriteData);
+        System.out.println(fileName);
+    }
     private List<LongestMatchColumnWidthData> dataLong() {
         List<LongestMatchColumnWidthData> list = ListUtils.newArrayList();
         for (int i = 0; i < 10; i++) {
@@ -851,6 +859,16 @@ public class WriteTest {
             data.setString("_xB9f0_");
             data.setDate(new Date());
             data.setDoubleData(0.56);
+            list.add(data);
+        }
+        return list;
+    }
+    private List<DemoAutoHeadNameWriteData> demoAutoHeadNameWriteData() {
+        List<DemoAutoHeadNameWriteData> list = ListUtils.newArrayList();
+        for (int i = 0; i < 10; i++) {
+            DemoAutoHeadNameWriteData data = new DemoAutoHeadNameWriteData();
+            data.setString("STRING" + i);
+            data.setName("NAME"+i);
             list.add(data);
         }
         return list;

@@ -453,4 +453,14 @@ public class ReadTest {
             }
         }
     }
+
+
+    /**
+     * headConvert
+     */
+    @Test
+    public void headConvert() {
+        String fileName = TestFileUtil.getPath() + "demo" + File.separator + "head-name-demo.xlsx";
+        FastExcel.read(fileName, new HeadNameConvertListener()).head(DemoAutoHeadNameData.class) .sheet().doRead();
+    }
 }

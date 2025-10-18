@@ -61,13 +61,14 @@ const config = {
                 },
                 blog: {
                     showReadingTime: false,
-                    postsPerPage: 5,
+                    postsPerPage: 15,
                     feedOptions: {
                         type: 'all',
                     },
                     editUrl: `${repoUrl}/edit/${branch}/website/`,
                     editLocalizedFiles: true,
-                    blogSidebarCount: 'ALL'
+                    blogSidebarCount: 'ALL',
+                    authorsMapPath: "authors.json"
                 },
                 theme: {
                     customCss: './src/css/custom.css'

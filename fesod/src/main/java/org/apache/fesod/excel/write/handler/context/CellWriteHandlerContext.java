@@ -20,6 +20,7 @@
 package org.apache.fesod.excel.write.handler.context;
 
 import java.util.List;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ import org.apache.fesod.excel.metadata.Head;
 import org.apache.fesod.excel.metadata.data.WriteCellData;
 import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
 import org.apache.fesod.excel.write.handler.impl.FillStyleCellWriteHandler;
+import org.apache.fesod.excel.write.metadata.fill.FillConfig;
 import org.apache.fesod.excel.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteTableHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
@@ -43,7 +45,7 @@ import org.apache.poi.ss.usermodel.Row;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class CellWriteHandlerContext {
+public class CellWriteHandlerContext implements Cloneable {
     /**
      * write context
      */
@@ -72,6 +74,11 @@ public class CellWriteHandlerContext {
      * cell
      */
     private Cell cell;
+    /**
+     * cellMap use by DynamicColumn
+     * key rowIndex_columnIndex
+     */
+    private Map<String, CellWriteHandlerContext> cellMap;
     /**
      * index
      */
@@ -125,6 +132,35 @@ public class CellWriteHandlerContext {
      * @see FillStyleCellWriteHandler
      */
     private Boolean ignoreFillStyle;
+
+    /**
+     * Fill config
+     */
+    private FillConfig fillConfig;
+    /**
+     * Original variable
+     */
+    private String originalVariable;
+
+    @Override
+    public CellWriteHandlerContext clone() {
+        CellWriteHandlerContext cellWriteHandlerContext = new CellWriteHandlerContext(
+                this.writeContext,
+                this.writeWorkbookHolder,
+                this.writeSheetHolder,
+                this.writeTableHolder,
+                this.row,
+                this.rowIndex,
+                this.cell,
+                this.columnIndex,
+                this.relativeRowIndex,
+                this.headData,
+                this.cellDataList,
+                this.firstCellData,
+                this.head,
+                this.excelContentProperty);
+        return cellWriteHandlerContext;
+    }
 
     public CellWriteHandlerContext(
             WriteContext writeContext,

@@ -20,11 +20,6 @@
 package org.apache.fesod.excel.write.executor;
 
 import cn.idev.excel.support.cglib.beans.BeanMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.context.WriteContext;
 import org.apache.fesod.excel.enums.HeadKindEnum;
@@ -32,11 +27,7 @@ import org.apache.fesod.excel.metadata.FieldCache;
 import org.apache.fesod.excel.metadata.FieldWrapper;
 import org.apache.fesod.excel.metadata.Head;
 import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
-import org.apache.fesod.excel.util.BeanMapUtils;
-import org.apache.fesod.excel.util.ClassUtils;
-import org.apache.fesod.excel.util.FieldUtils;
-import org.apache.fesod.excel.util.WorkBookUtil;
-import org.apache.fesod.excel.util.WriteHandlerUtils;
+import org.apache.fesod.excel.util.*;
 import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.excel.write.handler.context.RowWriteHandlerContext;
 import org.apache.fesod.excel.write.metadata.CollectionRowData;
@@ -46,6 +37,8 @@ import org.apache.fesod.excel.write.metadata.holder.WriteHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteSheetHolder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+
+import java.util.*;
 
 /**
  * Add the data into excel
@@ -153,6 +146,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
 
         WriteHandlerUtils.afterCellCreate(cellWriteHandlerContext);
 
+        cellWriteHandlerContext.setOriginalRecord(oneRowData);
         cellWriteHandlerContext.setOriginalValue(oneRowData.get(dataIndex));
         cellWriteHandlerContext.setOriginalFieldClass(
                 FieldUtils.getFieldClass(cellWriteHandlerContext.getOriginalValue()));
@@ -199,6 +193,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
 
                 WriteHandlerUtils.afterCellCreate(cellWriteHandlerContext);
 
+                cellWriteHandlerContext.setOriginalRecord(oneRowData);
                 cellWriteHandlerContext.setOriginalValue(beanMap.get(name));
                 cellWriteHandlerContext.setOriginalFieldClass(head.getField().getType());
                 converterAndSet(cellWriteHandlerContext);
@@ -244,6 +239,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
 
             WriteHandlerUtils.afterCellCreate(cellWriteHandlerContext);
 
+            cellWriteHandlerContext.setOriginalRecord(oneRowData);
             cellWriteHandlerContext.setOriginalValue(value);
             cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(beanMap, fieldName, value));
             converterAndSet(cellWriteHandlerContext);

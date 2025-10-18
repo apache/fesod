@@ -17,49 +17,27 @@
  * under the License.
  */
 
-package org.apache.fesod.excel.converters;
+package org.apache.fesod.excel.demo.write;
 
-import lombok.*;
-import org.apache.fesod.excel.context.WriteContext;
-import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.fesod.excel.util.BooleanUtils;
+import org.apache.fesod.excel.write.handler.CellWriteHandler;
+import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * write converter context
- *
- *
+ * 拦截器中单元格上下文可以获取到行数据
  */
-@Getter
-@Setter
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-public class WriteConverterContext<T> {
+@Slf4j
+public class RecordCellWriteHandler implements CellWriteHandler {
 
-    /**
-     * Java Data.NotNull.
-     */
-    private T value;
+    @Override
+    public void afterCellDispose(CellWriteHandlerContext context) {
+        Cell cell = context.getCell();
 
-    /**
-     * Java row level record
-     */
-    private Object record;
-
-    /**
-     * Content property.Nullable.
-     */
-    private ExcelContentProperty contentProperty;
-
-    /**
-     * write context
-     */
-    private WriteContext writeContext;
-
-    @SuppressWarnings("unchecked")
-    public <E extends Object> E getRecord() {
-        if (record == null) {
-            return null;
+        if (BooleanUtils.isFalse(context.getHead()) && cell.getColumnIndex() != 0) {
+            RecordData record = context.getOriginalRecord();
+            log.debug("写入数据：{}", record);
         }
-        return (E) record;
     }
 }

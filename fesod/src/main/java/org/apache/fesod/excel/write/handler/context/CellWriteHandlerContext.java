@@ -19,7 +19,6 @@
 
 package org.apache.fesod.excel.write.handler.context;
 
-import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +33,8 @@ import org.apache.fesod.excel.write.metadata.holder.WriteTableHolder;
 import org.apache.fesod.excel.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+
+import java.util.List;
 
 /**
  * cell context
@@ -105,6 +106,11 @@ public class CellWriteHandlerContext {
     private ExcelContentProperty excelContentProperty;
 
     /**
+     * The record of the original
+     */
+    private Object originalRecord;
+
+    /**
      * The value of the original
      */
     private Object originalValue;
@@ -155,5 +161,13 @@ public class CellWriteHandlerContext {
         this.firstCellData = firstCellData;
         this.head = head;
         this.excelContentProperty = excelContentProperty;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <E extends Object> E getOriginalRecord() {
+        if (originalRecord == null) {
+            return null;
+        }
+        return (E) originalRecord;
     }
 }

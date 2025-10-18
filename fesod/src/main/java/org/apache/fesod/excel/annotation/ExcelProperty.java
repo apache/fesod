@@ -24,9 +24,12 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.fesod.excel.AutoHeadConverter;
 import org.apache.fesod.excel.annotation.format.DateTimeFormat;
 import org.apache.fesod.excel.converters.AutoConverter;
 import org.apache.fesod.excel.converters.Converter;
+import org.apache.fesod.excel.converters.HeadConverter;
 
 /**
  *
@@ -84,4 +87,10 @@ public @interface ExcelProperty {
      */
     @Deprecated
     String format() default "";
+
+    /**
+     * 表头转换器
+     * @return Class
+     */
+    Class<? extends HeadConverter> headConverter() default AutoHeadConverter.class;
 }

@@ -21,18 +21,9 @@ package org.apache.fesod.excel.util;
 
 import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -487,7 +478,15 @@ public class ClassUtils {
         }
         // set heads
         if (excelProperty != null) {
-            fieldWrapper.setHeads(excelProperty.value());
+            try {
+                Class<?> clazz = excelProperty.headConverter();
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                Method convertMethod = clazz.getMethod("convert", String[].class);
+                Object result = convertMethod.invoke(instance,  new Object[]{excelProperty.value()});
+                fieldWrapper.setHeads((String[]) result);
+            } catch (Exception e) {
+                throw new UnsupportedOperationException("not supported by the current converter.");
+            }
         }
         if (excelProperty != null && excelProperty.index() >= 0) {
             if (indexFieldMap.containsKey(excelProperty.index())) {

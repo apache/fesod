@@ -64,7 +64,7 @@
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>1.7.36</log4j-over-slf4j.version>
-        <logback-classic.version>1.5.19</logback-classic.version>
+        <logback-classic.version>1.5.20</logback-classic.version>
         <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.14</jacoco.version>
         <junit.version>5.13.4</junit.version>

@@ -13,7 +13,7 @@ title: '表头'
 
 支持设置多级表头，通过 `@ExcelProperty` 注解指定主标题和子标题。
 
-### POJO类
+### POJO 类
 
 ```java
 @Getter

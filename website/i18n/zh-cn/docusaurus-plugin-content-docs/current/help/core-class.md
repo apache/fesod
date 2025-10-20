@@ -21,17 +21,17 @@ title: '核心类'
 
 对读和写操作分别有对应的 Builder 类：
 
-- **`ExcelReaderBuilder` 和 `ExcelWriterBuilder`**：分别为构建出一个 ReadWorkbook 和 WriteWorkbook，可以理解成一个excel对象，一个excel只要构建一个。
-- **`ExcelReaderSheetBuilder`和`ExcelWriterSheetBuilder`**：分别构建出一个 ReadSheet 和 WriteSheet对象，可以理解成excel里面的一页,每一页都要构建一个。
-- **`CsvReaderBuilder`和`CsvWriterBuilder`**：构建内部所需的 CsvFormat。
+- **`ExcelReaderBuilder` 和 `ExcelWriterBuilder`**：分别为构建出一个 ReadWorkbook 和 WriteWorkbook，可以理解成一个 excel 对象，一个 excel 只要构建一个。
+- **`ExcelReaderSheetBuilder` 和 `ExcelWriterSheetBuilder`**：分别构建出一个 ReadSheet 和 WriteSheet 对象，可以理解成 excel 里面的一页,每一页都要构建一个。
+- **`CsvReaderBuilder` 和 `CsvWriterBuilder`**：构建内部所需的 CsvFormat。
 
 ### ReadListener
 
-在每一行读取完毕后都会调用ReadListener来处理数据。
+在每一行读取完毕后都会调用 ReadListener 来处理数据。
 
 ### WriteHandler
 
-在每一个操作包括创建单元格、创建表格等都会调用WriteHandler来处理数据。
+在每一个操作包括创建单元格、创建表格等都会调用 WriteHandler 来处理数据。
 
 所有配置都是继承的，Workbook 的配置会被 Sheet 继承，所以在用 FastExcel 设置参数的时候，在 FastExcel...sheet() 方法之前作用域是整个 sheet,在 FastExcel...csv() 方法之前作用域是整个 csv。
 
@@ -591,11 +591,11 @@ public void readWithExceptionHandling() {
 
 ### 概述
 
-`Converter`是 FastExcel 提供的接口，用于在处理 Excel 文件时对数据进行转换。允许开发者自定义操作，通过实现`Converter`接口，自定义数据转换逻辑。
+`Converter` 是 FastExcel 提供的接口，用于在处理 Excel 文件时对数据进行转换。允许开发者自定义操作，通过实现 `Converter` 接口，自定义数据转换逻辑。
 
 ### 方法
 
-`Converter`是一个泛型接口，泛型类型是需要被转换的对象类型（如 `Date`)。其核心方法如下：
+`Converter` 是一个泛型接口，泛型类型是需要被转换的对象类型（如 `Date`)。其核心方法如下：
 
 | 方法名                                                                                                                                   | 描述                                      |
 |---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
@@ -605,9 +605,9 @@ public void readWithExceptionHandling() {
 | `WriteCellData<?> convertToExcelData(T value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(可选)*  | 将 Java  对象转换为 Excel 单元格数据对象             |
 | `WriteCellData<?> convertToExcelData(WriteConverterContext<T> context)` *(可选)*                                                        | 将 Java  对象转换为 Excel 单元格数据对象             |
 
-FastExcel 默认提供了很多常用类型的转换器， 并已默认在`DefaultConverterLoader`中注册。
+FastExcel 默认提供了很多常用类型的转换器， 并已默认在 `DefaultConverterLoader` 中注册。
 
-您可以自定义转换器，但类型不能与默认的类型重复。类型注册时，使用的`ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())`作为 key 值。
+您可以自定义转换器，但类型不能与默认的类型重复。类型注册时，使用的 `ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())` 作为 key 值。
 
 ### 使用场景
 

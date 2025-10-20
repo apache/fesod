@@ -21,7 +21,7 @@ FastExcel 提供监听器机制，用于在读取 Excel 文件时对每一行数
 
 监听器不能被 Spring 管理，每次读取 Excel 文件时需要重新实例化。
 
-#### `Lambda`表达式
+#### `Lambda` 表达式
 
 ```java
 @Test

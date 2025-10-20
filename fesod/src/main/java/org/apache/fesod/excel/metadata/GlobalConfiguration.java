@@ -24,6 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.excel.enums.CacheLocationEnum;
+import org.apache.fesod.excel.il8n.ExcelMessageSource;
 
 /**
  * Global configuration
@@ -70,7 +71,10 @@ public class GlobalConfiguration {
      * default is false
      */
     private Boolean autoStrip;
-
+    /**
+     * Message source
+     */
+    private ExcelMessageSource messageSource;
     public GlobalConfiguration() {
         this.autoTrim = Boolean.TRUE;
         this.autoStrip = Boolean.FALSE;
@@ -78,5 +82,6 @@ public class GlobalConfiguration {
         this.locale = Locale.getDefault();
         this.useScientificFormat = Boolean.FALSE;
         this.filedCacheLocation = CacheLocationEnum.THREAD_LOCAL;
+        this.messageSource=null;
     }
 }

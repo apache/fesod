@@ -20,9 +20,6 @@
 package org.apache.fesod.excel.demo.read;
 
 import com.alibaba.fastjson2.JSON;
-import java.io.File;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.ExcelReader;
 import org.apache.fesod.excel.FastExcel;
@@ -32,6 +29,7 @@ import org.apache.fesod.excel.annotation.format.NumberFormat;
 import org.apache.fesod.excel.context.AnalysisContext;
 import org.apache.fesod.excel.converters.DefaultConverterLoader;
 import org.apache.fesod.excel.enums.CellExtraTypeEnum;
+import org.apache.fesod.excel.il8n.AutoMessageSource;
 import org.apache.fesod.excel.read.listener.PageReadListener;
 import org.apache.fesod.excel.read.listener.ReadListener;
 import org.apache.fesod.excel.read.metadata.ReadSheet;
@@ -42,10 +40,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Common approaches for reading Excel files
- *
- *
  */
 @Slf4j
 public class ReadTest {
@@ -127,7 +128,7 @@ public class ReadTest {
         fileName = TestFileUtil.getPath() + "demo" + File.separator + "demo.xlsx";
         // One reader per file
         try (ExcelReader excelReader =
-                FastExcel.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+                     FastExcel.read(fileName, DemoData.class, new DemoDataListener()).build()) {
             // Build a sheet. You can specify the name or index.
             ReadSheet readSheet = FastExcel.readSheet(0).build();
             readSheet.setNumRows(2);
@@ -405,6 +406,41 @@ public class ReadTest {
     }
 
     /**
+     * Reading without creating objects
+     */
+    @Test
+    public void il8nZhHeadRead() {
+        String fileName = TestFileUtil.getPath() + "demo" + File.separator + "il8n-head-demo-zh.xlsx";
+        AutoMessageSource autoMessageSource = new AutoMessageSource();
+        autoMessageSource.addMessage("head.str", Locale.CHINA, "这是个中文表头");
+        autoMessageSource.addMessage("head.date", Locale.CHINA, "Date");
+        autoMessageSource.addMessage("head.doubleData", Locale.CHINA, "Number");
+        autoMessageSource.addMessage("head.str", Locale.US, "This is a English head");
+        autoMessageSource.addMessage("head.date", Locale.US, "Date");
+        autoMessageSource.addMessage("head.doubleData", Locale.US, "Number");
+        FastExcel.read(fileName, Il8nZhHeadDemoData.class, new Il8nHeadDemoDataListener())
+                .locale(Locale.CHINA).messageResource(autoMessageSource).sheet().doRead();
+    }
+
+    /**
+     * Reading without creating objects
+     */
+    @Test
+    public void il8nUsHeadRead() {
+        String fileName = TestFileUtil.getPath() + "demo" + File.separator + "il8n-head-demo-us.xlsx";
+        AutoMessageSource autoMessageSource = new AutoMessageSource();
+        autoMessageSource.addMessage("head.str", Locale.CHINA, "这是个中文表头");
+        autoMessageSource.addMessage("head.date", Locale.CHINA, "Date");
+        autoMessageSource.addMessage("head.doubleData", Locale.CHINA, "Number");
+        autoMessageSource.addMessage("head.str", Locale.US, "This is a English head");
+        autoMessageSource.addMessage("head.date", Locale.US, "Date");
+        autoMessageSource.addMessage("head.doubleData", Locale.US, "Number");
+        autoMessageSource.addMessage("head.str1", Locale.US, "这是个中文表头1");
+        FastExcel.read(fileName, Il8nZhHeadDemoData.class, new Il8nHeadDemoDataListener())
+                .locale(Locale.US).messageResource(autoMessageSource).sheet().doRead();
+    }
+
+    /**
      * Custom modification of CSV configuration
      */
     @Nested
@@ -446,7 +482,8 @@ public class ReadTest {
                                 }
 
                                 @Override
-                                public void doAfterAllAnalysed(AnalysisContext context) {}
+                                public void doAfterAllAnalysed(AnalysisContext context) {
+                                }
                             })
                     .build()) {
                 excelReader.readAll();

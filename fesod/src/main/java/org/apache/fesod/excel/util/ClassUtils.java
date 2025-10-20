@@ -20,25 +20,7 @@
 package org.apache.fesod.excel.util;
 
 import cn.idev.excel.support.cglib.beans.BeanMap;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.annotation.ExcelIgnore;
 import org.apache.fesod.excel.annotation.ExcelIgnoreUnannotated;
@@ -50,15 +32,18 @@ import org.apache.fesod.excel.annotation.write.style.ContentStyle;
 import org.apache.fesod.excel.converters.AutoConverter;
 import org.apache.fesod.excel.converters.Converter;
 import org.apache.fesod.excel.exception.ExcelCommonException;
+import org.apache.fesod.excel.il8n.ExcelMessageSource;
 import org.apache.fesod.excel.metadata.ConfigurationHolder;
 import org.apache.fesod.excel.metadata.FieldCache;
 import org.apache.fesod.excel.metadata.FieldWrapper;
-import org.apache.fesod.excel.metadata.property.DateTimeFormatProperty;
-import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
-import org.apache.fesod.excel.metadata.property.FontProperty;
-import org.apache.fesod.excel.metadata.property.NumberFormatProperty;
-import org.apache.fesod.excel.metadata.property.StyleProperty;
+import org.apache.fesod.excel.metadata.GlobalConfiguration;
+import org.apache.fesod.excel.metadata.property.*;
 import org.apache.fesod.excel.write.metadata.holder.WriteHolder;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClassUtils {
 
@@ -327,7 +312,7 @@ public class ClassUtils {
             if (ignoreSet.contains(fieldName)) {
                 continue;
             }
-            declaredOneField(field, orderFieldMap, indexFieldMap, ignoreSet, excelIgnoreUnannotated);
+            declaredOneField(field, orderFieldMap, indexFieldMap, ignoreSet, excelIgnoreUnannotated, configurationHolder);
         }
         Map<Integer, FieldWrapper> sortedFieldMap = buildSortedAllFieldMap(orderFieldMap, indexFieldMap);
         FieldCache fieldCache = new FieldCache(sortedFieldMap, indexFieldMap);
@@ -466,7 +451,8 @@ public class ClassUtils {
             Map<Integer, List<FieldWrapper>> orderFieldMap,
             Map<Integer, FieldWrapper> indexFieldMap,
             Set<String> ignoreSet,
-            ExcelIgnoreUnannotated excelIgnoreUnannotated) {
+            ExcelIgnoreUnannotated excelIgnoreUnannotated,
+            ConfigurationHolder configurationHolder) {
         String fieldName = FieldUtils.resolveCglibFieldName(field);
         // skip if the field is in ignoreSet
         if (ignoreSet.contains(fieldName)) {
@@ -487,7 +473,7 @@ public class ClassUtils {
         }
         // set heads
         if (excelProperty != null) {
-            fieldWrapper.setHeads(excelProperty.value());
+            fieldWrapper.setHeads(getIl8nHeads(excelProperty.value(), configurationHolder.globalConfiguration()));
         }
         if (excelProperty != null && excelProperty.index() >= 0) {
             if (indexFieldMap.containsKey(excelProperty.index())) {
@@ -584,5 +570,17 @@ public class ClassUtils {
         FIELD_THREAD_LOCAL.remove();
         CLASS_CONTENT_THREAD_LOCAL.remove();
         CONTENT_THREAD_LOCAL.remove();
+    }
+
+    private static String[] getIl8nHeads(String[] heads, GlobalConfiguration globalConfiguration) {
+        ExcelMessageSource excelMessageSource = globalConfiguration.getMessageSource();
+        if (Objects.isNull(heads) || heads.length == 0 || Objects.isNull(excelMessageSource)) {
+            return heads;
+        }
+        String[] il8nHeads = new String[heads.length];
+        for (int i = 0; i < heads.length; i++) {
+            il8nHeads[i] = excelMessageSource.resolveCode(heads[i], globalConfiguration.getLocale());
+        }
+        return il8nHeads;
     }
 }

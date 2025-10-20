@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Objects;
 import org.apache.fesod.excel.converters.Converter;
 import org.apache.fesod.excel.enums.CacheLocationEnum;
+import org.apache.fesod.excel.il8n.ExcelMessageSource;
 import org.apache.fesod.excel.util.ListUtils;
 
 /**
@@ -100,6 +101,16 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
         return self();
     }
 
+    /**
+     * message resource
+     *
+     * @param excelMessageSource ExcelMessageSource
+     * @return T
+     */
+    public T messageResource(ExcelMessageSource  excelMessageSource) {
+        parameter().setMessageSource(excelMessageSource);
+        return self();
+    }
     /**
      * The cache used when parsing fields such as head.
      * <p>

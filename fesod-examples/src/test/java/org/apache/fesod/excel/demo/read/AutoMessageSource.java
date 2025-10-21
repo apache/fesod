@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * ExcelMessageSource
+ * AutoMessageSource
  *
  * @author GGBOUD
  * @date 2025/10/20

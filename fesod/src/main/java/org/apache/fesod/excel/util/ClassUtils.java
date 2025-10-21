@@ -32,7 +32,7 @@ import org.apache.fesod.excel.annotation.write.style.ContentStyle;
 import org.apache.fesod.excel.converters.AutoConverter;
 import org.apache.fesod.excel.converters.Converter;
 import org.apache.fesod.excel.exception.ExcelCommonException;
-import org.apache.fesod.excel.il8n.ExcelMessageSource;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 import org.apache.fesod.excel.metadata.ConfigurationHolder;
 import org.apache.fesod.excel.metadata.FieldCache;
 import org.apache.fesod.excel.metadata.FieldWrapper;

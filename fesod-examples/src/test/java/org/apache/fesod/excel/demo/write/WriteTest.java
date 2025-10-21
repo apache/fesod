@@ -774,7 +774,7 @@ public class WriteTest {
     }
     @Test
     public void sheetIl8nHeadWriteTest() {
-        List<Locale> locales=new ArrayList<>();
+        List<Locale> locales = new ArrayList<>();
         locales.add(Locale.CHINA);
         locales.add(Locale.US);
         AutoMessageSource autoMessageSource = new AutoMessageSource();

@@ -18,7 +18,7 @@
  */
 package org.apache.fesod.excel.demo.read;
 
-import org.apache.fesod.excel.il8n.ExcelMessageSource;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 
 import java.util.HashMap;
 import java.util.Locale;

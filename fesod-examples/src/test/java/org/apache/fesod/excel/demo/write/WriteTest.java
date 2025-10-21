@@ -29,7 +29,7 @@ import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.excel.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.excel.demo.read.Il8nZhHeadDemoData;
 import org.apache.fesod.excel.enums.CellDataTypeEnum;
-import org.apache.fesod.excel.il8n.AutoMessageSource;
+import org.apache.fesod.excel.demo.read.AutoMessageSource;
 import org.apache.fesod.excel.metadata.data.*;
 import org.apache.fesod.excel.util.BooleanUtils;
 import org.apache.fesod.excel.util.FileUtils;

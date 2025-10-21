@@ -29,7 +29,6 @@ import org.apache.fesod.excel.annotation.format.NumberFormat;
 import org.apache.fesod.excel.context.AnalysisContext;
 import org.apache.fesod.excel.converters.DefaultConverterLoader;
 import org.apache.fesod.excel.enums.CellExtraTypeEnum;
-import org.apache.fesod.excel.il8n.AutoMessageSource;
 import org.apache.fesod.excel.read.listener.PageReadListener;
 import org.apache.fesod.excel.read.listener.ReadListener;
 import org.apache.fesod.excel.read.metadata.ReadSheet;

@@ -3,7 +3,7 @@ package org.apache.fesod.excel.il8n;
 import java.util.Locale;
 
 /**
- * IExcelMessageSource
+ * ExcelMessageSource
  *
  * @author GGBOUD
  * @date 2025/10/20

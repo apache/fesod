@@ -20,7 +20,7 @@
 package org.apache.fesod.excel.util;
 
 import cn.idev.excel.support.cglib.beans.BeanMap;
-import lombok.*;
+// Lombok imports replaced with explicit imports below.
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.annotation.ExcelIgnore;
 import org.apache.fesod.excel.annotation.ExcelIgnoreUnannotated;

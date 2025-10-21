@@ -35,7 +35,7 @@ import org.apache.fesod.excel.context.AnalysisContext;
 import org.apache.fesod.excel.enums.CellExtraTypeEnum;
 import org.apache.fesod.excel.enums.ReadDefaultReturnEnum;
 import org.apache.fesod.excel.event.AnalysisEventListener;
-import org.apache.fesod.excel.il8n.ExcelMessageSource;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 import org.apache.fesod.excel.read.listener.ModelBuildEventListener;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
 

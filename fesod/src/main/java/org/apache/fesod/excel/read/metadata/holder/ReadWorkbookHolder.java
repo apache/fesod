@@ -39,7 +39,7 @@ import org.apache.fesod.excel.enums.HolderEnum;
 import org.apache.fesod.excel.enums.ReadDefaultReturnEnum;
 import org.apache.fesod.excel.event.AnalysisEventListener;
 import org.apache.fesod.excel.exception.ExcelAnalysisException;
-import org.apache.fesod.excel.il8n.ExcelMessageSource;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 import org.apache.fesod.excel.read.metadata.ReadSheet;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.support.ExcelTypeEnum;

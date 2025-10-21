@@ -26,7 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.excel.converters.Converter;
 import org.apache.fesod.excel.enums.CacheLocationEnum;
-import org.apache.fesod.excel.il8n.ExcelMessageSource;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 
 /**
  * Basic parameter

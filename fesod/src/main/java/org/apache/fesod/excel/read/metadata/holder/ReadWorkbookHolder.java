@@ -221,7 +221,7 @@ public class ReadWorkbookHolder extends AbstractReadHolder {
         }
         this.hasReadSheet = new HashSet<Integer>();
         this.password = readWorkbook.getPassword();
-        this.messageSource=readWorkbook.getMessageSource();
+        this.messageSource = readWorkbook.getMessageSource();
     }
 
     @Override

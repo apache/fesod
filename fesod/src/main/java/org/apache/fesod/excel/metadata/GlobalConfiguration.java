@@ -82,6 +82,6 @@ public class GlobalConfiguration {
         this.locale = Locale.getDefault();
         this.useScientificFormat = Boolean.FALSE;
         this.filedCacheLocation = CacheLocationEnum.THREAD_LOCAL;
-        this.messageSource=null;
+        this.messageSource = null;
     }
 }

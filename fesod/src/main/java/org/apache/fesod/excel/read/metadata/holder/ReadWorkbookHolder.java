@@ -154,7 +154,6 @@ public class ReadWorkbookHolder extends AbstractReadHolder {
      */
     private Boolean ignoreHiddenSheet;
 
-
     /**
      * Excel message source
      */

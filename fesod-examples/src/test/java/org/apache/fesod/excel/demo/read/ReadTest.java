@@ -20,6 +20,10 @@
 package org.apache.fesod.excel.demo.read;
 
 import com.alibaba.fastjson2.JSON;
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.ExcelReader;
 import org.apache.fesod.excel.FastExcel;
@@ -38,11 +42,6 @@ import org.apache.fesod.excel.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Common approaches for reading Excel files
@@ -127,7 +126,7 @@ public class ReadTest {
         fileName = TestFileUtil.getPath() + "demo" + File.separator + "demo.xlsx";
         // One reader per file
         try (ExcelReader excelReader =
-                     FastExcel.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+                FastExcel.read(fileName, DemoData.class, new DemoDataListener()).build()) {
             // Build a sheet. You can specify the name or index.
             ReadSheet readSheet = FastExcel.readSheet(0).build();
             readSheet.setNumRows(2);
@@ -418,7 +417,10 @@ public class ReadTest {
         autoMessageSource.addMessage("head.date", Locale.US, "Date");
         autoMessageSource.addMessage("head.doubleData", Locale.US, "Number");
         FastExcel.read(fileName, Il8nZhHeadDemoData.class, new Il8nHeadDemoDataListener())
-                .locale(Locale.CHINA).messageResource(autoMessageSource).sheet().doRead();
+                .locale(Locale.CHINA)
+                .messageResource(autoMessageSource)
+                .sheet()
+                .doRead();
     }
 
     /**
@@ -436,7 +438,10 @@ public class ReadTest {
         autoMessageSource.addMessage("head.doubleData", Locale.US, "Number");
         autoMessageSource.addMessage("head.str1", Locale.US, "这是个中文表头1");
         FastExcel.read(fileName, Il8nZhHeadDemoData.class, new Il8nHeadDemoDataListener())
-                .locale(Locale.US).messageResource(autoMessageSource).sheet().doRead();
+                .locale(Locale.US)
+                .messageResource(autoMessageSource)
+                .sheet()
+                .doRead();
     }
 
     /**
@@ -481,8 +486,7 @@ public class ReadTest {
                                 }
 
                                 @Override
-                                public void doAfterAllAnalysed(AnalysisContext context) {
-                                }
+                                public void doAfterAllAnalysed(AnalysisContext context) {}
                             })
                     .build()) {
                 excelReader.readAll();

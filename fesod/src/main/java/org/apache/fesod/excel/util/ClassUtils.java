@@ -20,6 +20,10 @@
 package org.apache.fesod.excel.util;
 
 import cn.idev.excel.support.cglib.beans.BeanMap;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.annotation.ExcelIgnore;
@@ -39,11 +43,6 @@ import org.apache.fesod.excel.metadata.FieldWrapper;
 import org.apache.fesod.excel.metadata.GlobalConfiguration;
 import org.apache.fesod.excel.metadata.property.*;
 import org.apache.fesod.excel.write.metadata.holder.WriteHolder;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ClassUtils {
 
@@ -312,7 +311,8 @@ public class ClassUtils {
             if (ignoreSet.contains(fieldName)) {
                 continue;
             }
-            declaredOneField(field, orderFieldMap, indexFieldMap, ignoreSet, excelIgnoreUnannotated, configurationHolder);
+            declaredOneField(
+                    field, orderFieldMap, indexFieldMap, ignoreSet, excelIgnoreUnannotated, configurationHolder);
         }
         Map<Integer, FieldWrapper> sortedFieldMap = buildSortedAllFieldMap(orderFieldMap, indexFieldMap);
         FieldCache fieldCache = new FieldCache(sortedFieldMap, indexFieldMap);

@@ -19,6 +19,12 @@
 
 package org.apache.fesod.excel.demo.write;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import org.apache.fesod.excel.ExcelWriter;
 import org.apache.fesod.excel.FastExcel;
 import org.apache.fesod.excel.annotation.ExcelProperty;
@@ -27,9 +33,9 @@ import org.apache.fesod.excel.annotation.format.NumberFormat;
 import org.apache.fesod.excel.annotation.write.style.ColumnWidth;
 import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.excel.annotation.write.style.HeadRowHeight;
+import org.apache.fesod.excel.demo.read.AutoMessageSource;
 import org.apache.fesod.excel.demo.read.Il8nZhHeadDemoData;
 import org.apache.fesod.excel.enums.CellDataTypeEnum;
-import org.apache.fesod.excel.demo.read.AutoMessageSource;
 import org.apache.fesod.excel.metadata.data.*;
 import org.apache.fesod.excel.util.BooleanUtils;
 import org.apache.fesod.excel.util.FileUtils;
@@ -51,15 +57,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 写的常见写法
@@ -772,31 +769,33 @@ public class WriteTest {
                 .doWrite(this::data);
         System.out.println(fileName);
     }
+
     @Test
     public void sheetIl8nHeadWriteTest() {
         List<Locale> locales = new ArrayList<>();
         locales.add(Locale.CHINA);
         locales.add(Locale.US);
         AutoMessageSource autoMessageSource = new AutoMessageSource();
-        autoMessageSource.addMessage("head.str", Locale.CHINA,"这是个中文表头");
-        autoMessageSource.addMessage("head.str1", Locale.CHINA,"这是个中文表头2");
-        autoMessageSource.addMessage("head.date", Locale.CHINA,"Date");
-        autoMessageSource.addMessage("head.doubleData", Locale.CHINA,"Number");
-        autoMessageSource.addMessage("head.str", Locale.US,"This is a English head");
-        autoMessageSource.addMessage("head.date", Locale.US,"Date");
-        autoMessageSource.addMessage("head.doubleData", Locale.US,"Number");
-        autoMessageSource.addMessage("head.str1", Locale.US,"这是个中文表头1");
-        for (Locale locale:locales){
-            String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + locale.getLanguage()+".xlsx";
+        autoMessageSource.addMessage("head.str", Locale.CHINA, "这是个中文表头");
+        autoMessageSource.addMessage("head.str1", Locale.CHINA, "这是个中文表头2");
+        autoMessageSource.addMessage("head.date", Locale.CHINA, "Date");
+        autoMessageSource.addMessage("head.doubleData", Locale.CHINA, "Number");
+        autoMessageSource.addMessage("head.str", Locale.US, "This is a English head");
+        autoMessageSource.addMessage("head.date", Locale.US, "Date");
+        autoMessageSource.addMessage("head.doubleData", Locale.US, "Number");
+        autoMessageSource.addMessage("head.str1", Locale.US, "这是个中文表头1");
+        for (Locale locale : locales) {
+            String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + locale.getLanguage()
+                    + ".xlsx";
             FastExcel.write(fileName, Il8nZhHeadDemoData.class)
-                    .locale( locale)
+                    .locale(locale)
                     .messageResource(autoMessageSource)
                     .sheet("模板")
                     .doWrite(this::Il8nHeadDemoDataList);
             System.out.println(fileName);
         }
-
     }
+
     private List<LongestMatchColumnWidthData> dataLong() {
         List<LongestMatchColumnWidthData> list = ListUtils.newArrayList();
         for (int i = 0; i < 10; i++) {
@@ -880,7 +879,7 @@ public class WriteTest {
             data.setString("STRING" + i);
             data.setDate(new Date());
             data.setDoubleData(0.56);
-            data.setString1("测试000"+i);
+            data.setString1("测试000" + i);
             list.add(data);
         }
         return list;

@@ -19,11 +19,10 @@
 
 package org.apache.fesod.excel.demo.read;
 
-import org.apache.fesod.excel.i18n.ExcelMessageSource;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 
 /**
  * AutoMessageSource
@@ -32,7 +31,7 @@ import java.util.Map;
  * @date 2025/10/20
  */
 public class AutoMessageSource implements ExcelMessageSource {
-    private final static Map<String, Map<Locale, String>> MESSAGE_MAP = new HashMap<>();
+    private static final Map<String, Map<Locale, String>> MESSAGE_MAP = new HashMap<>();
 
     @Override
     public String resolveCode(String code, Locale locale) {

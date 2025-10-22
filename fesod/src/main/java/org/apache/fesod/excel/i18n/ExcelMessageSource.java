@@ -32,19 +32,18 @@ public interface ExcelMessageSource {
     /**
      * resolveCode 转换code
      *
-     * @param code String
-     * @param locale Locale
-     * @return String
+     * @param code
+     * @param locale
+     * @return
      */
     String resolveCode(String code, Locale locale);
-
 
     /**
      * addMessage 增加词条
      *
-     * @param code String
-     * @param locale Locale
-     * @param msg String
+     * @param code
+     * @param locale
+     * @param
      */
     void addMessage(String code, Locale locale, String msg);
 }

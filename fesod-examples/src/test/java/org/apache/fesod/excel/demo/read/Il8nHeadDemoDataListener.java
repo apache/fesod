@@ -33,9 +33,7 @@ import org.apache.fesod.excel.read.listener.ReadListener;
 @Slf4j
 public class Il8nHeadDemoDataListener implements ReadListener<Il8nZhHeadDemoData> {
 
-    public Il8nHeadDemoDataListener() {
-
-    }
+    public Il8nHeadDemoDataListener() {}
 
     @Override
     public void invoke(Il8nZhHeadDemoData data, AnalysisContext context) {
@@ -51,6 +49,4 @@ public class Il8nHeadDemoDataListener implements ReadListener<Il8nZhHeadDemoData
     public void doAfterAllAnalysed(AnalysisContext context) {
         log.info("All data has been parsed!");
     }
-
-
 }

@@ -82,12 +82,13 @@ public class BasicParameter {
     private CacheLocationEnum filedCacheLocation;
     /**
      * Automatic strip includes sheet name and content
+     *
      */
     private Boolean autoStrip;
 
-
     /**
      * Message source
+     *
      */
     private ExcelMessageSource messageSource;
 }

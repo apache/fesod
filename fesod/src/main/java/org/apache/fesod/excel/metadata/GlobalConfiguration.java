@@ -73,8 +73,10 @@ public class GlobalConfiguration {
     private Boolean autoStrip;
     /**
      * Message source
+     *
      */
     private ExcelMessageSource messageSource;
+
     public GlobalConfiguration() {
         this.autoTrim = Boolean.TRUE;
         this.autoStrip = Boolean.FALSE;

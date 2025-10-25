@@ -31,6 +31,7 @@ import org.apache.fesod.excel.FastExcel;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
 import org.apache.fesod.excel.util.TestFileUtil;
 import org.apache.fesod.excel.write.metadata.WriteSheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -141,6 +142,9 @@ public class WriteSheetTest {
             writeSheet =
                     FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
+            Assertions.assertEquals(
+                    sheetNameList.get(sheetNo).substring(0, Workbook.MAX_SENSITIVE_SHEET_NAME_LEN),
+                    excelWriter.writeContext().writeSheetHolder().getSheetName());
             Assertions.assertEquals(
                     sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
         }

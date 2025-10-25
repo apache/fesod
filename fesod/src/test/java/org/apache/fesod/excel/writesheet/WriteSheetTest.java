@@ -106,8 +106,8 @@ public class WriteSheetTest {
     }
 
     private void testSheetOrderWithSheetName(ExcelTypeEnum excelTypeEnum) {
-        List<String> sheetNameList = Arrays.asList("Sheet1", "Sheet2", "Sheet3");
-        List<Integer> sheetNoList = Arrays.asList(0, 1, 2);
+        List<String> sheetNameList = Arrays.asList("Sheet1", "Sheet2", "Sheet3", "Sheet111112222233333444445555566666");
+        List<Integer> sheetNoList = Arrays.asList(0, 1, 2, 3);
 
         Map<Integer, Integer> dataMap = initSheetDataSizeList(sheetNoList);
         File testFile = TestFileUtil.createNewFile("writesheet/write-sheet-order-name" + excelTypeEnum.getValue());
@@ -131,6 +131,13 @@ public class WriteSheetTest {
                     sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             sheetNo = 2;
+            writeSheet =
+                    FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
+            excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
+            Assertions.assertEquals(
+                    sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
+
+            sheetNo = 3;
             writeSheet =
                     FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);

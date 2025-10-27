@@ -31,6 +31,7 @@ import org.apache.fesod.excel.FastExcel;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
 import org.apache.fesod.excel.util.TestFileUtil;
 import org.apache.fesod.excel.write.metadata.WriteSheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -106,8 +107,8 @@ public class WriteSheetTest {
     }
 
     private void testSheetOrderWithSheetName(ExcelTypeEnum excelTypeEnum) {
-        List<String> sheetNameList = Arrays.asList("Sheet1", "Sheet2", "Sheet3");
-        List<Integer> sheetNoList = Arrays.asList(0, 1, 2);
+        List<String> sheetNameList = Arrays.asList("Sheet1", "Sheet2", "Sheet3", "Sheet111112222233333444445555566666");
+        List<Integer> sheetNoList = Arrays.asList(0, 1, 2, 3);
 
         Map<Integer, Integer> dataMap = initSheetDataSizeList(sheetNoList);
         File testFile = TestFileUtil.createNewFile("writesheet/write-sheet-order-name" + excelTypeEnum.getValue());
@@ -134,6 +135,16 @@ public class WriteSheetTest {
             writeSheet =
                     FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
+            Assertions.assertEquals(
+                    sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
+
+            sheetNo = 3;
+            writeSheet =
+                    FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
+            excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
+            Assertions.assertEquals(
+                    sheetNameList.get(sheetNo).substring(0, Workbook.MAX_SENSITIVE_SHEET_NAME_LEN),
+                    excelWriter.writeContext().writeSheetHolder().getSheetName());
             Assertions.assertEquals(
                     sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
         }

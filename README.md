@@ -15,6 +15,10 @@
 - limitations under the License.
 -->
 
+<p align="center">
+    <img src="logo.svg"/>
+</p>
+
 # Apache Fesod (Incubating)
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/apache/fesod/ci.yml?style=flat-square&logo=github)](https://github.com/apache/fesod/actions/workflows/ci.yml)
@@ -58,7 +62,8 @@ new features in the latest version will enhance your experience.
 > will need to manually exclude POI-related jar files.
 
 
-> We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache releases. You can see previous verison in this link: https://fesod.apache.org/docs/quickstart/guide/
+> We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache
+> releases. You can see previous verison in this link: https://fesod.apache.org/docs/quickstart/guide/
 
 ### Maven
 

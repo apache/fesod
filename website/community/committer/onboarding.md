@@ -8,7 +8,7 @@ Upon receiving an invitation email from Apache Fesod (Incubating) PPMC, a new co
 If they decide in favor, they should select "Reply All" and express their decision. Please provide the reference content of this reply email:
 
 ```text
-Hi, i accept. Thanks for invitaion.
+Hi, i accept. Thanks for invitation.
 ```
 
 ## Submit CLA

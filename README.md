@@ -72,7 +72,7 @@ new features in the latest version will enhance your experience.
 
 
 > We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache
-> releases. You can see previous verison in this link: https://fesod.apache.org/docs/quickstart/guide/
+> releases. You can see previous version in this link: https://fesod.apache.org/docs/quickstart/guide/
 
 ### Maven
 

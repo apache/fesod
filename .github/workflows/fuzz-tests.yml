@@ -24,6 +24,7 @@ on:
 
 jobs:
   fuzz:
+    if: (github.event_name == 'schedule' && github.repository == 'apache/fesod') || (github.event_name != 'schedule')
     runs-on: ubuntu-latest
     timeout-minutes: 360
     env:

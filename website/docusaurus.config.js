@@ -27,8 +27,6 @@ const config = {
     favicon: 'img/favicon.ico',
     url: 'https://fesod.apache.org',
     baseUrl: '/',
-    trailingSlash: true,
-
     future: {
         v4: true,
     },
@@ -96,7 +94,8 @@ const config = {
             title: '',
             logo: {
                 alt: '',
-                src: 'img/logo.svg',
+                src: 'img/logo/fesod-logo.svg',
+                srcDark: 'img/logo/fesod-logo-white.svg',
             },
             items: [
                 {

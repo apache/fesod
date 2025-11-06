@@ -7,6 +7,8 @@ title: 'Sheet'
 
 This chapter introduces how to configure Sheets to write data.
 
+> **Note:** Excel limits sheet names to 31 characters. Longer names are automatically trimmed with a warning logged.
+
 ## Writing to the Same Sheet
 
 ### Overview

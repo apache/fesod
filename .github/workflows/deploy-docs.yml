@@ -23,6 +23,7 @@ on:
 
 jobs:
   deploy:
+    if: github.repository == 'apache/fesod'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,7 +45,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: website
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build
         working-directory: website

@@ -378,7 +378,7 @@ public class CsvWorkbook implements Workbook {
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {}
 
     @Override
-    public void addToolPack(UDFFinder toopack) {}
+    public void addToolPack(UDFFinder toolpack) {}
 
     @Override
     public void setForceFormulaRecalculation(boolean value) {}

@@ -22,16 +22,19 @@ package org.apache.fesod.excel.write.builder;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.excel.ExcelWriter;
 import org.apache.fesod.excel.exception.ExcelGenerateException;
 import org.apache.fesod.excel.write.metadata.WriteSheet;
 import org.apache.fesod.excel.write.metadata.fill.FillConfig;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Build sheet
  *
  *
  */
+@Slf4j
 public class ExcelWriterSheetBuilder extends AbstractExcelWriterParameterBuilder<ExcelWriterSheetBuilder, WriteSheet> {
     private ExcelWriter excelWriter;
     /**
@@ -73,13 +76,13 @@ public class ExcelWriterSheetBuilder extends AbstractExcelWriterParameterBuilder
      * @return
      */
     public ExcelWriterSheetBuilder sheetName(String sheetName) {
-        writeSheet.setSheetName(sheetName);
+        writeSheet.setSheetName(sensitiveSheetName(sheetName));
         return this;
     }
 
     public ExcelWriterSheetBuilder sheetNameIfNotNull(String sheetName) {
         if (Objects.nonNull(sheetName)) {
-            writeSheet.setSheetName(sheetName);
+            writeSheet.setSheetName(sensitiveSheetName(sheetName));
         }
         return this;
     }
@@ -135,5 +138,32 @@ public class ExcelWriterSheetBuilder extends AbstractExcelWriterParameterBuilder
     @Override
     protected WriteSheet parameter() {
         return writeSheet;
+    }
+
+    /**
+     * Processes worksheet names to ensure they comply with MS Excel's length limitations.
+     * <p>
+     * If the provided sheet name exceeds the maximum allowed length defined by
+     * {@link Workbook#MAX_SENSITIVE_SHEET_NAME_LEN}, it will be truncated to fit within
+     * the limit. A warning message is logged when truncation occurs, as the original
+     * sheet name will not be available in scenarios such as formula references.
+     * </p>
+     *
+     * @param sheetName the original worksheet name to process
+     * @return the processed sheet name that complies with Excel's length restrictions
+     */
+    private String sensitiveSheetName(String sheetName) {
+        if (sheetName.length() > Workbook.MAX_SENSITIVE_SHEET_NAME_LEN) {
+            String trimmedSheetName = sheetName.substring(0, Workbook.MAX_SENSITIVE_SHEET_NAME_LEN);
+
+            // we still need to warn about the trimming as the original sheet name won't be available
+            // e.g. when referenced by formulas
+            log.warn(
+                    "Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
+                    sheetName,
+                    trimmedSheetName);
+            return trimmedSheetName;
+        }
+        return sheetName;
     }
 }

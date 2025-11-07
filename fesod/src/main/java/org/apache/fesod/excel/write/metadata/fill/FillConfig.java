@@ -43,7 +43,7 @@ public class FillConfig {
     /**
      * Create a new row each time you use the list parameter.The default create if necessary.
      * <p>
-     * Warnning:If you use <code>forceNewRow</code> set true, will not be able to use asynchronous write file, simply
+     * Warning:If you use <code>forceNewRow</code> set true, will not be able to use asynchronous write file, simply
      * say the whole file will be stored in memory.
      */
     private Boolean forceNewRow;

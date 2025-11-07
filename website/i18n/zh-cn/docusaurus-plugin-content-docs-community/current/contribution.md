@@ -1,17 +1,13 @@
 ---
 id: 'contribution'
-title: '贡献指南'
+title: '概述'
 ---
 
-# 贡献指南
-
-欢迎社区的每一位用户和开发者成为贡献者。无论是报告问题、改进文档、提交代码，还是提供技术支持，您的参与都将帮助 FastExcel 变得更好。
-
----
+欢迎社区中的每一位用户和开发者成为贡献者。无论是报告问题、改进文档、提交代码，还是提供技术支持，您的参与都将有助于使其变得更好。
 
 ## 贡献方向
 
-对 FastExcel 贡献，贡献方向有很多:
+对 Apache Fesod (Incubating) 贡献，贡献方向有很多:
 
 - 修复错别字
 - 修复 Bug
@@ -22,235 +18,63 @@ title: '贡献指南'
 - 优化代码结构
 - 改进或完善文档
 
-**原则**：
+### 原则
 
 - 任何有助于项目改进的 PR 都值得鼓励！
 - 贡献一个新的功能，请先在 `issue` 或 `discussion` 中提出和讨论。我们不会合并**未经讨论和确认的**的功能
 
----
+## 贡献流程
+
+### 查找任务
+
+找到您感兴趣的问题！在我们的 GitHub 仓库问题列表中，我们经常发布带有`good first issue`或`help wanted`标签的问题。这些问题欢迎贡献者的帮助。其中，`good first issues`通常门槛较低，适合初学者参与。
+
+当然，如果您有好的想法，也可以直接在 GitHub 讨论区提出，或联系社区成员。
+
+### 讨论
+
+请参考[问题反馈](./feedback.md)来创建一个问题或讨论，并努力达成共识。
+
+**注意**：如果申请分配这个问题时，请注意这并非简单的“请分配给我”，您需要阐述对问题的理解、设计方案，并在可能的情况下提供您的概念验证代码。
+
+### 实现
+
+根据问题中商定的方案实施变更。
+
+- 仅在方案达成共识时才开始实施工作（例如：您已被指派处理该工单）
+- 若您是新成员，可参考[代码贡献指南](./contribution/contribute-code.md)来搭建开发环境。
+
+### 审核
+
+创建拉取请求并与审核者协作。
+
+- 确保不包含无关或不必要的格式调整。
+- 在提交 PR 之后会触发 CI，请确保通过 CI 检查。
+- 请确保测试通过。
+- 请勿解决讨论。
+
+### 合并
+
+社区 committer 需要根据[Code Review指南](./contribution/code-review-guide.md)中的指南，负责检查贡献是否满足要求，并将代码合并到代码库中。
 
 ## 贡献代码
 
-所有改进均可通过 Pull Request (PR) 实现。在提交 Pull Request 前，请熟悉以下指南：
-
-### 工作区准备
-
-开发 FastExcel 需要 **3.9及以上版本的 Maven** 和 **17 及以上版本的 JDK (Java Development Kit)** ，但在编译过程中必须使用 **Java 1.8** 兼容的语言特性，保证 FastExcel 能在 Java 1.8 及以上版本环境中运行。
-
-> 您可以使用 [SDKMAN](https://sdkman.io/) 等工具配置多版本的 Java 工具链。
-
-### Fork 仓库
-
-确保您已注册 GitHub 账号，并按照以下步骤完成本地开发环境配置：
-
-**Fork 仓库**：在 FastExcel 的 [GitHub 页面](https://github.com/fast-excel/fastexcel) 点击 `Fork` 按钮，将项目复制到您的 GitHub 账户下，
-
-```bash
-https://github.com/<your-username>/fastexcel
-```
-
-**克隆代码库**：运行以下命令将 Fork 的项目克隆到本地：
-
-```bash
-git clone git@github.com:<your-username>/fastexcel.git
-```
-
-**设置上游仓库**：将官方仓库设置为 `upstream`，方便同步更新：
-
-```bash
-git remote add upstream git@github.com:fast-excel/fastexcel.git
-git remote set-url --push upstream no-pushing
-```
-
-运行 `git remote -v` 可检查配置是否正确。
-
-### 分支定义
-
-在 FastExcel 中，所有贡献应基于 `main` 开发分支。此外，还有以下分支类型：
-
-- **release 分支**：用于版本发布（如 `1.1.0`, `1.1.1`）。
-- **feature 分支**：用于开发较大的功能。
-- **hotfix 分支**：用于修复重要 Bug。
-
-提交 PR 时，请确保变更基于 `main` 分支。
-
-### 提交规则
-
-#### 提交信息
-
-请确保提交消息清晰且具有描述性，务必使用**英文**，且不超过 100 个字符。
-
-允许提交信息的类型且需遵循以下格式：
-
-- **docs**: 更新文档，例如 `docs: update README.md`
-- **feature/feat**: 新功能，例如 `feature: support for xxx`
-- **bugfix/fix**: 修复 Bug，例如 `fix: fix NPE in the A class`
-- **refactor**: 代码重构（不涉及功能变动），例如 `refactor: optimise data processing logic`
-- **style**: 代码格式，例如 `style: update code style`
-- **test**: 增加或改进测试，例如 `test: add new test cases`
-- **chore**: 构建过程或辅助工具的变动，例如 `chore: improve issue template`
-- **dependency**: 第三方依赖库的修改，例如 `dependency: upgrade poi version to 5.4.1`
-
-不建议使用模糊的提交信息，如：
-
-- ~~fixed issue~~
-- ~~update code~~
-
-如果需要帮助，请参考 [如何编写 Git 提交消息](http://chris.beams.io/posts/git-commit/)。
-
-#### 提交内容
-
-一次提交应包含完整且可审查的更改，确保：
-
-- 避免提交过于庞大的改动。
-- 每次提交内容独立且可通过 CI 测试。
-
-另外，请确保提交时配置正确的 Git 用户信息：
-
-```bash
-git config --get user.name
-git config --get user.email
-```
-
-### PR 说明
-
-为了帮助审阅者快速了解 PR 的内容和目的，请使用 [PR 模板](https://github.com/fast-excel/fastexcel/blob/main/.github/pull_request_template.md)。详细的描述将极大提高代码审阅效率。
-
----
+所有改进均可通过 Pull Request (PR) 实现。在提交 Pull Request 前，请参考[代码贡献指南](./contribution/contribute-code.md)了解如何贡献代码。
 
 ## 测试用例贡献
 
 任何测试用例的贡献都值得鼓励，尤其是单元测试。建议在对应模块的 `test` 目录中创建 `XXXTest.java` 文件，推荐使用 `JUnit5` 框架。
 
----
-
 ## 贡献文档
 
-文档是 FastExcel 官方网站的重要构建内容，是项目与社区之间的重要桥梁。FastExcel 官方网站使用 [Docusaurus](https://docusaurus.io/) 进行构建，其中文档在 [website](https://github.com/fast-excel/fastexcel/tree/main/website) 目录中进行维护。
-
-### 环境要求
-
-- [Node.js](https://nodejs.org/en/download/) 版本 18.0 或更高版本（可通过运行 `node -v` 命令进行检查）。您可使用 [nvm](https://github.com/nvm-sh/nvm) 在同一台机器上管理多个 Node 版本。
-- 安装 Node.js 时，建议勾选所有与依赖项相关的复选框。
-
-### 目录结构说明
-
-Docusaurus 支持国际化，主要需要维护的文档目录结构如下:
-
-```bash
-.
-├── community      # 社区(英文)
-├── docs           # 文档(英文)
-└── i18n           # 国际化
-    └── zh-cn
-        ├── docusaurus-plugin-content-docs
-        │   └── current   # 文档(简体中文)
-        └── docusaurus-plugin-content-docs-community
-            └── current   # 社区(简体中文)
-```
-
-单语言的文档目录结构如下:
-
-```bash
-.
-├── quickstart     # 1. 快速开始
-├── read           # 2. 读取文件
-├── write          # 3. 写入
-├── fill           # 4. 填充
-├── community      # 5. 社区
-└── help           # 6. FAQ
-```
-
-### 文档编写指南
-
-- 使用带有 `.md` 扩展名的文件路径
-
-```markdown
-[Example](docs/quickstart/example.md)
-```
-
-- 使用相对于 `docs/` 目录的路径
-
-```markdown
-[Example](docs/quickstart/example.md)
-```
-
-- 图片文件需要存储在 `static/img` 目录，并使用相对目录的形式引用.
-
-```markdown
-[img](/img/docs/fill/listFill_file.png)
-```
-
-### 预览和生成静态文件
-
-进入 `website` 目录，并执行以下命令
-
-#### 安装
-
-```bash
-yarn install
-```
-
-#### 本地预览和运行
-
-```bash
-# 英文版
-yarn start
-
-# 简体中文版
-yarn start --locale zh-cn
-```
-
-此命令会启动一个本地开发服务器，并打开一个浏览器窗口。大多数更改都无需重启服务器即可实时预览。
-
-> 每次只能运行一种语言版本
-
-#### 生成静态文件(可选)
-
-```bash
-yarn build
-```
-
-此命令将生成静态内容到`build`目录中，并且可以使用任何静态内容托管服务。
-
-### 文档格式校验
-
-FastExcel 使用 [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) 来检查文档格式。您在编写了相关 Markdown 文章后，可以在本地执行以下命令，来预先检查 Markdown 的格式内容是否符合要求:
-
-```bash
-cd website && yarn
-
-yarn md-lint
-
-# 如果文档错误，可以使用以下命令来尝试自动修复
-yarn md-lint-fix
-```
-
-- Markdown 文章的相关格式规则可以参考 [Markdown-lint-rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)
-- 项目中的 Markdown 格式配置文件位于: [.markdownlint-cli2.jsonc](https://github.com/fast-excel/fastexcel/blob/main/website/.markdownlint-cli2.jsonc)
-
----
+文档是 Apache Fesod (Incubating) 官方网站的重要构建内容，是项目与社区之间的重要桥梁。请参考[文档贡献指南](./contribution/contribute-doc.md)了解如何贡献文档。
 
 ## 其他参与方式
 
-除了直接贡献代码，以下方式同样是对 FastExcel 的宝贵支持：
+除了直接贡献代码，以下方式同样是对 Apache Fesod (Incubating) 的宝贵支持：
 
 - 回答其他用户的问题。
 - 帮助审阅他人的 PR。
 - 提出改进建议。
-- 撰写技术博客，宣传 FastExcel。
+- 撰写技术博客，宣传 Apache Fesod (Incubating)。
 - 在社区中分享项目相关知识。
-
----
-
-## 代码风格
-
-FastExcel 使用 [Spotless](https://github.com/diffplug/spotless) 作为代码格式化工具。请确保在提交前运行以下命令以自动格式化代码：
-
-```bash
-mvn spotless:apply
-```
-
----
-
-最后，感谢您对 FastExcel 的支持！

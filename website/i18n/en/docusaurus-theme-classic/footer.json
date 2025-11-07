@@ -1,6 +1,10 @@
 {
   "copyright": {
-    "message": "Copyright © 2025 FastExcel, Licensed under the Apache License, Version 2.0.",
+    "message": "<br><p>Apache Fesod (Incubating) is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.</p><p>Copyright © 2025 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.</p><p>Apache, the names of Apache projects, and the feather logo are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries. All other marks mentioned may be trademarks or registered trademarks of their respective owners.</p>",
     "description": "The footer copyright"
+  },
+  "logo.alt": {
+    "message": "Apache Incubator logo",
+    "description": "The alt text of footer logo"
   }
 }

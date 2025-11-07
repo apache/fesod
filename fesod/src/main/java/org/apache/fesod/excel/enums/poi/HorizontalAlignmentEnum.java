@@ -42,7 +42,7 @@ public enum HorizontalAlignmentEnum {
     GENERAL(HorizontalAlignment.GENERAL),
 
     /**
-     * The horizontal alignment is left-aligned, even in Rightto-Left mode.
+     * The horizontal alignment is left-aligned, even in Right-to-Left mode.
      * Aligns contents at the left edge of the cell. If an indent amount is specified, the contents of
      * the cell is indented from the left by the specified number of character spaces. The character spaces are
      * based on the default font and font size for the workbook.

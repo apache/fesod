@@ -25,6 +25,7 @@ permissions:
   pull-requests: write
 jobs:
   nightly-test:
+    if: (github.event_name == 'schedule' && github.repository == 'apache/fesod') || (github.event_name != 'schedule')
     runs-on: ubuntu-24.04
     strategy:
       matrix:

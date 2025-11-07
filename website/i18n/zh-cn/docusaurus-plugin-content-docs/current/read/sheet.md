@@ -34,6 +34,8 @@ public void readAllSheet() {
 
 可以读取 Excel 文件具体的某个 Sheet，支持指定 Sheet 的索引或名称
 
+> **注意：** Excel 中 Sheet 名称最多为 31 个字符。按名称读取时，请使用文件中实际显示的 Sheet 名称。
+
 ### 代码示例
 
 ```java

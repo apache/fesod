@@ -18,16 +18,8 @@
 name: Bug report
 title: "[Bug] "
 description: Problems with the software
-labels: [ bug ]
+labels: [ "bug" ]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thank you very much for your feedback!
-
-        For suggestions or help, please consider:
-        1. [WeChat User Group](https://github.com/user-attachments/assets/b40aebe8-0552-4fb2-b184-4cb64a5b1229);
-        2. [Github Discussion](https://github.com/apache/fesod/discussions).
   - type: checkboxes
     attributes:
       label: Search before asking
@@ -58,23 +50,27 @@ body:
       placeholder: Please provide the JDK version you are using (Ubuntu 20.04, macOS 13.4, Windows 10, etc.)
   - type: textarea
     attributes:
-      label: Minimal reproduce step
+      label: Steps To Reproduce
       description: Please try to give reproducing steps to facilitate quick location of the problem.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: What did you expect to see?
+      label: Current Behavior
     validations:
       required: true
   - type: textarea
     attributes:
-      label: What did you see instead?
+      label: Expected Behavior
     validations:
       required: true
   - type: textarea
     attributes:
       label: Anything else?
+      description: >
+        Links? References? Anything that will give us more context about the issue you are encountering!
+        
+          Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
   - type: checkboxes
     attributes:
       label: Are you willing to submit a PR?

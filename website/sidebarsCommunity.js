@@ -28,6 +28,10 @@ const sidebarsCommunity = {
             type: "doc",
         },
         {
+            id: "brand",
+            type: "doc",
+        },
+        {
             id: "feedback",
             type: "doc",
         },

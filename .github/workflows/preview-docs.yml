@@ -15,20 +15,18 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: Deploy Docusaurus to GitHub Pages
+name: Preview Documentation
 
 on:
-  push:
-    branches: [ main ]
+  pull_request:
+    paths:
+      - 'website/**'
 
 jobs:
-  deploy:
-    if: github.repository == 'apache/fesod'
+  deploy-preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -51,13 +49,17 @@ jobs:
         working-directory: website
         run: pnpm build
 
-      - name: Copy asf file
-        run: cp .asf.yaml ./website/build/.asf.yaml
-
-      - uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: website/build
-          publish_branch: gh-pages
-          # This allows us to make our publish branch with only the latest commit.
-          force_orphan: true
+          publish-dir: './website/build'
+          production-deploy: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: ${{ github.event.pull_request.title }}
+          enable-pull-request-comment: true
+          enable-commit-comment: false
+          enable-github-deployment: false
+          alias: deploy-preview-${{ github.event.number }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

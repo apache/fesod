@@ -29,6 +29,7 @@ on:
 
 jobs:
   codeql:
+    if: (github.event_name == 'schedule' && github.repository == 'apache/fesod') || (github.event_name != 'schedule')
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     permissions:

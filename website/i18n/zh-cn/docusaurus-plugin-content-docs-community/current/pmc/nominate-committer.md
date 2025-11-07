@@ -13,9 +13,46 @@ title: '提名新 Committer'
 - CANDIDATE_GITHUB_ID: 候选人 Github ID
 - NOMINATOR: 提名者
 
+## 讨论
+
+如果任何 PPMC 成员认为某人符合我们的要求并且可以成为潜在的提交者，
+请通过发送电子邮件的方式发起对该候选人的讨论，邮箱地址为： <private@fesod.apache.org>:
+
+主题：
+
+```text
+[DISCUSS] New committer: [CANDIDATE_NAME]
+```
+
+内容：
+
+```text
+Hi all,
+
+I propose to nominate ${CANDIDATE_NAME} (GitHub id: ${CANDIDATE_GITHUB_ID}) as a new committer.
+
+[State reasons that you believe they are a good candidate.]
+
+${CANDIDATE_NAME}'s great contributions can be found:
+
+- GitHub Account: https://github.com/${CANDIDATE_GITHUB_ID}
+- [XX PRs]: https://github.com/apache/fesod/pulls?q=is%3Apr+author%3A${CANDIDATE_GITHUB_ID}
+- [XX Issues]: https://github.com/apache/fesod/issues?q=is%3Aissue+involves%3A${CANDIDATE_GITHUB_ID}
+
+This is still in the discussion phase. If everything goes smoothly, we will proceed with the official vote 
+in a separate email.
+
+Looking forward to your thoughts and feedback.
+ 
+Best regards,
+${NOMINATOR}
+```
+
+讨论将至少持续**一周**的时间。
+
 ## 发起投票
 
-请通过发送电子邮件的方式发起对该候选人的投票，邮箱地址为： <private@fesod.apache.org>:
+如果所推荐的候选人得到了大多数回复者的积极评价，请通过发送电子邮件的方式启动对该候选人的投票，邮箱地址为： <private@fesod.apache.org>:
 
 主题：
 
@@ -26,29 +63,24 @@ title: '提名新 Committer'
 内容：
 
 ```text
-Hi, All Apache Fesod (Incubating) PPMC members.
+Hi all,
   
-I'd like to take this chance to call the vote for inviting committed
-contributor ${CANDIDATE_NAME} (GitHub id: ${CANDIDATE_GITHUB_ID}) as a new committer of Apache 
-Fesod.
+This is a VOTE to add candidate ${CANDIDATE_NAME} (GitHub id: ${CANDIDATE_GITHUB_ID}) as a new committer.
 
-${CANDIDATE_NAME}'s great contributions can be found:
+This has been discussed here: [Link to DISCUSS thread on lists.apache.org] If you have more to 
+add to the discussion, please do so there, rather than in this VOTE thread.
 
-- GitHub Account: https://github.com/${CANDIDATE_GITHUB_ID}
-- [27 PRs]: https://github.com/apache/fesod/pulls?q=is%3Apr+author%3A${CANDIDATE_GITHUB_ID}
-- [15 Issues]: https://github.com/apache/fesod/issues?q=is%3Aissue+involves%3A${CANDIDATE_GITHUB_ID}
+Please vote accordingly:
 
-Please make your valuable evaluation on whether we could invite ${CANDIDATE_NAME} as a
-committer:
+[ +1 ] Yes, add this committer
+[  0 ] Abstain
+[ -1 ] No, do not add this committer
 
-[ +1 ] Agree to add ${CANDIDATE_NAME} as a committer of Fesod.
-[  0 ] Have no sense.
-[ -1 ] Disagree to add ${CANDIDATE_NAME} as a committer of Fesod, because .....
+Voting ends one week from today, i.e. midnight UTC on YYYY-MM-DD
+https://www.timeanddate.com/counters/customcounter.html?year=YYYY&month=MM&day=DD
 
-This vote starts from the moment of sending and will be open for 3 days.
- 
-Best regards,
-${NOMINATOR}
+See voting guidelines at
+https://community.apache.org/pmc/adding-committers.html
 ```
 
 投票将在今天开始的**一周后**结束, 即：
@@ -58,18 +90,18 @@ ${NOMINATOR}
 
 ## 关闭投票
 
-在至少获得 3 次“+1”赞成票且无人投反对票的情况下，宣布投票结果：
+在至少获得 3 次 +1 赞成票且无人投反对票的情况下，宣布投票结果：
 
 主题：
 
 ```text
-[RESULT][VOTE] Add candidate ${CANDIDATE_NAME} as a new committer
+[RESULT] [VOTE] Add candidate ${CANDIDATE_NAME} as a new committer
 ```
 
 内容：
 
 ```text
-Hi, all:
+Hi all,
 
 The vote for "Add candidate ${CANDIDATE_NAME} as a new committer" has PASSED and closed now.
 
@@ -103,7 +135,7 @@ Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
 ```text
 Hello ${CANDIDATE_NAME},
 
-The Apache Fesod (Incubating) (PPMC)hereby offers you 
+The Apache Fesod (Incubating) (PPMC) hereby offers you 
 committer privileges to the project.
 
 These privileges are offered on the understanding that
@@ -169,7 +201,8 @@ When recording of your ICLA is noted, you will
 receive a follow-up message with the next steps for
 establishing you as a committer.
 
-${NOMINATOR} (as represents of The Apache Fesod (Incubating) PPMC)
+${NOMINATOR}
+On behalf of Apache Fesod (Incubating) PPMC
 ```
 
 ## 候选人接受邀请
@@ -208,22 +241,8 @@ After that is done, please make followup replies to the dev@fesod.apache.org lis
 We generally discuss everything there and keep the
 private@fesod.apache.org list for occasional matters which must be private.
 
-The developer section of the website describes roles within the ASF and provides other
-resources:
-  https://www.apache.org/foundation/how-it-works.html
-  https://www.apache.org/dev/
-
-The incubator also has some useful information for new committers
-in incubating projects:
-  https://incubator.apache.org/guides/committer.html
-  https://incubator.apache.org/guides/ppmc.html
-
-Just as before you became a committer, participation in any ASF community
-requires adherence to the ASF Code of Conduct:
-  https://www.apache.org/foundation/policies/conduct.html
-
-Yours,
-The Apache Fesod (Incubating) PPMC
+${NOMINATOR}
+On behalf of Apache Fesod (Incubating) PPMC
 ```
 
 ## 将候选人添加至提交者名单
@@ -232,19 +251,93 @@ The Apache Fesod (Incubating) PPMC
 
 ![Roster](/img/community/roster-add-committer.png)
 
-## 公告
+## 欢迎新的 Committer
 
-一旦候选人接受邀请并获得提交权限，建议向 `dev@fesod.apache.org` 发送公告邮件以欢迎新提交者。以下是邮件模板：
+向新提交者发送欢迎电子邮件。
+
+主题:
 
 ```text
-Hello, everyone
+Welcome, ${CANDIDATE_NAME}, New Committer!
+```
 
-On behalf of the Apache Fesod (Incubating) PPMC, I'm happy to announce that
-${CANDIDATE_NAME} has accepted the invitation to become a committer of
-Apache Fesod (Incubating).
+内容:
 
-Welcome, and thank you for your contributions!
+```text
+Hello, ${CANDIDATE_NAME},
 
-Best regards,
+As you know, the ASF Infrastructure has set up your committer account
+with the username `[apacheID]`
+
+You will now be able to merge approved PRs on GitHub for this project.
+(You'll need to associate your GitHub account with your Apache email
+address.)
+
+You can manage your account settings at https://id.apache.org/
+
+The developer section of the website describes roles within the ASF and 
+provides other resources:
+  https://www.apache.org/foundation/how-it-works.html
+  https://www.apache.org/dev/
+
+The incubator also has some useful information for new committers
+in incubating projects:
+  https://incubator.apache.org/guides/committer.html
+  https://incubator.apache.org/guides/ppmc.html
+
+You now have expanded access to portions of the Whimsy toolset
+specific to committers: https://whimsy.apache.org/
+
+As an ASF committer, you now also have commit access to specific
+sections of the ASF Foundation repository, as follows:
+
+The general "committers" at:
+https://svn.apache.org/repos/private/committers
+
+Just as before you became a committer, participation in any ASF community
+requires adherence to the ASF Code of Conduct:
+  https://www.apache.org/foundation/policies/conduct.html
+
+If you have any questions during this phase, then please
+see the following resources:
+
+Apache developer's pages: https://www.apache.org/dev/
+Incubator committer guide: https://incubator.apache.org/guides/committer.html
+
+Naturally, if you don't understand anything be sure to ask us on the 
+Fesod dev mailing list. Documentation is maintained by volunteers 
+and hence can be out-of-date and incomplete - of course you can now
+help fix that.
+
+A PPMC member will announce your election to the dev list, and we
+encourage you to introduce yourself there.
+
 ${NOMINATOR}
+On behalf of Apache Fesod (Incubating) PPMC
+```
+
+## 公告
+
+在 `dev@fesod.apache.org` 邮件列表中宣布新的提交者。
+
+主题:
+
+```text
+[ANNOUNCEMENT] New committer: ${CANDIDATE_NAME}
+```
+
+内容:
+
+```text
+The Podling Project Management Committee (PPMC) for Apache Fesod (Incubating)
+has invited ${CANDIDATE_NAME} to become a committer and we are pleased
+to announce that they have accepted.
+
+[State New Committers's contribution, if available and relevant.]
+
+Please join us in welcoming ${CANDIDATE_NAME} to their new role and
+responsibility in our project community.
+
+${NOMINATOR}
+On behalf of Apache Fesod (Incubating) PPMC
 ```

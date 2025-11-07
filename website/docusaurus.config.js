@@ -27,8 +27,6 @@ const config = {
     favicon: 'img/favicon.ico',
     url: 'https://fesod.apache.org',
     baseUrl: '/',
-    trailingSlash: true,
-
     future: {
         v4: true,
     },
@@ -61,13 +59,14 @@ const config = {
                 },
                 blog: {
                     showReadingTime: false,
-                    postsPerPage: 5,
+                    postsPerPage: 15,
                     feedOptions: {
                         type: 'all',
                     },
                     editUrl: `${repoUrl}/edit/${branch}/website/`,
                     editLocalizedFiles: true,
-                    blogSidebarCount: 'ALL'
+                    blogSidebarCount: 'ALL',
+                    authorsMapPath: "authors.json"
                 },
                 theme: {
                     customCss: './src/css/custom.css'
@@ -95,7 +94,8 @@ const config = {
             title: '',
             logo: {
                 alt: '',
-                src: 'img/logo.svg',
+                src: 'img/logo/fesod-logo.svg',
+                srcDark: 'img/logo/fesod-logo-white.svg',
             },
             items: [
                 {

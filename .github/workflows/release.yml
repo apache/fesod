@@ -24,6 +24,7 @@ on:
 
 jobs:
   publish:
+    if: github.repository == 'apache/fesod'
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository

@@ -19,32 +19,37 @@
 
 import React from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import config from "./team.json";
+import TeamData from "./data/team.json";
+import AvatarData from "./data/github-avatar.json";
 import Layout from '@theme/Layout';
 import './index.css';
 import Github from "./github.svg"
 import Translate from '@docusaurus/Translate'
-import useBaseUrl from '@docusaurus/useBaseUrl';
 
 /**
  * Derived from https://github.com/apache/streampark-website/tree/dev/src/pages/team
  */
 export default function () {
-    const dataSource = config;
+    const teamData = TeamData;
+    const avatarData = AvatarData;
 
     function getGitName(url) {
         return '@' + url.replace('https://github.com/', '');
     }
 
     function avatarUrl(id) {
-        return useBaseUrl('/img/team/' + id + '.png');
+        const avatarObj = avatarData.find((item) => item.id === id);
+        if (avatarObj) {
+            return "data:image/png;base64," + avatarObj.avatar_base64;
+        }
+        return "";
     }
 
     return (
         <BrowserOnly>
             {() => {
                 return <Layout>
-                    <div className="block team_page" style={{padding: "10px 0 30px"}}>
+                    <div className="container team_page">
                         <h1><Translate>team.name</Translate></h1>
                         <p className="team_desc team_indent"><Translate>team.desc</Translate></p>
 
@@ -54,7 +59,7 @@ export default function () {
                         </h2>
                         <div className="team-row">
                             {
-                                dataSource.pmc.map((item, i) => (
+                                teamData.pmc.map((item, i) => (
                                     <div className='team-box' key={i} data-aos="fade-up" data-aos-delay={i * 100}>
                                         <div style={{textAlign: "center"}}>
                                             <div style={{overflow: "hidden", zIndex: 1}}>
@@ -65,7 +70,8 @@ export default function () {
                                                 <h5 className="team-name">{item.name}</h5>
                                                 <small>{getGitName(item.gitUrl)}</small>
                                                 <div>
-                                                    <a className="team-link" href={item.gitUrl}>
+                                                    <a className="team-link" href={item.gitUrl} target="_blank"
+                                                       rel="noreferrer">
                                                         <Github className="github-icon"/>
                                                     </a>
                                                 </div>
@@ -81,7 +87,7 @@ export default function () {
                         </h2>
                         <div className="team-row">
                             {
-                                dataSource.committer.map((item, i) => (
+                                teamData.committer.map((item, i) => (
                                     <div className='team-box' key={i} data-aos="fade-up" data-aos-delay={i * 100}>
                                         <div style={{textAlign: "center"}}>
                                             <div style={{overflow: "hidden", zIndex: 1}}>
@@ -93,7 +99,8 @@ export default function () {
                                                 <h5 className="team-name">{item.name}</h5>
                                                 <small>{getGitName(item.gitUrl)}</small>
                                                 <div>
-                                                    <a className="team-link" href={item.gitUrl}>
+                                                    <a className="team-link" href={item.gitUrl} target="_blank"
+                                                       rel="noreferrer">
                                                         <Github className="github-icon"/>
                                                     </a>
                                                 </div>
@@ -111,11 +118,7 @@ export default function () {
                             Contributors</a>
                     </div>
                 </Layout>
-                    ;
             }}
-
         </BrowserOnly>
-
     )
-        ;
 }

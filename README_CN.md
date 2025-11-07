@@ -33,50 +33,34 @@
 [![Document](https://img.shields.io/github/actions/workflow/status/apache/fesod/ci.yml?style=flat-square&logo=read-the-docs&label=Document)](https://fesod.apache.org/)
 [![DeepWiki](https://img.shields.io/badge/DeepWiki-apache%2Ffesod-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==)](https://deepwiki.com/apache/fesod)
 
-**Home: [fesod.apache.org](https://fesod.apache.org)**   
-**Email: <a href="mailto:dev-subscribe@fesod.apache.org">Mail to `dev-subscribe@fesod.apache.org`</a> to subscribe mailing lists**
+**官网: [fesod.apache.org](https://fesod.apache.org)**    
+**邮件: <a href="mailto:dev-subscribe@fesod.apache.org">发送至 ```dev-subscribe@fesod.apache.org```</a>** 订阅邮件列表
 
+## 简介
 
-## Introduction
+**Apache Fesod (Incubating)** 是一个高性能、内存高效的 Java 库，用于读写 Excel 文件，旨在简化开发并确保可靠性。
 
-**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing Excel
-files, designed to simplify development and ensure reliability.
+Apache Fesod (Incubating) 可以为开发者和企业提供极大的自由度和灵活性。我们计划在未来引入更多新功能，以持续提升用户体验和工具可用性。Apache Fesod (Incubating) 致力于成为您处理 Excel 文件的最佳选择。
 
-Apache Fesod (Incubating) can provide developers and enterprises with great freedom and flexibility. We plan to
-introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod (
-Incubating) is committed to being your best choice for handling Excel files.
+名称 fesod（发音为 `/ˈfɛsɒd/`），是 "fast easy spreadsheet and other documents"（快速简单的电子表格和其他文档）的首字母缩写，表达了项目的起源、背景和愿景。
 
-The name fesod(pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents" expresses the
-project's origin, background and vision.
+### 特性
 
-### Features
+- **高性能读写**：Apache Fesod (Incubating) 专注于性能优化，能够高效处理大规模 Excel 数据。与一些传统的 Excel 处理库相比，它可以显著减少内存消耗。
+- **简单易用**：该库提供了简单直观的 API，使开发者能够轻松将其集成到项目中，无论是简单的 Excel 操作还是复杂的数据处理。
+- **流式操作**：Apache Fesod (Incubating) 支持流式读取，最大程度地减少一次性加载大量数据的问题。这一设计在处理数十万甚至数百万行数据时尤其重要。
 
-- **High-performance Reading and Writing**: Apache Fesod (Incubating) focuses on performance optimization, capable of
-  efficiently handling large-scale Excel data. Compared to some traditional Excel processing libraries, it can
-  significantly reduce memory consumption.
-- **Simplicity and Ease of Use**: The library offers a simple and intuitive API, allowing developers to easily integrate
-  it into projects, whether for simple Excel operations or complex data processing.
-- **Stream Operations**: Apache Fesod (Incubating) supports stream reading, minimizing the problem of loading large
-  amounts of data at once. This design is especially important when dealing with hundreds of thousands or even millions
-  of rows of data.
+## 安装
 
-## Installation
+Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最新的 LTS 版本的 Java。我们强烈建议使用最新版本的 Apache Fesod (Incubating)，因为最新版本中的性能优化、错误修复和新功能将提升您的使用体验。
 
-Apache Fesod (Incubating) requires **Java 1.8** or later. Using the latest LTS release of Java is encouraged. We
-strongly recommend using the latest version of Apache Fesod (Incubating), as performance optimizations, bug fixes, and
-new features in the latest version will enhance your experience.
+> 目前，Apache Fesod (Incubating) 使用 POI 作为底层包。如果您的项目已包含 POI 相关组件，您需要手动排除 POI 相关的 jar 文件。
 
-> Currently, Apache Fesod (Incubating) uses POI as its underlying package. If your project already includes POI-related
-> components, you
-> will need to manually exclude POI-related jar files.
-
-
-> We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache
-> releases. You can see previous version in this link: https://fesod.apache.org/docs/quickstart/guide/
+> 我们目前正在准备 Apache 孵化器下的第一个版本。当前的版本都是非 Apache 版本。您可以通过此链接查看之前的版本：https://fesod.apache.org/docs/quickstart/guide/
 
 ### Maven
 
-If you are using Maven for project building, add the following configuration in the `pom.xml` file:
+如果使用 Maven 进行项目构建，请在 `pom.xml` 文件中添加以下配置：
 
 ```xml
 
@@ -89,7 +73,7 @@ If you are using Maven for project building, add the following configuration in 
 
 ### Gradle
 
-If you are using Gradle for project building, add the following configuration in the build.gradle file:
+如果使用 Gradle 进行项目构建，请在 build.gradle 文件中添加以下配置：
 
 ```gradle
 dependencies {
@@ -97,56 +81,56 @@ dependencies {
 }
 ```
 
-## QuickStart
+## 快速开始
 
-### Read
+### 读取
 
-Below is an example of reading an Excel document:
+以下是读取 Excel 文档的示例：
 
 ```java
-// Implement the ReadListener interface to set up operations for reading data
+// 实现 ReadListener 接口以设置读取数据的操作
 public class DemoDataListener implements ReadListener<DemoData> {
 
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
-        System.out.println("Parsed a data entry" + JSON.toJSONString(data));
+        System.out.println("解析了一条数据" + JSON.toJSONString(data));
     }
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        System.out.println("All data parsed!");
+        System.out.println("所有数据解析完成！");
     }
 }
 
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
-    // Read Excel file
+    // 读取 Excel 文件
     Fesod.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
-### Write
+### 写入
 
-Below is a simple example of creating an Excel document:
+以下是创建 Excel 文档的简单示例：
 
 ```java
-// Sample data class
+// 示例数据类
 public class DemoData {
 
-    @ExcelProperty("String Title")
+    @ExcelProperty("字符串标题")
     private String string;
 
-    @ExcelProperty("Date Title")
+    @ExcelProperty("日期标题")
     private Date date;
 
-    @ExcelProperty("Number Title")
+    @ExcelProperty("数字标题")
     private Double doubleData;
 
     @ExcelIgnore
     private String ignore;
 }
 
-// Prepare data to write
+// 准备要写入的数据
 private static List<DemoData> data() {
     List<DemoData> list = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
@@ -161,39 +145,38 @@ private static List<DemoData> data() {
 
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
-    // Create a "Template" sheet and write data
+    // 创建一个名为 "Template" 的工作表并写入数据
     Fesod.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 }
 ```
 
-## Community
+## 社区
 
-### Contributors
+### 贡献者
 
-Contributors are welcomed to join the Apache Fesod (Incubating). Please
-check [Contributing Guide](./CONTRIBUTING.md) about how to contribute to this project.
+欢迎贡献者加入 Apache Fesod (Incubating)。请查看[贡献指南](./CONTRIBUTING.md)了解如何为该项目做出贡献。
 
-Thank you to all the people who already contributed to the Apache Fesod (Incubating) !
+感谢所有已经为 Apache Fesod (Incubating) 做出贡献的人们！
 
 <a href="https://github.com/apache/fesod/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=apache/fesod"/>
 </a>
 
-> Note: Showing the first 100 contributors only due to GitHub image size limitations
+> 注意：由于 GitHub 图片大小限制，仅显示前 100 名贡献者
 
-### Subscribe Mailing Lists
+### 订阅邮件列表
 
-Mail List is the most recognized form of communication in the Apache community. Contact us through the following mailing
-list.
+邮件列表是 Apache 社区中最受认可的交流形式。请通过以下邮件列表联系我们。
 
-| Name                                                | Mailing list                                                                                                  |
+| 名称                                                | 邮件列表                                                                                                  |
 |:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
-| [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [Subscribe](mailto:dev-subscribe@fesod.apache.org)  ｜  [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org) |
+| [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [订阅](mailto:dev-subscribe@fesod.apache.org)  ｜  [取消订阅](mailto:dev-unsubscribe@fesod.apache.org) |
 
-### Star History
+### Star 历史
 
 [![Star History Chart](https://api.star-history.com/svg?repos=apache/fesod&type=Date)](https://www.star-history.com/#apache/fesod&Date)
 
-## License
+## 许可证
 
-Apache Fesod (Incubating) project is licensed under the [Apache License 2.0](LICENSE).
+Apache Fesod (Incubating) 项目采用 [Apache License 2.0](LICENSE) 许可证。
+

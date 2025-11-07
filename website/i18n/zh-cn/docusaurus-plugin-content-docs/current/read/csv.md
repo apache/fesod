@@ -9,7 +9,7 @@ title: 'CSV'
 
 ## 概述
 
-FastExcel 通过不同的参数设计进行 CSV 的读取。其底层使用了[Apache Commons CSV](https://commons.apache.org/proper/commons-csv)，也支持通过直接设置[CSVFormat](https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html)进行设定来达成读取的目标。
+FastExcel 通过不同的参数设计进行 CSV 的读取。其底层使用了 [Apache Commons CSV](https://commons.apache.org/proper/commons-csv)，也支持通过直接设置 [CSVFormat](https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html) 进行设定来达成读取的目标。
 
 主要的参数如下：
 
@@ -29,7 +29,7 @@ FastExcel 通过不同的参数设计进行 CSV 的读取。其底层使用了[A
 
 ### delimiter
 
-`delimiter` 用于指定 CSV 文件中的字段分隔符。默认值为英文逗号 `,`。同时，FastExcel 提供了一些常量`CsvConstant`，用于简化使用
+`delimiter` 用于指定 CSV 文件中的字段分隔符。默认值为英文逗号 `,`。同时，FastExcel 提供了一些常量 `CsvConstant`，用于简化使用。
 
 #### 代码示例
 
@@ -50,7 +50,7 @@ public void delimiterDemo() {
 
 `quote` 用于指定包裹字段的引用符号。默认值为双引号 `"`。当字段内容本身包含分隔符或换行符时，建议设置。
 
-> 注意不可和 `recordSeparator` 的设置重复，建议结合`QuoteMode`使用
+> 注意不可和 `recordSeparator` 的设置重复，建议结合 `QuoteMode` 使用
 
 #### 代码示例
 
@@ -116,16 +116,16 @@ public void escapeDemo() {
 }
 ```
 
-## CSVFormat设置详解与示例
+## CSVFormat 设置详解与示例
 
-支持直接构建一个`CSVFormat`对象。
+支持直接构建一个 `CSVFormat` 对象。
 > 目前 FastExcel 仍然支持，但并非最推荐的使用方法。
 
 ### 代码示例
 
 ```java
 @Test
-public void escapeDemo() {
+public void csvFormatDemo() {
 
     CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
     String csvFile = "path/to/your.csv";

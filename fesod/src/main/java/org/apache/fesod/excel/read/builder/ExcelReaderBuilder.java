@@ -292,7 +292,7 @@ public class ExcelReaderBuilder extends AbstractExcelReaderParameterBuilder<Exce
     }
 
     /**
-     * Ignore hiddene sheet.Default is false.
+     * Ignore hidden sheet.Default is false.
      *
      * @param ignoreHiddenSheet
      * @return

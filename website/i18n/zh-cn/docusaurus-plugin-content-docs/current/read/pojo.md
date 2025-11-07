@@ -15,7 +15,7 @@ title: '实体类'
 
 ### 示例代码
 
-#### POJO类
+#### POJO 类
 
 ```java
 @Getter
@@ -54,7 +54,7 @@ public void indexOrNameRead() {
 
 使用 `CellData` 类型接收单元格数据以支持公式和多种单元格格式。
 
-### POJO类
+### POJO 类
 
 ```java
 @Getter

@@ -34,6 +34,8 @@ public void readAllSheet() {
 
 You can read a specific Sheet from an Excel file, supporting specification by Sheet index or name.
 
+> **Note:** Sheet names are limited to 31 characters in Excel. When reading sheets by name, use the actual sheet name that appears in the Excel file.
+
 ### Code Example
 
 ```java

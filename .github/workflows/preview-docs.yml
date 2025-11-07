@@ -50,7 +50,7 @@ jobs:
         run: pnpm build
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
+        uses: nwtgck/actions-netlify@4cbaf4c08f1a7bfa537d6113472ef4424e4eb654
         with:
           publish-dir: './website/build'
           production-deploy: false

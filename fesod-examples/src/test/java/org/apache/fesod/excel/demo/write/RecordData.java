@@ -17,49 +17,47 @@
  * under the License.
  */
 
-package org.apache.fesod.excel.converters;
+package org.apache.fesod.excel.demo.write;
 
-import lombok.*;
-import org.apache.fesod.excel.context.WriteContext;
-import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.fesod.excel.annotation.ExcelProperty;
+
+import java.util.Date;
 
 /**
- * write converter context
+ * Basic data class
  *
  *
- */
+ **/
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-public class WriteConverterContext<T> {
+public class RecordData {
+    /**
+     * String Title
+     */
+    @ExcelProperty("String Title")
+    private String string;
 
     /**
-     * Java Data.NotNull.
+     * Date Title
      */
-    private T value;
+    @ExcelProperty("Date Title")
+    private Date date;
 
     /**
-     * Java row level record
+     * Number Title
      */
-    private Object record;
+    @ExcelProperty("Number Title")
+    private Double doubleData;
 
     /**
-     * Content property.Nullable.
+     * 通过自定义转换器转换
      */
-    private ExcelContentProperty contentProperty;
-
-    /**
-     * write context
-     */
-    private WriteContext writeContext;
-
-    @SuppressWarnings("unchecked")
-    public <E extends Object> E getRecord() {
-        if (record == null) {
-            return null;
-        }
-        return (E) record;
-    }
+    @ExcelProperty(converter = RecordStringStringConverter.class)
+    private String text;
 }

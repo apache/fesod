@@ -19,14 +19,6 @@
 
 package org.apache.fesod.excel.demo.write;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.apache.fesod.excel.ExcelWriter;
 import org.apache.fesod.excel.FastExcel;
 import org.apache.fesod.excel.annotation.ExcelProperty;
@@ -36,12 +28,7 @@ import org.apache.fesod.excel.annotation.write.style.ColumnWidth;
 import org.apache.fesod.excel.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.excel.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.excel.enums.CellDataTypeEnum;
-import org.apache.fesod.excel.metadata.data.CommentData;
-import org.apache.fesod.excel.metadata.data.FormulaData;
-import org.apache.fesod.excel.metadata.data.HyperlinkData;
-import org.apache.fesod.excel.metadata.data.ImageData;
-import org.apache.fesod.excel.metadata.data.RichTextStringData;
-import org.apache.fesod.excel.metadata.data.WriteCellData;
+import org.apache.fesod.excel.metadata.data.*;
 import org.apache.fesod.excel.util.BooleanUtils;
 import org.apache.fesod.excel.util.FileUtils;
 import org.apache.fesod.excel.util.ListUtils;
@@ -58,15 +45,15 @@ import org.apache.fesod.excel.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.excel.write.metadata.style.WriteFont;
 import org.apache.fesod.excel.write.style.HorizontalCellStyleStrategy;
 import org.apache.fesod.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.*;
 
 /**
  * 写的常见写法
@@ -711,6 +698,15 @@ public class WriteTest {
                 .doWrite(data());
     }
 
+    @Test
+    public void recordWrite() {
+        String fileName = TestFileUtil.getPath() + "recordWrite" + System.currentTimeMillis() + ".xlsx";
+        FastExcel.write(fileName, RecordData.class)
+                .registerWriteHandler(new RecordCellWriteHandler())
+                .sheet("模板")
+                .doWrite(records());
+    }
+
     /**
      * 插入批注
      * <p>
@@ -839,6 +835,19 @@ public class WriteTest {
             data.setString("STRING" + i);
             data.setDate(new Date());
             data.setDoubleData(0.56);
+            list.add(data);
+        }
+        return list;
+    }
+
+    private List<RecordData> records() {
+        List<RecordData> list = ListUtils.newArrayList();
+        for (int i = 0; i < 10; i++) {
+            RecordData data = new RecordData();
+            data.setString("STRING" + i);
+            data.setDate(new Date());
+            data.setDoubleData(0.56);
+            data.setText("record-" + i);
             list.add(data);
         }
         return list;

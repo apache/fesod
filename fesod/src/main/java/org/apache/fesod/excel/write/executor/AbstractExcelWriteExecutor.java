@@ -19,7 +19,6 @@
 
 package org.apache.fesod.excel.write.executor;
 
-import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.excel.context.WriteContext;
 import org.apache.fesod.excel.converters.Converter;
@@ -28,30 +27,16 @@ import org.apache.fesod.excel.converters.NullableObjectConverter;
 import org.apache.fesod.excel.converters.WriteConverterContext;
 import org.apache.fesod.excel.enums.CellDataTypeEnum;
 import org.apache.fesod.excel.exception.ExcelWriteDataConvertException;
-import org.apache.fesod.excel.metadata.data.CommentData;
-import org.apache.fesod.excel.metadata.data.FormulaData;
-import org.apache.fesod.excel.metadata.data.HyperlinkData;
-import org.apache.fesod.excel.metadata.data.ImageData;
-import org.apache.fesod.excel.metadata.data.WriteCellData;
+import org.apache.fesod.excel.metadata.data.*;
 import org.apache.fesod.excel.metadata.property.ExcelContentProperty;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
-import org.apache.fesod.excel.util.DateUtils;
-import org.apache.fesod.excel.util.FileTypeUtils;
-import org.apache.fesod.excel.util.ListUtils;
-import org.apache.fesod.excel.util.StyleUtil;
-import org.apache.fesod.excel.util.WorkBookUtil;
-import org.apache.fesod.excel.util.WriteHandlerUtils;
+import org.apache.fesod.excel.util.*;
 import org.apache.fesod.excel.write.handler.context.CellWriteHandlerContext;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+
+import java.util.List;
 
 /**
  * Excel write Executor
@@ -361,7 +346,7 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         try {
             cellData = ((Converter<Object>) converter)
                     .convertToExcelData(new WriteConverterContext<>(
-                            cellWriteHandlerContext.getOriginalValue(), excelContentProperty, writeContext));
+                            cellWriteHandlerContext.getOriginalValue(), cellWriteHandlerContext.getOriginalRecord(), excelContentProperty, writeContext));
         } catch (Exception e) {
             throw new ExcelWriteDataConvertException(
                     cellWriteHandlerContext,

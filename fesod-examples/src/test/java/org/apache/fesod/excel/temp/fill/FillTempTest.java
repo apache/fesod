@@ -72,6 +72,83 @@ public class FillTempTest {
         */
     }
 
+    @Test
+    public void dynamicFill() {
+        String templateFileName = "src/test/resources/fill/dynamicColumn.xlsx";
+        String fileName = TestFileUtil.getPath() + "dynamicColumnFill" + System.currentTimeMillis() + ".xlsx";
+
+        DynamicFillData fillData1 = new DynamicFillData();
+        fillData1.setName("Zhang San");
+        fillData1.setNumber(5.2);
+        HashMap<String, String> qtyMap = new HashMap<>();
+        qtyMap.put("2023-01-01", "100");
+        qtyMap.put("2023-01-02", "200");
+        qtyMap.put("2023-01-03", "300");
+        fillData1.setQtyMap(qtyMap);
+        HashMap<String, DynamicFillDataObj> priceMap = new HashMap<>();
+        priceMap.put("2023-01-01", new DynamicFillDataObj("100个", 100));
+        priceMap.put("2023-01-02", new DynamicFillDataObj("200个", 200));
+        priceMap.put("2023-01-03", new DynamicFillDataObj("300个", 300));
+        fillData1.setPriceMap(priceMap);
+
+        DynamicFillData fillData2 = new DynamicFillData();
+        fillData2.setName("Li Si");
+        fillData2.setNumber(6.3);
+        HashMap<String, String> qtyMap2 = new HashMap<>();
+        qtyMap2.put("2023-01-01", "100");
+        qtyMap2.put("2023-01-02", "200");
+        qtyMap2.put("2023-01-03", "300");
+        fillData2.setQtyMap(qtyMap2);
+        HashMap<String, DynamicFillDataObj> priceMap2 = new HashMap<>();
+        priceMap2.put("2023-01-01", new DynamicFillDataObj("100", 100));
+        priceMap2.put("2023-01-02", new DynamicFillDataObj("200", 200));
+        priceMap2.put("2023-01-03", new DynamicFillDataObj("300", 300));
+        fillData2.setPriceMap(priceMap2);
+
+        List<DynamicFillData> fillDataList = new ArrayList<>();
+        fillDataList.add(fillData1);
+        fillDataList.add(fillData2);
+
+        ArrayList dateList = new ArrayList<>();
+        dateList.add("2023-01-01");
+        dateList.add("2023-01-02");
+        dateList.add("2023-01-03");
+        dateList.add("2023-01-04");
+        dateList.add("2023-01-05");
+        dateList.add("2023-01-06");
+        dateList.add("2023-01-07");
+        dateList.add("2023-01-08");
+        dateList.add("2023-01-09");
+        dateList.add("2023-01-10");
+        dateList.add("2023-01-11");
+        dateList.add("2023-01-12");
+
+        ExcelWriter excelWriter =
+                FastExcel.write(fileName).withTemplate(templateFileName).build();
+        WriteSheet writeSheet = FastExcel.writerSheet().build();
+        excelWriter.fill(
+                new FillWrapper("dataList", fillDataList),
+                FillConfig.builder()
+                        .forceNewRow(true)
+                        .addDynamicInfo(dateList, 1, "qtyMap")
+                        .addDefaultDynamicInfo(dateList, 1)
+                        .build(),
+                writeSheet);
+        excelWriter.fill(
+                new FillWrapper("dataObjList", fillDataList),
+                FillConfig.builder()
+                        .addDefaultDynamicInfo(dateList, 2)
+                        .forceNewRow(true)
+                        .build(),
+                writeSheet);
+        excelWriter.fill(
+                new FillWrapper("dateList", dateList),
+                FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build(),
+                writeSheet);
+        // Do not forget to close the stream
+        excelWriter.finish();
+    }
+
     /**
      * Example of filling a list of data.
      *
@@ -205,7 +282,7 @@ public class FillTempTest {
         excelWriter.fill(data(), fillConfig, writeSheet);
         excelWriter.fill(data(), fillConfig, writeSheet);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap();
         map.put("date", "2019-10-09 13:28:28");
         excelWriter.fill(map, writeSheet);
 

@@ -119,6 +119,7 @@ public abstract class AbstractHolder implements ConfigurationHolder {
         } else {
             globalConfiguration.setFiledCacheLocation(basicParameter.getFiledCacheLocation());
         }
+        globalConfiguration.setMessageSource(basicParameter.getMessageSource());
     }
 
     @Override

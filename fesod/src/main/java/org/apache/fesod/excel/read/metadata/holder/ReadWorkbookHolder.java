@@ -39,6 +39,7 @@ import org.apache.fesod.excel.enums.HolderEnum;
 import org.apache.fesod.excel.enums.ReadDefaultReturnEnum;
 import org.apache.fesod.excel.event.AnalysisEventListener;
 import org.apache.fesod.excel.exception.ExcelAnalysisException;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 import org.apache.fesod.excel.read.metadata.ReadSheet;
 import org.apache.fesod.excel.read.metadata.ReadWorkbook;
 import org.apache.fesod.excel.support.ExcelTypeEnum;
@@ -153,6 +154,11 @@ public class ReadWorkbookHolder extends AbstractReadHolder {
      */
     private Boolean ignoreHiddenSheet;
 
+    /**
+     * Excel message source
+     */
+    private ExcelMessageSource messageSource;
+
     public ReadWorkbookHolder(ReadWorkbook readWorkbook) {
         super(readWorkbook, null);
         this.readWorkbook = readWorkbook;
@@ -214,6 +220,7 @@ public class ReadWorkbookHolder extends AbstractReadHolder {
         }
         this.hasReadSheet = new HashSet<Integer>();
         this.password = readWorkbook.getPassword();
+        this.messageSource = readWorkbook.getMessageSource();
     }
 
     @Override

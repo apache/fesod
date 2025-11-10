@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.excel.converters.Converter;
 import org.apache.fesod.excel.enums.CacheLocationEnum;
+import org.apache.fesod.excel.i18n.ExcelMessageSource;
 
 /**
  * Basic parameter
@@ -81,6 +82,13 @@ public class BasicParameter {
     private CacheLocationEnum filedCacheLocation;
     /**
      * Automatic strip includes sheet name and content
+     *
      */
     private Boolean autoStrip;
+
+    /**
+     * Message source
+     *
+     */
+    private ExcelMessageSource messageSource;
 }

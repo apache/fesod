@@ -34,7 +34,6 @@ import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
  * Excel readers are all read in event mode.
  *
  */
-@Deprecated
 @Slf4j
 public class ExcelReader implements Closeable {
 

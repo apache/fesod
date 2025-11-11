@@ -20,7 +20,7 @@
 package org.apache.fesod.sheet;
 
 /**
- * This is actually {@link FastExcelFactory}, and short names look better.
+ * This is actually {@link FesodSheetFactory}, and short names look better.
  */
 @Deprecated
-public class EasyExcel extends FastExcelFactory {}
+public class EasyExcel extends FesodSheetFactory {}

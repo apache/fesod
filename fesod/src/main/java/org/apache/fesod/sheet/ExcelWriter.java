@@ -41,7 +41,6 @@ import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
  * </pre>
  *
  */
-@Deprecated
 @Slf4j
 public class ExcelWriter implements Closeable {
 

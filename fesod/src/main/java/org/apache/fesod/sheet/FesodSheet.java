@@ -20,6 +20,6 @@
 package org.apache.fesod.sheet;
 
 /**
- * This is actually {@link FastExcelFactory}, and short names look better.
+ * This is actually {@link FesodSheetFactory}, and short names look better.
  */
-public class FesodSheet extends FastExcelFactory {}
+public class FesodSheet extends FesodSheetFactory {}

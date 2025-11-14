@@ -20,7 +20,12 @@
 package org.apache.fesod.sheet;
 
 /**
- * Reader and writer factory class
+ * A convenient alias for {@link FesodSheet}.
+ * This class is deprecated; use {@link FesodSheet} instead.
+ * <p>
+ * This class will be removed in future versions.
+ * </p>
  */
 @Deprecated
-public class FastExcelFactory extends FesodSheetFactory {}
+public class FastExcelFactory extends FesodSheet {
+}

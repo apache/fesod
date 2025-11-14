@@ -27,5 +27,4 @@ package org.apache.fesod.sheet;
  * </p>
  */
 @Deprecated
-public class EasyExcel extends FesodSheet {
-}
+public class EasyExcel extends FesodSheet {}

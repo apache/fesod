@@ -27,5 +27,4 @@ package org.apache.fesod.sheet;
  * </p>
  */
 @Deprecated
-public class FastExcelFactory extends FesodSheet {
-}
+public class FastExcelFactory extends FesodSheet {}

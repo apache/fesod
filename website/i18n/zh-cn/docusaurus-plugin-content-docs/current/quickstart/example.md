@@ -26,7 +26,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // 读取 Excel 文件
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
@@ -63,6 +63,6 @@ private static List<DemoData> data() {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // 创建一个名为“模板”的 sheet 页，并写入数据
-    FastExcel.write(fileName, DemoData.class).sheet("模板").doWrite(data());
+    FesodSheet.write(fileName, DemoData.class).sheet("模板").doWrite(data());
 }
 ```

@@ -5,15 +5,15 @@ title: 'Core Class'
 
 # Core Classes
 
-This section introduces the core classes in FastExcel.
+This section introduces the core classes in the project.
 
 ## Overview
 
-If you use FastExcel for custom read/write operations, you need to understand its important concepts and classes.
+If you use this project for custom read/write operations, you need to understand its important concepts and classes.
 
 ## Core Concepts
 
-### FastExcel
+### FesodSheet
 
 Entry class used to start various operations
 
@@ -21,8 +21,10 @@ Entry class used to start various operations
 
 There are corresponding Builder classes for read and write operations:
 
-- **`ExcelReaderBuilder` and `ExcelWriterBuilder`**：Constructs a `ReadWorkbook` or `WriteWorkbook`, which can be understood as an Excel object; only one Excel needs to be constructed
-- **`ExcelReaderSheetBuilder` and `ExcelWriterSheetBuilder`**：Constructs a `ReadSheet` or `WriteSheet` object, which can be understood as a page in Excel; each page needs to be constructed
+- **`ExcelReaderBuilder` and `ExcelWriterBuilder`**：Constructs a `ReadWorkbook` or `WriteWorkbook`, which can be
+  understood as an Excel object; only one Excel needs to be constructed
+- **`ExcelReaderSheetBuilder` and `ExcelWriterSheetBuilder`**：Constructs a `ReadSheet` or `WriteSheet` object, which can
+  be understood as a page in Excel; each page needs to be constructed
 - **`CsvReaderBuilder` and `CsvWriterBuilder`**：Construct the CsvFormat required internally.
 
 ### ReadListener
@@ -33,7 +35,9 @@ Called to handle data after each row is read
 
 Called to handle data for each operation, including creating cells, creating tables, etc.
 
-All configurations are inherited. The configuration of `Workbook` will be inherited by `Sheet`, so when setting parameters in FastExcel, the scope is the entire sheet before the `FastExcel...sheet()` method, and the scope is the entire csv before the `FastExcel...csv()` method.
+All configurations are inherited. The configuration of `Workbook` will be inherited by `Sheet`, so when setting
+parameters in Fesod, the scope is the entire sheet before the `FesodSheet.sheet()` method, and the scope is the
+entire csv before the `FesodSheet.csv()` method.
 
 ---
 
@@ -41,11 +45,15 @@ All configurations are inherited. The configuration of `Workbook` will be inheri
 
 ### Overview
 
-`WriteHandler` is an interface provided by FastExcel for intercepting the writing process when writing to an Excel file, allowing developers to customize operations such as setting cell styles, merging cells, adding hyperlinks, inserting comments, etc. By implementing `WriteHandler`, developers can have precise control over the writing process to meet complex business requirements.
+`WriteHandler` is an interface provided by Fesod for intercepting the writing process when writing to an Excel
+file,
+allowing developers to customize operations such as setting cell styles, merging cells, adding hyperlinks, inserting
+comments, etc. By implementing `WriteHandler`, developers can have precise control over the writing process to meet
+complex business requirements.
 
 ### WriteHandler Interface Categories
 
-FastExcel provides the following WriteHandler interfaces for handling different writing scenarios:
+Fesod provides the following WriteHandler interfaces for handling different writing scenarios:
 
 | Interface Name        | Description                                                                                                        |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------|
@@ -60,7 +68,7 @@ FastExcel provides the following WriteHandler interfaces for handling different 
     - Implement the methods in the interface, defining custom logic in the methods.
 
 2. Register the WriteHandler：
-    - Register your custom WriteHandler when calling `FastExcel.write()` using `.registerWriteHandler()`.
+    - Register your custom WriteHandler when calling `FesodSheet.write()` using `.registerWriteHandler()`.
 
 ### Example
 
@@ -71,6 +79,7 @@ Set the background color to yellow and font color to blue for all content cells.
 Customise a `CellWriteHandler`
 
 ```java
+
 @Slf4j
 public class CustomCellStyleHandler implements CellWriteHandler {
 
@@ -99,14 +108,15 @@ public class CustomCellStyleHandler implements CellWriteHandler {
 Register and Use
 
 ```java
+
 @Test
 public void customCellStyleWrite() {
     String fileName = "customCellStyleWrite.xlsx";
 
-    FastExcel.write(fileName, DemoData.class)
-        .registerWriteHandler(new CustomCellStyleHandler())
-        .sheet("Custom Style")
-        .doWrite(data());
+    FesodSheet.write(fileName, DemoData.class)
+            .registerWriteHandler(new CustomCellStyleHandler())
+            .sheet("Custom Style")
+            .doWrite(data());
 }
 ```
 
@@ -117,6 +127,7 @@ Insert a comment for the first row, second column of the header.
 Customise a `RowWriteHandler`
 
 ```java
+
 @Slf4j
 public class CommentRowWriteHandler implements RowWriteHandler {
 
@@ -140,14 +151,15 @@ public class CommentRowWriteHandler implements RowWriteHandler {
 Register and Use
 
 ```java
+
 @Test
 public void commentWrite() {
     String fileName = "commentWrite.xlsx";
 
-    FastExcel.write(fileName, DemoData.class)
-        .registerWriteHandler(new CommentRowWriteHandler())
-        .sheet("Insert Comment")
-        .doWrite(data());
+    FesodSheet.write(fileName, DemoData.class)
+            .registerWriteHandler(new CommentRowWriteHandler())
+            .sheet("Insert Comment")
+            .doWrite(data());
 }
 ```
 
@@ -158,6 +170,7 @@ Add a dropdown list for the first column of the first two rows.
 Customise a  `SheetWriteHandler`
 
 ```java
+
 @Slf4j
 public class DropdownSheetWriteHandler implements SheetWriteHandler {
 
@@ -180,14 +193,15 @@ public class DropdownSheetWriteHandler implements SheetWriteHandler {
 Register and Use
 
 ```java
+
 @Test
 public void dropdownWrite() {
     String fileName = "dropdownWrite.xlsx";
 
-    FastExcel.write(fileName, DemoData.class)
-        .registerWriteHandler(new DropdownSheetWriteHandler())
-        .sheet("Add Dropdown")
-        .doWrite(data());
+    FesodSheet.write(fileName, DemoData.class)
+            .registerWriteHandler(new DropdownSheetWriteHandler())
+            .sheet("Add Dropdown")
+            .doWrite(data());
 }
 ```
 
@@ -197,11 +211,14 @@ public void dropdownWrite() {
 
 ### Overview
 
-`ReadListener` is an interface provided by FastExcel for processing each row of data when reading an Excel file. It is one of the core components of FastExcel, allowing developers to implement custom logic to handle data rows, process headers, and even perform specific operations after reading is complete.
+`ReadListener` is an interface provided by Fesod for processing each row of data when reading an Excel file. It is
+one of the core components of Fesod, allowing developers to implement custom logic to handle data rows, process
+headers, and even perform specific operations after reading is complete.
 
 ### Methods
 
-`ReadListener` is a generic interface, where the generic type is the type of object to be read (e.g., `DemoData`). Its core methods are as follows:
+`ReadListener` is a generic interface, where the generic type is the type of object to be read (e.g., `DemoData`). Its
+core methods are as follows:
 
 | Method Name                                                                                    | Description                                                                                                                           |
 |------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -218,11 +235,11 @@ public void dropdownWrite() {
 ### Implementation Steps
 
 1. Implement the `ReadListener` interface:
-   - Use an entity class as the generic type (e.g., `ReadListener<DemoData>`).
-   - Implement the core methods and add data processing logic as needed.
+    - Use an entity class as the generic type (e.g., `ReadListener<DemoData>`).
+    - Implement the core methods and add data processing logic as needed.
 
 2. Register the custom `ReadListener` during reading:
-   - When calling the `FastExcel.read()` method, pass in the custom listener instance.
+    - When calling the `FesodSheet.read()` method, pass in the custom listener instance.
 
 ### Example
 
@@ -231,6 +248,7 @@ public void dropdownWrite() {
 Customise a `ReadListener`
 
 ```java
+
 @Slf4j
 public class DemoDataListener implements ReadListener<DemoData> {
 
@@ -266,13 +284,14 @@ public class DemoDataListener implements ReadListener<DemoData> {
 Use
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener())
-        .sheet() // Read the first sheet by default
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .sheet() // Read the first sheet by default
+            .doRead();
 }
 ```
 
@@ -281,6 +300,7 @@ public void simpleRead() {
 Customise a `ReadListener`
 
 ```java
+
 @Slf4j
 public class HeadDataListener implements ReadListener<DemoData> {
 
@@ -304,13 +324,14 @@ public class HeadDataListener implements ReadListener<DemoData> {
 Use
 
 ```java
+
 @Test
 public void readWithHead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new HeadDataListener())
-        .sheet() // Read the first sheet by default
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new HeadDataListener())
+            .sheet() // Read the first sheet by default
+            .doRead();
 }
 ```
 
@@ -319,6 +340,7 @@ public void readWithHead() {
 Customise a `ReadListener`
 
 ```java
+
 @Slf4j
 public class ExceptionHandlingListener implements ReadListener<DemoData> {
 
@@ -332,46 +354,51 @@ public class ExceptionHandlingListener implements ReadListener<DemoData> {
     }
 
     @Override
-    public void invoke(DemoData data, AnalysisContext context) {}
+    public void invoke(DemoData data, AnalysisContext context) {
+    }
 
     @Override
-    public void doAfterAllAnalysed(AnalysisContext context) {}
+    public void doAfterAllAnalysed(AnalysisContext context) {
+    }
 }
 ```
 
 Use
 
 ```java
+
 @Test
 public void readWithExceptionHandling() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new ExceptionHandlingListener())
-        .sheet()
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+            .sheet()
+            .doRead();
 }
 ```
 
 #### Pagination
 
 ```java
+
 @Test
 public void pageRead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
-        // Pagination batch processing
-        log.info("Read a batch of data: {}", JSON.toJSONString(dataList));
-        // Implement data processing logic
-    }))
-    .sheet()
-    .doRead();
+    FesodSheet.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
+                // Pagination batch processing
+                log.info("Read a batch of data: {}", JSON.toJSONString(dataList));
+                // Implement data processing logic
+            }))
+            .sheet()
+            .doRead();
 }
 ```
 
 > **Note**：
 >
-> - `PageReadListener` is a convenient utility class provided by FastExcel that supports batch processing based on pagination.
+> - `PageReadListener` is a convenient utility class provided by Fesod that supports batch processing based on
+    pagination.
 > - The default page size is 1, which can be specified using the constructor.
 
 ---
@@ -380,33 +407,43 @@ public void pageRead() {
 
 ### Overview
 
-`AnalysisEventListener` is the core listener used in FastExcel for processing Excel data. It is based on an event-driven mechanism, allowing developers to perform custom operations when reading each row of data and to perform corresponding processing after all data has been parsed. It is typically used for streaming large amounts of data and is suitable for scenarios that require processing large data volumes and performing batch operations (such as batch insertion into a database).
+`AnalysisEventListener` is the core listener used in Fesod for processing Excel data. It is based on an
+event-driven
+mechanism, allowing developers to perform custom operations when reading each row of data and to perform corresponding
+processing after all data has been parsed. It is typically used for streaming large amounts of data and is suitable for
+scenarios that require processing large data volumes and performing batch operations (such as batch insertion into a
+database).
 
 Core Features:
 
-- **Line-by-line reading**: `AnalysisEventListener` reads data from Excel files line by line, executing the `invoke` method when reading each line of data, making it suitable for streaming processing.
-- **Memory control**: You can set `BATCH_COUNT` to control the amount of data processed each time, preventing memory overflow.
-- **Batch Processing**: You can cache a certain amount of data and process it in batches, suitable for scenarios with large data volumes.
-- **Event-Driven**: The `invoke` method is called when reading each row of data; after all data has been read, the `doAfterAllAnalysed` method is called.
+- **Line-by-line reading**: `AnalysisEventListener` reads data from Excel files line by line, executing the `invoke`
+  method when reading each line of data, making it suitable for streaming processing.
+- **Memory control**: You can set `BATCH_COUNT` to control the amount of data processed each time, preventing memory
+  overflow.
+- **Batch Processing**: You can cache a certain amount of data and process it in batches, suitable for scenarios with
+  large data volumes.
+- **Event-Driven**: The `invoke` method is called when reading each row of data; after all data has been read, the
+  `doAfterAllAnalysed` method is called.
 
 ### Methods
 
-| Method Name                                                                              | Description                                                                                                                           |
-|------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `invoke(T data, AnalysisContext context)`                                                | Triggered when a line of data is read. `data` is the parsed current line object, and `context` contains the read context information. |
-| `doAfterAllAnalysed(AnalysisContext context)`                                            | Called after all data parsing is complete, used for resource cleanup or post-processing of batch operations.                          |
-| `onException(Exception exception, AnalysisContext context)` *(Optional)*                 | Capture and handle exceptions thrown during parsing to facilitate error data handling.                                                |
+| Method Name                                                                               | Description                                                                                                                           |
+|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `invoke(T data, AnalysisContext context)`                                                 | Triggered when a line of data is read. `data` is the parsed current line object, and `context` contains the read context information. |
+| `doAfterAllAnalysed(AnalysisContext context)`                                             | Called after all data parsing is complete, used for resource cleanup or post-processing of batch operations.                          |
+| `onException(Exception exception, AnalysisContext context)` *(Optional)*                  | Capture and handle exceptions thrown during parsing to facilitate error data handling.                                                |
 | `invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(Optional)* | Retrieve Excel header data, commonly used for dynamic header processing.                                                              |
 
 ### Use Cases
 
-- **Streaming Data Processing**: For example, when reading large amounts of data, you can process the data as you read it, reducing memory consumption.
+- **Streaming Data Processing**: For example, when reading large amounts of data, you can process the data as you read
+  it, reducing memory consumption.
 - **Batch insertion into a database**: For example, batch processing row data from Excel and storing it in a database.
 
 ### Implementation Steps
 
 1. Inherit from `AnalysisEventListener` and implement its methods.
-2. Pass in a custom listener during reading and register it using `FastExcel.read()`.
+2. Pass in a custom listener during reading and register it using `FesodSheet.read()`.
 
 ### Example
 
@@ -415,6 +452,7 @@ Core Features:
 Inherit `AnalysisEventListener`
 
 ```java
+
 @Slf4j
 public class DemoDataListener extends AnalysisEventListener<DemoData> {
 
@@ -458,23 +496,26 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener())
-        .sheet()  // Read the first sheet by default
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .sheet()  // Read the first sheet by default
+            .doRead();
 }
 ```
 
 #### Processing Table Headers
 
-You can use the `invokeHead` method to obtain header information for handling dynamic header scenarios or for customising header data parsing.
+You can use the `invokeHead` method to obtain header information for handling dynamic header scenarios or for
+customising header data parsing.
 
 Inherit `AnalysisEventListener`
 
 ```java
+
 @Slf4j
 public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 
@@ -503,23 +544,26 @@ public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
+
 @Test
 public void readWithHead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new DemoDataListenerWithHead())
-        .sheet()  // Read the first sheet by default
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListenerWithHead())
+            .sheet()  // Read the first sheet by default
+            .doRead();
 }
 ```
 
 #### Handling Exceptions
 
-The `onException` method is provided so that developers can catch exceptions during reading and handle them (e.g., log errors, skip error lines, etc.).
+The `onException` method is provided so that developers can catch exceptions during reading and handle them (e.g., log
+errors, skip error lines, etc.).
 
 Inherit `AnalysisEventListener`
 
 ```java
+
 @Slf4j
 public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 
@@ -548,19 +592,22 @@ public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
+
 @Test
 public void readWithExceptionHandling() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new ExceptionHandlingListener())
-        .sheet()
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+            .sheet()
+            .doRead();
 }
 ```
 
 ### Compared to ReadListener
 
-`AnalysisEventListener` and `ReadListener` are both interfaces provided by FastExcel, designed to allow developers to perform customised processing when reading Excel files. However, they have some key differences in terms of functionality and use cases.
+`AnalysisEventListener` and `ReadListener` are both interfaces provided by Fesod, designed to allow developers to
+perform customised processing when reading Excel files. However, they have some key differences in terms of
+functionality and use cases.
 
 #### Different
 
@@ -576,25 +623,31 @@ public void readWithExceptionHandling() {
 
 Use `AnalysisEventListener`:
 
-- If you need to control memory consumption, batch process data, or handle complex read logic (such as paginated reading or batch writing to a database).
+- If you need to control memory consumption, batch process data, or handle complex read logic (such as paginated reading
+  or batch writing to a database).
 - Suitable for processing large datasets, offering greater flexibility.
 
 Use `ReadListener`:
 
-- If you want to simplify your code and do not have complex memory control requirements, and only need to handle the logic for each row of data.
+- If you want to simplify your code and do not have complex memory control requirements, and only need to handle the
+  logic for each row of data.
 - Suitable for simple Excel data reading and exception handling scenarios.
 
-In summary, `ReadListener` is a more simplified interface suitable for simpler scenarios, while `AnalysisEventListener` offers greater control and scalability, making it suitable for complex data processing requirements. Developers can choose the appropriate listener based on their actual needs.
+In summary, `ReadListener` is a more simplified interface suitable for simpler scenarios, while `AnalysisEventListener`
+offers greater control and scalability, making it suitable for complex data processing requirements. Developers can
+choose the appropriate listener based on their actual needs.
 
 ## Converter
 
 ### Overview
 
-`Converter` is an interface provided by FastExcel for converting data when processing Excel files. It allows developers to customise operations by implementing the `Converter` interface to define custom data conversion logic.
+`Converter` is an interface provided by Fesod for converting data when processing Excel files. It allows developers
+to customise operations by implementing the `Converter` interface to define custom data conversion logic.
 
 ### Methods
 
-`Converter` is a generic interface, and the generic type is the object type to be converted (such as `Date`). Its core methods are as follows:
+`Converter` is a generic interface, and the generic type is the object type to be converted (such as `Date`). Its core
+methods are as follows:
 
 | Method Name                                                                                                                                 | Description                                                             |
 |---------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
@@ -604,9 +657,11 @@ In summary, `ReadListener` is a more simplified interface suitable for simpler s
 | `WriteCellData<?> convertToExcelData(T value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(Optional)*  | Convert Java objects to Excel cell data objects                         |
 | `WriteCellData<?> convertToExcelData(WriteConverterContext<T> context)` *(Optional)*                                                        | Convert Java objects to Excel cell data objects                         |
 
-FastExcel provides many commonly used type converters by default, which are already registered in `DefaultConverterLoader`.
+Fesod provides many commonly used type converters by default, which are already registered in
+`DefaultConverterLoader`.
 
-You can customise converters, but the types must not overlap with the default types. When registering types, use `ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())` as the key value.
+You can customise converters, but the types must not overlap with the default types. When registering types, use
+`ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())` as the key value.
 
 ### Use Cases
 
@@ -624,6 +679,7 @@ You can customise converters, but the types must not overlap with the default ty
 Implement `Converter`
 
 ```java
+
 @Slf4j
 public class TimestampNumberConverter implements Converter<Timestamp> {
     @Override
@@ -653,20 +709,21 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
 Use
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
 
     // Read
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener())
-        .registerConverter(new TimestampNumberConverter())
-        .sheet()
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .registerConverter(new TimestampNumberConverter())
+            .sheet()
+            .doRead();
 
     // Write
-    FastExcel.write(fileName)
-         .registerConverter(new TimestampNumberConverter())
-         .sheet()
-         .doWrite(data());
+    FesodSheet.write(fileName)
+            .registerConverter(new TimestampNumberConverter())
+            .sheet()
+            .doWrite(data());
 }
 ```

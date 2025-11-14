@@ -5,72 +5,94 @@ title: 'FAQ'
 
 # FAQ
 
-This section describes common issues that may arise when using FastExcel.
+This section describes common issues that may arise when using this project.
 
 ## Feature Limitations
 
-- **Q:** What functions does FastExcel support? What functions are not supported?
-- **A:** FastExcel supports efficient reading and writing operations for Excel files, including support for CSV format. Unsupported functions include concurrent writing to a single file, reading and writing image macros, etc.
+- **Q:** What functions does Fesod support? What functions are not supported?
+- **A:** Fesod supports efficient reading and writing operations for spreadsheet files, including support for CSV
+  format.
+  Unsupported functions include concurrent writing to a single file, reading and writing image macros, etc.
 
 ## Choosing Write Operations
 
-- **Q:** When writing to Excel, when should I choose the fill mode and when should I choose direct writing?
-- **A:** For complex export content, it is recommended to use template filling; for simple format scenarios, direct writing is more efficient.
+- **Q:** When writing to spreadsheet, when should I choose the fill mode and when should I choose direct writing?
+- **A:** For complex export content, it is recommended to use template filling; for simple format scenarios, direct
+  writing is more efficient.
 
 ## Lombok Annotations
 
-- **Q:** What is the role of Lombok annotations in using FastExcel?
-- **A:** Commonly used Lombok annotations in entity classes such as `@Getter`, `@Setter`, `@EqualsAndHashCode` are used to automatically generate getter, setter methods, equals, and hashCode methods. If you do not want to use these auto-generated methods, you can implement them yourself.
+- **Q:** What is the role of Lombok annotations in using Fesod?
+- **A:** Commonly used Lombok annotations in entity classes such as `@Getter`, `@Setter`, `@EqualsAndHashCode` are used
+  to automatically generate getter, setter methods, equals, and hashCode methods. If you do not want to use these
+  auto-generated methods, you can implement them yourself.
 
 ## Field Matching
 
 - **Q:** How to solve the problem of some fields not being read or written correctly?
-- **A:** Ensure that the entity class fields follow the camel case naming convention, avoid using `@Accessors(chain = true)`, and recommend using `@Builder` instead. Also, ensure that the entity class uses the `@ExcelProperty` annotation to mark the fields participating in reading and writing.
+- **A:** Ensure that the entity class fields follow the camel case naming convention, avoid using
+  `@Accessors(chain = true)`, and recommend using `@Builder` instead. Also, ensure that the entity class uses the
+  `@ExcelProperty` annotation to mark the fields participating in reading and writing.
 
 ## Compatibility Issues
 
-- **Q:** What should I do if I encounter compatibility issues when using FastExcel?
-- **A:** Common compatibility issues include `NoSuchMethodException`, `ClassNotFoundException`, `NoClassDefFoundError`, etc., usually caused by jar conflicts. It is recommended to check and clean up dependencies in the project to ensure that the version of FastExcel used is compatible with other libraries in the project.
+- **Q:** What should I do if I encounter compatibility issues when using Fesod?
+- **A:** Common compatibility issues include `NoSuchMethodException`, `ClassNotFoundException`, `NoClassDefFoundError`,
+  etc., usually caused by jar conflicts. It is recommended to check and clean up dependencies in the project to ensure
+  that the version of Fesod used is compatible with other libraries in the project.
 
 ## Online Deployment
 
 - **Q:** Why are there issues in the online environment when it runs fine locally?
-- **A:** In most cases, this is due to the lack of necessary font libraries in the online environment. You can solve this problem by installing font libraries (such as `dejavu-sans-fonts` and `fontconfig`) or enabling memory processing mode.
+- **A:** In most cases, this is due to the lack of necessary font libraries in the online environment. You can solve
+  this problem by installing font libraries (such as `dejavu-sans-fonts` and `fontconfig`) or enabling memory processing
+  mode.
 
 ## Concurrent Reading
 
 - **Q:** Why shouldn't the Listener be managed by Spring?
-- **A:** Listeners should not be managed by Spring because this would cause the Listener to become a singleton, which may lead to data confusion when reading files concurrently. A new Listener instance should be created each time a file is read.
+- **A:** Listeners should not be managed by Spring because this would cause the Listener to become a singleton, which
+  may lead to data confusion when reading files concurrently. A new Listener instance should be created each time a file
+  is read.
 
 ## Performance Optimization
 
-- **Q:** For large files over 10M, what reading strategies does FastExcel provide?
-- **A:** FastExcel supports default large file processing strategies, as well as customizable high-speed modes and optimization settings for high concurrency and super large files.
+- **Q:** For large files over 10M, what reading strategies does Fesod provide?
+- **A:** Fesod supports default large file processing strategies, as well as customizable high-speed modes and
+  optimization settings for high concurrency and super large files.
 
 ## Writing and Format Setting
 
 - **Q:** How to set cell formats?
-- **A:** You can set cell formats by using annotations such as `@ContentStyle` on entity class properties, for example, numeric formats, date formats, etc.
+- **A:** You can set cell formats by using annotations such as `@ContentStyle` on entity class properties, for example,
+  numeric formats, date formats, etc.
 
 ## Export Issues
 
-- **Q:** How to resolve the issue of Excel files exported cannot be opened or prompt for repair?
-- **A:** This is usually caused by frontend frameworks or backend interceptors modifying the file stream. It is recommended to test local exports first, ensure the backend logic is correct, and then investigate frontend and network-related issues.
+- **Q:** How to resolve the issue of spreadsheet files exported cannot be opened or prompt for repair?
+- **A:** This is usually caused by frontend frameworks or backend interceptors modifying the file stream. It is
+  recommended to test local exports first, ensure the backend logic is correct, and then investigate frontend and
+  network-related issues.
 
 ## Large File Reading Optimization
 
-- **Q:** How does FastExcel optimize memory usage when reading large files?
-- **A:** FastExcel automatically determines the processing method for large files. For files with shared strings exceeding 5MB, a file storage strategy is used to reduce memory usage. You can enable ultra-fast mode by setting the `readCache` parameter, but this will increase memory consumption.
+- **Q:** How does Fesod optimize memory usage when reading large files?
+- **A:** Fesod automatically determines the processing method for large files. For files with shared strings
+  exceeding 5MB, a file storage strategy is used to reduce memory usage. You can enable ultra-fast mode by setting the
+  `readCache` parameter, but this will increase memory consumption.
 
 ## Concurrent Processing
 
-- **Q:** How to efficiently read Excel files in a high-concurrency environment?
-- **A:** In a high-concurrency environment, you can optimize reading performance using `SimpleReadCacheSelector`. By setting the `maxUseMapCacheSize` and `maxCacheActivateBatchCount` parameters, you can control the cache strategy for shared strings, improve hit rates, and reduce file read delays.
+- **Q:** How to efficiently read spreadsheet files in a high-concurrency environment?
+- **A:** In a high-concurrency environment, you can optimize reading performance using `SimpleReadCacheSelector`. By
+  setting the `maxUseMapCacheSize` and `maxCacheActivateBatchCount` parameters, you can control the cache strategy for
+  shared strings, improve hit rates, and reduce file read delays.
 
 ## Field Mapping
 
-- **Q:** How to handle cases where entity class fields do not match Excel column names?
-- **A:** You can use the `@ExcelProperty` annotation to specify the correspondence between entity class fields and Excel column names. For example:
+- **Q:** How to handle cases where entity class fields do not match spreadsheet column names?
+- **A:** You can use the `@ExcelProperty` annotation to specify the correspondence between entity class fields and Excel
+  column names. For example:
 
   ```java
   @ExcelProperty("Name")
@@ -79,7 +101,7 @@ This section describes common issues that may arise when using FastExcel.
 
 ## Data Validation
 
-- **Q:** How to validate data when reading Excel data?
+- **Q:** How to validate data when reading spreadsheet data?
 - **A:** Data validation logic can be implemented in the `ReadListener`. For example:
 
   ```java
@@ -117,7 +139,7 @@ This section describes common issues that may arise when using FastExcel.
 - **A:** Using the `inMemory(true)` parameter can ensure correct field replacement. For example:
 
   ```java
-  FastExcel.write(fileName, DemoData.class).inMemory(true).sheet("Template").doWrite(fillData());
+  FesodSheet.write(fileName, DemoData.class).inMemory(true).sheet("Template").doWrite(fillData());
   ```
 
 ## Error Handling
@@ -141,32 +163,34 @@ This section describes common issues that may arise when using FastExcel.
 ## Dependency Conflict
 
 - **Q:** How to resolve dependency conflict issues?
-- **A:** Common dependency conflicts include POI, ehcache, commons-io, etc. It is recommended to check the dependency tree in the project, ensure that the versions used are compatible with FastExcel. You can use the Maven `dependency:tree` command to view the dependency tree.
+- **A:** Common dependency conflicts include POI, ehcache, commons-io, etc. It is recommended to check the dependency
+  tree in the project, ensure that the versions used are compatible with fesod. You can use the Maven
+  `dependency:tree` command to view the dependency tree.
 
 ## Performance Monitoring
 
-- **Q:** How to monitor the performance of FastExcel?
-- **A:** You can monitor the performance of FastExcel by enabling debug logging. For example:
+- **Q:** How to monitor the performance of Fesod?
+- **A:** You can monitor the performance of Fesod by enabling debug logging. For example:
 
   ```java
   LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-  ch.qos.logback.classic.Logger logger = lc.getLogger("cn.idev.excel");
+  ch.qos.logback.classic.Logger logger = lc.getLogger("org.apache.fesod");
   logger.setLevel(Level.DEBUG);
   ```
 
 ## Multi-Sheet Reading
 
-- **Q:** How to monitor the performance of FastExcel?
-- **A:** You can monitor the performance of FastExcel by enabling debug logging. For example:
+- **Q:** How to monitor the performance of Fesod?
+- **A:** You can monitor the performance of Fesod by enabling debug logging. For example:
 
   ```java
-  FastExcel.read(file, MultipleSheetsData.class, new MultipleSheetsListener()).doReadAll();
+  FesodSheet.read(file, MultipleSheetsData.class, new MultipleSheetsListener()).doReadAll();
   ```
 
   Alternatively, you can get information on all sheets before reading:
 
   ```java
-  ExcelReader excelReader = FastExcel.read(file, MultipleSheetsData.class, multipleSheetsListener).build();
+  ExcelReader excelReader = FesodSheet.read(file, MultipleSheetsData.class, multipleSheetsListener).build();
   List<ReadSheet> sheets = excelReader.excelExecutor().sheetList();
   for (ReadSheet readSheet : sheets) {
       excelReader.read(readSheet);
@@ -177,7 +201,8 @@ This section describes common issues that may arise when using FastExcel.
 ## Get Total Rows in Excel
 
 - **Q:** How to get the total number of rows in an Excel file?
-- **A:** You can use `analysisContext.readSheetHolder().getApproximateTotalRowNumber()` method in the listener to get an approximate number of rows. For example:
+- **A:** You can use `analysisContext.readSheetHolder().getApproximateTotalRowNumber()` method in the listener to get an
+  approximate number of rows. For example:
 
   ```java
   @Override
@@ -190,10 +215,11 @@ This section describes common issues that may arise when using FastExcel.
 ## Memory Mode
 
 - **Q:** How to use memory mode to process Excel files?
-- **A:** Memory mode is suitable for processing smaller files and can significantly improve processing speed. For example:
+- **A:** Memory mode is suitable for processing smaller files and can significantly improve processing speed. For
+  example:
 
   ```java
-  FastExcel.write(fileName, DemoData.class)
+  FesodSheet.write(fileName, DemoData.class)
       .inMemory(Boolean.TRUE)
       .sheet("Template")
       .doWrite(data());
@@ -205,7 +231,7 @@ This section describes common issues that may arise when using FastExcel.
 - **A:** You can modify the delimiter of CSV files by setting `CsvFormat`. For example:
 
   ```java
-  FastExcel.read(csvFile, DemoData.class, new DemoDataListener())
+  FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
             .csv().delimiter(CsvConstant.UNICODE_EMPTY).doReadSync();
   ```
 

@@ -5,15 +5,15 @@ title: '核心类'
 
 # 核心类
 
-本章节介绍读取 FastExcel 中的核心类。
+本章节介绍读取 Fesod 中的核心类。
 
 ## 概述
 
-如果使用 FastExcel 进行自定义读写操作，需要理解其重要的概念和类。
+如果使用 Fesod 进行自定义读写操作，需要理解其重要的概念和类。
 
 ## 核心概念
 
-### FastExcel
+### FesodSheet
 
 入口类，用于构建开始各种操作。
 
@@ -21,8 +21,10 @@ title: '核心类'
 
 对读和写操作分别有对应的 Builder 类：
 
-- **`ExcelReaderBuilder` 和 `ExcelWriterBuilder`**：分别为构建出一个 ReadWorkbook 和 WriteWorkbook，可以理解成一个 excel 对象，一个 excel 只要构建一个。
-- **`ExcelReaderSheetBuilder` 和 `ExcelWriterSheetBuilder`**：分别构建出一个 ReadSheet 和 WriteSheet 对象，可以理解成 excel 里面的一页,每一页都要构建一个。
+- **`ExcelReaderBuilder` 和 `ExcelWriterBuilder`**：分别为构建出一个 ReadWorkbook 和 WriteWorkbook，可以理解成一个 excel
+  对象，一个 excel 只要构建一个。
+- **`ExcelReaderSheetBuilder` 和 `ExcelWriterSheetBuilder`**：分别构建出一个 ReadSheet 和 WriteSheet 对象，可以理解成
+  excel 里面的一页,每一页都要构建一个。
 - **`CsvReaderBuilder` 和 `CsvWriterBuilder`**：构建内部所需的 CsvFormat。
 
 ### ReadListener
@@ -33,7 +35,8 @@ title: '核心类'
 
 在每一个操作包括创建单元格、创建表格等都会调用 WriteHandler 来处理数据。
 
-所有配置都是继承的，Workbook 的配置会被 Sheet 继承，所以在用 FastExcel 设置参数的时候，在 FastExcel...sheet() 方法之前作用域是整个 sheet,在 FastExcel...csv() 方法之前作用域是整个 csv。
+所有配置都是继承的，Workbook 的配置会被 Sheet 继承，所以在用 Fesod 设置参数的时候，在 FesodSheet.sheet() 方法之前作用域是整个
+sheet,在 FesodSheet.csv() 方法之前作用域是整个 csv。
 
 ---
 
@@ -41,12 +44,12 @@ title: '核心类'
 
 ### 概述
 
-`WriteHandler` 是 FastExcel 提供的接口，用于在写入 Excel 文件时拦截写入过程，允许开发者自定义操作，如设置单元格样式、合并单元格、添加超链接、插入批注等。
+`WriteHandler` 是 Fesod 提供的接口，用于在写入 Excel 文件时拦截写入过程，允许开发者自定义操作，如设置单元格样式、合并单元格、添加超链接、插入批注等。
 通过实现 `WriteHandler`，开发者可以深入控制写入流程，以满足复杂的业务需求。
 
 ### 分类
 
-FastExcel 提供了以下几种 WriteHandler 接口，分别用于处理不同的写入场景：
+Fesod 提供了以下几种 WriteHandler 接口，分别用于处理不同的写入场景：
 
 | 接口名                   | 描述                                  |
 |-----------------------|-------------------------------------|
@@ -61,7 +64,7 @@ FastExcel 提供了以下几种 WriteHandler 接口，分别用于处理不同�
     - 实现接口中的方法，在方法中定义自定义逻辑。
 
 2. 注册 WriteHandler：
-    - 在调用 `FastExcel.write()` 时通过 `.registerWriteHandler()` 注册自定义的 WriteHandler。
+    - 在调用 `FesodSheet.write()` 时通过 `.registerWriteHandler()` 注册自定义的 WriteHandler。
 
 ### 示例
 
@@ -72,6 +75,7 @@ FastExcel 提供了以下几种 WriteHandler 接口，分别用于处理不同�
 自定义 `CellWriteHandler`
 
 ```java
+
 @Slf4j
 public class CustomCellStyleHandler implements CellWriteHandler {
 
@@ -100,14 +104,15 @@ public class CustomCellStyleHandler implements CellWriteHandler {
 注册并使用
 
 ```java
+
 @Test
 public void customCellStyleWrite() {
     String fileName = "customCellStyleWrite.xlsx";
 
-    FastExcel.write(fileName, DemoData.class)
-        .registerWriteHandler(new CustomCellStyleHandler())
-        .sheet("自定义样式")
-        .doWrite(data());
+    FesodSheet.write(fileName, DemoData.class)
+            .registerWriteHandler(new CustomCellStyleHandler())
+            .sheet("自定义样式")
+            .doWrite(data());
 }
 ```
 
@@ -118,6 +123,7 @@ public void customCellStyleWrite() {
 自定义 `RowWriteHandler`
 
 ```java
+
 @Slf4j
 public class CommentRowWriteHandler implements RowWriteHandler {
 
@@ -141,14 +147,15 @@ public class CommentRowWriteHandler implements RowWriteHandler {
 注册并使用
 
 ```java
+
 @Test
 public void commentWrite() {
     String fileName = "commentWrite.xlsx";
 
-    FastExcel.write(fileName, DemoData.class)
-        .registerWriteHandler(new CommentRowWriteHandler())
-        .sheet("插入批注")
-        .doWrite(data());
+    FesodSheet.write(fileName, DemoData.class)
+            .registerWriteHandler(new CommentRowWriteHandler())
+            .sheet("插入批注")
+            .doWrite(data());
 }
 ```
 
@@ -159,6 +166,7 @@ public void commentWrite() {
 自定义 `SheetWriteHandler`
 
 ```java
+
 @Slf4j
 public class DropdownSheetWriteHandler implements SheetWriteHandler {
 
@@ -181,14 +189,15 @@ public class DropdownSheetWriteHandler implements SheetWriteHandler {
 注册并使用
 
 ```java
+
 @Test
 public void dropdownWrite() {
     String fileName = "dropdownWrite.xlsx";
 
-    FastExcel.write(fileName, DemoData.class)
-        .registerWriteHandler(new DropdownSheetWriteHandler())
-        .sheet("添加下拉框")
-        .doWrite(data());
+    FesodSheet.write(fileName, DemoData.class)
+            .registerWriteHandler(new DropdownSheetWriteHandler())
+            .sheet("添加下拉框")
+            .doWrite(data());
 }
 ```
 
@@ -198,8 +207,8 @@ public void dropdownWrite() {
 
 ### 概述
 
-`ReadListener` 是 FastExcel 提供的接口，用于在读取 Excel 文件时对每一行数据进行处理。
-它是 FastExcel 核心组件之一，允许开发者实现自定义逻辑来处理数据行、处理表头，甚至在读取完成后执行特定操作。
+`ReadListener` 是 Fesod 提供的接口，用于在读取 Excel 文件时对每一行数据进行处理。
+它是 Fesod 核心组件之一，允许开发者实现自定义逻辑来处理数据行、处理表头，甚至在读取完成后执行特定操作。
 
 ### 方法
 
@@ -224,7 +233,7 @@ public void dropdownWrite() {
     - 实现核心方法，根据需要添加数据处理逻辑。
 
 2. 在读取时注册自定义 `ReadListener`：
-    - 调用 `FastExcel.read()` 方法时，传入自定义监听器实例。
+    - 调用 `FesodSheet.read()` 方法时，传入自定义监听器实例。
 
 ### 示例
 
@@ -233,6 +242,7 @@ public void dropdownWrite() {
 自定义 `ReadListener`
 
 ```java
+
 @Slf4j
 public class DemoDataListener implements ReadListener<DemoData> {
 
@@ -268,13 +278,14 @@ public class DemoDataListener implements ReadListener<DemoData> {
 使用
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener())
-        .sheet() // 默认读取第一个 Sheet
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .sheet() // 默认读取第一个 Sheet
+            .doRead();
 }
 ```
 
@@ -283,6 +294,7 @@ public void simpleRead() {
 自定义 `ReadListener`
 
 ```java
+
 @Slf4j
 public class HeadDataListener implements ReadListener<DemoData> {
 
@@ -306,13 +318,14 @@ public class HeadDataListener implements ReadListener<DemoData> {
 使用
 
 ```java
+
 @Test
 public void readWithHead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new HeadDataListener())
-        .sheet() // 默认读取第一个 Sheet
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new HeadDataListener())
+            .sheet() // 默认读取第一个 Sheet
+            .doRead();
 }
 ```
 
@@ -321,6 +334,7 @@ public void readWithHead() {
 自定义 `ReadListener`
 
 ```java
+
 @Slf4j
 public class ExceptionHandlingListener implements ReadListener<DemoData> {
 
@@ -334,46 +348,50 @@ public class ExceptionHandlingListener implements ReadListener<DemoData> {
     }
 
     @Override
-    public void invoke(DemoData data, AnalysisContext context) {}
+    public void invoke(DemoData data, AnalysisContext context) {
+    }
 
     @Override
-    public void doAfterAllAnalysed(AnalysisContext context) {}
+    public void doAfterAllAnalysed(AnalysisContext context) {
+    }
 }
 ```
 
 使用
 
 ```java
+
 @Test
 public void readWithExceptionHandling() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new ExceptionHandlingListener())
-        .sheet()
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+            .sheet()
+            .doRead();
 }
 ```
 
 #### 分页处理
 
 ```java
+
 @Test
 public void pageRead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
-        // 分页批量处理
-        log.info("读取到一批数据: {}", JSON.toJSONString(dataList));
-        // 实现数据处理逻辑
-    }))
-    .sheet()
-    .doRead();
+    FesodSheet.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
+                // 分页批量处理
+                log.info("读取到一批数据: {}", JSON.toJSONString(dataList));
+                // 实现数据处理逻辑
+            }))
+            .sheet()
+            .doRead();
 }
 ```
 
 > **说明**：
 >
-> - `PageReadListener` 是 FastExcel 提供的便捷工具类，支持基于分页的批量处理。
+> - `PageReadListener` 是 Fesod 提供的便捷工具类，支持基于分页的批量处理。
 > - 默认每页大小为 1，可通过构造器指定。
 
 ---
@@ -382,7 +400,8 @@ public void pageRead() {
 
 ### 概述
 
-`AnalysisEventListener` 是 FastExcel 中用于处理读取 Excel 数据的核心监听器。它基于事件驱动机制，允许开发者在读取每一行数据时执行自定义操作，并在所有数据解析完成后进行相应处理。它通常用于流式读取大量数据，适合需要处理大数据量、进行批量操作（如批量插入数据库）的场景。
+`AnalysisEventListener` 是 Fesod 中用于处理读取 Excel
+数据的核心监听器。它基于事件驱动机制，允许开发者在读取每一行数据时执行自定义操作，并在所有数据解析完成后进行相应处理。它通常用于流式读取大量数据，适合需要处理大数据量、进行批量操作（如批量插入数据库）的场景。
 
 核心特性:
 
@@ -410,7 +429,7 @@ public void pageRead() {
 ### 实现步骤
 
 1. 继承 `AnalysisEventListener` 并实现其方法。
-2. 在读取时传入自定义监听器，通过 `FastExcel.read()` 注册。
+2. 在读取时传入自定义监听器，通过 `FesodSheet.read()` 注册。
 
 ### 示例
 
@@ -419,6 +438,7 @@ public void pageRead() {
 继承 `AnalysisEventListener`
 
 ```java
+
 @Slf4j
 public class DemoDataListener extends AnalysisEventListener<DemoData> {
 
@@ -462,13 +482,14 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
 使用
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener())
-        .sheet()  // 默认读取第一个 Sheet
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .sheet()  // 默认读取第一个 Sheet
+            .doRead();
 }
 ```
 
@@ -479,6 +500,7 @@ public void simpleRead() {
 继承 `AnalysisEventListener`
 
 ```java
+
 @Slf4j
 public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 
@@ -507,13 +529,14 @@ public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 使用
 
 ```java
+
 @Test
 public void readWithHead() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new DemoDataListenerWithHead())
-        .sheet()  // 默认读取第一个 Sheet
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListenerWithHead())
+            .sheet()  // 默认读取第一个 Sheet
+            .doRead();
 }
 ```
 
@@ -524,6 +547,7 @@ public void readWithHead() {
 继承 `AnalysisEventListener`
 
 ```java
+
 @Slf4j
 public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 
@@ -552,19 +576,21 @@ public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 使用
 
 ```java
+
 @Test
 public void readWithExceptionHandling() {
     String fileName = "path/to/demo.xlsx";
 
-    FastExcel.read(fileName, DemoData.class, new ExceptionHandlingListener())
-        .sheet()
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+            .sheet()
+            .doRead();
 }
 ```
 
 ### 与 `ReadListener` 比较
 
-`AnalysisEventListener` 和 `ReadListener` 都是 FastExcel 提供的接口，目的是为了让开发者在读取 Excel 时进行自定义处理，但它们在功能和使用场景上有一些关键的区别。
+`AnalysisEventListener` 和 `ReadListener` 都是 Fesod 提供的接口，目的是为了让开发者在读取 Excel
+时进行自定义处理，但它们在功能和使用场景上有一些关键的区别。
 
 #### 区别
 
@@ -585,13 +611,15 @@ public void readWithExceptionHandling() {
 - 使用 `ReadListener`：
   - 如果你希望简化代码，并且没有复杂的内存控制需求，只需处理每一行数据的逻辑。
   - 适合简单的 Excel 数据读取和异常捕获场景。
-      总的来说，`ReadListener` 是更为简化的接口，适用于较为简单的场景，而 `AnalysisEventListener` 提供了更强的控制力和扩展性，适合复杂的数据处理需求。开发者可以根据实际需求选择合适的监听器。
+      总的来说，`ReadListener` 是更为简化的接口，适用于较为简单的场景，而 `AnalysisEventListener`
+      提供了更强的控制力和扩展性，适合复杂的数据处理需求。开发者可以根据实际需求选择合适的监听器。
 
 ## Converter
 
 ### 概述
 
-`Converter` 是 FastExcel 提供的接口，用于在处理 Excel 文件时对数据进行转换。允许开发者自定义操作，通过实现 `Converter` 接口，自定义数据转换逻辑。
+`Converter` 是 Fesod 提供的接口，用于在处理 Excel 文件时对数据进行转换。允许开发者自定义操作，通过实现 `Converter`
+接口，自定义数据转换逻辑。
 
 ### 方法
 
@@ -605,9 +633,10 @@ public void readWithExceptionHandling() {
 | `WriteCellData<?> convertToExcelData(T value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(可选)*  | 将 Java  对象转换为 Excel 单元格数据对象             |
 | `WriteCellData<?> convertToExcelData(WriteConverterContext<T> context)` *(可选)*                                                        | 将 Java  对象转换为 Excel 单元格数据对象             |
 
-FastExcel 默认提供了很多常用类型的转换器， 并已默认在 `DefaultConverterLoader` 中注册。
+Fesod 默认提供了很多常用类型的转换器， 并已默认在 `DefaultConverterLoader` 中注册。
 
-您可以自定义转换器，但类型不能与默认的类型重复。类型注册时，使用的 `ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())` 作为 key 值。
+您可以自定义转换器，但类型不能与默认的类型重复。类型注册时，使用的
+`ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())` 作为 key 值。
 
 ### 使用场景
 
@@ -625,6 +654,7 @@ FastExcel 默认提供了很多常用类型的转换器， 并已默认在 `Defa
 实现 `Converter`
 
 ```java
+
 @Slf4j
 public class TimestampNumberConverter implements Converter<Timestamp> {
     @Override
@@ -654,20 +684,21 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
 使用
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
 
     // 读取
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener())
-        .registerConverter(new TimestampNumberConverter())
-        .sheet()
-        .doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .registerConverter(new TimestampNumberConverter())
+            .sheet()
+            .doRead();
 
     // 写入
-    FastExcel.write(fileName)
-         .registerConverter(new TimestampNumberConverter())
-         .sheet()
-         .doWrite(data());
+    FesodSheet.write(fileName)
+            .registerConverter(new TimestampNumberConverter())
+            .sheet()
+            .doWrite(data());
 }
 ```

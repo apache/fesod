@@ -5,7 +5,7 @@ title: 'Parameter'
 
 # Parameter
 
-This section introduces the parameters used in FastExcel.
+This section introduces the parameters used in the project.
 
 ## Class Diagram
 

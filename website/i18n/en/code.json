@@ -364,5 +364,40 @@
   },
   "team.thanks": {
     "message": "Thanks to all wonderful contributor, who already contributed to Apache Fesod (Incubating)."
+  },
+  "theme.SearchBar.noResultsText": {
+    "message": "No results"
+  },
+  "theme.SearchBar.seeAllOutsideContext": {
+    "message": "See all results outside \"{context}\""
+  },
+  "theme.SearchBar.searchInContext": {
+    "message": "See all results within \"{context}\""
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "See all results"
+  },
+  "theme.SearchBar.label": {
+    "message": "Search",
+    "description": "The ARIA label and placeholder for search button"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Search results for \"{query}\"",
+    "description": "The search page title for non-empty query"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Search the documentation",
+    "description": "The search page title for empty query"
+  },
+  "theme.SearchPage.searchContext.everywhere": {
+    "message": "Everywhere"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "1 document found|{count} documents found",
+    "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "No documents were found",
+    "description": "The paragraph for empty search result"
   }
 }

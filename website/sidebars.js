@@ -37,55 +37,58 @@ const sidebars = {
         {
             id: "introduce",
             type: "doc",
-        },
-        {
+        }, {
             type: 'category',
             label: 'quickstart',
             items: [
                 'quickstart/guide',
                 'quickstart/simple-example'
             ]
-        },
-        {
+        }, {
             type: 'category',
-            label: 'read',
+            label: 'fesod-sheet',
             items: [
-                'read/simple',
-                'read/sheet',
-                'read/num-rows',
-                'read/csv',
-                'read/head',
-                'read/extra',
-                'read/exception',
-                'read/pojo',
-                'read/converter',
-                'read/spring'
+                {
+                    type: 'category',
+                    label: 'read',
+                    items: [
+                        'sheet/read/simple',
+                        'sheet/read/sheet',
+                        'sheet/read/num-rows',
+                        'sheet/read/csv',
+                        'sheet/read/head',
+                        'sheet/read/extra',
+                        'sheet/read/exception',
+                        'sheet/read/pojo',
+                        'sheet/read/converter',
+                        'sheet/read/spring'
+                    ],
+                },
+                {
+                    type: 'category',
+                    label: 'write',
+                    items: [
+                        'sheet/write/simple',
+                        'sheet/write/sheet',
+                        'sheet/write/image',
+                        'sheet/write/csv',
+                        'sheet/write/head',
+                        'sheet/write/extra',
+                        'sheet/write/format',
+                        'sheet/write/pojo',
+                        'sheet/write/style',
+                        'sheet/write/spring'
+                    ]
+                },
+                {
+                    type: 'category',
+                    label: 'fill',
+                    items: [
+                        'sheet/fill/fill'
+                    ]
+                }
             ]
-        },
-        {
-            type: 'category',
-            label: 'write',
-            items: [
-                'write/simple',
-                'write/sheet',
-                'write/image',
-                'write/csv',
-                'write/head',
-                'write/extra',
-                'write/format',
-                'write/pojo',
-                'write/style',
-                'write/spring'
-            ]
-        },
-        {
-            type: 'category',
-            label: 'fill',
-            items: [
-                'fill/fill'
-            ]
-        },
-        {
+        }, {
             type: 'category',
             label: 'help',
             items: [

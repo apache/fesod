@@ -20,7 +20,7 @@
 package org.apache.fesod.sheet;
 
 /**
- * A convenient alias for {@link FesodSheet}.
+ * An alias class for {@link FesodSheet}.
  * This class is deprecated; use {@link FesodSheet} instead.
  * <p>
  * This class will be removed in future versions.

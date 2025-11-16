@@ -747,7 +747,6 @@ public class DataFormatter {
     /**
      * Format class for Excel's SSN format. This class mimics Excel's built-in SSN formatting.
      */
-    @SuppressWarnings("serial")
     private static final class SSNFormat extends Format {
         private static final DecimalFormat df = createIntegerOnlyFormat("000000000");
 
@@ -777,7 +776,6 @@ public class DataFormatter {
     /**
      * Format class for Excel Zip + 4 format. This class mimics Excel's built-in formatting for Zip + 4.
      */
-    @SuppressWarnings("serial")
     private static final class ZipPlusFourFormat extends Format {
         private static final DecimalFormat df = createIntegerOnlyFormat("000000000");
 
@@ -807,7 +805,6 @@ public class DataFormatter {
     /**
      * Format class for Excel phone number format. This class mimics Excel's built-in phone number formatting.
      */
-    @SuppressWarnings("serial")
     private static final class PhoneFormat extends Format {
         private static final DecimalFormat df = createIntegerOnlyFormat("##########");
 
@@ -857,7 +854,7 @@ public class DataFormatter {
      * non-cachable wrapper around a
      * {@link CellFormatResult}
      */
-    private final class CellFormatResultWrapper extends Format {
+    private static final class CellFormatResultWrapper extends Format {
         private final CellFormatResult result;
 
         private CellFormatResultWrapper(CellFormatResult result) {

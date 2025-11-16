@@ -86,17 +86,18 @@ const sidebars = {
                     items: [
                         'sheet/fill/fill'
                     ]
+                },
+                {
+                    type: 'category',
+                    label: 'help',
+                    items: [
+                        'sheet/help/annotation',
+                        'sheet/help/core-class',
+                        'sheet/help/parameter',
+                        'sheet/help/large-data',
+                        "sheet/help/faq"
+                    ]
                 }
-            ]
-        }, {
-            type: 'category',
-            label: 'help',
-            items: [
-                'help/annotation',
-                'help/core-class',
-                'help/parameter',
-                'help/large-data',
-                "help/faq"
             ]
         }
     ]

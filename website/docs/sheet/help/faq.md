@@ -9,8 +9,8 @@ This section describes common issues that may arise when using this project.
 
 ## Feature Limitations
 
-- **Q:** What functions does Fesod support? What functions are not supported?
-- **A:** Fesod supports efficient reading and writing operations for spreadsheet files, including support for CSV
+- **Q:** What functions does FesodSheet support? What functions are not supported?
+- **A:** FesodSheet supports efficient reading and writing operations for spreadsheet files, including support for CSV
   format.
   Unsupported functions include concurrent writing to a single file, reading and writing image macros, etc.
 
@@ -22,7 +22,7 @@ This section describes common issues that may arise when using this project.
 
 ## Lombok Annotations
 
-- **Q:** What is the role of Lombok annotations in using Fesod?
+- **Q:** What is the role of Lombok annotations in using FesodSheet?
 - **A:** Commonly used Lombok annotations in entity classes such as `@Getter`, `@Setter`, `@EqualsAndHashCode` are used
   to automatically generate getter, setter methods, equals, and hashCode methods. If you do not want to use these
   auto-generated methods, you can implement them yourself.
@@ -36,10 +36,10 @@ This section describes common issues that may arise when using this project.
 
 ## Compatibility Issues
 
-- **Q:** What should I do if I encounter compatibility issues when using Fesod?
+- **Q:** What should I do if I encounter compatibility issues when using FesodSheet?
 - **A:** Common compatibility issues include `NoSuchMethodException`, `ClassNotFoundException`, `NoClassDefFoundError`,
   etc., usually caused by jar conflicts. It is recommended to check and clean up dependencies in the project to ensure
-  that the version of Fesod used is compatible with other libraries in the project.
+  that the version of FesodSheet used is compatible with other libraries in the project.
 
 ## Online Deployment
 
@@ -57,8 +57,8 @@ This section describes common issues that may arise when using this project.
 
 ## Performance Optimization
 
-- **Q:** For large files over 10M, what reading strategies does Fesod provide?
-- **A:** Fesod supports default large file processing strategies, as well as customizable high-speed modes and
+- **Q:** For large files over 10M, what reading strategies does FesodSheet provide?
+- **A:** FesodSheet supports default large file processing strategies, as well as customizable high-speed modes and
   optimization settings for high concurrency and super large files.
 
 ## Writing and Format Setting
@@ -76,8 +76,8 @@ This section describes common issues that may arise when using this project.
 
 ## Large File Reading Optimization
 
-- **Q:** How does Fesod optimize memory usage when reading large files?
-- **A:** Fesod automatically determines the processing method for large files. For files with shared strings
+- **Q:** How does FesodSheet optimize memory usage when reading large files?
+- **A:** FesodSheet automatically determines the processing method for large files. For files with shared strings
   exceeding 5MB, a file storage strategy is used to reduce memory usage. You can enable ultra-fast mode by setting the
   `readCache` parameter, but this will increase memory consumption.
 
@@ -91,8 +91,8 @@ This section describes common issues that may arise when using this project.
 ## Field Mapping
 
 - **Q:** How to handle cases where entity class fields do not match spreadsheet column names?
-- **A:** You can use the `@ExcelProperty` annotation to specify the correspondence between entity class fields and Excel
-  column names. For example:
+- **A:** You can use the `@ExcelProperty` annotation to specify the correspondence between entity class fields and
+  spreadsheet column names. For example:
 
   ```java
   @ExcelProperty("Name")
@@ -164,13 +164,13 @@ This section describes common issues that may arise when using this project.
 
 - **Q:** How to resolve dependency conflict issues?
 - **A:** Common dependency conflicts include POI, ehcache, commons-io, etc. It is recommended to check the dependency
-  tree in the project, ensure that the versions used are compatible with fesod. You can use the Maven
+  tree in the project, ensure that the versions used are compatible with FesodSheet. You can use the Maven
   `dependency:tree` command to view the dependency tree.
 
 ## Performance Monitoring
 
-- **Q:** How to monitor the performance of Fesod?
-- **A:** You can monitor the performance of Fesod by enabling debug logging. For example:
+- **Q:** How to monitor the performance of FesodSheet?
+- **A:** You can monitor the performance of FesodSheet by enabling debug logging. For example:
 
   ```java
   LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -180,8 +180,8 @@ This section describes common issues that may arise when using this project.
 
 ## Multi-Sheet Reading
 
-- **Q:** How to monitor the performance of Fesod?
-- **A:** You can monitor the performance of Fesod by enabling debug logging. For example:
+- **Q:** How to monitor the performance of FesodSheet?
+- **A:** You can monitor the performance of FesodSheet by enabling debug logging. For example:
 
   ```java
   FesodSheet.read(file, MultipleSheetsData.class, new MultipleSheetsListener()).doReadAll();
@@ -198,9 +198,9 @@ This section describes common issues that may arise when using this project.
   excelReader.finish();
   ```
 
-## Get Total Rows in Excel
+## Get Total Rows
 
-- **Q:** How to get the total number of rows in an Excel file?
+- **Q:** How to get the total number of rows in a spreadsheet file?
 - **A:** You can use `analysisContext.readSheetHolder().getApproximateTotalRowNumber()` method in the listener to get an
   approximate number of rows. For example:
 
@@ -214,7 +214,7 @@ This section describes common issues that may arise when using this project.
 
 ## Memory Mode
 
-- **Q:** How to use memory mode to process Excel files?
+- **Q:** How to use memory mode to process spreadsheet files?
 - **A:** Memory mode is suitable for processing smaller files and can significantly improve processing speed. For
   example:
 

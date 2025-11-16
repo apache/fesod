@@ -5,11 +5,11 @@ title: '与 Spring 集成'
 
 # 与 Spring 集成指南
 
-本章节介绍如何在 Spring 框架中集成和使用 Fesod 来处理用户上传的 Excel 文件。
+本章节介绍如何在 Spring 框架中集成和使用 Fesod 来处理用户上传的电子表格文件。
 
 ## 概述
 
-通过创建 RESTful API 接口，用户可以使用 HTTP 请求上传 Excel 文件，服务器端使用 Fesod 解析数据。
+通过创建 RESTful API 接口，用户可以使用 HTTP 请求上传电子表格文件，服务器端使用 Fesod 解析数据。
 
 ## 环境依赖
 
@@ -38,7 +38,7 @@ title: '与 Spring 集成'
 
 ### POJO类
 
-首先，定义一个用于映射 Excel 数据的 POJO 类：
+首先，定义一个用于映射电子表格数据的 POJO 类：
 
 ```java
 

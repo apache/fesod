@@ -11,8 +11,8 @@ This chapter introduces how to read data by configuring POJO classes.
 
 ### Overview
 
-You can read Excel data by specifying **column names** or **column indexes**. This makes interaction with dynamically
-generated Excel files more flexible.
+You can read spreadsheet data by specifying **column names** or **column indexes**. This makes interaction with
+dynamically generated spreadsheet files more flexible.
 
 ### Example Code
 
@@ -92,7 +92,8 @@ public void cellDataRead() {
 
 ### Overview
 
-Fesod supports reading Excel files directly without defining POJO classes, using `Map<Integer, String>` to read data
+Fesod supports reading spreadsheet files directly without defining POJO classes, using `Map<Integer, String>` to read
+data
 directly.
 
 ### Data Listener

@@ -7,7 +7,7 @@ title: 'Sheet 页'
 
 本章节将介绍设置 Sheet 来写入数据的使用。
 
-> **注意：** Excel 中 Sheet 名称最多为 31 个字符。超过此长度的名称将被自动截断，并记录警告日志。
+> **注意：** 微软 Excel 中 Sheet 名称最多为 31 个字符。超过此长度的名称将被自动截断，并记录警告日志。
 
 ## 写入同一个 Sheet
 
@@ -18,6 +18,7 @@ title: 'Sheet 页'
 ### 代码示例
 
 ```java
+
 @Test
 public void writeSingleSheet() {
     String fileName = "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
@@ -46,6 +47,7 @@ public void writeSingleSheet() {
 ### 代码示例
 
 ```java
+
 @Test
 public void writeMultiSheet() {
     String fileName = "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
@@ -74,6 +76,7 @@ public void writeMultiSheet() {
 ### 代码示例
 
 ```java
+
 @Test
 public void tableWrite() {
     String fileName = "tableWrite" + System.currentTimeMillis() + ".xlsx";

@@ -5,7 +5,7 @@ title: '表头'
 
 # 表头
 
-本章节将介绍写入 Excel 中的表头数据。
+本章节将介绍写入电子表格中的表头数据。
 
 ## 复杂头写入
 
@@ -16,6 +16,7 @@ title: '表头'
 ### POJO 类
 
 ```java
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -32,12 +33,13 @@ public class ComplexHeadData {
 ### 代码示例
 
 ```java
+
 @Test
 public void complexHeadWrite() {
     String fileName = "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
     FesodSheet.write(fileName, ComplexHeadData.class)
-        .sheet()
-        .doWrite(data());
+            .sheet()
+            .doWrite(data());
 }
 ```
 
@@ -56,19 +58,20 @@ public void complexHeadWrite() {
 ### 代码示例
 
 ```java
+
 @Test
 public void dynamicHeadWrite() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
     List<List<String>> head = Arrays.asList(
-        Collections.singletonList("动态字符串标题"),
-        Collections.singletonList("动态数字标题"),
-        Collections.singletonList("动态日期标题"));
+            Collections.singletonList("动态字符串标题"),
+            Collections.singletonList("动态数字标题"),
+            Collections.singletonList("动态日期标题"));
 
     FesodSheet.write(fileName)
-        .head(head)
-        .sheet()
-        .doWrite(data());
+            .head(head)
+            .sheet()
+            .doWrite(data());
 }
 ```
 

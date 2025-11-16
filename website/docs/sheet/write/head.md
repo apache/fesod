@@ -5,7 +5,7 @@ title: 'Head'
 
 # Headers
 
-This chapter introduces how to write header data in Excel.
+This chapter introduces how to write header data in spreadsheet.
 
 ## Complex Header Writing
 
@@ -33,12 +33,13 @@ public class ComplexHeadData {
 ### Code Example
 
 ```java
+
 @Test
 public void complexHeadWrite() {
     String fileName = "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
     FesodSheet.write(fileName, ComplexHeadData.class)
-        .sheet()
-        .doWrite(data());
+            .sheet()
+            .doWrite(data());
 }
 ```
 
@@ -57,19 +58,20 @@ Generate dynamic headers in real-time, suitable for scenarios where header conte
 ### Code Example
 
 ```java
+
 @Test
 public void dynamicHeadWrite() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
     List<List<String>> head = Arrays.asList(
-        Collections.singletonList("动态字符串标题"),
-        Collections.singletonList("动态数字标题"),
-        Collections.singletonList("动态日期标题"));
+            Collections.singletonList("动态字符串标题"),
+            Collections.singletonList("动态数字标题"),
+            Collections.singletonList("动态日期标题"));
 
     FesodSheet.write(fileName)
-        .head(head)
-        .sheet()
-        .doWrite(data());
+            .head(head)
+            .sheet()
+            .doWrite(data());
 }
 ```
 

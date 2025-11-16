@@ -5,11 +5,11 @@ title: '核心类'
 
 # 核心类
 
-本章节介绍读取 Fesod 中的核心类。
+本章节介绍读取 FesodSheet 中的核心类。
 
 ## 概述
 
-如果使用 Fesod 进行自定义读写操作，需要理解其重要的概念和类。
+如果使用 FesodSheet 进行自定义读写操作，需要理解其重要的概念和类。
 
 ## 核心概念
 
@@ -21,10 +21,10 @@ title: '核心类'
 
 对读和写操作分别有对应的 Builder 类：
 
-- **`ExcelReaderBuilder` 和 `ExcelWriterBuilder`**：分别为构建出一个 ReadWorkbook 和 WriteWorkbook，可以理解成一个 excel
-  对象，一个 excel 只要构建一个。
+- **`ExcelReaderBuilder` 和 `ExcelWriterBuilder`**：分别为构建出一个 ReadWorkbook 和 WriteWorkbook，可以理解成一个电子表格对象，一个
+  电子表格只能构建一个。
 - **`ExcelReaderSheetBuilder` 和 `ExcelWriterSheetBuilder`**：分别构建出一个 ReadSheet 和 WriteSheet 对象，可以理解成
-  excel 里面的一页,每一页都要构建一个。
+  电子表格里面的一页,每一页都要构建一个。
 - **`CsvReaderBuilder` 和 `CsvWriterBuilder`**：构建内部所需的 CsvFormat。
 
 ### ReadListener
@@ -35,7 +35,7 @@ title: '核心类'
 
 在每一个操作包括创建单元格、创建表格等都会调用 WriteHandler 来处理数据。
 
-所有配置都是继承的，Workbook 的配置会被 Sheet 继承，所以在用 Fesod 设置参数的时候，在 FesodSheet.sheet() 方法之前作用域是整个
+所有配置都是继承的，Workbook 的配置会被 Sheet 继承，所以在用 FesodSheet 设置参数的时候，在 FesodSheet.sheet() 方法之前作用域是整个
 sheet,在 FesodSheet.csv() 方法之前作用域是整个 csv。
 
 ---
@@ -44,12 +44,12 @@ sheet,在 FesodSheet.csv() 方法之前作用域是整个 csv。
 
 ### 概述
 
-`WriteHandler` 是 Fesod 提供的接口，用于在写入 Excel 文件时拦截写入过程，允许开发者自定义操作，如设置单元格样式、合并单元格、添加超链接、插入批注等。
+`WriteHandler` 是 FesodSheet 提供的接口，用于在写入电子表格文件时拦截写入过程，允许开发者自定义操作，如设置单元格样式、合并单元格、添加超链接、插入批注等。
 通过实现 `WriteHandler`，开发者可以深入控制写入流程，以满足复杂的业务需求。
 
 ### 分类
 
-Fesod 提供了以下几种 WriteHandler 接口，分别用于处理不同的写入场景：
+FesodSheet 提供了以下几种 WriteHandler 接口，分别用于处理不同的写入场景：
 
 | 接口名                   | 描述                                  |
 |-----------------------|-------------------------------------|
@@ -207,8 +207,8 @@ public void dropdownWrite() {
 
 ### 概述
 
-`ReadListener` 是 Fesod 提供的接口，用于在读取 Excel 文件时对每一行数据进行处理。
-它是 Fesod 核心组件之一，允许开发者实现自定义逻辑来处理数据行、处理表头，甚至在读取完成后执行特定操作。
+`ReadListener` 是 FesodSheet 提供的接口，用于在读取电子表格文件时对每一行数据进行处理。
+它是 FesodSheet 核心组件之一，允许开发者实现自定义逻辑来处理数据行、处理表头，甚至在读取完成后执行特定操作。
 
 ### 方法
 
@@ -219,7 +219,7 @@ public void dropdownWrite() {
 | `void invoke(T data, AnalysisContext context)`                                           | 当读取到一行数据时触发，`data` 是解析后的当前行对象，`context` 包含读取的上下文信息。 |
 | `void doAfterAllAnalysed(AnalysisContext context)`                                       | 在所有数据解析完成后调用，可用于资源释放或统计数据处理。                        |
 | `void onException(Exception exception, AnalysisContext context)` *(可选)*                  | 捕获读取过程中的异常，方便处理解析错误。                                |
-| `void invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(可选)* | 获取 Excel 表头信息，用于动态处理表头。                             |
+| `void invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(可选)* | 获取表头信息，用于动态处理表头。                                    |
 
 ### 使用场景
 
@@ -391,7 +391,7 @@ public void pageRead() {
 
 > **说明**：
 >
-> - `PageReadListener` 是 Fesod 提供的便捷工具类，支持基于分页的批量处理。
+> - `PageReadListener` 是 FesodSheet 提供的便捷工具类，支持基于分页的批量处理。
 > - 默认每页大小为 1，可通过构造器指定。
 
 ---
@@ -400,12 +400,12 @@ public void pageRead() {
 
 ### 概述
 
-`AnalysisEventListener` 是 Fesod 中用于处理读取 Excel
-数据的核心监听器。它基于事件驱动机制，允许开发者在读取每一行数据时执行自定义操作，并在所有数据解析完成后进行相应处理。它通常用于流式读取大量数据，适合需要处理大数据量、进行批量操作（如批量插入数据库）的场景。
+`AnalysisEventListener` 是 FesodSheet
+中用于处理读取数据的核心监听器。它基于事件驱动机制，允许开发者在读取每一行数据时执行自定义操作，并在所有数据解析完成后进行相应处理。它通常用于流式读取大量数据，适合需要处理大数据量、进行批量操作（如批量插入数据库）的场景。
 
 核心特性:
 
-- **逐行读取**：`AnalysisEventListener` 按行读取 Excel 文件的数据，在读取每行数据时执行 `invoke` 方法，适合流式处理。
+- **逐行读取**：`AnalysisEventListener` 按行读取文件的数据，在读取每行数据时执行 `invoke` 方法，适合流式处理。
 - **内存控制**：可以设置 `BATCH_COUNT` 来控制每次处理的数据量，避免内存溢出。
 - **批量处理**：可以缓存一定数量的数据并批量处理，适用于大数据量场景。
 - **事件驱动**：当读取每一行数据时，调用 `invoke` 方法；所有数据读取完毕后，调用 `doAfterAllAnalysed` 方法。
@@ -419,12 +419,12 @@ public void pageRead() {
 | `invoke(T data, AnalysisContext context)`                                           | 当读取到一行数据时触发，`data` 为解析后的当前行数据，`context` 为读取上下文。 |
 | `doAfterAllAnalysed(AnalysisContext context)`                                       | 在所有数据解析完成后调用，用于资源清理或批量操作后处理。                    |
 | `onException(Exception exception, AnalysisContext context)` *(可选)*                  | 捕获并处理解析过程中抛出的异常，方便处理错误数据。                       |
-| `invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(可选)* | 获取 Excel 表头数据，常用于动态表头处理。                        |
+| `invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context)` *(可选)* | 获取表头数据，常用于动态表头处理。                               |
 
 ### 使用场景
 
 - **流式数据处理**：比如读取大量数据时，可以边读取边处理，减少内存消耗。
-- **批量插入数据库**：如批量处理 Excel 中的行数据并存储到数据库。
+- **批量插入数据库**：如批量处理电子表格中的行数据并存储到数据库。
 
 ### 实现步骤
 
@@ -589,8 +589,7 @@ public void readWithExceptionHandling() {
 
 ### 与 `ReadListener` 比较
 
-`AnalysisEventListener` 和 `ReadListener` 都是 Fesod 提供的接口，目的是为了让开发者在读取 Excel
-时进行自定义处理，但它们在功能和使用场景上有一些关键的区别。
+`AnalysisEventListener` 和 `ReadListener` 都是 FesodSheet 提供的接口，目的是为了让开发者在读取电子表格时进行自定义处理，但它们在功能和使用场景上有一些关键的区别。
 
 #### 区别
 
@@ -610,7 +609,7 @@ public void readWithExceptionHandling() {
 
 - 使用 `ReadListener`：
   - 如果你希望简化代码，并且没有复杂的内存控制需求，只需处理每一行数据的逻辑。
-  - 适合简单的 Excel 数据读取和异常捕获场景。
+  - 适合简单的电子表格数据读取和异常捕获场景。
       总的来说，`ReadListener` 是更为简化的接口，适用于较为简单的场景，而 `AnalysisEventListener`
       提供了更强的控制力和扩展性，适合复杂的数据处理需求。开发者可以根据实际需求选择合适的监听器。
 
@@ -618,29 +617,29 @@ public void readWithExceptionHandling() {
 
 ### 概述
 
-`Converter` 是 Fesod 提供的接口，用于在处理 Excel 文件时对数据进行转换。允许开发者自定义操作，通过实现 `Converter`
+`Converter` 是 FesodSheet 提供的接口，用于在处理电子表格文件时对数据进行转换。允许开发者自定义操作，通过实现 `Converter`
 接口，自定义数据转换逻辑。
 
 ### 方法
 
 `Converter` 是一个泛型接口，泛型类型是需要被转换的对象类型（如 `Date`)。其核心方法如下：
 
-| 方法名                                                                                                                                   | 描述                                      |
-|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
-| `Class<?> supportJavaTypeKey()`*(可选)*                                                                                                 | 返回支持的 Java 对象类型                         |
-| `CellDataTypeEnum supportExcelTypeKey()`*(可选)*                                                                                        | 返回支持的 Excel 单元格类型，枚举类为 CellDataTypeEnum |
-| `T convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(可选)* | 将 Excel 单元格数据转换为 Java 对象                |
-| `WriteCellData<?> convertToExcelData(T value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(可选)*  | 将 Java  对象转换为 Excel 单元格数据对象             |
-| `WriteCellData<?> convertToExcelData(WriteConverterContext<T> context)` *(可选)*                                                        | 将 Java  对象转换为 Excel 单元格数据对象             |
+| 方法名                                                                                                                                   | 描述                               |
+|---------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| `Class<?> supportJavaTypeKey()`*(可选)*                                                                                                 | 返回支持的 Java 对象类型                  |
+| `CellDataTypeEnum supportExcelTypeKey()`*(可选)*                                                                                        | 返回支持的单元格类型，枚举类为 CellDataTypeEnum |
+| `T convertToJavaData(ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(可选)* | 将单元格数据转换为 Java 对象                |
+| `WriteCellData<?> convertToExcelData(T value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)` *(可选)*  | 将 Java  对象转换为单元格数据对象             |
+| `WriteCellData<?> convertToExcelData(WriteConverterContext<T> context)` *(可选)*                                                        | 将 Java  对象转换为单元格数据对象             |
 
-Fesod 默认提供了很多常用类型的转换器， 并已默认在 `DefaultConverterLoader` 中注册。
+FesodSheet 默认提供了很多常用类型的转换器， 并已默认在 `DefaultConverterLoader` 中注册。
 
 您可以自定义转换器，但类型不能与默认的类型重复。类型注册时，使用的
 `ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey())` 作为 key 值。
 
 ### 使用场景
 
-- **数据转换**：对 Excel 数据进行转换，如将日期转换为字符串、将字符串转换为日期等。
+- **数据转换**：对电子表格数据进行转换，如将日期转换为字符串、将字符串转换为日期等。
 
 ### 实现步骤
 

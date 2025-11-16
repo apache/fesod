@@ -11,13 +11,14 @@ title: '实体类'
 
 ### 概述
 
-您可以通过指定**列名**或**列下标**来读取 Excel 数据。这使得与动态生成的 Excel 文件交互更加灵活。
+您可以通过指定**列名**或**列下标**来读取电子表格数据。这使得与动态生成的电子表格文件交互更加灵活。
 
 ### 示例代码
 
 #### POJO 类
 
 ```java
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -36,6 +37,7 @@ public class IndexOrNameData {
 #### 代码示例
 
 ```java
+
 @Test
 public void indexOrNameRead() {
     String fileName = "path/to/demo.xlsx";
@@ -57,6 +59,7 @@ public void indexOrNameRead() {
 ### POJO 类
 
 ```java
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -71,6 +74,7 @@ public class CellDataReadDemoData {
 ### 代码示例
 
 ```java
+
 @Test
 public void cellDataRead() {
     String fileName = "path/to/demo.xlsx";
@@ -87,11 +91,12 @@ public void cellDataRead() {
 
 ### 概述
 
-Fesod 支持不定义 POJO 类直接读取 Excel 文件，通过 `Map<Integer, String>` 直接读取数据。
+Fesod 支持不定义 POJO 类直接读取电子表格文件，通过 `Map<Integer, String>` 直接读取数据。
 
 ### 数据监听器
 
 ```java
+
 @Slf4j
 public class NoModelDataListener extends AnalysisEventListener<Map<Integer, String>> {
 

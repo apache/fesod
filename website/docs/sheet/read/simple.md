@@ -19,7 +19,7 @@ Data listeners need to be instantiated and support various usage patterns.
 
 #### Instantiation
 
-Listeners cannot be managed by Spring and must be re-instantiated each time an Excel file is read.
+Listeners cannot be managed by Spring and must be re-instantiated each time a spreadsheet file is read.
 
 #### `Lambda` Expressions
 
@@ -79,12 +79,12 @@ public void simpleRead() {
 
 ### Overview
 
-Fesod provides a simple way to read Excel files. Users only need to define a POJO class to represent the data
+Fesod provides a simple way to read spreadsheet files. Users only need to define a POJO class to represent the data
 structure, then read data through Fesod's listener mechanism.
 
 ### POJO Class
 
-The `DemoData` POJO class corresponding to the Excel structure:
+The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
 
@@ -100,7 +100,7 @@ public class DemoData {
 
 ### Data Listener
 
-`DemoDataListener` is a custom listener used to process data read from Excel.
+`DemoDataListener` is a custom listener used to process data read from spreadsheet.
 
 ```java
 
@@ -139,8 +139,8 @@ public void simpleRead() {
 
 ### Overview
 
-Fesod supports reading Excel files directly without defining POJO classes, using `Map<Integer, String>` to read data
-directly, where the key is the **column index** and the value is the **cell data**.
+Fesod supports reading spreadsheet files directly without defining POJO classes, using `Map<Integer, String>` to read
+data directly, where the key is the **column index** and the value is the **cell data**.
 
 ### Data Listener
 
@@ -167,12 +167,12 @@ public class NoModelDataListener extends AnalysisEventListener<Map<Integer, Stri
 
 ### Overview
 
-Use the `doReadSync` method to directly read Excel data into a list **in memory**. This method is recommended for
+Use the `doReadSync` method to directly read spreadsheet data into a list **in memory**. This method is recommended for
 scenarios with **small data volumes**. The read data can be either a list of POJO objects or a list of Maps.
 
 ### POJO Class
 
-The `DemoData` POJO class corresponding to the Excel structure:
+The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
 

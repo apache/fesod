@@ -5,12 +5,12 @@ title: 'Spring'
 
 # Spring Integration Guide
 
-This chapter introduces how to integrate and use Fesod in the Spring framework to handle Excel files uploaded by
+This chapter introduces how to integrate and use Fesod in the Spring framework to handle spreadsheet files uploaded by
 users.
 
 ## Overview
 
-By creating RESTful API endpoints, users can upload Excel files using HTTP requests, and the server uses Fesod to
+By creating RESTful API endpoints, users can upload spreadsheet files using HTTP requests, and the server uses Fesod to
 parse the data.
 
 ## Environment Dependencies
@@ -40,7 +40,7 @@ Ensure the necessary dependencies are included in your pom.xml file:
 
 ### POJO Class
 
-First, define a POJO class for mapping Excel data:
+First, define a POJO class for mapping spreadsheet data:
 
 ```java
 

@@ -11,13 +11,14 @@ title: 'Sheet'
 
 ### 概述
 
-可以读取 Excel 文件中的多个 Sheet，且同一个 Sheet 不可重复读取。
+可以读取电子表格文件中的多个 Sheet，且同一个 Sheet 不可重复读取。
 
 ### 代码示例
 
 #### 读取全部 Sheet
 
 ```java
+
 @Test
 public void readAllSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -32,13 +33,14 @@ public void readAllSheet() {
 
 ### 概述
 
-可以读取 Excel 文件具体的某个 Sheet，支持指定 Sheet 的索引或名称
+可以读取电子表格文件具体的某个 Sheet，支持指定 Sheet 的索引或名称
 
-> **注意：** Excel 中 Sheet 名称最多为 31 个字符。按名称读取时，请使用文件中实际显示的 Sheet 名称。
+> **注意：** 微软 Excel 中 Sheet 名称最多为 31 个字符。按名称读取时，请使用文件中实际显示的 Sheet 名称。
 
 ### 代码示例
 
 ```java
+
 @Test
 public void readSingleSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -64,6 +66,7 @@ public void readSingleSheet() {
 ### 代码示例
 
 ```java
+
 @Test
 public void exceptionRead() {
     String fileName = "path/to/demo.xlsx";

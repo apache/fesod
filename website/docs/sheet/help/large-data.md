@@ -9,12 +9,13 @@ title: 'Large Data'
 
 ### Overview
 
-When reading files larger than 10 MB, Excel 03 is unable to handle them and consumes significantly more memory. Excel
-2007 introduces the concept
+When reading files larger than 10 MB, Microsoft Excel 03 is unable to handle them and consumes significantly more
+memory. Microsoft Excel 2007 introduces the concept
 of [Shared Strings](https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/working-with-the-shared-string-table),
 which can consume a significant amount of memory.
 If all shared strings are loaded into memory, the memory usage can be approximately 3 to 10 times the size of the Excel
-file. Therefore, Fesod uses a strategy of first storing the file and then deserialising it to read the data, thereby
+file. Therefore, FesodSheet uses a strategy of first storing the file and then deserialising it to read the data,
+thereby
 saving memory. Of course, after deserialising the file, efficiency will decrease by approximately 30-50% (this is not
 fixed and depends on the hit rate, which may exceed 100%).
 
@@ -66,7 +67,7 @@ readCacheSelector(new SimpleReadCacheSelector(5, 20));
 
 ### About maxCacheActivateSize
 
-When using file storage, Fesod splits the shared string into batches of **1000** items and then stores them in file
+When using file storage, FesodSheet splits the shared string into batches of **1000** items and then stores them in file
 storage. Excel typically reads shared strings in sequential order, so by default, 1000 entries (approximately 20MB) are
 kept in memory. If a match is found, the data is returned directly; if not, the file is read. Therefore, the size should
 not be set too small, as this makes it difficult to find a match and results in constant file reads. Conversely, setting

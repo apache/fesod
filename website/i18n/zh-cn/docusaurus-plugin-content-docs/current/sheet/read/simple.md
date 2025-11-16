@@ -5,13 +5,13 @@ title: '简单读取'
 
 # 简单读取
 
-本章节介绍如何使用 Fesod 完成简单 Excel 读取
+本章节介绍如何使用 Fesod 完成简单电子表格读取
 
 ## 数据监听器
 
 ### 概述
 
-Fesod 提供监听器机制，用于在读取 Excel 文件时对每一行数据进行处理。
+Fesod 提供监听器机制，用于在读取电子表格文件时对每一行数据进行处理。
 
 ### 使用
 
@@ -19,11 +19,12 @@ Fesod 提供监听器机制，用于在读取 Excel 文件时对每一行数据�
 
 #### 实例化
 
-监听器不能被 Spring 管理，每次读取 Excel 文件时需要重新实例化。
+监听器不能被 Spring 管理，每次读取电子表格文件时需要重新实例化。
 
 #### `Lambda` 表达式
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -39,6 +40,7 @@ public void simpleRead() {
 #### 匿名内部类
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -46,7 +48,7 @@ public void simpleRead() {
     FesodSheet.read(fileName, DemoData.class, new ReadListener<DemoData>() {
         @Override
         public void invoke(DemoData data, AnalysisContext context) {
-           log.info("读取到一条数据: {}", JSON.toJSONString(data));
+            log.info("读取到一条数据: {}", JSON.toJSONString(data));
         }
 
         @Override
@@ -60,6 +62,7 @@ public void simpleRead() {
 #### 数据监听器
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -76,13 +79,14 @@ public void simpleRead() {
 
 ### 概述
 
-Fesod 提供了一种简单的方式来读取 Excel 文件。用户只需定义一个 POJO 类来表示数据结构，然后通过 Fesod 的监听器机制读取数据。
+Fesod 提供了一种简单的方式来读取电子表格文件。用户只需定义一个 POJO 类来表示数据结构，然后通过 Fesod 的监听器机制读取数据。
 
 ### POJO 类
 
-与 Excel 结构对应的 POJO 类 `DemoData`
+与电子表格结构对应的 POJO 类 `DemoData`
 
 ```java
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -95,9 +99,10 @@ public class DemoData {
 
 ### 数据监听器
 
-`DemoDataListener` 是一个自定义监听器，用于处理从 Excel 中读取的数据。
+`DemoDataListener` 是一个自定义监听器，用于处理从电子表格中读取的数据。
 
 ```java
+
 @Slf4j
 public class DemoDataListener implements ReadListener<DemoData> {
 
@@ -116,6 +121,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 ### 代码示例
 
 ```java
+
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -132,12 +138,13 @@ public void simpleRead() {
 
 ### 概述
 
-Fesod 支持不定义 POJO 类直接读取 Excel 文件，通过 `Map<Integer, String>` 直接读取数据，其中的键为**列索引**，值为*
+Fesod 支持不定义 POJO 类直接读取电子表格文件，通过 `Map<Integer, String>` 直接读取数据，其中的键为**列索引**，值为*
 *单元格数据**。
 
 ### 数据监听器
 
 ```java
+
 @Slf4j
 public class NoModelDataListener extends AnalysisEventListener<Map<Integer, String>> {
 
@@ -159,14 +166,16 @@ public class NoModelDataListener extends AnalysisEventListener<Map<Integer, Stri
 
 ### 概述
 
-使用 `doReadSync` 方法直接将 Excel 数据读取为**内存**中的列表，这种方法推荐用于**数据量较小**的场景。读取的数据可以是 POJO
+使用 `doReadSync` 方法直接将电子表格数据读取为**内存**中的列表，这种方法推荐用于**数据量较小**的场景。读取的数据可以是
+POJO
 对象列表或 Map 列表。
 
 ### POJO 类
 
-与 Excel 结构对应的 POJO 类 `DemoData`
+与电子表格结构对应的 POJO 类 `DemoData`
 
 ```java
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -182,6 +191,7 @@ public class DemoData {
 #### 读取为 POJO 对象列表
 
 ```java
+
 @Test
 public void synchronousReadToObjectList() {
     String fileName = "path/to/demo.xlsx";
@@ -203,6 +213,7 @@ public void synchronousReadToObjectList() {
 在不使用 POJO 情况下，可以将每一行读取为 Map，键为列索引，值为单元格内容。
 
 ```java
+
 @Test
 public void synchronousReadToMapList() {
     String fileName = "path/to/demo.xlsx";

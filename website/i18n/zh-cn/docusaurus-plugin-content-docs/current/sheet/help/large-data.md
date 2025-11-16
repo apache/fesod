@@ -9,9 +9,9 @@ title: '大数据量文件'
 
 ### 概述
 
-当需要读取 10M 大小以上的文件时，Excel 03 没有办法处理，相对内存占用大很多。Excel 07
+当需要读取 10M 大小以上的文件时，微软 Excel 03 没有办法处理，相对内存占用大很多。微软 Excel 07
 版本有个[共享字符串](https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/working-with-the-shared-string-table)
-的概念，这个会非常占用内存，如果全部读取到内存的话，大概是 Excel 文件的大小的 3-10 倍，所以 Fesod
+的概念，这个会非常占用内存，如果全部读取到内存的话，大概是 Excel 文件的大小的 3-10 倍，所以 FesodSheet
 用先存储文件的，然后再反序列化去读取的策略来节约内存。当然需要通过文件反序列化以后，效率会降低，大概降低
 30-50%（不一定，也看命中率，可能会超过100%）。
 
@@ -55,7 +55,7 @@ readCacheSelector(new SimpleReadCacheSelector(5, 20));
 
 ### 关于 maxCacheActivateSize
 
-Fesod 在使用文件存储的时候，会把共享字符串拆分成 **1000** 条一批，然后放到文件存储。然后 Excel 来读取共享字符串大概率是按照顺序的，所以默认
+FesodSheet 在使用文件存储的时候，会把共享字符串拆分成 **1000** 条一批，然后放到文件存储。然后 Excel 来读取共享字符串大概率是按照顺序的，所以默认
 20M 的 1000 条的数据放在内存，命中后直接返回，没命中去读文件。所以不能设置太小，太小了，很难命中，一直去读取文件，太大了的话会占用过多的内存。
 
 判断 maxCacheActivateSize 是否需要调整，开启 `debug` 日志会输出 `Already put :4000000` 最后一次输出，大概可以得出值为

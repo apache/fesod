@@ -5,18 +5,18 @@ title: 'Simple'
 
 # Simple Writing
 
-This chapter introduces how to use Fesod to perform simple Excel writing operations.
+This chapter introduces how to use Fesod to perform simple spreadsheet writing operations.
 
 ## Overview
 
-Use Fesod for simple Excel data writing to quickly write entity objects to Excel files.
+Use Fesod for simple spreadsheet data writing to quickly write entity objects to spreadsheet files.
 This is the most basic and commonly used writing approach.
 
 ## Code Examples
 
 ### POJO Class
 
-The `DemoData` POJO class corresponding to the Excel structure:
+The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
 

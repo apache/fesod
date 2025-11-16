@@ -11,7 +11,7 @@ This section explains how to use Fesod to fill data into files.
 
 ### Overview
 
-Fill data into Excel based on a template file using objects or Map.
+Fill data into spreadsheet based on a template file using objects or Map.
 
 ### POJO Class
 

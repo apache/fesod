@@ -3,7 +3,7 @@ id: 'simple-example'
 title: '简单示例'
 ---
 
-## Fesod 电子表格示例
+## Fesod Sheet 示例
 
 ### 读取
 
@@ -25,7 +25,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
-    // 读取 Excel 文件
+    // 读取文件
     FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```

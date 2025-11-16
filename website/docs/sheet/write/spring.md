@@ -5,14 +5,14 @@ title: 'Spring'
 
 # Spring Integration Guide
 
-This chapter introduces how to integrate and use Fesod in the Spring framework to generate Excel files.
+This chapter introduces how to integrate and use Fesod in the Spring framework to generate spreadsheet files.
 
 ## Spring Controller Example
 
 ### Overview
 
-In Spring Boot projects, you can generate Excel files and provide download functionality through HTTP interfaces, making
-it convenient to use Fesod in web environments.
+In Spring Boot projects, you can generate spreadsheet files and provide download functionality through HTTP interfaces,
+making it convenient to use Fesod in web environments.
 
 ### Code Example
 

@@ -8,12 +8,13 @@ slug: /
 
 ## Introduction
 
-**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing Excel
+**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing
+spreadsheet
 files, designed to simplify development and ensure reliability.
 
 Apache Fesod (Incubating) can provide developers and enterprises with great freedom and flexibility. We plan to
 introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod (
-Incubating) is committed to being your best choice for handling Excel files.
+Incubating) is committed to being your best choice for handling spreadsheet files.
 
 The name fesod(pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents" expresses the
 project's origin, background and vision.
@@ -21,10 +22,11 @@ project's origin, background and vision.
 ### Features
 
 - **High-performance Reading and Writing**: Apache Fesod (Incubating) focuses on performance optimization, capable of
-  efficiently handling large-scale Excel data. Compared to some traditional Excel processing libraries, it can
+  efficiently handling large-scale spreadsheet data. Compared to some traditional spreadsheet processing libraries, it
+  can
   significantly reduce memory consumption.
 - **Simplicity and Ease of Use**: The library offers a simple and intuitive API, allowing developers to easily integrate
-  it into projects, whether for simple Excel operations or complex data processing.
+  it into projects, whether for simple spreadsheet operations or complex data processing.
 - **Stream Operations**: Apache Fesod (Incubating) supports stream reading, minimizing the problem of loading large
   amounts of data at once. This design is especially important when dealing with hundreds of thousands or even millions
   of rows of data.
@@ -33,7 +35,7 @@ project's origin, background and vision.
 
 ### Read
 
-Below is an example of reading an Excel document:
+Below is an example of reading a spreadsheet document:
 
 ```java
 // Implement the ReadListener interface to set up operations for reading data
@@ -51,14 +53,14 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
-    // Read Excel file
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    // Read file
+    Fesod.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
 ### Write
 
-Below is a simple example of creating an Excel document:
+Below is a simple example of creating a spreadsheet document:
 
 ```java
 // Sample data class
@@ -89,6 +91,6 @@ private static List<DemoData> data() {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // Create a "Template" sheet and write data
-    FastExcel.write(fileName, DemoData.class).sheet("Template").doWrite(data());
+    FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 }
 ```

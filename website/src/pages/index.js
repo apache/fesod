@@ -47,7 +47,7 @@ function HomepageHeader() {
 
                     <Link
                         className={clsx("button button--secondary button--lg", styles.buttonWidth, styles.buttonWithIcon)}
-                        to="https://github.com/fast-excel/fastexcel">
+                        to="https://github.com/apache/fesod">
                         <img
                             src="img/github_icon.svg"
                             alt="GitHub"

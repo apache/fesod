@@ -3,11 +3,11 @@ id: 'simple-example'
 title: 'Simple example'
 ---
 
-# Simple example
+## Fesod Sheet Examples
 
-## Read
+### Read the spreadsheet
 
-Below is an example of reading an Excel document:
+Below is an example of reading a spreadsheet document:
 
 ```java
 // Implement the ReadListener interface to set up operations for reading data
@@ -25,14 +25,14 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
-    // Read Excel file
-    FastExcel.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    // Read file
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
-### Write
+### Write the spreadsheet
 
-Below is a simple example of creating an Excel document:
+Below is a simple example of creating a spreadsheet document:
 
 ```java
 // Sample data class
@@ -63,6 +63,6 @@ private static List<DemoData> data() {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // Create a "Template" sheet and write data
-    FastExcel.write(fileName, DemoData.class).sheet("Template").doWrite(data());
+    FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 }
 ```

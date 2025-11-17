@@ -2,5 +2,21 @@
   "version.label": {
     "message": "Next",
     "description": "The label for version current"
+  },
+  "sidebar.community.category.Contribution": {
+    "message": "Contribution",
+    "description": "The label for category Contribution in sidebar community"
+  },
+  "sidebar.community.category.Committers": {
+    "message": "Committers",
+    "description": "The label for category Committers in sidebar community"
+  },
+  "sidebar.community.category.PPMC Members": {
+    "message": "PPMC Members",
+    "description": "The label for category PPMC Members in sidebar community"
+  },
+  "sidebar.community.category.Release": {
+    "message": "Release",
+    "description": "The label for category Release in sidebar community"
   }
 }

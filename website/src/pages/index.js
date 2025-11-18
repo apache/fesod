@@ -66,7 +66,7 @@ export default function Home() {
     return (
         <Layout
             title=""
-            description="Apache Fesod (Incubating) Official Documentation | Fast, concise, Java tool for processing Excel files that solves memory overflow issues with large files <head />">
+            description="Apache Fesod (Incubating) Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
             <HomepageHeader/>
             <main>
                 <HomepageFeatures/>

@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 import org.apache.fesod.sheet.annotation.format.NumberFormat;
@@ -91,7 +91,7 @@ public class WriteTest {
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
-        FastExcel.write(fileName, DemoData.class).sheet("模板").doWrite(() -> {
+        FesodSheet.write(fileName, DemoData.class).sheet("模板").doWrite(() -> {
             // 分页查询数据
             return data();
         });
@@ -100,13 +100,14 @@ public class WriteTest {
         fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
-        FastExcel.write(fileName, DemoData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, DemoData.class).sheet("模板").doWrite(data());
 
         // 写法3
         fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写
-        try (ExcelWriter excelWriter = FastExcel.write(fileName, DemoData.class).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet("模板").build();
+        try (ExcelWriter excelWriter =
+                FesodSheet.write(fileName, DemoData.class).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet("模板").build();
             excelWriter.write(data(), writeSheet);
         }
     }
@@ -114,7 +115,7 @@ public class WriteTest {
     @Test
     public void testEscapeHex() {
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .sheet("template")
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .doWrite(() -> {
@@ -142,7 +143,7 @@ public class WriteTest {
         Set<String> excludeColumnFieldNames = new HashSet<>();
         excludeColumnFieldNames.add("date");
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .excludeColumnFieldNames(excludeColumnFieldNames)
                 .sheet("模板")
                 .doWrite(data());
@@ -152,7 +153,7 @@ public class WriteTest {
         Set<String> includeColumnFieldNames = new HashSet<>();
         includeColumnFieldNames.add("date");
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .includeColumnFieldNames(includeColumnFieldNames)
                 .sheet("模板")
                 .doWrite(data());
@@ -171,7 +172,7 @@ public class WriteTest {
     public void indexWrite() {
         String fileName = TestFileUtil.getPath() + "indexWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, IndexData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, IndexData.class).sheet("模板").doWrite(data());
     }
 
     /**
@@ -187,7 +188,7 @@ public class WriteTest {
     public void complexHeadWrite() {
         String fileName = TestFileUtil.getPath() + "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, ComplexHeadData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, ComplexHeadData.class).sheet("模板").doWrite(data());
     }
 
     /**
@@ -204,9 +205,10 @@ public class WriteTest {
         // 方法1: 如果写到同一个sheet
         String fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写
-        try (ExcelWriter excelWriter = FastExcel.write(fileName, DemoData.class).build()) {
+        try (ExcelWriter excelWriter =
+                FesodSheet.write(fileName, DemoData.class).build()) {
             // 这里注意 如果同一个sheet只要创建一次
-            WriteSheet writeSheet = FastExcel.writerSheet("模板").build();
+            WriteSheet writeSheet = FesodSheet.writerSheet("模板").build();
             // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来
             for (int i = 0; i < 5; i++) {
                 // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
@@ -218,11 +220,12 @@ public class WriteTest {
         // 方法2: 如果写到不同的sheet 同一个对象
         fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 指定文件
-        try (ExcelWriter excelWriter = FastExcel.write(fileName, DemoData.class).build()) {
+        try (ExcelWriter excelWriter =
+                FesodSheet.write(fileName, DemoData.class).build()) {
             // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
             for (int i = 0; i < 5; i++) {
                 // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样
-                WriteSheet writeSheet = FastExcel.writerSheet(i, "模板" + i).build();
+                WriteSheet writeSheet = FesodSheet.writerSheet(i, "模板" + i).build();
                 // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
                 List<DemoData> data = data();
                 excelWriter.write(data, writeSheet);
@@ -232,13 +235,13 @@ public class WriteTest {
         // 方法3 如果写到不同的sheet 不同的对象
         fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 指定文件
-        try (ExcelWriter excelWriter = FastExcel.write(fileName).build()) {
+        try (ExcelWriter excelWriter = FesodSheet.write(fileName).build()) {
             // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
             for (int i = 0; i < 5; i++) {
                 // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样。这里注意DemoData.class 可以每次都变，我这里为了方便 所以用的同一个class
                 // 实际上可以一直变
                 WriteSheet writeSheet =
-                        FastExcel.writerSheet(i, "模板" + i).head(DemoData.class).build();
+                        FesodSheet.writerSheet(i, "模板" + i).head(DemoData.class).build();
                 // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
                 List<DemoData> data = data();
                 excelWriter.write(data, writeSheet);
@@ -259,7 +262,7 @@ public class WriteTest {
     public void converterWrite() {
         String fileName = TestFileUtil.getPath() + "converterWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, ConverterData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, ConverterData.class).sheet("模板").doWrite(data());
     }
 
     /**
@@ -337,10 +340,10 @@ public class WriteTest {
             imageData.setRelativeLastColumnIndex(1);
 
             // 写入数据
-            FastExcel.write(fileName, ImageDemoData.class).sheet().doWrite(list);
+            FesodSheet.write(fileName, ImageDemoData.class).sheet().doWrite(list);
             // 如果图片资源不可访问，XLSX格式会报错 SXSSFWorkbook - Failed to dispose sheet
             // 也可以考虑声明为XLS格式
-            // FastExcel.write(fileName, ImageDemoData.class).excelType(ExcelTypeEnum.XLS).sheet().doWrite(list);
+            // FesodSheet.write(fileName, ImageDemoData.class).excelType(ExcelTypeEnum.XLS).sheet().doWrite(list);
         }
     }
 
@@ -416,7 +419,7 @@ public class WriteTest {
 
         List<WriteCellDemoData> data = new ArrayList<>();
         data.add(writeCellDemoData);
-        FastExcel.write(fileName, WriteCellDemoData.class)
+        FesodSheet.write(fileName, WriteCellDemoData.class)
                 .inMemory(true)
                 .sheet("模板")
                 .doWrite(data);
@@ -440,7 +443,7 @@ public class WriteTest {
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 这里要注意 withTemplate 的模板文件会全量存储在内存里面，所以尽量不要用于追加文件，如果文件模板文件过大会OOM
         // 如果要再文件中追加（无法在一个线程里面处理，可以在一个线程的建议参照多次写入的demo） 建议临时存储到数据库 或者 磁盘缓存(ehcache) 然后再一次性写入
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .withTemplate(templateFileName)
                 .sheet()
                 .doWrite(data());
@@ -459,7 +462,7 @@ public class WriteTest {
     public void widthAndHeightWrite() {
         String fileName = TestFileUtil.getPath() + "widthAndHeightWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, WidthAndHeightData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, WidthAndHeightData.class).sheet("模板").doWrite(data());
     }
 
     /**
@@ -475,7 +478,7 @@ public class WriteTest {
     public void annotationStyleWrite() {
         String fileName = TestFileUtil.getPath() + "annotationStyleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoStyleData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, DemoStyleData.class).sheet("模板").doWrite(data());
     }
 
     /**
@@ -515,7 +518,7 @@ public class WriteTest {
                 new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
 
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(horizontalCellStyleStrategy)
                 .sheet("模板")
                 .doWrite(data());
@@ -523,7 +526,7 @@ public class WriteTest {
         // 方法2: 使用FastExcel的方式完全自己写 不太推荐 尽量使用已有策略
         // @since 3.0.0-beta2
         fileName = TestFileUtil.getPath() + "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CellWriteHandler() {
                     @Override
                     public void afterCellDispose(CellWriteHandlerContext context) {
@@ -554,7 +557,7 @@ public class WriteTest {
         // 坑1：style里面有dataformat 用来格式化数据的 所以自己设置可能导致格式化注解不生效
         // 坑2：不要一直去创建style 记得缓存起来 最多创建6W个就挂了
         fileName = TestFileUtil.getPath() + "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CellWriteHandler() {
                     @Override
                     public void afterCellDispose(CellWriteHandlerContext context) {
@@ -601,14 +604,14 @@ public class WriteTest {
         String fileName = TestFileUtil.getPath() + "mergeWrite" + System.currentTimeMillis() + ".xlsx";
         // 在DemoStyleData里面加上ContentLoopMerge注解
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoMergeData.class).sheet("模板").doWrite(data());
+        FesodSheet.write(fileName, DemoMergeData.class).sheet("模板").doWrite(data());
 
         // 方法2 自定义合并单元格策略
         fileName = TestFileUtil.getPath() + "mergeWrite" + System.currentTimeMillis() + ".xlsx";
         // 每隔2行会合并 把eachColumn 设置成 3 也就是我们数据的长度，所以就第一列会合并。当然其他合并策略也可以自己写
         LoopMergeStrategy loopMergeStrategy = new LoopMergeStrategy(2, 0);
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(loopMergeStrategy)
                 .sheet("模板")
                 .doWrite(data());
@@ -626,15 +629,16 @@ public class WriteTest {
         String fileName = TestFileUtil.getPath() + "tableWrite" + System.currentTimeMillis() + ".xlsx";
         // 方法1 这里直接写多个table的案例了，如果只有一个 也可以直一行代码搞定，参照其他案
         // 这里 需要指定写用哪个class去写
-        try (ExcelWriter excelWriter = FastExcel.write(fileName, DemoData.class).build()) {
+        try (ExcelWriter excelWriter =
+                FesodSheet.write(fileName, DemoData.class).build()) {
             // 把sheet设置为不需要头 不然会输出sheet的头 这样看起来第一个table 就有2个头了
             WriteSheet writeSheet =
-                    FastExcel.writerSheet("模板").needHead(Boolean.FALSE).build();
+                    FesodSheet.writerSheet("模板").needHead(Boolean.FALSE).build();
             // 这里必须指定需要头，table 会继承sheet的配置，sheet配置了不需要，table 默认也是不需要
             WriteTable writeTable0 =
-                    FastExcel.writerTable(0).needHead(Boolean.TRUE).build();
+                    FesodSheet.writerTable(0).needHead(Boolean.TRUE).build();
             WriteTable writeTable1 =
-                    FastExcel.writerTable(1).needHead(Boolean.TRUE).build();
+                    FesodSheet.writerTable(1).needHead(Boolean.TRUE).build();
             // 第一次写入会创建头
             excelWriter.write(data(), writeSheet, writeTable0);
             // 第二次写如也会创建头，然后在第一次的后面写入数据
@@ -655,7 +659,7 @@ public class WriteTest {
     @Test
     public void dynamicHeadWrite() {
         String fileName = TestFileUtil.getPath() + "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
-        FastExcel.write(fileName)
+        FesodSheet.write(fileName)
                 // 这里放入动态头
                 .head(head())
                 .sheet("模板")
@@ -683,7 +687,7 @@ public class WriteTest {
         String fileName =
                 TestFileUtil.getPath() + "longestMatchColumnWidthWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, LongestMatchColumnWidthData.class)
+        FesodSheet.write(fileName, LongestMatchColumnWidthData.class)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("模板")
                 .doWrite(dataLong());
@@ -704,7 +708,7 @@ public class WriteTest {
     public void customHandlerWrite() {
         String fileName = TestFileUtil.getPath() + "customHandlerWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CustomSheetWriteHandler())
                 .registerWriteHandler(new CustomCellWriteHandler())
                 .sheet("模板")
@@ -725,7 +729,7 @@ public class WriteTest {
         String fileName = TestFileUtil.getPath() + "commentWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 这里要注意inMemory 要设置为true，才能支持批注。目前没有好的办法解决 不在内存处理批注。这个需要自己选择。
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .inMemory(Boolean.TRUE)
                 .registerWriteHandler(new CommentWriteHandler())
                 .sheet("模板")
@@ -746,7 +750,7 @@ public class WriteTest {
         // 写法1
         String fileName = TestFileUtil.getPath() + "variableTitleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName, ConverterData.class)
+        FesodSheet.write(fileName, ConverterData.class)
                 .head(variableTitleHead())
                 .sheet("模板")
                 .doWrite(data());
@@ -760,13 +764,13 @@ public class WriteTest {
         // 写法1
         String fileName = TestFileUtil.getPath() + "noModelWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FastExcel.write(fileName).head(head()).sheet("模板").doWrite(dataList());
+        FesodSheet.write(fileName).head(head()).sheet("模板").doWrite(dataList());
     }
 
     @Test
     public void sheetDisposeTest() {
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        FastExcel.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, DemoData.class)
                 .sheet("模板")
                 .registerWriteHandler(new SheetWriteHandler() {
                     @Override

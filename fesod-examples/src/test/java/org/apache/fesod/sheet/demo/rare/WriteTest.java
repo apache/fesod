@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.demo.read.DemoData;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.ListUtils;
@@ -61,7 +61,7 @@ public class WriteTest {
         File file = TestFileUtil.createNewFile("rare/compressedTemporaryFile" + System.currentTimeMillis() + ".xlsx");
 
         // Specify which class to use for writing here
-        try (ExcelWriter excelWriter = FastExcel.write(file, DemoData.class)
+        try (ExcelWriter excelWriter = FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new WorkbookWriteHandler() {
 
                     /**
@@ -83,7 +83,7 @@ public class WriteTest {
                 })
                 .build()) {
             // Note that the same sheet should only be created once
-            WriteSheet writeSheet = FastExcel.writerSheet("Template").build();
+            WriteSheet writeSheet = FesodSheet.writerSheet("Template").build();
             // 100,000 data entries to ensure sufficient space
             for (int i = 0; i < 10000; i++) {
                 // Query data from the database page by page. Here you can query data for each page from the database
@@ -107,7 +107,7 @@ public class WriteTest {
         // event
         // If it is after the last row, since there will be no more data afterwards, just intercept the
         // afterWorkbookDispose event and write the data when the Excel file is almost done
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 // Writing value before the last row
                 .registerWriteHandler(new RowWriteHandler() {
                     @Override

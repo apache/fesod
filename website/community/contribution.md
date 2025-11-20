@@ -68,7 +68,7 @@ Any contribution of test cases is encouraged, especially unit tests. It is recom
 
 ## Contribution Document
 
-Documentation is an important component of the project official website and serves as a vital bridge between the project and the community. Please refer to [Docs Contribution](./contribution/contribute-code.md) for information on how to contribute document.
+Documentation is an important component of the project official website and serves as a vital bridge between the project and the community. Please refer to [Docs Contribution](./contribution/contribute-doc.md) for information on how to contribute document.
 
 ## Other Ways to Contribute
 

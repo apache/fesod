@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
@@ -74,13 +74,13 @@ public class RepetitionDataTest {
 
     private void readAndWrite(File file) {
         try (ExcelWriter excelWriter =
-                FastExcel.write(file, RepetitionData.class).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet(0).build();
+                FesodSheet.write(file, RepetitionData.class).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet(0).build();
             excelWriter.write(data(), writeSheet).write(data(), writeSheet);
         }
-        try (ExcelReader excelReader = FastExcel.read(file, RepetitionData.class, new RepetitionDataListener())
+        try (ExcelReader excelReader = FesodSheet.read(file, RepetitionData.class, new RepetitionDataListener())
                 .build()) {
-            ReadSheet readSheet = FastExcel.readSheet(0).build();
+            ReadSheet readSheet = FesodSheet.readSheet(0).build();
             excelReader.read(readSheet);
         }
     }
@@ -102,15 +102,15 @@ public class RepetitionDataTest {
 
     private void readAndWriteTable(File file) {
         try (ExcelWriter excelWriter =
-                FastExcel.write(file, RepetitionData.class).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet(0).build();
+                FesodSheet.write(file, RepetitionData.class).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet(0).build();
             WriteTable writeTable =
-                    FastExcel.writerTable(0).relativeHeadRowIndex(0).build();
+                    FesodSheet.writerTable(0).relativeHeadRowIndex(0).build();
             excelWriter.write(data(), writeSheet, writeTable).write(data(), writeSheet, writeTable);
         }
-        try (ExcelReader excelReader = FastExcel.read(file, RepetitionData.class, new RepetitionDataListener())
+        try (ExcelReader excelReader = FesodSheet.read(file, RepetitionData.class, new RepetitionDataListener())
                 .build()) {
-            ReadSheet readSheet = FastExcel.readSheet(0).headRowNumber(2).build();
+            ReadSheet readSheet = FesodSheet.readSheet(0).headRowNumber(2).build();
             excelReader.read(readSheet);
         }
     }

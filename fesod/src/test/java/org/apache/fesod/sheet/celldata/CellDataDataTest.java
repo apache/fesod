@@ -23,7 +23,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.data.FormulaData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -67,8 +67,8 @@ public class CellDataDataTest {
     }
 
     private void readAndWrite(File file) throws Exception {
-        FastExcel.write(file, CellDataWriteData.class).sheet().doWrite(data());
-        FastExcel.read(file, CellDataReadData.class, new CellDataDataListener())
+        FesodSheet.write(file, CellDataWriteData.class).sheet().doWrite(data());
+        FesodSheet.read(file, CellDataReadData.class, new CellDataDataListener())
                 .sheet()
                 .doRead();
     }

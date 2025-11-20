@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.annotation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -64,8 +64,8 @@ public class AnnotationIndexAndNameDataTest {
     }
 
     private void readAndWrite(File file) {
-        FastExcel.write(file, AnnotationIndexAndNameData.class).sheet().doWrite(data());
-        FastExcel.read(file, AnnotationIndexAndNameData.class, new AnnotationIndexAndNameDataListener())
+        FesodSheet.write(file, AnnotationIndexAndNameData.class).sheet().doWrite(data());
+        FesodSheet.read(file, AnnotationIndexAndNameData.class, new AnnotationIndexAndNameDataListener())
                 .sheet()
                 .doRead();
     }

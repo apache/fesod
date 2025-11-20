@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.event.SyncReadListener;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
@@ -70,11 +70,11 @@ public class SkipDataTest {
     }
 
     private void readAndWrite(File file) {
-        try (ExcelWriter excelWriter = FastExcel.write(file, SimpleData.class).build(); ) {
-            WriteSheet writeSheet0 = FastExcel.writerSheet(0, "第一个").build();
-            WriteSheet writeSheet1 = FastExcel.writerSheet(1, "第二个").build();
-            WriteSheet writeSheet2 = FastExcel.writerSheet(2, "第三个").build();
-            WriteSheet writeSheet3 = FastExcel.writerSheet(3, "第四个").build();
+        try (ExcelWriter excelWriter = FesodSheet.write(file, SimpleData.class).build(); ) {
+            WriteSheet writeSheet0 = FesodSheet.writerSheet(0, "第一个").build();
+            WriteSheet writeSheet1 = FesodSheet.writerSheet(1, "第二个").build();
+            WriteSheet writeSheet2 = FesodSheet.writerSheet(2, "第三个").build();
+            WriteSheet writeSheet3 = FesodSheet.writerSheet(3, "第四个").build();
             excelWriter.write(data("name1"), writeSheet0);
             excelWriter.write(data("name2"), writeSheet1);
             excelWriter.write(data("name3"), writeSheet2);
@@ -82,16 +82,16 @@ public class SkipDataTest {
         }
 
         List<SkipData> list =
-                FastExcel.read(file, SkipData.class, null).sheet("第二个").doReadSync();
+                FesodSheet.read(file, SkipData.class, null).sheet("第二个").doReadSync();
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals("name2", list.get(0).getName());
 
         SyncReadListener syncReadListener = new SyncReadListener();
-        try (ExcelReader excelReader = FastExcel.read(file, SkipData.class, null)
+        try (ExcelReader excelReader = FesodSheet.read(file, SkipData.class, null)
                 .registerReadListener(syncReadListener)
                 .build()) {
-            ReadSheet readSheet1 = FastExcel.readSheet("第二个").build();
-            ReadSheet readSheet3 = FastExcel.readSheet("第四个").build();
+            ReadSheet readSheet1 = FesodSheet.readSheet("第二个").build();
+            ReadSheet readSheet3 = FesodSheet.readSheet("第四个").build();
             excelReader.read(readSheet1, readSheet3);
             List<Object> syncList = syncReadListener.getList();
             Assertions.assertEquals(2, syncList.size());

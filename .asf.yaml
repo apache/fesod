@@ -18,7 +18,7 @@
 # All configurations could be found here: https://github.com/apache/infrastructure-asfyaml/
 
 github:
-  description: "Fast. Easy. Done. Processing Excels without worrying about large files causing OOM."
+  description: "Fast. Easy. Done. Processing spreadsheets without worrying about large files causing OOM."
   homepage: https://fesod.apache.org
   labels:
     - java

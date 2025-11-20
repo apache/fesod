@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcelFactory;
+import org.apache.fesod.sheet.FesodSheetFactory;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.read.builder.CsvReaderBuilder;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class CsvBenignErrorToleranceTest {
 
         // When / Then: reading should complete without throwing any exception
         assertDoesNotThrow(() -> {
-            CsvReaderBuilder builder = FastExcelFactory.read(in).csv();
+            CsvReaderBuilder builder = FesodSheetFactory.read(in).csv();
             // Use sync read to drive the pipeline end-to-end
             List<Object> rows = builder.doReadSync();
             // No strict assertion on content; important is no exception is thrown
@@ -87,7 +87,7 @@ class CsvBenignErrorToleranceTest {
 
         // When / Then: the pipeline should convert UncheckedIOException into ExcelAnalysisException
         assertThrows(ExcelCommonException.class, () -> {
-            FastExcelFactory.read(throwing).csv().doReadSync();
+            FesodSheetFactory.read(throwing).csv().doReadSync();
         });
     }
 
@@ -96,7 +96,7 @@ class CsvBenignErrorToleranceTest {
         String csv = "a,b\n1,2\n3,4\n";
         ByteArrayInputStream in = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
         assertDoesNotThrow(() -> {
-            CsvReaderBuilder builder = FastExcelFactory.read(in).csv();
+            CsvReaderBuilder builder = FesodSheetFactory.read(in).csv();
             List<Object> rows = builder.doReadSync();
         });
     }

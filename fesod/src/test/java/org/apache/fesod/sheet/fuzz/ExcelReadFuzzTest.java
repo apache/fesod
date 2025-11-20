@@ -23,7 +23,7 @@ import com.code_intelligence.jazzer.junit.FuzzTest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import lombok.SneakyThrows;
-import org.apache.fesod.sheet.FastExcelFactory;
+import org.apache.fesod.sheet.FesodSheetFactory;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 
 /**
@@ -40,7 +40,7 @@ public class ExcelReadFuzzTest {
             return; // Ignore trivial or oversized inputs
         }
         try (InputStream in = new ByteArrayInputStream(data)) {
-            ExcelReaderBuilder builder = FastExcelFactory.read(in);
+            ExcelReaderBuilder builder = FesodSheetFactory.read(in);
             // Always attempt to read first sheet synchronously if possible
             builder.sheet().doReadSync();
         } catch (Throwable t) {

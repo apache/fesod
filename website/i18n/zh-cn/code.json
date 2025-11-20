@@ -1,6 +1,6 @@
 {
   "site.description": {
-    "message": "快速、简洁、解决大文件内存溢出的 Java 处理 Excel 工具"
+    "message": "快速、简洁、解决大文件内存溢出的 Java 处理电子表格工具"
   },
   "quickstart": {
     "message": "快速开始"
@@ -12,13 +12,13 @@
     "message": "快速"
   },
   "homepage.feature.quick.description": {
-    "message": "专注于性能优化，能够高效处理大规模的 Excel 数据。相比一些传统的 Excel 处理库，它能显著降低内存占用"
+    "message": "专注于性能优化，能够高效处理大规模的电子表格数据。相比一些传统的电子表格处理库，它能显著降低内存占用"
   },
   "homepage.feature.simple.title": {
     "message": "简洁"
   },
   "homepage.feature.simple.description": {
-    "message": "提供了简洁直观的 API，使得开发者可以轻松集成到项目中，无论是简单的 Excel 操作还是复杂的数据处理都能快速上手"
+    "message": "提供了简洁直观的 API，使得开发者可以轻松集成到项目中，无论是简单的电子表格操作还是复杂的数据处理都能快速上手"
   },
   "homepage.feature.bigdata": {
     "message": "大文件"

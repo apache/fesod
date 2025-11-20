@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.util.TestFileUtil;
@@ -54,7 +54,7 @@ public class CustomConverterTest {
     void t01ConverterMapTest() throws Exception {
         TimestampStringConverter timestampStringConverter = new TimestampStringConverter();
         TimestampNumberConverter timestampNumberConverter = new TimestampNumberConverter();
-        ExcelWriter excelWriter = FastExcel.write(converterCsvFile10)
+        ExcelWriter excelWriter = FesodSheet.write(converterCsvFile10)
                 .registerConverter(timestampStringConverter)
                 .registerConverter(timestampNumberConverter)
                 .build();
@@ -84,7 +84,7 @@ public class CustomConverterTest {
     }
 
     private void writeFile(File file) throws Exception {
-        FastExcel.write(file)
+        FesodSheet.write(file)
                 .registerConverter(new TimestampNumberConverter())
                 .registerConverter(new TimestampStringConverter())
                 .sheet()

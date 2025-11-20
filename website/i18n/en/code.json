@@ -1,6 +1,6 @@
 {
   "site.description": {
-    "message": "A high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability."
+    "message": "A high-performance and memory-efficient Java library for reading and writing spreadsheet files, designed to simplify development and ensure reliability."
   },
   "quickstart": {
     "message": "Get Start"
@@ -12,13 +12,13 @@
     "message": "High-performance"
   },
   "homepage.feature.quick.description": {
-    "message": "Focuses on performance optimization, capable of efficiently handling large-scale Excel data.\n Compared to some traditional Excel processing libraries, it can significantly reduce memory consumption."
+    "message": "Focuses on performance optimization, capable of efficiently handling large-scale spreadsheet data.\n Compared to some traditional spreadsheet processing libraries, it can significantly reduce memory consumption."
   },
   "homepage.feature.simple.title": {
     "message": "Simplicity and Ease of Use"
   },
   "homepage.feature.simple.description": {
-    "message": "The library offers a simple and intuitive API, allowing developers to easily integrate it into projects, whether for simple Excel operations or complex data processing."
+    "message": "The library offers a simple and intuitive API, allowing developers to easily integrate it into projects, whether for simple spreadsheet operations or complex data processing."
   },
   "homepage.feature.bigdata": {
     "message": "Stream Operations"
@@ -364,5 +364,40 @@
   },
   "team.thanks": {
     "message": "Thanks to all wonderful contributor, who already contributed to Apache Fesod (Incubating)."
+  },
+  "theme.SearchBar.noResultsText": {
+    "message": "No results"
+  },
+  "theme.SearchBar.seeAllOutsideContext": {
+    "message": "See all results outside \"{context}\""
+  },
+  "theme.SearchBar.searchInContext": {
+    "message": "See all results within \"{context}\""
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "See all results"
+  },
+  "theme.SearchBar.label": {
+    "message": "Search",
+    "description": "The ARIA label and placeholder for search button"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Search results for \"{query}\"",
+    "description": "The search page title for non-empty query"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Search the documentation",
+    "description": "The search page title for empty query"
+  },
+  "theme.SearchPage.searchContext.everywhere": {
+    "message": "Everywhere"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "1 document found|{count} documents found",
+    "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "No documents were found",
+    "description": "The paragraph for empty search result"
   }
 }

@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.head;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -62,8 +62,8 @@ public class NoHeadDataTest {
     }
 
     private void readAndWrite(File file) {
-        FastExcel.write(file, NoHeadData.class).needHead(Boolean.FALSE).sheet().doWrite(data());
-        FastExcel.read(file, NoHeadData.class, new NoHeadDataListener())
+        FesodSheet.write(file, NoHeadData.class).needHead(Boolean.FALSE).sheet().doWrite(data());
+        FesodSheet.read(file, NoHeadData.class, new NoHeadDataListener())
                 .headRowNumber(0)
                 .sheet()
                 .doRead();

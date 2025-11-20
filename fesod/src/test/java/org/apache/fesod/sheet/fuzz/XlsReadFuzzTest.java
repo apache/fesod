@@ -24,7 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.zip.ZipException;
 import lombok.SneakyThrows;
-import org.apache.fesod.sheet.FesodSheetFactory;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.poi.EmptyFileException;
@@ -45,7 +45,7 @@ public class XlsReadFuzzTest {
             return;
         }
         try (InputStream in = new ByteArrayInputStream(data)) {
-            ExcelReaderBuilder builder = FesodSheetFactory.read(in).excelType(ExcelTypeEnum.XLS);
+            ExcelReaderBuilder builder = FesodSheet.read(in).excelType(ExcelTypeEnum.XLS);
             builder.sheet().doReadSync();
         } catch (Throwable t) {
             if (isBenignHssfParseException(t)) {

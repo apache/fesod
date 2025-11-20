@@ -45,8 +45,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("FesodSheetFactory Unit Tests")
-class FesodSheetFactoryTest {
+@DisplayName("FesodSheet Unit Tests")
+class FesodSheetTest {
 
     @TempDir
     Path tempDir;
@@ -93,13 +93,13 @@ class FesodSheetFactoryTest {
 
     @Test
     void testWrite_noArgs_shouldReturnBuilder() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write();
+        ExcelWriterBuilder builder = FesodSheet.write();
         assertNotNull(builder);
     }
 
     @Test
     void testWrite_withFile_shouldConfigureFile() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write(tempFile);
+        ExcelWriterBuilder builder = FesodSheet.write(tempFile);
         assertNotNull(builder);
 
         assertEquals(tempFile, writeWorkbook(builder).getFile());
@@ -107,7 +107,7 @@ class FesodSheetFactoryTest {
 
     @Test
     void testWrite_withFileAndHead_shouldConfigureAll() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write(tempFile, DemoData.class);
+        ExcelWriterBuilder builder = FesodSheet.write(tempFile, DemoData.class);
         assertNotNull(builder);
         assertEquals(tempFile, writeWorkbook(builder).getFile());
         assertEquals(DemoData.class, writeWorkbook(builder).getClazz());
@@ -115,14 +115,14 @@ class FesodSheetFactoryTest {
 
     @Test
     void testWrite_withPathName_shouldConfigureFile() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write(tempFilePath);
+        ExcelWriterBuilder builder = FesodSheet.write(tempFilePath);
         assertNotNull(builder);
         assertEquals(tempFilePath, writeWorkbook(builder).getFile().getAbsolutePath());
     }
 
     @Test
     void testWrite_withPathNameAndHead_shouldConfigureAll() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write(tempFilePath, DemoData.class);
+        ExcelWriterBuilder builder = FesodSheet.write(tempFilePath, DemoData.class);
         assertNotNull(builder);
         WriteWorkbook workbook = writeWorkbook(builder);
         assertEquals(tempFilePath, workbook.getFile().getAbsolutePath());
@@ -131,14 +131,14 @@ class FesodSheetFactoryTest {
 
     @Test
     void testWrite_withOutputStream_shouldConfigureStream() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write(mockOutputStream);
+        ExcelWriterBuilder builder = FesodSheet.write(mockOutputStream);
         assertNotNull(builder);
         assertSame(mockOutputStream, writeWorkbook(builder).getOutputStream());
     }
 
     @Test
     void testWrite_withOutputStreamAndHead_shouldConfigureAll() {
-        ExcelWriterBuilder builder = FesodSheetFactory.write(mockOutputStream, DemoData.class);
+        ExcelWriterBuilder builder = FesodSheet.write(mockOutputStream, DemoData.class);
         assertNotNull(builder);
         assertSame(mockOutputStream, writeWorkbook(builder).getOutputStream());
         assertEquals(DemoData.class, writeWorkbook(builder).getClazz());
@@ -146,37 +146,37 @@ class FesodSheetFactoryTest {
 
     @Test
     void testWriterSheet_noArgs_shouldReturnBuilder() {
-        ExcelWriterSheetBuilder builder = FesodSheetFactory.writerSheet();
+        ExcelWriterSheetBuilder builder = FesodSheet.writerSheet();
         assertNotNull(builder);
     }
 
     @Test
     void testWriterSheet_withSheetNo_shouldReturnBuilder() {
-        ExcelWriterSheetBuilder builder = FesodSheetFactory.writerSheet(1);
+        ExcelWriterSheetBuilder builder = FesodSheet.writerSheet(1);
         assertNotNull(builder);
     }
 
     @Test
     void testWriterSheet_withSheetName_shouldReturnBuilder() {
-        ExcelWriterSheetBuilder builder = FesodSheetFactory.writerSheet("TestSheet");
+        ExcelWriterSheetBuilder builder = FesodSheet.writerSheet("TestSheet");
         assertNotNull(builder);
     }
 
     @Test
     void testWriterSheet_withSheetNoAndName_shouldReturnBuilder() {
-        ExcelWriterSheetBuilder builder = FesodSheetFactory.writerSheet(1, "TestSheet");
+        ExcelWriterSheetBuilder builder = FesodSheet.writerSheet(1, "TestSheet");
         assertNotNull(builder);
     }
 
     @Test
     void testWriterTable_noArgs_shouldReturnBuilder() {
-        ExcelWriterTableBuilder builder = FesodSheetFactory.writerTable();
+        ExcelWriterTableBuilder builder = FesodSheet.writerTable();
         assertNotNull(builder);
     }
 
     @Test
     void testWriterTable_withTableNo_shouldReturnBuilder() {
-        ExcelWriterTableBuilder builder = FesodSheetFactory.writerTable(1);
+        ExcelWriterTableBuilder builder = FesodSheet.writerTable(1);
         assertNotNull(builder);
     }
 
@@ -184,13 +184,13 @@ class FesodSheetFactoryTest {
 
     @Test
     void testRead_noArgs_shouldReturnBuilder() {
-        ExcelReaderBuilder builder = FesodSheetFactory.read();
+        ExcelReaderBuilder builder = FesodSheet.read();
         assertNotNull(builder);
     }
 
     @Test
     void testRead_withFile_shouldConfigureFile() throws Exception {
-        ExcelReaderBuilder builder = FesodSheetFactory.read(tempFile);
+        ExcelReaderBuilder builder = FesodSheet.read(tempFile);
         assertNotNull(builder);
         ReadWorkbook workbook = writeWorkbook(builder);
         assertEquals(tempFile, workbook.getFile());
@@ -198,7 +198,7 @@ class FesodSheetFactoryTest {
 
     @Test
     void testRead_withFileAndListener_shouldConfigureAll() {
-        ExcelReaderBuilder builder = FesodSheetFactory.read(tempFile, mockReadListener);
+        ExcelReaderBuilder builder = FesodSheet.read(tempFile, mockReadListener);
         assertNotNull(builder);
         assertEquals(tempFile, writeWorkbook(builder).getFile());
         assertTrue(writeWorkbook(builder).getCustomReadListenerList().contains(mockReadListener));
@@ -206,7 +206,7 @@ class FesodSheetFactoryTest {
 
     @Test
     void testRead_withFileHeadAndListener_shouldConfigureAll() {
-        ExcelReaderBuilder builder = FesodSheetFactory.read(tempFile, DemoData.class, mockReadListener);
+        ExcelReaderBuilder builder = FesodSheet.read(tempFile, DemoData.class, mockReadListener);
         assertNotNull(builder);
         assertEquals(tempFile, writeWorkbook(builder).getFile());
         assertEquals(DemoData.class, writeWorkbook(builder).getClazz());
@@ -215,7 +215,7 @@ class FesodSheetFactoryTest {
 
     @Test
     void testRead_withInputStreamHeadAndListener_shouldConfigureAll() {
-        ExcelReaderBuilder builder = FesodSheetFactory.read(mockInputStream, DemoData.class, mockReadListener);
+        ExcelReaderBuilder builder = FesodSheet.read(mockInputStream, DemoData.class, mockReadListener);
         assertNotNull(builder);
         assertSame(mockInputStream, writeWorkbook(builder).getInputStream());
         assertEquals(DemoData.class, writeWorkbook(builder).getClazz());
@@ -226,25 +226,25 @@ class FesodSheetFactoryTest {
 
     @Test
     void testReadSheet_noArgs_shouldReturnBuilder() {
-        ExcelReaderSheetBuilder builder = FesodSheetFactory.readSheet();
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet();
         assertNotNull(builder);
     }
 
     @Test
     void testReadSheet_withSheetNo_shouldReturnBuilder() {
-        ExcelReaderSheetBuilder builder = FesodSheetFactory.readSheet(0);
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0);
         assertNotNull(builder);
     }
 
     @Test
     void testReadSheet_withSheetName_shouldReturnBuilder() {
-        ExcelReaderSheetBuilder builder = FesodSheetFactory.readSheet("DataSheet");
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet("DataSheet");
         assertNotNull(builder);
     }
 
     @Test
     void testReadSheet_withAllParams_shouldReturnBuilder() {
-        ExcelReaderSheetBuilder builder = FesodSheetFactory.readSheet(0, "DataSheet", 100);
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0, "DataSheet", 100);
         assertNotNull(builder);
     }
 }

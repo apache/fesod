@@ -22,8 +22,20 @@ on:
     branches:
       - master
       - main
+    paths:
+      - '.github/workflows/codeql-scan.yml'
+      - '**/pom.xml'
+      - 'fesod/**'
+      - 'fesod-*/**'
+      - '!**.md'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/codeql-scan.yml'
+      - '**/pom.xml'
+      - 'fesod/**'
+      - 'fesod-*/**'
+      - '!**.md'
   schedule:
     - cron: '0 0 * * *' # 每天0点自动扫描
 

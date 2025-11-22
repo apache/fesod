@@ -28,21 +28,26 @@
 
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-parent</artifactId>
-    <version>1.3.0</version>
+    <version>${revision}</version>
 
     <packaging>pom</packaging>
-
     <name>fesod-parent</name>
-    <description>Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability.</description>
+    <description>
+        Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
+        simplify development and ensure reliability.
+    </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
 
     <modules>
-        <module>fesod</module>
+        <module>fesod-bom</module>
+        <module>fesod-common</module>
         <module>fesod-examples</module>
+        <module>fesod-sheet</module>
     </modules>
 
     <properties>
+        <revision>2.0.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -52,7 +57,9 @@
         <gpg.skip>true</gpg.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.test.skip>true</maven.test.skip>
+        <commons-collections4.version>4.4</commons-collections4.version>
         <commons-csv.version>1.11.0</commons-csv.version>
+        <commons-lang3.version>3.16.0</commons-lang3.version>
         <poi.version>5.4.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>
         <commons-io.version>2.16.1</commons-io.version>
@@ -69,9 +76,9 @@
         <jacoco.version>0.8.14</jacoco.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
-        <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
-        <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
+        <fastexcel.support.version>1.3.0</fastexcel.support.version>
+        <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <argLine></argLine>
     </properties>
 
@@ -128,9 +135,19 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-collections4</artifactId>
+              <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>${commons-csv.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-lang3</artifactId>
+              <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
@@ -162,6 +179,11 @@
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.idev.excel</groupId>
+                <artifactId>fastexcel-support</artifactId>
+                <version>${fastexcel.support.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -267,10 +289,85 @@
                 </exclusions>
                 <scope>test</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.code-intelligence</groupId>
+            <artifactId>jazzer-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
@@ -476,7 +573,7 @@
                 <configuration>
                     <java>
                         <licenseHeader>
-                            <file>tools/spotless/license-header.txt</file>
+                            <file>${maven.multiModuleProjectDirectory}/tools/spotless/license-header.txt</file>
                             <delimiter>package |import |module </delimiter>
                         </licenseHeader>
                         <palantirJavaFormat>
@@ -503,19 +600,16 @@
                         </indent>
                     </pom>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
-
-            <!-- Publish package to the Maven Central Repository -->
-            <!--            <plugin>-->
-            <!--                <groupId>org.sonatype.plugins</groupId>-->
-            <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-            <!--                <extensions>true</extensions>-->
-            <!--                <configuration>-->
-            <!--                    <serverId>ossrh</serverId>-->
-            <!--                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-            <!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
@@ -524,6 +618,10 @@
                     <publishingServerId>ossrh</publishingServerId>
                     <tokenAuth>true</tokenAuth>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

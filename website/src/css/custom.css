@@ -84,3 +84,19 @@ article header h2 {
 .footer__copyright p {
     text-align: justify;
 }
+
+.theme-announcement-bar {
+    font-size: 20px;
+
+    --site-announcement-bar-stripe-color1: var(--ifm-color-primary);
+    --site-announcement-bar-stripe-color2: var(--ifm-color-primary-lighter);
+
+    background: repeating-linear-gradient(
+            35deg,
+            var(--site-announcement-bar-stripe-color1),
+            var(--site-announcement-bar-stripe-color1) 20px,
+            var(--site-announcement-bar-stripe-color2) 10px,
+            var(--site-announcement-bar-stripe-color2) 40px
+    );
+    font-weight: bold;
+}

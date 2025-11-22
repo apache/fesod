@@ -33,7 +33,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvConstant;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
@@ -74,8 +74,8 @@ public class CsvFormatTest {
 
         // sheet
         csvFile = TestFileUtil.createNewFile(CSV_BASE + "csv-sheet-simple.csv");
-        FastExcel.write(csvFile, CsvData.class).sheet().doWrite(csvDataList);
-        List<CsvData> dataList = FastExcel.read(csvFile, CsvData.class, new CsvDataListener())
+        FesodSheet.write(csvFile, CsvData.class).sheet().doWrite(csvDataList);
+        List<CsvData> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
                 .sheet()
                 .doReadSync();
         Assertions.assertEquals(10, dataList.size());
@@ -126,8 +126,8 @@ public class CsvFormatTest {
     @Test
     public void testNoHead() {
         csvFile = TestFileUtil.createNewFile(CSV_BASE + "csv-no-head.csv");
-        FastExcel.write(csvFile, CsvData.class).needHead(false).csv().doWrite(csvDataList);
-        List<Object> dataList = FastExcel.read(csvFile, new CsvDataListener())
+        FesodSheet.write(csvFile, CsvData.class).needHead(false).csv().doWrite(csvDataList);
+        List<Object> dataList = FesodSheet.read(csvFile, new CsvDataListener())
                 .headRowNumber(0)
                 .csv()
                 .doReadSync();
@@ -138,11 +138,11 @@ public class CsvFormatTest {
     @Test
     public void testAutoTrim() {
         csvFile = TestFileUtil.createNewFile(CSV_BASE + "csv-auto-trim.csv");
-        FastExcel.write(csvFile, CsvData.class)
+        FesodSheet.write(csvFile, CsvData.class)
                 .autoTrim(Boolean.FALSE)
                 .csv()
                 .doWrite(dataList(10, " " + STRING_PREFIX));
-        List<Object> dataList = FastExcel.read(csvFile, CsvData.class, new CsvDataListener())
+        List<Object> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
                 .autoTrim(Boolean.FALSE)
                 .csv()
                 .doReadSync();
@@ -156,7 +156,7 @@ public class CsvFormatTest {
                 CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
 
         csvFile = TestFileUtil.createNewFile(CSV_BASE + "csv-delimiter.csv");
-        try (ExcelWriter excelWriter = FastExcel.write(csvFile, CsvData.class)
+        try (ExcelWriter excelWriter = FesodSheet.write(csvFile, CsvData.class)
                 .excelType(ExcelTypeEnum.CSV)
                 .build()) {
             WriteWorkbookHolder writeWorkbookHolder = excelWriter.writeContext().writeWorkbookHolder();
@@ -166,20 +166,20 @@ public class CsvFormatTest {
                 csvWorkbook.setCsvFormat(csvFormat);
                 writeWorkbookHolder.setWorkbook(csvWorkbook);
             }
-            WriteSheet writeSheet = FastExcel.writerSheet(0).build();
+            WriteSheet writeSheet = FesodSheet.writerSheet(0).build();
             excelWriter.write(csvDataList, writeSheet);
         }
 
         csvFile = TestFileUtil.readFile(CSV_BASE + "csv-delimiter.csv");
         try (ExcelReader excelReader =
-                FastExcel.read(csvFile, CsvData.class, new CsvDataListener()).build()) {
+                FesodSheet.read(csvFile, CsvData.class, new CsvDataListener()).build()) {
             ReadWorkbookHolder readWorkbookHolder =
                     excelReader.analysisContext().readWorkbookHolder();
             if (readWorkbookHolder instanceof CsvReadWorkbookHolder) {
                 CsvReadWorkbookHolder csvReadWorkbookHolder = (CsvReadWorkbookHolder) readWorkbookHolder;
                 csvReadWorkbookHolder.setCsvFormat(csvFormat);
             }
-            ReadSheet readSheet = FastExcel.readSheet(0).build();
+            ReadSheet readSheet = FesodSheet.readSheet(0).build();
             excelReader.read(readSheet);
         }
     }
@@ -214,7 +214,7 @@ public class CsvFormatTest {
             if (StringUtils.isNotBlank(appendStr)) {
                 csvDataList = dataList(10, STRING_PREFIX + appendStr);
             }
-            FastExcel.write(csvFile, CsvData.class)
+            FesodSheet.write(csvFile, CsvData.class)
                     .csv()
                     .delimiter(delimiter)
                     .quote(quote, QuoteMode.MINIMAL)
@@ -224,7 +224,7 @@ public class CsvFormatTest {
                     .doWrite(csvDataList);
         }
 
-        List<CsvData> dataList = FastExcel.read(csvFile, CsvData.class, new CsvDataListener())
+        List<CsvData> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
                 .csv()
                 .delimiter(delimiter)
                 .quote(quote, QuoteMode.MINIMAL)

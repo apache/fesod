@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.annotation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.StyleTestUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
@@ -84,7 +84,7 @@ public class AnnotationDataTest {
     }
 
     private void writeStyle(File file) throws Exception {
-        FastExcel.write().file(file).head(AnnotationStyleData.class).sheet().doWrite(dataStyle());
+        FesodSheet.write().file(file).head(AnnotationStyleData.class).sheet().doWrite(dataStyle());
 
         Workbook workbook = WorkbookFactory.create(file);
         Sheet sheet = workbook.getSheetAt(0);
@@ -112,7 +112,7 @@ public class AnnotationDataTest {
     }
 
     private void readAndWrite(File file) throws Exception {
-        FastExcel.write().file(file).head(AnnotationData.class).sheet().doWrite(dataStyle());
+        FesodSheet.write().file(file).head(AnnotationData.class).sheet().doWrite(dataStyle());
 
         if (file == fileCsv) {
             return;

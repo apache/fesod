@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
@@ -74,18 +74,18 @@ public class WriteSheetTest {
 
         File testFile = TestFileUtil.createNewFile("writesheet/write-sheet-order" + excelTypeEnum.getValue());
         // write a file in the order of sheetNoList.
-        try (ExcelWriter excelWriter = FastExcel.write(testFile, WriteSheetData.class)
+        try (ExcelWriter excelWriter = FesodSheet.write(testFile, WriteSheetData.class)
                 .excelType(excelTypeEnum)
                 .build()) {
             for (Integer sheetNo : sheetNoList) {
                 excelWriter.write(
                         dataList(dataMap.get(sheetNo)),
-                        FastExcel.writerSheet(sheetNo).build());
+                        FesodSheet.writerSheet(sheetNo).build());
             }
         }
 
         for (int i = 0; i < sheetNoList.size(); i++) {
-            List<WriteSheetData> sheetDataList = FastExcel.read(testFile)
+            List<WriteSheetData> sheetDataList = FesodSheet.read(testFile)
                     .excelType(excelTypeEnum)
                     .head(WriteSheetData.class)
                     .sheet(i)
@@ -113,34 +113,34 @@ public class WriteSheetTest {
         Map<Integer, Integer> dataMap = initSheetDataSizeList(sheetNoList);
         File testFile = TestFileUtil.createNewFile("writesheet/write-sheet-order-name" + excelTypeEnum.getValue());
 
-        try (ExcelWriter excelWriter = FastExcel.write(testFile, WriteSheetData.class)
+        try (ExcelWriter excelWriter = FesodSheet.write(testFile, WriteSheetData.class)
                 .excelType(excelTypeEnum)
                 .build()) {
 
             // sheetName is empty
             int sheetNo = 0;
-            WriteSheet writeSheet = FastExcel.writerSheet(sheetNo).build();
+            WriteSheet writeSheet = FesodSheet.writerSheet(sheetNo).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
             Assertions.assertEquals(
                     sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             // sheetNo is empty
             sheetNo = 1;
-            writeSheet = FastExcel.writerSheet(sheetNameList.get(sheetNo)).build();
+            writeSheet = FesodSheet.writerSheet(sheetNameList.get(sheetNo)).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
             Assertions.assertEquals(
                     sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             sheetNo = 2;
             writeSheet =
-                    FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
+                    FesodSheet.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
             Assertions.assertEquals(
                     sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             sheetNo = 3;
             writeSheet =
-                    FastExcel.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
+                    FesodSheet.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(dataList(dataMap.get(sheetNo)), writeSheet);
             Assertions.assertEquals(
                     sheetNameList.get(sheetNo).substring(0, Workbook.MAX_SENSITIVE_SHEET_NAME_LEN),
@@ -150,7 +150,7 @@ public class WriteSheetTest {
         }
 
         for (int i = 0; i < sheetNoList.size(); i++) {
-            List<WriteSheetData> sheetDataList = FastExcel.read(testFile)
+            List<WriteSheetData> sheetDataList = FesodSheet.read(testFile)
                     .excelType(excelTypeEnum)
                     .head(WriteSheetData.class)
                     .sheet(i)

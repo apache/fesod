@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.data.DemoData;
@@ -72,8 +72,8 @@ public class CacheDataTest {
         ThreadLocal<Map<Class<?>, FieldCache>> fieldThreadLocal =
                 (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(ClassUtils.class.newInstance());
         Assertions.assertNull(fieldThreadLocal.get());
-        FastExcel.write(file07, CacheData.class).sheet().doWrite(data());
-        FastExcel.read(file07, CacheData.class, new PageReadListener<DemoData>(dataList -> {
+        FesodSheet.write(file07, CacheData.class).sheet().doWrite(data());
+        FesodSheet.read(file07, CacheData.class, new PageReadListener<DemoData>(dataList -> {
                     Assertions.assertNotNull(fieldThreadLocal.get());
                 }))
                 .sheet()
@@ -83,8 +83,8 @@ public class CacheDataTest {
 
     @Test
     public void t02ReadAndWriteInvoke() throws Exception {
-        FastExcel.write(fileCacheInvoke, CacheInvokeData.class).sheet().doWrite(dataInvoke());
-        FastExcel.read(fileCacheInvoke, CacheInvokeData.class, new AnalysisEventListener<CacheInvokeData>() {
+        FesodSheet.write(fileCacheInvoke, CacheInvokeData.class).sheet().doWrite(dataInvoke());
+        FesodSheet.read(fileCacheInvoke, CacheInvokeData.class, new AnalysisEventListener<CacheInvokeData>() {
 
                     @Override
                     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
@@ -110,8 +110,8 @@ public class CacheDataTest {
         Map map = (Map) memberValues.get(invocationHandler);
         map.put("value", new String[] {"姓名2"});
 
-        FastExcel.write(fileCacheInvoke2, CacheInvokeData.class).sheet().doWrite(dataInvoke());
-        FastExcel.read(fileCacheInvoke2, CacheInvokeData.class, new AnalysisEventListener<CacheInvokeData>() {
+        FesodSheet.write(fileCacheInvoke2, CacheInvokeData.class).sheet().doWrite(dataInvoke());
+        FesodSheet.read(fileCacheInvoke2, CacheInvokeData.class, new AnalysisEventListener<CacheInvokeData>() {
 
                     @Override
                     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
@@ -132,11 +132,11 @@ public class CacheDataTest {
 
     @Test
     public void t03ReadAndWriteInvokeMemory() throws Exception {
-        FastExcel.write(fileCacheInvokeMemory, CacheInvokeMemoryData.class)
+        FesodSheet.write(fileCacheInvokeMemory, CacheInvokeMemoryData.class)
                 .filedCacheLocation(CacheLocationEnum.MEMORY)
                 .sheet()
                 .doWrite(dataInvokeMemory());
-        FastExcel.read(
+        FesodSheet.read(
                         fileCacheInvokeMemory,
                         CacheInvokeMemoryData.class,
                         new AnalysisEventListener<CacheInvokeMemoryData>() {
@@ -166,11 +166,11 @@ public class CacheDataTest {
         Map map = (Map) memberValues.get(invocationHandler);
         map.put("value", new String[] {"姓名2"});
 
-        FastExcel.write(fileCacheInvokeMemory2, CacheInvokeMemoryData.class)
+        FesodSheet.write(fileCacheInvokeMemory2, CacheInvokeMemoryData.class)
                 .filedCacheLocation(CacheLocationEnum.MEMORY)
                 .sheet()
                 .doWrite(dataInvokeMemory());
-        FastExcel.read(
+        FesodSheet.read(
                         fileCacheInvokeMemory2,
                         CacheInvokeMemoryData.class,
                         new AnalysisEventListener<CacheInvokeMemoryData>() {

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.cache.MapCache;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
@@ -76,8 +76,8 @@ public class ParameterDataTest {
     }
 
     private void readAndWrite1(File file, ExcelTypeEnum type) {
-        FastExcel.write(file.getPath()).head(ParameterData.class).sheet().doWrite(data());
-        FastExcel.read(file.getPath())
+        FesodSheet.write(file.getPath()).head(ParameterData.class).sheet().doWrite(data());
+        FesodSheet.read(file.getPath())
                 .head(ParameterData.class)
                 .registerReadListener(new ParameterDataListener())
                 .sheet()
@@ -85,19 +85,19 @@ public class ParameterDataTest {
     }
 
     private void readAndWrite2(File file, ExcelTypeEnum type) {
-        FastExcel.write(file.getPath(), ParameterData.class).sheet().doWrite(data());
-        FastExcel.read(file.getPath(), ParameterData.class, new ParameterDataListener())
+        FesodSheet.write(file.getPath(), ParameterData.class).sheet().doWrite(data());
+        FesodSheet.read(file.getPath(), ParameterData.class, new ParameterDataListener())
                 .sheet()
                 .doRead();
     }
 
     private void readAndWrite3(File file, ExcelTypeEnum type) throws Exception {
-        FastExcel.write(new FileOutputStream(file))
+        FesodSheet.write(new FileOutputStream(file))
                 .excelType(type)
                 .head(ParameterData.class)
                 .sheet()
                 .doWrite(data());
-        FastExcel.read(file.getPath())
+        FesodSheet.read(file.getPath())
                 .head(ParameterData.class)
                 .registerReadListener(new ParameterDataListener())
                 .sheet()
@@ -105,40 +105,40 @@ public class ParameterDataTest {
     }
 
     private void readAndWrite4(File file, ExcelTypeEnum type) throws Exception {
-        FastExcel.write(new FileOutputStream(file), ParameterData.class)
+        FesodSheet.write(new FileOutputStream(file), ParameterData.class)
                 .excelType(type)
                 .sheet()
                 .doWrite(data());
-        FastExcel.read(file.getPath(), new ParameterDataListener())
+        FesodSheet.read(file.getPath(), new ParameterDataListener())
                 .head(ParameterData.class)
                 .sheet()
                 .doRead();
     }
 
     private void readAndWrite5(File file, ExcelTypeEnum type) throws Exception {
-        ExcelWriter excelWriter = FastExcel.write(new FileOutputStream(file))
+        ExcelWriter excelWriter = FesodSheet.write(new FileOutputStream(file))
                 .excelType(type)
                 .head(ParameterData.class)
                 .relativeHeadRowIndex(0)
                 .build();
-        WriteSheet writeSheet = FastExcel.writerSheet(0)
+        WriteSheet writeSheet = FesodSheet.writerSheet(0)
                 .relativeHeadRowIndex(0)
                 .needHead(Boolean.FALSE)
                 .build();
-        WriteTable writeTable = FastExcel.writerTable(0)
+        WriteTable writeTable = FesodSheet.writerTable(0)
                 .relativeHeadRowIndex(0)
                 .needHead(Boolean.TRUE)
                 .build();
         excelWriter.write(data(), writeSheet, writeTable);
         excelWriter.finish();
 
-        ExcelReader excelReader = FastExcel.read(file.getPath(), new ParameterDataListener())
+        ExcelReader excelReader = FesodSheet.read(file.getPath(), new ParameterDataListener())
                 .head(ParameterData.class)
                 .mandatoryUseInputStream(Boolean.FALSE)
                 .autoCloseStream(Boolean.TRUE)
                 .readCache(new MapCache())
                 .build();
-        ReadSheet readSheet = FastExcel.readSheet()
+        ReadSheet readSheet = FesodSheet.readSheet()
                 .head(ParameterData.class)
                 .use1904windowing(Boolean.FALSE)
                 .headRowNumber(1)
@@ -148,7 +148,7 @@ public class ParameterDataTest {
         excelReader.read(readSheet);
         excelReader.finish();
 
-        excelReader = FastExcel.read(file.getPath(), new ParameterDataListener())
+        excelReader = FesodSheet.read(file.getPath(), new ParameterDataListener())
                 .head(ParameterData.class)
                 .mandatoryUseInputStream(Boolean.FALSE)
                 .autoCloseStream(Boolean.TRUE)
@@ -159,16 +159,16 @@ public class ParameterDataTest {
     }
 
     private void readAndWrite6(File file, ExcelTypeEnum type) throws Exception {
-        ExcelWriter excelWriter = FastExcel.write(new FileOutputStream(file))
+        ExcelWriter excelWriter = FesodSheet.write(new FileOutputStream(file))
                 .excelType(type)
                 .head(ParameterData.class)
                 .relativeHeadRowIndex(0)
                 .build();
-        WriteSheet writeSheet = FastExcel.writerSheet(0)
+        WriteSheet writeSheet = FesodSheet.writerSheet(0)
                 .relativeHeadRowIndex(0)
                 .needHead(Boolean.FALSE)
                 .build();
-        WriteTable writeTable = FastExcel.writerTable(0)
+        WriteTable writeTable = FesodSheet.writerTable(0)
                 .registerConverter(new StringStringConverter())
                 .relativeHeadRowIndex(0)
                 .needHead(Boolean.TRUE)
@@ -176,13 +176,13 @@ public class ParameterDataTest {
         excelWriter.write(data(), writeSheet, writeTable);
         excelWriter.finish();
 
-        ExcelReader excelReader = FastExcel.read(file.getPath(), new ParameterDataListener())
+        ExcelReader excelReader = FesodSheet.read(file.getPath(), new ParameterDataListener())
                 .head(ParameterData.class)
                 .mandatoryUseInputStream(Boolean.FALSE)
                 .autoCloseStream(Boolean.TRUE)
                 .readCache(new MapCache())
                 .build();
-        ReadSheet readSheet = FastExcel.readSheet("0")
+        ReadSheet readSheet = FesodSheet.readSheet("0")
                 .head(ParameterData.class)
                 .use1904windowing(Boolean.FALSE)
                 .headRowNumber(1)
@@ -191,7 +191,7 @@ public class ParameterDataTest {
         excelReader.read(readSheet);
         excelReader.finish();
 
-        excelReader = FastExcel.read(file.getPath(), new ParameterDataListener())
+        excelReader = FesodSheet.read(file.getPath(), new ParameterDataListener())
                 .head(ParameterData.class)
                 .mandatoryUseInputStream(Boolean.FALSE)
                 .autoCloseStream(Boolean.TRUE)
@@ -202,7 +202,7 @@ public class ParameterDataTest {
     }
 
     private void readAndWrite7(File file, ExcelTypeEnum type) {
-        FastExcel.write(file, ParameterData.class)
+        FesodSheet.write(file, ParameterData.class)
                 .registerConverter(new StringStringConverter())
                 .sheet()
                 .registerConverter(new StringStringConverter())
@@ -210,7 +210,7 @@ public class ParameterDataTest {
                 .table(0)
                 .needHead(Boolean.TRUE)
                 .doWrite(data());
-        FastExcel.read(file.getPath())
+        FesodSheet.read(file.getPath())
                 .head(ParameterData.class)
                 .registerReadListener(new ParameterDataListener())
                 .sheet()

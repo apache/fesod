@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.multiplesheets;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
@@ -68,7 +68,7 @@ public class MultipleSheetsDataTest {
 
     private void read(File file) {
         MultipleSheetsListener multipleSheetsListener = new MultipleSheetsListener();
-        try (ExcelReader excelReader = FastExcel.read(file, MultipleSheetsData.class, multipleSheetsListener)
+        try (ExcelReader excelReader = FesodSheet.read(file, MultipleSheetsData.class, multipleSheetsListener)
                 .build()) {
             List<ReadSheet> sheets = excelReader.excelExecutor().sheetList();
             int count = 1;
@@ -81,7 +81,7 @@ public class MultipleSheetsDataTest {
     }
 
     private void readAll(File file) {
-        FastExcel.read(file, MultipleSheetsData.class, new MultipleSheetsListener())
+        FesodSheet.read(file, MultipleSheetsData.class, new MultipleSheetsListener())
                 .doReadAll();
     }
 }

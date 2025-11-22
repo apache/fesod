@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
@@ -73,14 +73,14 @@ public class MaxHeadSizeTest {
     private void readFileWithMap(String file, int expectHeadSize) {
         List<Map<Integer, String>> dataList;
         // default
-        dataList = FastExcel.read(file).excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
+        dataList = FesodSheet.read(file).excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
         dataList.forEach(d -> {
             log.info(JSON.toJSONString(d, JSONWriter.Feature.WriteMapNullValue));
             Assertions.assertTrue(d.size() >= expectHeadSize);
         });
 
         // custom listener
-        dataList = FastExcel.read(file, new MaxHeadReadListener(expectHeadSize))
+        dataList = FesodSheet.read(file, new MaxHeadReadListener(expectHeadSize))
                 .excelType(ExcelTypeEnum.XLSX)
                 .sheet()
                 .doReadSync();
@@ -91,7 +91,7 @@ public class MaxHeadSizeTest {
     }
 
     private void readFileWithPOJO(String file) {
-        List<MaxHeadSizeData> dataList = FastExcel.read(file)
+        List<MaxHeadSizeData> dataList = FesodSheet.read(file)
                 .head(MaxHeadSizeData.class)
                 .excelType(ExcelTypeEnum.XLSX)
                 .sheet()

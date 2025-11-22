@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
@@ -72,8 +72,8 @@ public class ConverterDataTest {
     }
 
     private void readAndWrite(File file) throws Exception {
-        FastExcel.write(file, ConverterWriteData.class).sheet().doWrite(data());
-        FastExcel.read(file, ConverterReadData.class, new ConverterDataListener())
+        FesodSheet.write(file, ConverterWriteData.class).sheet().doWrite(data());
+        FesodSheet.read(file, ConverterReadData.class, new ConverterDataListener())
                 .sheet()
                 .doRead();
     }
@@ -115,7 +115,7 @@ public class ConverterDataTest {
             imageData.setString(imagePath);
             inputStream = FileUtils.openInputStream(new File(imagePath));
             imageData.setInputStream(inputStream);
-            FastExcel.write(file, ImageData.class).sheet().doWrite(list);
+            FesodSheet.write(file, ImageData.class).sheet().doWrite(list);
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -124,7 +124,7 @@ public class ConverterDataTest {
     }
 
     private void readAllConverter(String fileName) {
-        FastExcel.read(TestFileUtil.readFile(fileName), ReadAllConverterData.class, new ReadAllConverterDataListener())
+        FesodSheet.read(TestFileUtil.readFile(fileName), ReadAllConverterData.class, new ReadAllConverterDataListener())
                 .sheet()
                 .doRead();
     }

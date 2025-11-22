@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.handler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -93,7 +93,7 @@ public class WriteHandlerTest {
 
     private void workbookWrite(File file) {
         WriteHandler writeHandler = new WriteHandler();
-        FastExcel.write(file)
+        FesodSheet.write(file)
                 .head(WriteHandlerData.class)
                 .registerWriteHandler(writeHandler)
                 .sheet()
@@ -103,7 +103,7 @@ public class WriteHandlerTest {
 
     private void sheetWrite(File file) {
         WriteHandler writeHandler = new WriteHandler();
-        FastExcel.write(file)
+        FesodSheet.write(file)
                 .head(WriteHandlerData.class)
                 .sheet()
                 .registerWriteHandler(writeHandler)
@@ -113,7 +113,7 @@ public class WriteHandlerTest {
 
     private void tableWrite(File file) {
         WriteHandler writeHandler = new WriteHandler();
-        FastExcel.write(file)
+        FesodSheet.write(file)
                 .head(WriteHandlerData.class)
                 .sheet()
                 .table(0)

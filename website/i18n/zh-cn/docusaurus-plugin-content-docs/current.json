@@ -22,5 +22,9 @@
   "sidebar.docs.category.help": {
     "message": "帮助",
     "description": "The label for category help in sidebar docs"
+  },
+  "sidebar.docs.category.fesod-sheet": {
+    "message": "Fesod Sheet",
+    "description": "The label for category fesod-sheet in sidebar docs"
   }
 }

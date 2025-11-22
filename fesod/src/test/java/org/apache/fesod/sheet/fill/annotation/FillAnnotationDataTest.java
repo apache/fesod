@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -76,7 +76,7 @@ public class FillAnnotationDataTest {
     }
 
     private void readAndWrite(File file, File fileTemplate) throws Exception {
-        FastExcel.write()
+        FesodSheet.write()
                 .file(file)
                 .head(FillAnnotationData.class)
                 .withTemplate(fileTemplate)

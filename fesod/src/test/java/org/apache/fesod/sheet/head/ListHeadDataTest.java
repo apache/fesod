@@ -23,7 +23,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
@@ -64,8 +64,8 @@ public class ListHeadDataTest {
     }
 
     private void readAndWrite(File file) throws Exception {
-        FastExcel.write(file).head(head()).sheet().doWrite(data());
-        FastExcel.read(file)
+        FesodSheet.write(file).head(head()).sheet().doWrite(data());
+        FesodSheet.read(file)
                 .registerReadListener(new ListHeadDataListener())
                 .sheet()
                 .doRead();

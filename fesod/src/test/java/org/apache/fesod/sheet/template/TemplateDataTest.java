@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.template;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -55,22 +55,22 @@ public class TemplateDataTest {
     }
 
     private void readAndWrite07(File file) {
-        FastExcel.write(file, TemplateData.class)
+        FesodSheet.write(file, TemplateData.class)
                 .withTemplate(TestFileUtil.readFile("template" + File.separator + "template07.xlsx"))
                 .sheet()
                 .doWrite(data());
-        FastExcel.read(file, TemplateData.class, new TemplateDataListener())
+        FesodSheet.read(file, TemplateData.class, new TemplateDataListener())
                 .headRowNumber(3)
                 .sheet()
                 .doRead();
     }
 
     private void readAndWrite03(File file) {
-        FastExcel.write(file, TemplateData.class)
+        FesodSheet.write(file, TemplateData.class)
                 .withTemplate(TestFileUtil.readFile("template" + File.separator + "template03.xls"))
                 .sheet()
                 .doWrite(data());
-        FastExcel.read(file, TemplateData.class, new TemplateDataListener())
+        FesodSheet.read(file, TemplateData.class, new TemplateDataListener())
                 .headRowNumber(3)
                 .sheet()
                 .doRead();

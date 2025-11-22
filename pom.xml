@@ -79,6 +79,7 @@
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
         <fastexcel.support.version>1.3.0</fastexcel.support.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
+        <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <argLine></argLine>
     </properties>
 
@@ -623,7 +624,8 @@
                 <jdk>[9,)</jdk>
             </activation>
             <properties>
-                <surefire.jdk9plus.args>--add-opens=java.base/java.lang=ALL-UNNAMED
+                <surefire.jdk9plus.args>
+                    --add-opens=java.base/java.lang=ALL-UNNAMED
                     --add-opens=java.base/java.util=ALL-UNNAMED
                     --add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED
                 </surefire.jdk9plus.args>

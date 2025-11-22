@@ -17,13 +17,13 @@ settings to achieve reading objectives.
 
 The main parameters are as follows:
 
-| Name              | Default Value      | Description                                                                                                                              |
-|:------------------|:-------------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
-| `delimiter`       | `,` (comma)        | Field delimiter. It's recommended to use predefined constants from `CsvConstant`, such as `CsvConstant.AT`(`@`), `CsvConstant.TAB`, etc. |
-| `quote`           | `"` (double quote) | Field quote character. It's recommended to use predefined constants from `CsvConstant`, such as `CsvConstant.DOUBLE_QUOTE`(`"`).         |
-| `recordSeparator` | `CRLF`             | Record (line) separator. Varies by operating system, such as `CsvConstant.CRLF`(Windows) or `CsvConstant.LF`(Unix/Linux).                |
-| `nullString`      | `null`             | String used to represent `null` values. Note this is different from an empty string `""`.                                                |
-| `escape`          | `null`             | Escape character used to escape quote characters themselves.                                                                             |
+| Name            | Default Value      | Description                                                                                                                              |
+|:----------------|:-------------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
+| delimiter       | `,` (comma)        | Field delimiter. It's recommended to use predefined constants from `CsvConstant`, such as `CsvConstant.AT`(`@`), `CsvConstant.TAB`, etc. |
+| quote           | `"` (double quote) | Field quote character. It's recommended to use predefined constants from `CsvConstant`, such as `CsvConstant.DOUBLE_QUOTE`(`"`).         |
+| recordSeparator | `CRLF`             | Record (line) separator. Varies by operating system, such as `CsvConstant.CRLF`(Windows) or `CsvConstant.LF`(Unix/Linux).                |
+| nullString      | `null`             | String used to represent `null` values. Note this is different from an empty string `""`.                                                |
+| escape          | `null`             | Escape character used to escape quote characters themselves.                                                                             |
 
 ---
 

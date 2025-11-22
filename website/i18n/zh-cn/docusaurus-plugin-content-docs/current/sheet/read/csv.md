@@ -16,13 +16,13 @@ Fesod 通过不同的参数设计进行 CSV
 
 主要的参数如下：
 
-| 名称                | 默认值       | 描述                                                                                    |
-|:------------------|:----------|:--------------------------------------------------------------------------------------|
-| `delimiter`       | `,` (逗号)  | 字段分隔符。推荐使用 `CsvConstant` 中预定义的常量，例如 `CsvConstant.AT` (`@`)、`CsvConstant.TAB` 等。       |
-| `quote`           | `"` (双引号) | 字段引用符号，推荐使用 `CsvConstant` 中预定义的常量，例如 `CsvConstant.DOUBLE_QUOTE` (`"`)。                |
-| `recordSeparator` | `CRLF`    | 记录（行）分隔符。根据操作系统不同而变化，例如 `CsvConstant.CRLF` (Windows) 或 `CsvConstant.LF` (Unix/Linux)。 |
-| `nullString`      | `null`    | 用于表示 `null` 值的字符串。注意这与空字符串 `""` 不同。                                                   |
-| `escape`          | `null`    | 转义字符，用于转义引用符号自身。                                                                      |
+| 名称              | 默认值       | 描述                                                                                    |
+|:----------------|:----------|:--------------------------------------------------------------------------------------|
+| delimiter       | `,` (逗号)  | 字段分隔符。推荐使用 `CsvConstant` 中预定义的常量，例如 `CsvConstant.AT` (`@`)、`CsvConstant.TAB` 等。       |
+| quote           | `"` (双引号) | 字段引用符号，推荐使用 `CsvConstant` 中预定义的常量，例如 `CsvConstant.DOUBLE_QUOTE` (`"`)。                |
+| recordSeparator | `CRLF`    | 记录（行）分隔符。根据操作系统不同而变化，例如 `CsvConstant.CRLF` (Windows) 或 `CsvConstant.LF` (Unix/Linux)。 |
+| nullString      | `null`    | 用于表示 `null` 值的字符串。注意这与空字符串 `""` 不同。                                                   |
+| escape          | `null`    | 转义字符，用于转义引用符号自身。                                                                      |
 
 ---
 

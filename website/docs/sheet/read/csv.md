@@ -25,8 +25,6 @@ The main parameters are as follows:
 | nullString      | `null`             | String used to represent `null` values. Note this is different from an empty string `""`.                                                |
 | escape          | `null`             | Escape character used to escape quote characters themselves.                                                                             |
 
----
-
 ## Parameter Details and Examples
 
 The following sections will explain each parameter in detail with code examples.

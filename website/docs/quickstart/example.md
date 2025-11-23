@@ -7,6 +7,8 @@ title: 'Simple example'
 
 ### Read the spreadsheet
 
+Just change for preview
+
 Below is an example of reading a spreadsheet document:
 
 ```java

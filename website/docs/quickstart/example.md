@@ -7,7 +7,7 @@ title: 'Simple example'
 
 ### Read the spreadsheet
 
-Just change for preview!
+Just change for preview! Trigger the Build.
 
 Below is an example of reading a spreadsheet document:
 

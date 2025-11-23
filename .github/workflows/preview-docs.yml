@@ -18,11 +18,7 @@
 name: Preview Documentation
 
 on:
-  push:
-    paths:
-      - 'website/**'
   pull_request_target:
-    branches: [ main ]
     paths:
       - 'website/**'
 

@@ -99,6 +99,12 @@ const sidebars = {
                     ]
                 }
             ]
+        }, {
+            type: 'category',
+            label: 'migration',
+            items: [
+                'migration/from-fastexcel'
+            ]
         }
     ]
 };

@@ -20,8 +20,18 @@ name: Java CI
 on:
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'website/**'
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'website/**'
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
 
 permissions:
   checks: write

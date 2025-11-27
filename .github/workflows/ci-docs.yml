@@ -15,19 +15,16 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: Markdown Lint
+name: Documentation CI
 
 on:
   pull_request:
     paths:
-      - '**/*.md'
-  push:
-    paths:
+      - 'website/**'
       - '**/*.md'
 
 jobs:
-  markdownlint:
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+  lint-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -67,3 +64,21 @@ jobs:
           else
             echo "No markdown files changed, skipping lint."
           fi
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          run_install: false
+
+      - name: Enable corepack
+        working-directory: website
+        run: npm i -g --force corepack && corepack enable
+
+      - name: Install dependencies
+        working-directory: website
+        run: pnpm install
+
+      - name: Build website
+        working-directory: website
+        run: pnpm build

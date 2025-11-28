@@ -17,34 +17,49 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.converter;
+package org.apache.fesod.sheet.model;
 
-import java.io.File;
-import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
-import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
-import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
-import org.apache.fesod.sheet.converters.string.StringImageConverter;
 
 /**
- * @deprecated Use {@link org.apache.fesod.sheet.model.ImageData} instead.
- *             This class has been moved to the model package.
+ * Simple data model for basic read/write operations.
+ * Consolidated from various feature-specific packages.
  */
-@Deprecated
 @Getter
 @Setter
 @EqualsAndHashCode
-@ContentRowHeight(500)
-@ColumnWidth(500 / 8)
-public class ImageData {
-    private File file;
-    private InputStream inputStream;
+public class SimpleData {
+    @ExcelProperty("姓名")
+    private String name;
 
-    @ExcelProperty(converter = StringImageConverter.class)
-    private String string;
+    @ExcelProperty("数字")
+    private Double number;
 
-    private byte[] byteArray;
+    @ExcelProperty("整数")
+    private Integer integer;
+
+    public SimpleData() {}
+
+    public SimpleData(String name) {
+        this.name = name;
+    }
+
+    public SimpleData(String name, Double number) {
+        this.name = name;
+        this.number = number;
+    }
+
+    public SimpleData(String name, Double number, Integer integer) {
+        this.name = name;
+        this.number = number;
+        this.integer = integer;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleData{" + "name='" + name + '\'' + ", number=" + number + ", integer=" + integer + '}';
+    }
 }

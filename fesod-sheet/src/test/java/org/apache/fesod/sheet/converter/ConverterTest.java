@@ -29,8 +29,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 /**
- *
+ * @deprecated Use {@link org.apache.fesod.sheet.unit.converter.ConverterUnitTest} instead.
+ *             The tests have been moved to the unit test package with enhanced coverage.
  */
+@Deprecated
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class ConverterTest {
 

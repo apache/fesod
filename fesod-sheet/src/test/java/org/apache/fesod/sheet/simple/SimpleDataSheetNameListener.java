@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Assertions;
 /**
  *
  */
+@Deprecated
 @Slf4j
 public class SimpleDataSheetNameListener extends AnalysisEventListener<SimpleData> {
     List<SimpleData> list = new ArrayList<SimpleData>();

@@ -32,8 +32,12 @@ import org.junit.jupiter.api.Assertions;
 /**
  * Define an AnalysisEventListener to handler the Analysis event
  *
+ * @deprecated Use {@link org.apache.fesod.sheet.testkit.listeners.CollectingReadListener} instead.
+ *             This class mixes data collection with assertions, which violates single responsibility.
+ *             See {@link SimpleReadWriteTest} for the refactored approach.
  *
  */
+@Deprecated
 @Slf4j
 public class SimpleDataListener extends AnalysisEventListener<SimpleData> {
 

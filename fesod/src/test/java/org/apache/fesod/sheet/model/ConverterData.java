@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.converter;
+package org.apache.fesod.sheet.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,18 +27,30 @@ import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
+import org.apache.fesod.sheet.metadata.data.CellData;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
+import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.util.TestUtil;
 
 /**
- * @deprecated Use {@link org.apache.fesod.sheet.model.ConverterData} instead.
- *             This class has been consolidated into a unified model.
+ * Unified data model for converter tests.
+ * Consolidates the previous ConverterReadData and ConverterWriteData classes.
+ *
+ * <p>This class uses a generic CellData type to support both read and write operations.
+ * For write operations, use {@link WriteCellData}; for read operations, the framework
+ * will populate {@link ReadCellData}.</p>
+ *
+ * @see org.apache.fesod.sheet.converter.ConverterReadData (deprecated)
+ * @see org.apache.fesod.sheet.converter.ConverterWriteData (deprecated)
  */
-@Deprecated
 @Getter
 @Setter
-@EqualsAndHashCode
-public class ConverterReadData {
+@EqualsAndHashCode(exclude = {"cellData"}) // Exclude cellData to avoid StackOverflow in hashCode
+@ToString(exclude = {"cellData"})
+public class ConverterData {
+
     @ExcelProperty("日期")
     private Date date;
 
@@ -58,7 +70,7 @@ public class ConverterReadData {
     private BigInteger bigInteger;
 
     @ExcelProperty("长整型")
-    private long longData;
+    private Long longData;
 
     @ExcelProperty("整型")
     private Integer integerData;
@@ -70,7 +82,7 @@ public class ConverterReadData {
     private Byte byteData;
 
     @ExcelProperty("双精度浮点型")
-    private double doubleData;
+    private Double doubleData;
 
     @ExcelProperty("浮点型")
     private Float floatData;
@@ -79,5 +91,35 @@ public class ConverterReadData {
     private String string;
 
     @ExcelProperty("自定义")
-    private ReadCellData<?> cellData;
+    private CellData<?> cellData;
+
+    /**
+     * Default constructor.
+     */
+    public ConverterData() {}
+
+    /**
+     * Creates a ConverterData instance with all standard test values.
+     * Useful for write tests.
+     *
+     * @return a fully populated ConverterData instance
+     */
+    public static ConverterData createTestData() {
+        ConverterData data = new ConverterData();
+        data.setDate(TestUtil.TEST_DATE);
+        data.setLocalDate(TestUtil.TEST_LOCAL_DATE);
+        data.setLocalDateTime(TestUtil.TEST_LOCAL_DATE_TIME);
+        data.setBooleanData(Boolean.TRUE);
+        data.setBigDecimal(BigDecimal.ONE);
+        data.setBigInteger(BigInteger.ONE);
+        data.setLongData(1L);
+        data.setIntegerData(1);
+        data.setShortData((short) 1);
+        data.setByteData((byte) 1);
+        data.setDoubleData(1.0);
+        data.setFloatData(1.0f);
+        data.setString("测试");
+        data.setCellData(new WriteCellData<>("自定义"));
+        return data;
+    }
 }

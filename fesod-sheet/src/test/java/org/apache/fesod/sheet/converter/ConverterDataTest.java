@@ -36,8 +36,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 /**
+ * @deprecated Use {@link ConverterIntegrationTest} instead. This class uses the legacy pattern
+ *             with custom listeners containing embedded assertions. The new test uses
+ *             parameterized tests with {@link org.apache.fesod.sheet.testkit.base.AbstractExcelTest}.
  *
  */
+@Deprecated
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class ConverterDataTest {
 

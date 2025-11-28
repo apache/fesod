@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.converter;
+package org.apache.fesod.sheet.model;
 
 import java.io.File;
 import java.io.InputStream;
@@ -30,21 +30,41 @@ import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.converters.string.StringImageConverter;
 
 /**
- * @deprecated Use {@link org.apache.fesod.sheet.model.ImageData} instead.
- *             This class has been moved to the model package.
+ * Data model for image write tests.
+ * Images can be specified as File, InputStream, String (path), or byte array.
+ *
+ * <p>Note: Image data can only be written to Excel formats (XLSX, XLS),
+ * not CSV. The InputStream should be closed after writing.</p>
+ *
+ * @see org.apache.fesod.sheet.converter.ImageData (deprecated)
  */
-@Deprecated
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"inputStream"}) // Exclude InputStream to avoid hashCode issues
 @ContentRowHeight(500)
 @ColumnWidth(500 / 8)
 public class ImageData {
+
+    /**
+     * Image as a File reference.
+     */
     private File file;
+
+    /**
+     * Image as an InputStream.
+     * Note: The caller is responsible for closing this stream.
+     */
     private InputStream inputStream;
 
+    /**
+     * Image file path as a String.
+     * Uses StringImageConverter for conversion.
+     */
     @ExcelProperty(converter = StringImageConverter.class)
     private String string;
 
+    /**
+     * Image as raw byte array.
+     */
     private byte[] byteArray;
 }

@@ -31,8 +31,10 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 
 /**
- *
+ * @deprecated Use {@link org.apache.fesod.sheet.model.ConverterData} instead.
+ *             This class has been consolidated into a unified model.
  */
+@Deprecated
 @Getter
 @Setter
 @EqualsAndHashCode

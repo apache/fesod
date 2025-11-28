@@ -36,6 +36,11 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+/**
+ * @deprecated Use {@link org.apache.fesod.sheet.integration.converter.CustomConverterIntegrationTest} instead.
+ *             The tests have been refactored to use parameterized tests with format providers.
+ */
+@Deprecated
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class CustomConverterTest {
 

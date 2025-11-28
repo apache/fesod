@@ -31,8 +31,12 @@ import org.apache.fesod.sheet.util.TestUtil;
 import org.junit.jupiter.api.Assertions;
 
 /**
+ * @deprecated Use {@link org.apache.fesod.sheet.testkit.listeners.CollectingReadListener} instead.
+ *             This class mixes data collection with assertions, which violates single responsibility.
+ *             See {@link ConverterIntegrationTest} for the refactored approach.
  *
  */
+@Deprecated
 @Slf4j
 public class ConverterDataListener extends AnalysisEventListener<ConverterReadData> {
     private final List<ConverterReadData> list = new ArrayList<>();

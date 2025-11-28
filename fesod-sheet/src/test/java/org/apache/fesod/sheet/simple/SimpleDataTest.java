@@ -46,8 +46,12 @@ import org.junit.jupiter.api.TestMethodOrder;
  * <li>t1x: Synchronous reading tests</li>
  * <li>t2x: Specific feature tests (sheet name reading, pagination, etc.)</li>
  *
+ * @deprecated Use {@link SimpleReadWriteTest} instead. This class uses the legacy pattern
+ *             with custom listeners containing embedded assertions. The new test uses
+ *             parameterized tests with {@link org.apache.fesod.sheet.testkit.base.AbstractExcelTest}.
  *
  */
+@Deprecated
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class SimpleDataTest {

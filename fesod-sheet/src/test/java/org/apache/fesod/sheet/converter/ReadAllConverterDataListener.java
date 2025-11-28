@@ -34,8 +34,12 @@ import org.apache.fesod.sheet.util.DateUtils;
 import org.junit.jupiter.api.Assertions;
 
 /**
+ * @deprecated Use {@link org.apache.fesod.sheet.testkit.listeners.CollectingReadListener} instead.
+ *             This class mixes data collection with assertions, which violates single responsibility.
+ *             See {@link ConverterIntegrationTest} for the refactored approach.
  *
  */
+@Deprecated
 @Slf4j
 public class ReadAllConverterDataListener extends AnalysisEventListener<ReadAllConverterData> {
     List<ReadAllConverterData> list = new ArrayList<ReadAllConverterData>();

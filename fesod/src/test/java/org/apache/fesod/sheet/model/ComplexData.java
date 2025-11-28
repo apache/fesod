@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.converter;
+package org.apache.fesod.sheet.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,17 +28,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
-import org.apache.fesod.sheet.metadata.data.ReadCellData;
 
 /**
- * @deprecated Use {@link org.apache.fesod.sheet.model.ConverterData} instead.
- *             This class has been consolidated into a unified model.
+ * Complex data model for testing various data type conversions.
+ * Consolidated from converter tests.
  */
-@Deprecated
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ConverterReadData {
+public class ComplexData {
     @ExcelProperty("日期")
     private Date date;
 
@@ -78,6 +76,30 @@ public class ConverterReadData {
     @ExcelProperty("字符串")
     private String string;
 
-    @ExcelProperty("自定义")
-    private ReadCellData<?> cellData;
+    public ComplexData() {}
+
+    public ComplexData(String string, Date date, Double doubleData, Boolean booleanData) {
+        this.string = string;
+        this.date = date;
+        this.doubleData = doubleData;
+        this.booleanData = booleanData;
+    }
+
+    @Override
+    public String toString() {
+        return "ComplexData{" + "date="
+                + date + ", localDate="
+                + localDate + ", localDateTime="
+                + localDateTime + ", booleanData="
+                + booleanData + ", bigDecimal="
+                + bigDecimal + ", bigInteger="
+                + bigInteger + ", longData="
+                + longData + ", integerData="
+                + integerData + ", shortData="
+                + shortData + ", byteData="
+                + byteData + ", doubleData="
+                + doubleData + ", floatData="
+                + floatData + ", string='"
+                + string + '\'' + '}';
+    }
 }

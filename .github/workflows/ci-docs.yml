@@ -21,55 +21,24 @@ on:
   pull_request:
     paths:
       - 'website/**'
-      - '**/*.md'
 
 jobs:
-  lint-and-build:
+  build-and-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install markdownlint-cli2
-        run: npm install -g markdownlint-cli2
-
-      - name: Run markdownlint
-        id: lint
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED_MD=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...${{ github.event.pull_request.head.ref }} | grep -E '\.md$' || true)
-          else
-            CHANGED_MD=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E '\.md$' || true)
-          fi
-          if [ -n "$CHANGED_MD" ]; then
-            markdownlint-cli2 "$CHANGED_MD" --config website/.markdownlint-cli2.jsonc > lint-result.txt || true
-            if [ -s lint-result.txt ]; then
-              echo "Lint failed."
-              # Output non-compliant file contents to comment-body.txt
-              for file in $CHANGED_MD; do
-                echo "\n---\n**$file Content:**\n" >> comment-body.txt
-                echo '\n```markdown' >> comment-body.txt
-                cat "$file" >> comment-body.txt
-                echo '\n```' >> comment-body.txt
-              done
-              echo "\n---\n**Lint Results:**\n" >> comment-body.txt
-              cat lint-result.txt >> comment-body.txt
-              exit 1
-            fi
-          else
-            echo "No markdown files changed, skipping lint."
-          fi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 8
           run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Enable corepack
         working-directory: website
@@ -82,3 +51,9 @@ jobs:
       - name: Build website
         working-directory: website
         run: pnpm build
+
+      - name: Lint markdown files
+        uses: DavidAnson/markdownlint-cli2-action@992badcdf24e3b8eb7e87ff9287fe931bcb00c6e
+        with:
+          globs: 'website/**/*.md'
+          config: 'website/.markdownlint-cli2.jsonc'

@@ -26,5 +26,9 @@
   "sidebar.docs.category.fesod-sheet": {
     "message": "Fesod Sheet",
     "description": "The label for category fesod-sheet in sidebar docs"
+  },
+  "sidebar.docs.category.migration": {
+    "message": "Migration",
+    "description": "The label for category migration in sidebar docs"
   }
 }

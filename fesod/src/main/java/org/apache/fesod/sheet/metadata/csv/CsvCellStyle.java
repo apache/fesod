@@ -19,6 +19,7 @@
 
 package org.apache.fesod.sheet.metadata.csv;
 
+import java.util.EnumMap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,8 +33,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
-
-import java.util.EnumMap;
 
 /**
  * csv cell style

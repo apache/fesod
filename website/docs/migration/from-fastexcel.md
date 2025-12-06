@@ -44,6 +44,7 @@ Replace your existing dependency with Apache Fesod (Incubating):
 | **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod | 1.3.0+ |
 
 **Maven:**
+
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
@@ -53,6 +54,7 @@ Replace your existing dependency with Apache Fesod (Incubating):
 ```
 
 **Gradle:**
+
 ```gradle
 implementation 'org.apache.fesod:fesod:1.3.0'
 ```
@@ -101,23 +103,27 @@ Replace deprecated entry point classes with FesodSheet.
 Utilize the deprecated alias classes for a phased migration approach.
 
 **Phase 1: Dependency Update Only**
+
 - Update Maven/Gradle dependency to Apache Fesod (Incubating)
 - Keep using FastExcel classes (now deprecated aliases)
 - Update package imports only
 - Run comprehensive tests to verify compatibility
 
 **Phase 2: Class Name Migration**
+
 - Progressively replace deprecated classes with FesodSheet
 - Use IDE refactoring tools for bulk renaming
 - Migrate module by module or feature by feature
 - Maintain thorough test coverage throughout
 
 **Phase 3: Cleanup**
+
 - Remove all references to deprecated classes
 - Resolve deprecation warnings
 - Update documentation and code comments
 
 **Benefits:**
+
 - Lower risk through incremental changes
 - Easier rollback if issues arise
 - Minimal disruption to ongoing development

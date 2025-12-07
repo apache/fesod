@@ -23,9 +23,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FastExcelApplication {
+public class FesodApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FastExcelApplication.class, args);
+        SpringApplication.run(FesodApplication.class, args);
     }
 }

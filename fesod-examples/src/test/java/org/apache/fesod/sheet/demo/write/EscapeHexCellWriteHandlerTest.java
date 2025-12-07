@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.write.handler.EscapeHexCellWriteHandler;
 import org.apache.poi.ss.usermodel.Cell;
@@ -57,7 +57,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_xB9f0_"));
 
         File file = tempDir.resolve("testEscapeHex.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -79,7 +79,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_xB9f0_"));
 
         File file = tempDir.resolve("testEscapeHex.xls").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .excelType(ExcelTypeEnum.XLS)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
@@ -101,7 +101,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_xB9f0_"));
 
         File file = tempDir.resolve("testEscapeHex.csv").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .excelType(ExcelTypeEnum.CSV)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
@@ -124,7 +124,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_xB9f0_ and _x1234_ and _xABCD_"));
 
         File file = tempDir.resolve("testMultipleHex.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -144,7 +144,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("normalString"));
 
         File file = tempDir.resolve("testNoHex.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -163,7 +163,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_x123_ _xABC_ _x12345_")); // Invalid patterns
 
         File file = tempDir.resolve("testPartialHex.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -183,7 +183,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_x1234_ _x123_ _xABCD_ _xGHIJ_"));
 
         File file = tempDir.resolve("testMixedHex.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -206,7 +206,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(data2);
 
         File file = tempDir.resolve("testEmptyNull.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -234,7 +234,7 @@ public class EscapeHexCellWriteHandlerTest {
         list.add(createDemoData("_x1a2B_ _XC3d4_ _x9F8e_"));
 
         File file = tempDir.resolve("testCaseInsensitive.xlsx").toFile();
-        FastExcel.write(file, DemoData.class)
+        FesodSheet.write(file, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
@@ -256,14 +256,14 @@ public class EscapeHexCellWriteHandlerTest {
 
         // Test xlsx
         File xlsxFile = tempDir.resolve("testFormats.xlsx").toFile();
-        FastExcel.write(xlsxFile, DemoData.class)
+        FesodSheet.write(xlsxFile, DemoData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
                 .doWrite(list);
 
         // Test xls
         File xlsFile = tempDir.resolve("testFormats.xls").toFile();
-        FastExcel.write(xlsFile, DemoData.class)
+        FesodSheet.write(xlsFile, DemoData.class)
                 .excelType(ExcelTypeEnum.XLS)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")
@@ -271,7 +271,7 @@ public class EscapeHexCellWriteHandlerTest {
 
         // Test csv
         File csvFile = tempDir.resolve("testFormats.csv").toFile();
-        FastExcel.write(csvFile, DemoData.class)
+        FesodSheet.write(csvFile, DemoData.class)
                 .excelType(ExcelTypeEnum.CSV)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("TestSheet")

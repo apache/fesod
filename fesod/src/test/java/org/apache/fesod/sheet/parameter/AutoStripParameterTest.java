@@ -26,7 +26,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
@@ -117,18 +117,18 @@ public class AutoStripParameterTest {
         simpleData.setName("string");
         demoList.add(simpleData);
 
-        try (ExcelWriter excelWriter = FastExcel.write(testFile, ParameterData.class)
+        try (ExcelWriter excelWriter = FesodSheet.write(testFile, ParameterData.class)
                 .excelType(excelType)
                 .autoTrim(autoTrim)
                 .autoStrip(autoStrip)
                 .build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet(sheetNameSpaces).build();
+            WriteSheet writeSheet = FesodSheet.writerSheet(sheetNameSpaces).build();
             excelWriter.write(demoList, writeSheet);
-            writeSheet = FastExcel.writerSheet(sheetNameFullWidthSpaces).build();
+            writeSheet = FesodSheet.writerSheet(sheetNameFullWidthSpaces).build();
             excelWriter.write(demoList, writeSheet);
         }
 
-        try (ExcelReader excelReader = FastExcel.read(testFile)
+        try (ExcelReader excelReader = FesodSheet.read(testFile)
                 .excelType(excelType)
                 .head(ParameterData.class)
                 .registerReadListenerIfNotNull(new AnalysisEventListener<ParameterData>() {
@@ -160,8 +160,8 @@ public class AutoStripParameterTest {
 
             // set sheet name
             excelReader.read(
-                    FastExcel.readSheet(sheetNameSpaces).build(),
-                    FastExcel.readSheet(sheetNameFullWidthSpaces).build());
+                    FesodSheet.readSheet(sheetNameSpaces).build(),
+                    FesodSheet.readSheet(sheetNameFullWidthSpaces).build());
         }
     }
 
@@ -183,14 +183,14 @@ public class AutoStripParameterTest {
         simpleData.setName(testContentFullWidthSpaces);
         demoList.add(simpleData);
 
-        FastExcel.write(testFile, ParameterData.class)
+        FesodSheet.write(testFile, ParameterData.class)
                 .excelType(excelType)
                 .autoTrim(autoTrim)
                 .autoStrip(autoStrip)
                 .sheet()
                 .doWrite(demoList);
 
-        List<ParameterData> dataList = FastExcel.read(testFile)
+        List<ParameterData> dataList = FesodSheet.read(testFile)
                 .excelType(excelType)
                 .head(ParameterData.class)
                 .autoTrim(autoTrim)

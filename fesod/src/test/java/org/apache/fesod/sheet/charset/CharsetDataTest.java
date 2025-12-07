@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
@@ -65,8 +65,8 @@ public class CharsetDataTest {
 
     @Test
     public void t02ReadAndWriteCsvError() {
-        FastExcel.write(fileCsvError, CharsetData.class).charset(GBK).sheet().doWrite(data());
-        FastExcel.read(fileCsvError, CharsetData.class, new ReadListener<CharsetData>() {
+        FesodSheet.write(fileCsvError, CharsetData.class).charset(GBK).sheet().doWrite(data());
+        FesodSheet.read(fileCsvError, CharsetData.class, new ReadListener<CharsetData>() {
 
                     private final List<CharsetData> dataList = Lists.newArrayList();
 
@@ -90,8 +90,8 @@ public class CharsetDataTest {
     }
 
     private void readAndWrite(File file, Charset charset) {
-        FastExcel.write(file, CharsetData.class).charset(charset).sheet().doWrite(data());
-        FastExcel.read(file, CharsetData.class, new ReadListener<CharsetData>() {
+        FesodSheet.write(file, CharsetData.class).charset(charset).sheet().doWrite(data());
+        FesodSheet.read(file, CharsetData.class, new ReadListener<CharsetData>() {
 
                     private final List<CharsetData> dataList = Lists.newArrayList();
 

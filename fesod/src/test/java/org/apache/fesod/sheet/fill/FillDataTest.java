@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.util.TestFileUtil;
@@ -155,7 +155,7 @@ public class FillDataTest {
         FillData fillData = new FillData();
         fillData.setName("Zhang San");
         fillData.setNumber(5.2);
-        FastExcel.write(file, FillData.class)
+        FesodSheet.write(file, FillData.class)
                 .withTemplate(template)
                 .sheet("Sheet2")
                 .doFill(fillData);
@@ -163,8 +163,8 @@ public class FillDataTest {
 
     private void compositeFill(File file, File template) {
         try (ExcelWriter excelWriter =
-                FastExcel.write(file).withTemplate(template).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(file).withTemplate(template).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
             FillConfig fillConfig = FillConfig.builder()
                     .direction(WriteDirectionEnum.HORIZONTAL)
@@ -180,7 +180,7 @@ public class FillDataTest {
             excelWriter.fill(map, writeSheet);
         }
 
-        List<Object> list = FastExcel.read(file)
+        List<Object> list = FesodSheet.read(file)
                 .ignoreEmptyRow(false)
                 .sheet()
                 .headRowNumber(0)
@@ -195,8 +195,8 @@ public class FillDataTest {
 
     private void horizontalFill(File file, File template) {
         try (ExcelWriter excelWriter =
-                FastExcel.write(file).withTemplate(template).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(file).withTemplate(template).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             FillConfig fillConfig = FillConfig.builder()
                     .direction(WriteDirectionEnum.HORIZONTAL)
                     .build();
@@ -208,7 +208,7 @@ public class FillDataTest {
             excelWriter.finish();
         }
 
-        List<Object> list = FastExcel.read(file).sheet().headRowNumber(0).doReadSync();
+        List<Object> list = FesodSheet.read(file).sheet().headRowNumber(0).doReadSync();
         Assertions.assertEquals(5L, list.size());
         Map<String, String> map0 = (Map<String, String>) list.get(0);
         Assertions.assertEquals("Zhang San", map0.get(2));
@@ -216,8 +216,8 @@ public class FillDataTest {
 
     private void complexFill(File file, File template) {
         try (ExcelWriter excelWriter =
-                FastExcel.write(file).withTemplate(template).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet()
+                FesodSheet.write(file).withTemplate(template).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet()
                     .registerWriteHandler(new LoopMergeStrategy(2, 0))
                     .build();
             FillConfig fillConfig =
@@ -229,7 +229,7 @@ public class FillDataTest {
             map.put("total", 1000);
             excelWriter.fill(map, writeSheet);
         }
-        List<Object> list = FastExcel.read(file).sheet().headRowNumber(3).doReadSync();
+        List<Object> list = FesodSheet.read(file).sheet().headRowNumber(3).doReadSync();
         Assertions.assertEquals(21L, list.size());
         Map<String, String> map19 = (Map<String, String>) list.get(19);
         Assertions.assertEquals("Zhang San", map19.get(0));
@@ -239,7 +239,7 @@ public class FillDataTest {
         FillData fillData = new FillData();
         fillData.setName("Zhang San");
         fillData.setNumber(5.2);
-        FastExcel.write(file, FillData.class).withTemplate(template).sheet().doFill(fillData);
+        FesodSheet.write(file, FillData.class).withTemplate(template).sheet().doFill(fillData);
     }
 
     private List<FillData> data() {

@@ -54,7 +54,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // Read file
-    Fesod.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 

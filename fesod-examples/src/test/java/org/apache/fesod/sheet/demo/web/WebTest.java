@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.ListUtils;
 import org.apache.fesod.sheet.util.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,11 +62,11 @@ public class WebTest {
         // Postman
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
-        // Here URLEncoder.encode can prevent Chinese character encoding issues, which is unrelated to FastExcel
+        // Here URLEncoder.encode can prevent Chinese character encoding issues, which is unrelated to Fesod
         String fileName = URLEncoder.encode("test", "UTF-8").replaceAll("\\+", "%20");
         response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
 
-        FastExcel.write(response.getOutputStream(), DownloadData.class)
+        FesodSheet.write(response.getOutputStream(), DownloadData.class)
                 .sheet("Template")
                 .doWrite(data());
     }
@@ -83,11 +83,11 @@ public class WebTest {
         try {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
-            // Here URLEncoder.encode can prevent Chinese character encoding issues, which is unrelated to FastExcel
+            // Here URLEncoder.encode can prevent Chinese character encoding issues, which is unrelated to Fesod
             String fileName = URLEncoder.encode("test", "UTF-8").replaceAll("\\+", "%20");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // Here we need to set not to close the stream
-            FastExcel.write(response.getOutputStream(), DownloadData.class)
+            FesodSheet.write(response.getOutputStream(), DownloadData.class)
                     .autoCloseStream(Boolean.FALSE)
                     .sheet("Template")
                     .doWrite(data());
@@ -115,7 +115,7 @@ public class WebTest {
     @PostMapping("upload")
     @ResponseBody
     public String upload(MultipartFile file) throws IOException {
-        FastExcel.read(file.getInputStream(), UploadData.class, new UploadDataListener(uploadDAO))
+        FesodSheet.read(file.getInputStream(), UploadData.class, new UploadDataListener(uploadDAO))
                 .sheet()
                 .doRead();
         return "success";

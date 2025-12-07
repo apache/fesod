@@ -1,6 +1,6 @@
 {
   "site.description": {
-    "message": "A high-performance and memory-efficient Java library for reading and writing Excel files, designed to simplify development and ensure reliability."
+    "message": "A high-performance and memory-efficient Java library for reading and writing spreadsheet files, designed to simplify development and ensure reliability."
   },
   "quickstart": {
     "message": "Get Start"
@@ -12,13 +12,13 @@
     "message": "High-performance"
   },
   "homepage.feature.quick.description": {
-    "message": "Focuses on performance optimization, capable of efficiently handling large-scale Excel data.\n Compared to some traditional Excel processing libraries, it can significantly reduce memory consumption."
+    "message": "Focuses on performance optimization, capable of efficiently handling large-scale spreadsheet data.\n Compared to some traditional spreadsheet processing libraries, it can significantly reduce memory consumption."
   },
   "homepage.feature.simple.title": {
     "message": "Simplicity and Ease of Use"
   },
   "homepage.feature.simple.description": {
-    "message": "The library offers a simple and intuitive API, allowing developers to easily integrate it into projects, whether for simple Excel operations or complex data processing."
+    "message": "The library offers a simple and intuitive API, allowing developers to easily integrate it into projects, whether for simple spreadsheet operations or complex data processing."
   },
   "homepage.feature.bigdata": {
     "message": "Stream Operations"

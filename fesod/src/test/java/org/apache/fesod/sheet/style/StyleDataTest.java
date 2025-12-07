@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.style;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 import org.apache.fesod.sheet.metadata.Head;
@@ -143,7 +143,7 @@ public class StyleDataTest {
                 return writeCellStyle;
             }
         };
-        FastExcel.write(fileVerticalCellStyleStrategy07, StyleData.class)
+        FesodSheet.write(fileVerticalCellStyleStrategy07, StyleData.class)
                 .registerWriteHandler(verticalCellStyleStrategy)
                 .sheet()
                 .doWrite(data());
@@ -185,7 +185,7 @@ public class StyleDataTest {
                 return writeCellStyle;
             }
         };
-        FastExcel.write(fileVerticalCellStyleStrategy207, StyleData.class)
+        FesodSheet.write(fileVerticalCellStyleStrategy207, StyleData.class)
                 .registerWriteHandler(verticalCellStyleStrategy)
                 .sheet()
                 .doWrite(data());
@@ -193,7 +193,7 @@ public class StyleDataTest {
 
     @Test
     public void t05LoopMergeStrategy() {
-        FastExcel.write(fileLoopMergeStrategy, StyleData.class)
+        FesodSheet.write(fileLoopMergeStrategy, StyleData.class)
                 .sheet()
                 .registerWriteHandler(new LoopMergeStrategy(2, 1))
                 .doWrite(data10());
@@ -221,14 +221,14 @@ public class StyleDataTest {
                 new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
 
         OnceAbsoluteMergeStrategy onceAbsoluteMergeStrategy = new OnceAbsoluteMergeStrategy(2, 2, 0, 1);
-        FastExcel.write(file, StyleData.class)
+        FesodSheet.write(file, StyleData.class)
                 .registerWriteHandler(simpleColumnWidthStyleStrategy)
                 .registerWriteHandler(simpleRowHeightStyleStrategy)
                 .registerWriteHandler(horizontalCellStyleStrategy)
                 .registerWriteHandler(onceAbsoluteMergeStrategy)
                 .sheet()
                 .doWrite(data());
-        FastExcel.read(file, StyleData.class, new StyleDataListener()).sheet().doRead();
+        FesodSheet.read(file, StyleData.class, new StyleDataListener()).sheet().doRead();
 
         Workbook workbook = WorkbookFactory.create(file);
         Sheet sheet = workbook.getSheetAt(0);

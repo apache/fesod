@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.poi.xssf.streaming.SXSSFCell;
@@ -67,7 +67,7 @@ public class LargeDataTest {
     @Test
     public void t01Read() throws Exception {
         long start = System.currentTimeMillis();
-        FastExcel.read(
+        FesodSheet.read(
                         TestFileUtil.getPath() + "large" + File.separator + "large07.xlsx",
                         LargeData.class,
                         new LargeDataListener())
@@ -80,8 +80,8 @@ public class LargeDataTest {
     @Test
     public void t02Fill() {
         try (ExcelWriter excelWriter =
-                FastExcel.write(fileFill07).withTemplate(template07).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileFill07).withTemplate(template07).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             for (int j = 0; j < 5000; j++) {
                 excelWriter.fill(data(), writeSheet);
                 log.info("{} fill success.", j);
@@ -93,8 +93,8 @@ public class LargeDataTest {
     public void t03ReadAndWriteCsv() {
         // write
         long start = System.currentTimeMillis();
-        try (ExcelWriter excelWriter = FastExcel.write(fileCsv).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+        try (ExcelWriter excelWriter = FesodSheet.write(fileCsv).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             for (int j = 0; j < 5000; j++) {
                 excelWriter.write(data(), writeSheet);
                 log.info("{} write success.", j);
@@ -104,7 +104,7 @@ public class LargeDataTest {
 
         //  read
         start = System.currentTimeMillis();
-        FastExcel.read(fileCsv, LargeData.class, new LargeDataListener())
+        FesodSheet.read(fileCsv, LargeData.class, new LargeDataListener())
                 .sheet()
                 .doRead();
         log.info("CSV large data total time spent:{}", System.currentTimeMillis() - start);
@@ -113,16 +113,16 @@ public class LargeDataTest {
     @Test
     public void t04Write() throws Exception {
         ExcelWriter excelWriter =
-                FastExcel.write(fileWriteTemp07, LargeData.class).build();
-        WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileWriteTemp07, LargeData.class).build();
+        WriteSheet writeSheet = FesodSheet.writerSheet().build();
         for (int j = 0; j < 2; j++) {
             excelWriter.write(data(), writeSheet);
         }
         excelWriter.finish();
 
         long start = System.currentTimeMillis();
-        excelWriter = FastExcel.write(fileWrite07, LargeData.class).build();
-        writeSheet = FastExcel.writerSheet().build();
+        excelWriter = FesodSheet.write(fileWrite07, LargeData.class).build();
+        writeSheet = FesodSheet.writerSheet().build();
         for (int j = 0; j < 5000; j++) {
             excelWriter.write(data(), writeSheet);
             log.info("{} write success.", j);

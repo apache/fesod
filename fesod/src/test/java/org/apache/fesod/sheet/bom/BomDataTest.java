@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
@@ -72,14 +72,14 @@ public class BomDataTest {
         if (charsetName != null) {
             charset = Charset.forName(charsetName);
         }
-        FastExcel.write(new FileOutputStream(file), BomData.class)
+        FesodSheet.write(new FileOutputStream(file), BomData.class)
                 .charset(charset)
                 .withBom(withBom)
                 .excelType(ExcelTypeEnum.CSV)
                 .sheet()
                 .doWrite(data());
 
-        FastExcel.read(file, BomData.class, new ReadListener<BomData>() {
+        FesodSheet.read(file, BomData.class, new ReadListener<BomData>() {
 
                     private final List<BomData> dataList = Lists.newArrayList();
 
@@ -108,7 +108,7 @@ public class BomDataTest {
     }
 
     private void readCsv(File file) {
-        FastExcel.read(file, BomData.class, new ReadListener<BomData>() {
+        FesodSheet.read(file, BomData.class, new ReadListener<BomData>() {
 
                     private final List<BomData> dataList = Lists.newArrayList();
 

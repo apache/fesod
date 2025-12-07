@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.util.ListUtils;
 import org.apache.fesod.sheet.util.MapUtils;
@@ -63,7 +63,7 @@ public class FillTest {
         FillData fillData = new FillData();
         fillData.setName("Zhang San");
         fillData.setNumber(5.2);
-        FastExcel.write(fileName).withTemplate(templateFileName).sheet().doFill(fillData);
+        FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(fillData);
 
         // Option 2: Fill based on a Map
         fileName = TestFileUtil.getPath() + "simpleFill" + System.currentTimeMillis() + ".xlsx";
@@ -71,7 +71,7 @@ public class FillTest {
         Map<String, Object> map = MapUtils.newHashMap();
         map.put("name", "Zhang San");
         map.put("number", 5.2);
-        FastExcel.write(fileName).withTemplate(templateFileName).sheet().doFill(map);
+        FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(map);
     }
 
     /**
@@ -92,13 +92,13 @@ public class FillTest {
         // Option 1: Load all data into memory at once and fill
         String fileName = TestFileUtil.getPath() + "listFill" + System.currentTimeMillis() + ".xlsx";
         // This will fill the first sheet, and the file stream will be automatically closed.
-        FastExcel.write(fileName).withTemplate(templateFileName).sheet().doFill(data());
+        FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(data());
 
         // Option 2: Fill in multiple passes, using file caching (saves memory)
         fileName = TestFileUtil.getPath() + "listFill" + System.currentTimeMillis() + ".xlsx";
         try (ExcelWriter excelWriter =
-                FastExcel.write(fileName).withTemplate(templateFileName).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileName).withTemplate(templateFileName).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             excelWriter.fill(data(), writeSheet);
             excelWriter.fill(data(), writeSheet);
         }
@@ -120,8 +120,8 @@ public class FillTest {
         String fileName = TestFileUtil.getPath() + "complexFill" + System.currentTimeMillis() + ".xlsx";
         // Option 1
         try (ExcelWriter excelWriter =
-                FastExcel.write(fileName).withTemplate(templateFileName).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileName).withTemplate(templateFileName).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             // Note: The forceNewRow parameter is used here. When writing a list, it will always create a new row, and
             // the data below will be shifted down. Default is false, which will use the next row if available,
             // otherwise create a new one.
@@ -160,8 +160,8 @@ public class FillTest {
 
         // Option 1
         try (ExcelWriter excelWriter =
-                FastExcel.write(fileName).withTemplate(templateFileName).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileName).withTemplate(templateFileName).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             // Directly write data
             excelWriter.fill(data(), writeSheet);
             excelWriter.fill(data(), writeSheet);
@@ -206,8 +206,8 @@ public class FillTest {
         String fileName = TestFileUtil.getPath() + "horizontalFill" + System.currentTimeMillis() + ".xlsx";
         // Option 1
         try (ExcelWriter excelWriter =
-                FastExcel.write(fileName).withTemplate(templateFileName).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileName).withTemplate(templateFileName).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             FillConfig fillConfig = FillConfig.builder()
                     .direction(WriteDirectionEnum.HORIZONTAL)
                     .build();
@@ -238,8 +238,8 @@ public class FillTest {
 
         // Option 1
         try (ExcelWriter excelWriter =
-                FastExcel.write(fileName).withTemplate(templateFileName).build()) {
-            WriteSheet writeSheet = FastExcel.writerSheet().build();
+                FesodSheet.write(fileName).withTemplate(templateFileName).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
             FillConfig fillConfig = FillConfig.builder()
                     .direction(WriteDirectionEnum.HORIZONTAL)
                     .build();
@@ -278,7 +278,7 @@ public class FillTest {
 
         // Fill the template with data.
         // The dates in the data will be formatted according to the template's settings.
-        FastExcel.write(fileName).withTemplate(templateFileName).sheet().doFill(data());
+        FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(data());
     }
 
     @Test
@@ -289,7 +289,7 @@ public class FillTest {
         FillData fillData = new FillData();
         fillData.setName("Zhang San");
         fillData.setNumber(5.2);
-        FastExcel.write(fileName)
+        FesodSheet.write(fileName)
                 .withTemplate(templateFileName)
                 .sheet()
                 .registerWriteHandler(new SheetWriteHandler() {

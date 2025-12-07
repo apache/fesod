@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.read.listener.ReadListener;
@@ -65,7 +65,7 @@ public class ExcelPropertyFormatTest {
         singleElementList.add(sample);
         String fileName =
                 tempDir.resolve(System.currentTimeMillis() + "_single.xlsx").toString();
-        FastExcel.write(fileName, FormatSample.class).sheet("UnitTest").doWrite(singleElementList);
+        FesodSheet.write(fileName, FormatSample.class).sheet("UnitTest").doWrite(singleElementList);
         try (FileInputStream fis = new FileInputStream(fileName);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row dataRow = workbook.getSheetAt(0).getRow(1);
@@ -94,7 +94,7 @@ public class ExcelPropertyFormatTest {
         sample.setFullDate(new Date());
         sample.setLocalDate(LocalDate.of(2025, 1, 2));
         String fileName = tempDir.resolve("chinese_pattern.xlsx").toString();
-        FastExcel.write(fileName, ChinesePatternSample.class)
+        FesodSheet.write(fileName, ChinesePatternSample.class)
                 .sheet("ChineseFormat")
                 .doWrite(Collections.singletonList(sample));
         try (FileInputStream fis = new FileInputStream(fileName);
@@ -131,7 +131,7 @@ public class ExcelPropertyFormatTest {
         s.setDateDash(LocalDate.of(2024, 12, 31));
         s.setDateTimeMinute(LocalDateTime.of(2025, 3, 4, 15, 20));
         String file = tempDir.resolve("multi_pattern.xlsx").toString();
-        FastExcel.write(file, MultiPatternSample.class).sheet("MultiFormat").doWrite(Collections.singletonList(s));
+        FesodSheet.write(file, MultiPatternSample.class).sheet("MultiFormat").doWrite(Collections.singletonList(s));
         try (FileInputStream fis = new FileInputStream(file);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row row = workbook.getSheetAt(0).getRow(1);
@@ -188,7 +188,7 @@ public class ExcelPropertyFormatTest {
     public void testNullDateFieldWritesBlank(@TempDir Path tempDir) throws IOException {
         NullDateSample sample = new NullDateSample();
         String file = tempDir.resolve("null_date.xlsx").toString();
-        FastExcel.write(file, NullDateSample.class).sheet("Null").doWrite(Collections.singletonList(sample));
+        FesodSheet.write(file, NullDateSample.class).sheet("Null").doWrite(Collections.singletonList(sample));
         try (FileInputStream fis = new FileInputStream(file);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row row = workbook.getSheetAt(0).getRow(1);

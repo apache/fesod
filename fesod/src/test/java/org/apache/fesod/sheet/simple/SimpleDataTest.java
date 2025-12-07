@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.TestFileUtil;
@@ -84,9 +84,11 @@ public class SimpleDataTest {
      * @param file file
      */
     private void readAndWrite(File file) {
-        FastExcel.write(file, SimpleData.class).sheet().doWrite(data());
+        FesodSheet.write(file, SimpleData.class).sheet().doWrite(data());
         // use a SimpleDataListener object to handle and check result
-        FastExcel.read(file, SimpleData.class, new SimpleDataListener()).sheet().doRead();
+        FesodSheet.read(file, SimpleData.class, new SimpleDataListener())
+                .sheet()
+                .doRead();
     }
 
     @Test
@@ -112,12 +114,12 @@ public class SimpleDataTest {
      * @throws Exception exception
      */
     private void readAndWriteInputStream(File file, ExcelTypeEnum excelTypeEnum) throws Exception {
-        FastExcel.write(new FileOutputStream(file), SimpleData.class)
+        FesodSheet.write(new FileOutputStream(file), SimpleData.class)
                 .excelType(excelTypeEnum)
                 .sheet()
                 .doWrite(data());
         // use a SimpleDataListener object to handle and check result
-        FastExcel.read(new FileInputStream(file), SimpleData.class, new SimpleDataListener())
+        FesodSheet.read(new FileInputStream(file), SimpleData.class, new SimpleDataListener())
                 .sheet()
                 .doRead();
     }
@@ -151,7 +153,7 @@ public class SimpleDataTest {
      */
     @Test
     public void t21SheetNameRead07() {
-        List<Map<Integer, Object>> list = FastExcel.read(
+        List<Map<Integer, Object>> list = FesodSheet.read(
                         TestFileUtil.readFile("simple" + File.separator + "simple07.xlsx"))
                 // set the sheet name to read
                 .sheet("simple")
@@ -164,7 +166,7 @@ public class SimpleDataTest {
      */
     @Test
     public void t22SheetNoRead07() {
-        List<Map<Integer, Object>> list = FastExcel.read(
+        List<Map<Integer, Object>> list = FesodSheet.read(
                         TestFileUtil.readFile("simple" + File.separator + "simple07.xlsx"))
                 // sheetNo begin with 0
                 .sheet(1)
@@ -183,7 +185,7 @@ public class SimpleDataTest {
     @Test
     public void t23PageReadListener07() {
         // Read the first 5 rows of an Excel file
-        FastExcel.read(
+        FesodSheet.read(
                         file07,
                         SimpleData.class,
                         new PageReadListener<SimpleData>(
@@ -206,7 +208,7 @@ public class SimpleDataTest {
      */
     private void synchronousRead(File file) {
         // Synchronous read file
-        List<Object> list = FastExcel.read(file).head(SimpleData.class).sheet().doReadSync();
+        List<Object> list = FesodSheet.read(file).head(SimpleData.class).sheet().doReadSync();
         Assertions.assertEquals(10, list.size());
         Assertions.assertInstanceOf(SimpleData.class, list.get(0));
         Assertions.assertEquals("姓名0", ((SimpleData) list.get(0)).getName());

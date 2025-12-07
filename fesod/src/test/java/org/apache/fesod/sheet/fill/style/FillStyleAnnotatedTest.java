@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.fill.style;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.fill.FillData;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.util.DateUtils;
@@ -209,7 +209,7 @@ public class FillStyleAnnotatedTest {
     }
 
     private void fill(File file, File template) throws Exception {
-        FastExcel.write(file, FillStyleAnnotatedData.class)
+        FesodSheet.write(file, FillStyleAnnotatedData.class)
                 .withTemplate(template)
                 .sheet()
                 .doFill(data());
@@ -339,7 +339,7 @@ public class FillStyleAnnotatedTest {
     }
 
     private void fillStyleHandler(File file, File template) throws Exception {
-        FastExcel.write(file, FillData.class)
+        FesodSheet.write(file, FillData.class)
                 .withTemplate(template)
                 .sheet()
                 .registerWriteHandler(new AbstractVerticalCellStyleStrategy() {

@@ -53,7 +53,7 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.test.skip>true</maven.test.skip>
         <commons-csv.version>1.11.0</commons-csv.version>
-        <poi.version>5.4.1</poi.version>
+        <poi.version>5.5.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>
         <commons-io.version>2.16.1</commons-io.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>

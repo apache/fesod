@@ -20,7 +20,6 @@
 package org.apache.fesod.sheet.write.metadata.fill;
 
 import java.util.List;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.enums.WriteTemplateAnalysisCellTypeEnum;
@@ -32,7 +31,6 @@ import org.apache.fesod.sheet.enums.WriteTemplateAnalysisCellTypeEnum;
  **/
 @Getter
 @Setter
-@EqualsAndHashCode
 public class AnalysisCell {
     private int columnIndex;
     private int rowIndex;

@@ -24,7 +24,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.simple.SimpleData;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
@@ -104,12 +104,12 @@ public class EncryptDataTest {
         log.info(
                 "file:{}, isStream:{}, excelType:{}, hasPassword:{}", file.getName(), isStream, excelType, hasPassword);
         ExcelWriterBuilder excelWriterBuilder = isStream
-                ? FastExcel.write(Files.newOutputStream(file.toPath()), EncryptData.class)
-                : FastExcel.write(file, EncryptData.class);
+                ? FesodSheet.write(Files.newOutputStream(file.toPath()), EncryptData.class)
+                : FesodSheet.write(file, EncryptData.class);
 
         ExcelReaderBuilder readerBuilder = isStream
-                ? FastExcel.read(Files.newInputStream(file.toPath()), EncryptData.class, new EncryptDataListener())
-                : FastExcel.read(file, EncryptData.class, new EncryptDataListener());
+                ? FesodSheet.read(Files.newInputStream(file.toPath()), EncryptData.class, new EncryptDataListener())
+                : FesodSheet.read(file, EncryptData.class, new EncryptDataListener());
         if (excelType != null) {
             excelWriterBuilder.excelType(excelType);
             readerBuilder.excelType(excelType);

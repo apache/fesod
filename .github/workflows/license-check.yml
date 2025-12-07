@@ -15,5 +15,14 @@
 # specific language governing permissions and limitations
 # under the License.
 
-lombok.toString.callSuper = CALL
-lombok.equalsAndHashCode.callSuper= CALL
+name: Check License Header
+
+on: [ push, pull_request ]
+
+jobs:
+  license:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check License Header
+        uses: korandoru/hawkeye@v6

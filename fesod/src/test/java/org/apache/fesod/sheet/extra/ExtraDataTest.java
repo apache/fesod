@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.extra;
 import com.alibaba.fastjson2.JSON;
 import java.io.File;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CellExtraTypeEnum;
 import org.apache.fesod.sheet.metadata.CellExtra;
@@ -61,7 +61,7 @@ public class ExtraDataTest {
 
     @Test
     public void t03Read() {
-        FastExcel.read(extraRelationships, ExtraData.class, new ReadListener() {
+        FesodSheet.read(extraRelationships, ExtraData.class, new ReadListener() {
                     @Override
                     public void invoke(Object data, AnalysisContext context) {}
 
@@ -93,7 +93,7 @@ public class ExtraDataTest {
     }
 
     private void read(File file) {
-        FastExcel.read(file, ExtraData.class, new ExtraDataListener())
+        FesodSheet.read(file, ExtraData.class, new ExtraDataListener())
                 .extraRead(CellExtraTypeEnum.COMMENT)
                 .extraRead(CellExtraTypeEnum.HYPERLINK)
                 .extraRead(CellExtraTypeEnum.MERGE)

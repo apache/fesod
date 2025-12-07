@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -67,7 +67,7 @@ public class DateFormatTest {
     @Test
     public void t03Read() {
         List<Map<Integer, String>> dataMap =
-                FastExcel.read(file07V2).headRowNumber(0).doReadAllSync();
+                FesodSheet.read(file07V2).headRowNumber(0).doReadAllSync();
         log.info("dataMap:{}", JSON.toJSONString(dataMap));
         Assertions.assertEquals("15:00", dataMap.get(0).get(0));
         Assertions.assertEquals("2023-1-01 00:00:00", dataMap.get(1).get(0));
@@ -79,7 +79,7 @@ public class DateFormatTest {
     }
 
     private void readCn(File file) {
-        List<DateFormatData> list = FastExcel.read(file, DateFormatData.class, null)
+        List<DateFormatData> list = FesodSheet.read(file, DateFormatData.class, null)
                 .locale(Locale.CHINA)
                 .sheet()
                 .doReadSync();
@@ -104,7 +104,7 @@ public class DateFormatTest {
     }
 
     private void readUs(File file) {
-        List<DateFormatData> list = FastExcel.read(file, DateFormatData.class, null)
+        List<DateFormatData> list = FesodSheet.read(file, DateFormatData.class, null)
                 .locale(Locale.US)
                 .sheet()
                 .doReadSync();

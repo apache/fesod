@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.TestFileUtil;
@@ -60,14 +60,14 @@ public class DateWindowingTest {
     @Test
     void test03WriteAndRead() {
         // writing a file
-        FastExcel.write(file03DateWindowing1900, ParameterData.class)
+        FesodSheet.write(file03DateWindowing1900, ParameterData.class)
                 .excelType(ExcelTypeEnum.XLS)
                 .use1904windowing(Boolean.FALSE)
                 .sheet()
                 .doWrite(data());
 
         // not support setting actual file to true.
-        FastExcel.write(file03DateWindowing1904, ParameterData.class)
+        FesodSheet.write(file03DateWindowing1904, ParameterData.class)
                 .excelType(ExcelTypeEnum.XLS)
                 .use1904windowing(Boolean.TRUE)
                 .sheet()
@@ -75,26 +75,26 @@ public class DateWindowingTest {
 
         // reading a file
         Assertions.assertThrows(ExcelAnalysisException.class, () -> {
-            FastExcel.read(file03DateWindowing1904, new DateWindowingListener(Boolean.TRUE))
+            FesodSheet.read(file03DateWindowing1904, new DateWindowingListener(Boolean.TRUE))
                     .excelType(ExcelTypeEnum.XLS)
                     .head(ParameterData.class)
                     .doReadAllSync();
         });
-        FastExcel.read(file03DateWindowing1900, new DateWindowingListener(Boolean.FALSE))
+        FesodSheet.read(file03DateWindowing1900, new DateWindowingListener(Boolean.FALSE))
                 .excelType(ExcelTypeEnum.XLS)
                 .use1904windowing(Boolean.FALSE)
                 .head(ParameterData.class)
                 .doReadAllSync();
-        FastExcel.read(file03DateWindowing1904, new DateWindowingListener(Boolean.TRUE))
+        FesodSheet.read(file03DateWindowing1904, new DateWindowingListener(Boolean.TRUE))
                 .excelType(ExcelTypeEnum.XLS)
                 .use1904windowing(Boolean.TRUE)
                 .head(ParameterData.class)
                 .doReadAllSync();
-        FastExcel.read(file03DateWindowing1900Exists, new DateWindowingListener(Boolean.FALSE))
+        FesodSheet.read(file03DateWindowing1900Exists, new DateWindowingListener(Boolean.FALSE))
                 .excelType(ExcelTypeEnum.XLS)
                 .head(ParameterData.class)
                 .doReadAllSync();
-        FastExcel.read(file03DateWindowing1904Exists, new DateWindowingListener(Boolean.TRUE))
+        FesodSheet.read(file03DateWindowing1904Exists, new DateWindowingListener(Boolean.TRUE))
                 .excelType(ExcelTypeEnum.XLS)
                 .head(ParameterData.class)
                 .doReadAllSync();
@@ -103,23 +103,23 @@ public class DateWindowingTest {
     @Test
     void test07WriteAndRead() {
         // writing a file
-        FastExcel.write(file07DateWindowing1900, ParameterData.class)
+        FesodSheet.write(file07DateWindowing1900, ParameterData.class)
                 .excelType(ExcelTypeEnum.XLSX)
                 .use1904windowing(Boolean.FALSE)
                 .sheet()
                 .doWrite(data());
-        FastExcel.write(file07DateWindowing1904, ParameterData.class)
+        FesodSheet.write(file07DateWindowing1904, ParameterData.class)
                 .excelType(ExcelTypeEnum.XLSX)
                 .use1904windowing(Boolean.TRUE)
                 .sheet()
                 .doWrite(data());
 
         // reading a file
-        FastExcel.read(file07DateWindowing1900, new DateWindowingListener(Boolean.FALSE))
+        FesodSheet.read(file07DateWindowing1900, new DateWindowingListener(Boolean.FALSE))
                 .excelType(ExcelTypeEnum.XLSX)
                 .head(ParameterData.class)
                 .doReadAllSync();
-        FastExcel.read(file07DateWindowing1904, new DateWindowingListener(Boolean.TRUE))
+        FesodSheet.read(file07DateWindowing1904, new DateWindowingListener(Boolean.TRUE))
                 .excelType(ExcelTypeEnum.XLSX)
                 .head(ParameterData.class)
                 .doReadAllSync();
@@ -128,35 +128,35 @@ public class DateWindowingTest {
     @Test
     void testCsvWriteAndRead() {
         // writing a file
-        FastExcel.write(fileCsvDateWindowing1900, ParameterData.class)
+        FesodSheet.write(fileCsvDateWindowing1900, ParameterData.class)
                 .excelType(ExcelTypeEnum.CSV)
                 .use1904windowing(Boolean.FALSE)
                 .sheet()
                 .doWrite(data());
-        FastExcel.write(fileCsvDateWindowing1904, ParameterData.class)
+        FesodSheet.write(fileCsvDateWindowing1904, ParameterData.class)
                 .excelType(ExcelTypeEnum.CSV)
                 .use1904windowing(Boolean.TRUE)
                 .sheet()
                 .doWrite(data());
 
         // reading a file
-        FastExcel.read(fileCsvDateWindowing1900, new DateWindowingListener(Boolean.FALSE))
+        FesodSheet.read(fileCsvDateWindowing1900, new DateWindowingListener(Boolean.FALSE))
                 .excelType(ExcelTypeEnum.CSV)
                 .use1904windowing(Boolean.FALSE)
                 .head(ParameterData.class)
                 .doReadAllSync();
         Assertions.assertThrows(ExcelAnalysisException.class, () -> {
-            FastExcel.read(fileCsvDateWindowing1904, new DateWindowingListener(Boolean.TRUE))
+            FesodSheet.read(fileCsvDateWindowing1904, new DateWindowingListener(Boolean.TRUE))
                     .excelType(ExcelTypeEnum.CSV)
                     .head(ParameterData.class)
                     .doReadAllSync();
         });
-        FastExcel.read(fileCsvDateWindowing1904, new DateWindowingListener(Boolean.TRUE))
+        FesodSheet.read(fileCsvDateWindowing1904, new DateWindowingListener(Boolean.TRUE))
                 .excelType(ExcelTypeEnum.CSV)
                 .use1904windowing(Boolean.TRUE)
                 .head(ParameterData.class)
                 .doReadAllSync();
-        FastExcel.read(fileCsvDateWindowing1904, new DateWindowingListener(Boolean.FALSE))
+        FesodSheet.read(fileCsvDateWindowing1904, new DateWindowingListener(Boolean.FALSE))
                 .excelType(ExcelTypeEnum.CSV)
                 .head(ParameterData.class)
                 .doReadAllSync();

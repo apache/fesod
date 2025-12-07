@@ -20,8 +20,18 @@ name: Java CI
 on:
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'website/**'
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'website/**'
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
 
 permissions:
   checks: write
@@ -32,8 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Check License Header
-        uses: korandoru/hawkeye@v6
       - name: Cache Local Maven Repository
         uses: actions/cache@v4
         with:

@@ -21,7 +21,7 @@ package org.apache.fesod.sheet.demo.write;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ public class WriteWithColorTest {
     @Test
     public void write() {
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        FastExcel.write(fileName, ColorDemoData.class).sheet("模板").doWrite(this::data);
+        FesodSheet.write(fileName, ColorDemoData.class).sheet("模板").doWrite(this::data);
         System.out.println(fileName);
     }
 

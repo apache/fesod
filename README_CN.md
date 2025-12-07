@@ -38,16 +38,16 @@
 
 ## 简介
 
-**Apache Fesod (Incubating)** 是一个高性能、内存高效的 Java 库，用于读写 Excel 文件，旨在简化开发并确保可靠性。
+**Apache Fesod (Incubating)** 是一个高性能、内存高效的 Java 库，用于读写电子表格文件，旨在简化开发并确保可靠性。
 
-Apache Fesod (Incubating) 可以为开发者和企业提供极大的自由度和灵活性。我们计划在未来引入更多新功能，以持续提升用户体验和工具可用性。Apache Fesod (Incubating) 致力于成为您处理 Excel 文件的最佳选择。
+Apache Fesod (Incubating) 可以为开发者和企业提供极大的自由度和灵活性。我们计划在未来引入更多新功能，以持续提升用户体验和工具可用性。Apache Fesod (Incubating) 致力于成为您处理电子表格文件的最佳选择。
 
 名称 fesod（发音为 `/ˈfɛsɒd/`），是 "fast easy spreadsheet and other documents"（快速简单的电子表格和其他文档）的首字母缩写，表达了项目的起源、背景和愿景。
 
 ### 特性
 
-- **高性能读写**：Apache Fesod (Incubating) 专注于性能优化，能够高效处理大规模 Excel 数据。与一些传统的 Excel 处理库相比，它可以显著减少内存消耗。
-- **简单易用**：该库提供了简单直观的 API，使开发者能够轻松将其集成到项目中，无论是简单的 Excel 操作还是复杂的数据处理。
+- **高性能读写**：Apache Fesod (Incubating) 专注于性能优化，能够高效处理大规模电子表格数据。与一些传统的电子表格处理库相比，它可以显著减少内存消耗。
+- **简单易用**：该库提供了简单直观的 API，使开发者能够轻松将其集成到项目中，无论是简单的电子表格操作还是复杂的数据处理。
 - **流式操作**：Apache Fesod (Incubating) 支持流式读取，最大程度地减少一次性加载大量数据的问题。这一设计在处理数十万甚至数百万行数据时尤其重要。
 
 ## 安装
@@ -85,7 +85,7 @@ dependencies {
 
 ### 读取
 
-以下是读取 Excel 文档的示例：
+以下是读取电子表格文档的示例：
 
 ```java
 // 实现 ReadListener 接口以设置读取数据的操作
@@ -104,14 +104,14 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
-    // 读取 Excel 文件
-    Fesod.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    // 读取电子表格文件
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
 ### 写入
 
-以下是创建 Excel 文档的简单示例：
+以下是创建电子表格文档的简单示例：
 
 ```java
 // 示例数据类
@@ -146,7 +146,7 @@ private static List<DemoData> data() {
 public static void main(String[] args) {
     String fileName = "demo.xlsx";
     // 创建一个名为 "Template" 的工作表并写入数据
-    Fesod.write(fileName, DemoData.class).sheet("Template").doWrite(data());
+    FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 }
 ```
 

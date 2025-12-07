@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.noncamel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -62,8 +62,8 @@ public class UnCamelDataTest {
     }
 
     private void readAndWrite(File file) {
-        FastExcel.write(file, UnCamelData.class).sheet().doWrite(data());
-        FastExcel.read(file, UnCamelData.class, new UnCamelDataListener())
+        FesodSheet.write(file, UnCamelData.class).sheet().doWrite(data());
+        FesodSheet.read(file, UnCamelData.class, new UnCamelDataListener())
                 .sheet()
                 .doRead();
     }

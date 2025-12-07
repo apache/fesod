@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -86,8 +86,8 @@ public class SortDataTest {
     }
 
     private void readAndWrite(File file) {
-        FastExcel.write(file, SortData.class).sheet().doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        FesodSheet.write(file, SortData.class).sheet().doWrite(data());
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals("column1", record.get(0));
@@ -97,12 +97,12 @@ public class SortDataTest {
         Assertions.assertEquals("column5", record.get(4));
         Assertions.assertEquals("column6", record.get(5));
 
-        FastExcel.read(file, SortData.class, new SortDataListener()).sheet().doRead();
+        FesodSheet.read(file, SortData.class, new SortDataListener()).sheet().doRead();
     }
 
     private void readAndWriteNoHead(File file) {
-        FastExcel.write(file).head(head()).sheet().doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        FesodSheet.write(file).head(head()).sheet().doWrite(data());
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals("column1", record.get(0));
@@ -111,7 +111,7 @@ public class SortDataTest {
         Assertions.assertEquals("column4", record.get(3));
         Assertions.assertEquals("column5", record.get(4));
         Assertions.assertEquals("column6", record.get(5));
-        FastExcel.read(file, SortData.class, new SortDataListener()).sheet().doRead();
+        FesodSheet.read(file, SortData.class, new SortDataListener()).sheet().doRead();
     }
 
     private List<List<String>> head() {

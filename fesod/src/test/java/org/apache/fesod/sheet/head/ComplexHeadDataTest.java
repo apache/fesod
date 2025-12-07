@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.head;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -68,8 +68,8 @@ public class ComplexHeadDataTest {
     }
 
     private void readAndWrite(File file) {
-        FastExcel.write(file, ComplexHeadData.class).sheet().doWrite(data());
-        FastExcel.read(file, ComplexHeadData.class, new ComplexDataListener())
+        FesodSheet.write(file, ComplexHeadData.class).sheet().doWrite(data());
+        FesodSheet.read(file, ComplexHeadData.class, new ComplexDataListener())
                 .xlsxSAXParserFactoryName("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl")
                 .sheet()
                 .doRead();
@@ -91,11 +91,11 @@ public class ComplexHeadDataTest {
     }
 
     private void readAndWriteAutomaticMergeHead(File file) {
-        FastExcel.write(file, ComplexHeadData.class)
+        FesodSheet.write(file, ComplexHeadData.class)
                 .automaticMergeHead(Boolean.FALSE)
                 .sheet()
                 .doWrite(data());
-        FastExcel.read(file, ComplexHeadData.class, new ComplexDataListener())
+        FesodSheet.read(file, ComplexHeadData.class, new ComplexDataListener())
                 .sheet()
                 .doRead();
     }

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.junit.jupiter.api.Assertions;
@@ -98,10 +98,10 @@ public class ExceptionDataTest {
 
     private void readAndWriteExcelAnalysisStopSheetException(File file) throws Exception {
         try (ExcelWriter excelWriter =
-                FastExcel.write(file, ExceptionData.class).build()) {
+                FesodSheet.write(file, ExceptionData.class).build()) {
             for (int i = 0; i < 5; i++) {
                 String sheetName = "sheet" + i;
-                WriteSheet writeSheet = FastExcel.writerSheet(i, sheetName).build();
+                WriteSheet writeSheet = FesodSheet.writerSheet(i, sheetName).build();
                 List<ExceptionData> data = data(sheetName);
                 excelWriter.write(data, writeSheet);
             }
@@ -109,7 +109,7 @@ public class ExceptionDataTest {
 
         ExcelAnalysisStopSheetExceptionDataListener excelAnalysisStopSheetExceptionDataListener =
                 new ExcelAnalysisStopSheetExceptionDataListener();
-        FastExcel.read(file, ExceptionData.class, excelAnalysisStopSheetExceptionDataListener)
+        FesodSheet.read(file, ExceptionData.class, excelAnalysisStopSheetExceptionDataListener)
                 .doReadAll();
         Map<Integer, List<String>> dataMap = excelAnalysisStopSheetExceptionDataListener.getDataMap();
         Assertions.assertEquals(5, dataMap.size());
@@ -126,8 +126,10 @@ public class ExceptionDataTest {
     }
 
     private void readAndWriteException(File file) throws Exception {
-        FastExcel.write(new FileOutputStream(file), ExceptionData.class).sheet().doWrite(data());
-        ArithmeticException exception = Assertions.assertThrows(ArithmeticException.class, () -> FastExcel.read(
+        FesodSheet.write(new FileOutputStream(file), ExceptionData.class)
+                .sheet()
+                .doWrite(data());
+        ArithmeticException exception = Assertions.assertThrows(ArithmeticException.class, () -> FesodSheet.read(
                         new FileInputStream(file), ExceptionData.class, new ExceptionThrowDataListener())
                 .sheet()
                 .doRead());
@@ -135,8 +137,10 @@ public class ExceptionDataTest {
     }
 
     private void readAndWrite(File file) throws Exception {
-        FastExcel.write(new FileOutputStream(file), ExceptionData.class).sheet().doWrite(data());
-        FastExcel.read(new FileInputStream(file), ExceptionData.class, new ExceptionDataListener())
+        FesodSheet.write(new FileOutputStream(file), ExceptionData.class)
+                .sheet()
+                .doWrite(data());
+        FesodSheet.read(new FileInputStream(file), ExceptionData.class, new ExceptionDataListener())
                 .sheet()
                 .doRead();
     }

@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.hiddensheets;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
@@ -78,7 +78,7 @@ public class HiddenSheetsTest {
     }
 
     private void readHiddenList(File file) {
-        try (ExcelReader excelReader = FastExcel.read(file, HiddenSheetsData.class, new HiddenSheetsListener())
+        try (ExcelReader excelReader = FesodSheet.read(file, HiddenSheetsData.class, new HiddenSheetsListener())
                 .build()) {
             List<ReadSheet> allSheetList = excelReader.excelExecutor().sheetList();
             Assertions.assertEquals(
@@ -96,7 +96,7 @@ public class HiddenSheetsTest {
     }
 
     private void read(File file, Boolean ignoreHidden) {
-        try (ExcelReader excelReader = FastExcel.read(file, HiddenSheetsData.class, new HiddenSheetsListener())
+        try (ExcelReader excelReader = FesodSheet.read(file, HiddenSheetsData.class, new HiddenSheetsListener())
                 .ignoreHiddenSheet(ignoreHidden)
                 .build()) {
             List<ReadSheet> sheets = excelReader.excelExecutor().sheetList();
@@ -109,7 +109,7 @@ public class HiddenSheetsTest {
     }
 
     private void readAll(File file, Boolean ignoreHidden) {
-        List<HiddenSheetsData> dataList = FastExcel.read(file, HiddenSheetsData.class, new HiddenSheetsListener())
+        List<HiddenSheetsData> dataList = FesodSheet.read(file, HiddenSheetsData.class, new HiddenSheetsListener())
                 .ignoreHiddenSheet(ignoreHidden)
                 .doReadAllSync();
         if (Boolean.TRUE.equals(ignoreHidden)) {

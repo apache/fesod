@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -175,11 +175,11 @@ public class ExcludeOrIncludeDataTest {
         Set<Integer> excludeColumnIndexes = new HashSet<Integer>();
         excludeColumnIndexes.add(0);
         excludeColumnIndexes.add(3);
-        FastExcel.write(file, ExcludeOrIncludeData.class)
+        FesodSheet.write(file, ExcludeOrIncludeData.class)
                 .excludeColumnIndexes(excludeColumnIndexes)
                 .sheet()
                 .doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals(2, record.size());
@@ -192,11 +192,11 @@ public class ExcludeOrIncludeDataTest {
         excludeColumnFieldNames.add("column1");
         excludeColumnFieldNames.add("column3");
         excludeColumnFieldNames.add("column4");
-        FastExcel.write(file, ExcludeOrIncludeData.class)
+        FesodSheet.write(file, ExcludeOrIncludeData.class)
                 .excludeColumnFieldNames(excludeColumnFieldNames)
                 .sheet()
                 .doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals(1, record.size());
@@ -207,11 +207,11 @@ public class ExcludeOrIncludeDataTest {
         Set<Integer> includeColumnIndexes = new HashSet<Integer>();
         includeColumnIndexes.add(1);
         includeColumnIndexes.add(2);
-        FastExcel.write(file, ExcludeOrIncludeData.class)
+        FesodSheet.write(file, ExcludeOrIncludeData.class)
                 .includeColumnIndexes(includeColumnIndexes)
                 .sheet()
                 .doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals(2, record.size());
@@ -223,11 +223,11 @@ public class ExcludeOrIncludeDataTest {
         Set<String> includeColumnFieldNames = new HashSet<String>();
         includeColumnFieldNames.add("column2");
         includeColumnFieldNames.add("column3");
-        FastExcel.write(file, ExcludeOrIncludeData.class)
+        FesodSheet.write(file, ExcludeOrIncludeData.class)
                 .sheet()
                 .includeColumnFieldNames(includeColumnFieldNames)
                 .doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals(2, record.size());
@@ -241,12 +241,12 @@ public class ExcludeOrIncludeDataTest {
         includeColumnIndexes.add(1);
         includeColumnIndexes.add(2);
         includeColumnIndexes.add(0);
-        FastExcel.write(file, ExcludeOrIncludeData.class)
+        FesodSheet.write(file, ExcludeOrIncludeData.class)
                 .includeColumnIndexes(includeColumnIndexes)
                 .orderByIncludeColumn(true)
                 .sheet()
                 .doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals(4, record.size());
@@ -261,12 +261,12 @@ public class ExcludeOrIncludeDataTest {
         includeColumnFieldNames.add("column4");
         includeColumnFieldNames.add("column2");
         includeColumnFieldNames.add("column3");
-        FastExcel.write(file, ExcludeOrIncludeData.class)
+        FesodSheet.write(file, ExcludeOrIncludeData.class)
                 .includeColumnFieldNames(includeColumnFieldNames)
                 .orderByIncludeColumn(true)
                 .sheet()
                 .doWrite(data());
-        List<Map<Integer, String>> dataMap = FastExcel.read(file).sheet().doReadSync();
+        List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
         Assertions.assertEquals(3, record.size());

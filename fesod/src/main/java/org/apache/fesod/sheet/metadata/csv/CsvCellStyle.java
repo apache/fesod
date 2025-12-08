@@ -19,17 +19,20 @@
 
 package org.apache.fesod.sheet.metadata.csv;
 
+import java.util.EnumMap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellPropertyType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellUtil;
 
 /**
  * csv cell style
@@ -279,4 +282,12 @@ public class CsvCellStyle implements CellStyle {
     public boolean getShrinkToFit() {
         return false;
     }
+
+    @Override
+    public EnumMap<CellPropertyType, Object> getFormatProperties() {
+        return CellUtil.getFormatProperties(this);
+    }
+
+    @Override
+    public void invalidateCachedProperties() {}
 }

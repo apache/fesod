@@ -44,6 +44,7 @@ keywords: [fesod, 迁移, fastexcel, apache, excel, 升级]
 | **Apache Fesod (Incubating)** ✅    | org.apache.fesod | fesod      | 1.3.0+ |
 
 **Maven 配置:**
+
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
@@ -53,6 +54,7 @@ keywords: [fesod, 迁移, fastexcel, apache, excel, 升级]
 ```
 
 **Gradle 配置:**
+
 ```gradle
 implementation 'org.apache.fesod:fesod:1.3.0'
 ```
@@ -101,23 +103,27 @@ implementation 'org.apache.fesod:fesod:1.3.0'
 利用已废弃的别名类进行分阶段迁移。
 
 **阶段 1: 仅更新依赖**
+
 - 将 Maven/Gradle 依赖更新为 Apache Fesod (Incubating)
 - 继续使用 FastExcel 类(现为已废弃的别名)
 - 仅更新包导入
 - 运行全面测试以验证兼容性
 
 **阶段 2: 类名迁移**
+
 - 逐步将已废弃的类替换为 FesodSheet
 - 使用 IDE 重构工具进行批量重命名
 - 逐个模块或逐个功能进行迁移
 - 在整个过程中保持全面的测试覆盖
 
 **阶段 3: 清理**
+
 - 删除所有对已废弃类的引用
 - 解决废弃警告
 - 更新文档和代码注释
 
 **优势:**
+
 - 通过增量更改降低风险
 - 如果出现问题更容易回滚
 - 对正在进行的开发影响最小

@@ -184,6 +184,7 @@ The `headerMergeStrategy` parameter provides fine-grained control over how heade
 - **AUTO**: Automatic merging (default behavior for backward compatibility).
 
 **Example**:
+
 ```java
 FastExcel.write(fileName)
     .head(head)
@@ -193,6 +194,7 @@ FastExcel.write(fileName)
 ```
 
 **Note**: If `headerMergeStrategy` is not set, the behavior is determined by `automaticMergeHead`:
+
 - `automaticMergeHead == true` → `HeaderMergeStrategy.AUTO`
 - `automaticMergeHead == false` → `HeaderMergeStrategy.NONE`
 

@@ -184,6 +184,7 @@ WriteWorkbook  --|>  WriteBasicParameter
 - **AUTO**: 自动合并（默认行为，向后兼容）。
 
 **示例**:
+
 ```java
 FastExcel.write(fileName)
     .head(head)
@@ -193,6 +194,7 @@ FastExcel.write(fileName)
 ```
 
 **注意**: 如果未设置 `headerMergeStrategy`，则根据 `automaticMergeHead` 决定行为：
+
 - `automaticMergeHead == true` → `HeaderMergeStrategy.AUTO`
 - `automaticMergeHead == false` → `HeaderMergeStrategy.NONE`
 

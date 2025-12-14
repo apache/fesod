@@ -19,6 +19,9 @@
 
 package org.apache.fesod.sheet.demo.write;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,10 +30,6 @@ import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.converters.string.StringImageConverter;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 
 /**
  * 图片导出类

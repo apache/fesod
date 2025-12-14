@@ -109,7 +109,7 @@ public interface WriteContext {
      * Get outputStream
      *
      * @return
-     * @deprecated please us e{@link #writeWorkbookHolder()} ()}
+     * @deprecated please use {@link #writeWorkbookHolder()}
      */
     @Deprecated
     OutputStream getOutputStream();
@@ -118,7 +118,7 @@ public interface WriteContext {
      * Get workbook
      *
      * @return
-     * @deprecated please us e{@link #writeWorkbookHolder()} ()}
+     * @deprecated please use {@link #writeWorkbookHolder()}
      */
     @Deprecated
     Workbook getWorkbook();

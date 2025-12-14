@@ -37,7 +37,7 @@ import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
  *
  * <pre>
  *    1. Create a new empty Excel workbook, write the value to the stream after the value is filled.
- *    2. Edit existing Excel, write the original Excel file, or write it to other places.}
+ *    2. Edit existing Excel, write the original Excel file, or write it to other places.
  * </pre>
  *
  */

@@ -59,7 +59,7 @@ public @interface ExcelProperty {
     int index() default -1;
 
     /**
-     * Defines the sort order for an column.
+     * Defines the sort order for a column.
      *
      * priority: index &gt; order &gt; default sort
      *

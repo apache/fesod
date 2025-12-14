@@ -117,9 +117,9 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
     private Collection<String> includeColumnFieldNames;
 
     /**
-     * Data will be order by  {@link #includeColumnFieldNames} or  {@link #includeColumnIndexes}.
-     *
-     * default is false.
+     * Data will be ordered by {@link #includeColumnFieldNames} or {@link #includeColumnIndexes}.
+     * <p>
+     * Default is {@code false}.
      */
     private Boolean orderByIncludeColumn;
 

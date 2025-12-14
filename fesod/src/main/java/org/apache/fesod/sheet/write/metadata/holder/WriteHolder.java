@@ -76,11 +76,9 @@ public interface WriteHolder extends ConfigurationHolder {
     int relativeHeadRowIndex();
 
     /**
-     * Data will be order by  {@link #includeColumnFieldNames} or  {@link #includeColumnIndexes}.
+     * Data will be ordered by {@link #includeColumnFieldNames} or {@link #includeColumnIndexes}.
      *
-     * default is false.
-     *
-     * @return
+     * @return {@code true} to order by included column; default is {@code false}
      */
     boolean orderByIncludeColumn();
 

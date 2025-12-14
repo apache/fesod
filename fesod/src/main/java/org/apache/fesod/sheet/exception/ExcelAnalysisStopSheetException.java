@@ -23,13 +23,11 @@ package org.apache.fesod.sheet.exception;
  * Throw the exception when you need to stop
  * This exception will only stop the parsing of the current sheet. If you want to stop the entire excel parsing, please
  * use ExcelAnalysisStopException.
- *
+ * <p>
  * The org.apache.fesod.sheet.read.listener.ReadListener#doAfterAllAnalysed(org.apache.fesod.sheet.context.AnalysisContext) method
  * is called after the call is stopped.
  *
- *
  * @see ExcelAnalysisStopException
- * @since 3.3.4
  */
 public class ExcelAnalysisStopSheetException extends ExcelAnalysisException {
 

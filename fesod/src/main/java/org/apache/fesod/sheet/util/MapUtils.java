@@ -100,7 +100,6 @@ public class MapUtils {
      * @return a new, empty {@code LinkedHashMap} with enough capacity to hold {@code expectedSize}
      * entries without resizing
      * @throws IllegalArgumentException if {@code expectedSize} is negative
-     * @since 19.0
      */
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMapWithExpectedSize(int expectedSize) {
         return new LinkedHashMap<>(capacity(expectedSize));

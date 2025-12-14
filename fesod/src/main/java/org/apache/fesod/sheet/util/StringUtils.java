@@ -99,8 +99,6 @@ public class StringUtils {
      * @param cs the CharSequence to check, may be null
      * @return {@code true} if the CharSequence is
      * not empty and not null and not whitespace only
-     * @since 2.0
-     * @since 3.0 Changed signature from isNotBlank(String) to isNotBlank(CharSequence)
      */
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
@@ -125,7 +123,6 @@ public class StringUtils {
      * @param cs2 the second CharSequence, may be {@code null}
      * @return {@code true} if the CharSequences are equal (case-sensitive), or both {@code null}
      * @see Object#equals(Object)
-     * @since 3.0 Changed signature from equals(String, String) to equals(CharSequence, CharSequence)
      */
     public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
         if (cs1 == cs2) {
@@ -232,8 +229,6 @@ public class StringUtils {
      *
      * @param cs the CharSequence to check, may be null
      * @return {@code true} if only contains digits, and is non-null
-     * @since 3.0 Changed signature from isNumeric(String) to isNumeric(CharSequence)
-     * @since 3.0 Changed "" to return false and not true
      */
     public static boolean isNumeric(final CharSequence cs) {
         if (isEmpty(cs)) {

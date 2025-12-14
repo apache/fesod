@@ -50,8 +50,6 @@ public class ImageDataWithAnnotation {
     private byte[] byteArray;
     /**
      * 根据url导出
-     *
-     * @since 2.1.1
      */
     private URL url;
 }

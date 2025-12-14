@@ -33,7 +33,6 @@ import org.apache.fesod.sheet.util.IoUtils;
  * Url and image converter
  *
  *
- * @since 2.1.1
  */
 public class UrlImageConverter implements Converter<URL> {
     public static int urlConnectTimeout = 1000;

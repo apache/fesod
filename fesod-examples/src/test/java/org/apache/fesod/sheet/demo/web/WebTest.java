@@ -73,8 +73,6 @@ public class WebTest {
 
     /**
      * File download that returns JSON when failed (by default, returns an Excel with partial data when failed)
-     *
-     * @since 2.1.1
      */
     @GetMapping("downloadFailedUsingJson")
     public void downloadFailedUsingJson(HttpServletResponse response) throws IOException {

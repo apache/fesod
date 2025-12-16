@@ -2,6 +2,8 @@
 .vscode/
 */.settings/
 *.idea
+!.idea/icon.png
+!.idea/vcs.xml
 .DS_Store
 **/.iml*
 *.iml

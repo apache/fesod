@@ -41,14 +41,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Example of writing and filling data into Excel
- *
- * @since 2.1.1
  */
 public class FillTest {
     /**
      * Simplest example of filling data
-     *
-     * @since 2.1.1
      */
     @Test
     public void simpleFill() {
@@ -76,8 +72,6 @@ public class FillTest {
 
     /**
      * Example of filling a list
-     *
-     * @since 2.1.1
      */
     @Test
     public void listFill() {
@@ -106,8 +100,6 @@ public class FillTest {
 
     /**
      * Example of complex filling
-     *
-     * @since 2.1.1
      */
     @Test
     public void complexFill() {
@@ -144,8 +136,6 @@ public class FillTest {
      * Example of complex filling with large datasets
      * <p>
      * The solution here is to ensure that the list in the template is the last row, and then append a table. For Excel 2003, there is no solution other than increasing memory.
-     *
-     * @since 2.1.1
      */
     @Test
     public void complexFillWithTable() {
@@ -192,8 +182,6 @@ public class FillTest {
 
     /**
      * Example of horizontal filling
-     *
-     * @since 2.1.1
      */
     @Test
     public void horizontalFill() {
@@ -222,8 +210,6 @@ public class FillTest {
 
     /**
      * Example of composite filling with multiple lists
-     *
-     * @since 2.2.0-beta1
      */
     @Test
     public void compositeFill() {

@@ -37,15 +37,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Example of filling data into Excel templates.
- *
- *
- * @since 2.1.1
  */
 public class FillTempTest {
     /**
      * Simplest example of filling data.
-     *
-     * @since 2.1.1
      */
     @Test
     public void simpleFill() {
@@ -74,8 +69,6 @@ public class FillTempTest {
 
     /**
      * Example of filling a list of data.
-     *
-     * @since 2.1.1
      */
     @Test
     public void listFill() {
@@ -103,8 +96,6 @@ public class FillTempTest {
 
     /**
      * Example of complex data filling.
-     *
-     * @since 2.1.1
      */
     @Test
     public void complexFill() {
@@ -140,8 +131,6 @@ public class FillTempTest {
      * <p>
      * The solution here is to ensure the list in the template is the last row, then append a table.
      * Note: Excel 2003 format is not supported and requires more memory.
-     *
-     * @since 2.1.1
      */
     @Test
     public void complexFillWithTable() {
@@ -185,8 +174,6 @@ public class FillTempTest {
 
     /**
      * Example of horizontal data filling.
-     *
-     * @since 2.1.1
      */
     @Test
     public void horizontalFill() {
@@ -215,8 +202,6 @@ public class FillTempTest {
 
     /**
      * Example of composite data filling with multiple lists.
-     *
-     * @since 2.2.0-beta1
      */
     @Test
     public void compositeFill() {

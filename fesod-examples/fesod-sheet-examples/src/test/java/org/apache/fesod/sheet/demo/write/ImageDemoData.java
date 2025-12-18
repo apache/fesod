@@ -33,8 +33,6 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 
 /**
  * 图片导出类
- *
- *
  */
 @Getter
 @Setter
@@ -53,15 +51,11 @@ public class ImageDemoData {
     private byte[] byteArray;
     /**
      * 根据url导出
-     *
-     * @since 2.1.1
      */
     private URL url;
 
     /**
      * 根据文件导出 并设置导出的位置。
-     *
-     * @since 3.0.0-beta1
      */
     private WriteCellData<Void> writeCellDataFile;
 }

@@ -316,8 +316,6 @@ public class ReadTest {
      * 2. Since Fesod reads Excel files row by row by default, you need to create a callback listener for each row. Refer to {@link DemoExtraListener}.
      * <p>
      * 3. Directly read the file.
-     *
-     * @since 2.2.0-beat1
      */
     @Test
     public void extraRead() {
@@ -343,8 +341,6 @@ public class ReadTest {
      * 2. Since Fesod reads Excel files row by row by default, you need to create a callback listener for each row. Refer to {@link CellDataDemoHeadDataListener}.
      * <p>
      * 3. Directly read the file.
-     *
-     * @since 2.2.0-beat1
      */
     @Test
     public void cellDataRead() {

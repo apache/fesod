@@ -19,25 +19,18 @@
     under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.apache.fesod</groupId>
-        <artifactId>fesod-parent</artifactId>
-        <version>${revision}</version>
-    </parent>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
 
-    <artifactId>fesod-examples</artifactId>
-    <packaging>pom</packaging>
-    <name>Fesod Examples</name>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gpg.skip>true</gpg.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-    <modules>
-        <module>fesod-sheet-examples</module>
-    </modules>
-</project>
+    <!-- Reduce noise from POI -->
+    <logger name="org.apache.poi" level="WARN"/>
+</configuration>

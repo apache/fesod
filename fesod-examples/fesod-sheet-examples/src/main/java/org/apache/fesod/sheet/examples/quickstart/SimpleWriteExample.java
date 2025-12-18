@@ -1,0 +1,65 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.apache.fesod.sheet.examples.quickstart;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.examples.quickstart.data.DemoData;
+import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
+
+/**
+ * Simplest way to write an Excel file.
+ */
+public class SimpleWriteExample {
+
+    public static void main(String[] args) {
+        simpleWrite();
+    }
+
+    /**
+     * Simplest way to write
+     * <p>
+     * 1. Create an entity class corresponding to the Excel data structure. Refer to {@link DemoData}.
+     * <p>
+     * 2. Directly write.
+     */
+    public static void simpleWrite() {
+        // Write to system temp directory for output files
+        String fileName = ExampleFileUtil.getTempPath("demo" + System.currentTimeMillis() + ".xlsx");
+
+        // Specify the class to write, then write to the first sheet named "Template"
+        FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
+        System.out.println("Successfully wrote file: " + fileName);
+    }
+
+    private static List<DemoData> data() {
+        List<DemoData> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            DemoData data = new DemoData();
+            data.setString("String" + i);
+            data.setDate(new Date());
+            data.setDoubleData(0.56);
+            list.add(data);
+        }
+        return list;
+    }
+}

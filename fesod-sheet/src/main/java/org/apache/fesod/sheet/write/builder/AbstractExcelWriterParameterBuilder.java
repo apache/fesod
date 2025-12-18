@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.write.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.AbstractParameterBuilder;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
 import org.apache.fesod.sheet.write.metadata.WriteBasicParameter;
@@ -89,6 +90,18 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
+     * Set header merge strategy.
+     * If not set, the behavior is determined by {@link #automaticMergeHead} for backward compatibility.
+     *
+     * @param strategy Header merge strategy
+     * @return this
+     */
+    public T headerMergeStrategy(HeaderMergeStrategy strategy) {
+        parameter().setHeaderMergeStrategy(strategy);
+        return self();
+    }
+
+    /**
      * Ignore the custom columns.
      */
     public T excludeColumnIndexes(Collection<Integer> excludeColumnIndexes) {
@@ -142,12 +155,11 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Data will be order by  {@link #includeColumnFieldNames} or  {@link #includeColumnIndexes}.
+     * Data will be ordered by {@link #includeColumnFieldNames} or {@link #includeColumnIndexes}.
      *
-     * default is false.
-     *
-     * @since 3.3.0
-     **/
+     * @param orderByIncludeColumn {@code true} to order by included column; default is {@code false}
+     * @return this
+     */
     public T orderByIncludeColumn(Boolean orderByIncludeColumn) {
         parameter().setOrderByIncludeColumn(orderByIncludeColumn);
         return self();

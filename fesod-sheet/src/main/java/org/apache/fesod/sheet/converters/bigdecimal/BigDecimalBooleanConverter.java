@@ -31,7 +31,7 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
  * BigDecimal and boolean converter
  *
  * This converter is responsible for converting between Java type BigDecimal and Excel's boolean type.
- * It treats Excel's true as BigDecimal.ONE, and false as BigDecimal.ZERO.
+ * It treats Excel's true as {@link BigDecimal#ONE}, and false as {@link BigDecimal#ZERO}.
  *
  *
  */

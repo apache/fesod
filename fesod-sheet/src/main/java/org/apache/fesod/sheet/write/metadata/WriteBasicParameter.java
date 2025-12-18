@@ -25,6 +25,7 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.BasicParameter;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
 
@@ -58,6 +59,11 @@ public class WriteBasicParameter extends BasicParameter {
      */
     private Boolean automaticMergeHead;
     /**
+     * Header merge strategy.
+     * If null, the behavior is determined by {@link #automaticMergeHead} for backward compatibility.
+     */
+    private HeaderMergeStrategy headerMergeStrategy;
+    /**
      * Ignore the custom columns.
      */
     private Collection<Integer> excludeColumnIndexes;
@@ -75,9 +81,9 @@ public class WriteBasicParameter extends BasicParameter {
     private Collection<String> includeColumnFieldNames;
 
     /**
-     * Data will be order by  {@link #includeColumnFieldNames} or  {@link #includeColumnIndexes}.
-     *
-     * default is false.
+     * Data will be ordered by {@link #includeColumnFieldNames} or {@link #includeColumnIndexes}.
+     * <p>
+     * Default is {@code false}.
      */
     private Boolean orderByIncludeColumn;
 }

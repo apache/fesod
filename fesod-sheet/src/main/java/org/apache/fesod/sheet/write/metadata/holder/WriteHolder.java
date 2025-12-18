@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.write.metadata.holder;
 
 import java.util.Collection;
+import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.write.property.ExcelWriteHeadProperty;
 
@@ -60,6 +61,14 @@ public interface WriteHolder extends ConfigurationHolder {
     boolean automaticMergeHead();
 
     /**
+     * Get header merge strategy.
+     * If null, the behavior is determined by {@link #automaticMergeHead()} for backward compatibility.
+     *
+     * @return Header merge strategy
+     */
+    HeaderMergeStrategy headerMergeStrategy();
+
+    /**
      * Writes the head relative to the existing contents of the sheet. Indexes are zero-based.
      *
      * @return
@@ -67,11 +76,9 @@ public interface WriteHolder extends ConfigurationHolder {
     int relativeHeadRowIndex();
 
     /**
-     * Data will be order by  {@link #includeColumnFieldNames} or  {@link #includeColumnIndexes}.
+     * Data will be ordered by {@link #includeColumnFieldNames} or {@link #includeColumnIndexes}.
      *
-     * default is false.
-     *
-     * @return
+     * @return {@code true} to order by included column; default is {@code false}
      */
     boolean orderByIncludeColumn();
 

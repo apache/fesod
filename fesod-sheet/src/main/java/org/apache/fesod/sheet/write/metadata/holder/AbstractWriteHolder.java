@@ -37,6 +37,7 @@ import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
+import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.event.NotRepeatExecutor;
 import org.apache.fesod.sheet.metadata.AbstractHolder;
 import org.apache.fesod.sheet.metadata.Head;
@@ -92,6 +93,11 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
      * Whether to automatically merge headers.Default is true.
      */
     private Boolean automaticMergeHead;
+    /**
+     * Header merge strategy.
+     * If null, the behavior is determined by {@link #automaticMergeHead} for backward compatibility.
+     */
+    private HeaderMergeStrategy headerMergeStrategy;
 
     /**
      * Ignore the custom columns.
@@ -111,9 +117,9 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
     private Collection<String> includeColumnFieldNames;
 
     /**
-     * Data will be order by  {@link #includeColumnFieldNames} or  {@link #includeColumnIndexes}.
-     *
-     * default is false.
+     * Data will be ordered by {@link #includeColumnFieldNames} or {@link #includeColumnIndexes}.
+     * <p>
+     * Default is {@code false}.
      */
     private Boolean orderByIncludeColumn;
 
@@ -199,6 +205,17 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
             }
         } else {
             this.automaticMergeHead = writeBasicParameter.getAutomaticMergeHead();
+        }
+
+        if (writeBasicParameter.getHeaderMergeStrategy() == null) {
+            if (parentAbstractWriteHolder == null) {
+                // Backward compatibility: if headerMergeStrategy is not set, use automaticMergeHead
+                this.headerMergeStrategy = null;
+            } else {
+                this.headerMergeStrategy = parentAbstractWriteHolder.getHeaderMergeStrategy();
+            }
+        } else {
+            this.headerMergeStrategy = writeBasicParameter.getHeaderMergeStrategy();
         }
 
         if (writeBasicParameter.getExcludeColumnFieldNames() == null && parentAbstractWriteHolder != null) {
@@ -515,6 +532,15 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
     @Override
     public boolean automaticMergeHead() {
         return getAutomaticMergeHead();
+    }
+
+    @Override
+    public HeaderMergeStrategy headerMergeStrategy() {
+        // Backward compatibility: if headerMergeStrategy is null, determine based on automaticMergeHead
+        if (headerMergeStrategy == null) {
+            return automaticMergeHead ? HeaderMergeStrategy.AUTO : HeaderMergeStrategy.NONE;
+        }
+        return headerMergeStrategy;
     }
 
     @Override

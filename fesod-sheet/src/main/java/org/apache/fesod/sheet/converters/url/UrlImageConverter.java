@@ -23,16 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.util.IoUtils;
 
 /**
  * Url and image converter
  *
- * @since 2.1.1
+ *
  */
 public class UrlImageConverter implements Converter<URL> {
     public static int urlConnectTimeout = 1000;

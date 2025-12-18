@@ -22,11 +22,11 @@ package org.apache.fesod.sheet.write.metadata.style;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.BuiltinFormats;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
+import org.apache.fesod.sheet.util.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -82,7 +82,7 @@ public class WriteCellStyle {
     private VerticalAlignment verticalAlignment;
     /**
      * Set the degree of rotation for the text in the cell.
-     * <p>
+     *
      * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF uses values from 0 to 180 degrees. The
      * implementations of this method will map between these two value-ranges accordingly, however the corresponding
      * getter is returning values in the range mandated by the current type of Excel file-format that this CellStyle is

@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.csv.CsvExcelReadExecutor;
 import org.apache.fesod.sheet.analysis.v03.XlsSaxAnalyser;
 import org.apache.fesod.sheet.analysis.v07.XlsxSaxAnalyser;
@@ -47,6 +46,7 @@ import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
+import org.apache.fesod.sheet.util.StringUtils;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -177,10 +177,10 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
      *
      * @param readSheetList A list of ReadSheet objects specifying which sheets to analyze.
      *                      Can be null if all sheets are to be analyzed.
-     * @param readAll       A boolean indicating whether to analyze all sheets in the workbook.
-     *                      If true, the readSheetList parameter is ignored.
+     * @param readAll A boolean indicating whether to analyze all sheets in the workbook.
+     *                If true, the readSheetList parameter is ignored.
      * @throws IllegalArgumentException If neither readAll is true nor readSheetList contains any sheets.
-     * @throws ExcelAnalysisException   If a non-runtime exception occurs during the analysis.
+     * @throws ExcelAnalysisException If a non-runtime exception occurs during the analysis.
      */
     @Override
     public void analysis(List<ReadSheet> readSheetList, Boolean readAll) {

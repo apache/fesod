@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,6 +37,7 @@ import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
+import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.CellRange;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.Head;
@@ -109,11 +111,28 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
      * Calculate all cells that need to be merged
      *
      * @return cells that need to be merged
+     * @deprecated Use {@link #headCellRangeList(HeaderMergeStrategy)} instead
      */
+    @Deprecated
     public List<CellRange> headCellRangeList() {
-        List<CellRange> cellRangeList = new ArrayList<CellRange>();
-        Set<String> alreadyRangeSet = new HashSet<String>();
-        List<Head> headList = new ArrayList<Head>(getHeadMap().values());
+        return headCellRangeList(HeaderMergeStrategy.AUTO);
+    }
+
+    /**
+     * Calculate all cells that need to be merged based on the merge strategy
+     *
+     * @param mergeStrategy The merge strategy to use
+     * @return cells that need to be merged
+     */
+    public List<CellRange> headCellRangeList(HeaderMergeStrategy mergeStrategy) {
+        if (mergeStrategy == null || mergeStrategy == HeaderMergeStrategy.NONE) {
+            return new ArrayList<>();
+        }
+
+        List<CellRange> cellRangeList = new ArrayList<>();
+        Set<String> alreadyRangeSet = new HashSet<>();
+        List<Head> headList = new ArrayList<>(getHeadMap().values());
+
         for (int i = 0; i < headList.size(); i++) {
             Head head = headList.get(i);
             List<String> headNameList = head.getHeadNameList();
@@ -125,37 +144,144 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
                 String headName = headNameList.get(j);
                 int lastCol = i;
                 int lastRow = j;
-                for (int k = i + 1; k < headList.size(); k++) {
-                    String key = k + "-" + j;
-                    if (headList.get(k).getHeadNameList().get(j).equals(headName) && !alreadyRangeSet.contains(key)) {
-                        alreadyRangeSet.add(key);
-                        lastCol = k;
-                    } else {
-                        break;
+
+                // Horizontal merge (if allowed by strategy)
+                if (mergeStrategy == HeaderMergeStrategy.HORIZONTAL_ONLY
+                        || mergeStrategy == HeaderMergeStrategy.FULL_RECTANGLE
+                        || mergeStrategy == HeaderMergeStrategy.AUTO) {
+                    for (int k = i + 1; k < headList.size(); k++) {
+                        String key = k + "-" + j;
+                        if (headList.get(k).getHeadNameList().size() > j
+                                && Objects.equals(
+                                        headList.get(k).getHeadNameList().get(j), headName)
+                                && !alreadyRangeSet.contains(key)) {
+                            alreadyRangeSet.add(key);
+                            lastCol = k;
+                        } else {
+                            break;
+                        }
                     }
                 }
+
+                // Vertical merge (if allowed by strategy)
                 Set<String> tempAlreadyRangeSet = new HashSet<>();
-                outer:
-                for (int k = j + 1; k < headNameList.size(); k++) {
-                    for (int l = i; l <= lastCol; l++) {
-                        String key = l + "-" + k;
-                        if (headList.get(l).getHeadNameList().get(k).equals(headName)
-                                && !alreadyRangeSet.contains(key)) {
-                            tempAlreadyRangeSet.add(l + "-" + k);
+                if (mergeStrategy == HeaderMergeStrategy.VERTICAL_ONLY
+                        || mergeStrategy == HeaderMergeStrategy.FULL_RECTANGLE
+                        || mergeStrategy == HeaderMergeStrategy.AUTO) {
+                    outer:
+                    for (int k = j + 1; k < headNameList.size(); k++) {
+                        // For FULL_RECTANGLE and AUTO, verify all cells in the row
+                        boolean canMerge = true;
+                        for (int l = i; l <= lastCol; l++) {
+                            String key = l + "-" + k;
+                            if (headList.get(l).getHeadNameList().size() <= k
+                                    || !Objects.equals(
+                                            headList.get(l).getHeadNameList().get(k), headName)
+                                    || alreadyRangeSet.contains(key)) {
+                                canMerge = false;
+                                break;
+                            }
+                        }
+
+                        // For AUTO strategy, also check context consistency
+                        if (canMerge && mergeStrategy == HeaderMergeStrategy.AUTO) {
+                            canMerge = canMergeVertically(headList, j, k, i, lastCol);
+                        }
+
+                        if (canMerge) {
+                            for (int l = i; l <= lastCol; l++) {
+                                String key = l + "-" + k;
+                                tempAlreadyRangeSet.add(key);
+                            }
+                            lastRow = k;
                         } else {
                             break outer;
                         }
                     }
-                    lastRow = k;
                     alreadyRangeSet.addAll(tempAlreadyRangeSet);
                 }
-                if (j == lastRow && i == lastCol) {
-                    continue;
+
+                // For FULL_RECTANGLE strategy, verify the entire rectangle is valid
+                if (mergeStrategy == HeaderMergeStrategy.FULL_RECTANGLE) {
+                    if (!isValidRectangleRegion(headList, j, lastRow, i, lastCol, headName)) {
+                        // If rectangle is invalid, fall back to single cell (no merge)
+                        continue;
+                    }
                 }
-                cellRangeList.add(new CellRange(
-                        j, lastRow, head.getColumnIndex(), headList.get(lastCol).getColumnIndex()));
+
+                // Add merge range if it's larger than a single cell
+                if (j != lastRow || i != lastCol) {
+                    cellRangeList.add(new CellRange(
+                            j,
+                            lastRow,
+                            head.getColumnIndex(),
+                            headList.get(lastCol).getColumnIndex()));
+                }
             }
         }
         return cellRangeList;
+    }
+
+    /**
+     * Check if two rows can be merged vertically based on context consistency
+     *
+     * @param headList    The list of heads
+     * @param row1        First row index
+     * @param row2        Second row index
+     * @param startCol    Start column index
+     * @param endCol      End column index
+     * @return true if the rows can be merged
+     */
+    private boolean canMergeVertically(List<Head> headList, int row1, int row2, int startCol, int endCol) {
+        // Check if there's a row above that provides context
+        if (row1 > 0) {
+            // Check if all cells in the range have the same context above
+            for (int col = startCol; col <= endCol; col++) {
+                boolean hasUpper1 = headList.get(col).getHeadNameList().size() > row1;
+                boolean hasUpper2 = headList.get(col).getHeadNameList().size() > row2;
+
+                // If one row has upper context but the other doesn't, don't merge
+                if (hasUpper1 != hasUpper2) {
+                    return false;
+                }
+
+                if (hasUpper1) {
+                    String upper1 = headList.get(col).getHeadNameList().get(row1 - 1);
+                    String upper2 = headList.get(col).getHeadNameList().get(row2 - 1);
+                    // If context (upper cells) is different, don't merge
+                    if (!Objects.equals(upper1, upper2)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Verify if a rectangle region is valid (all cells exist and have the same name)
+     *
+     * @param headList      The list of heads
+     * @param startRow      Start row index
+     * @param endRow        End row index
+     * @param startCol      Start column index
+     * @param endCol        End column index
+     * @param expectedName  Expected cell name
+     * @return true if the rectangle is valid
+     */
+    private boolean isValidRectangleRegion(
+            List<Head> headList, int startRow, int endRow, int startCol, int endCol, String expectedName) {
+        for (int row = startRow; row <= endRow; row++) {
+            for (int col = startCol; col <= endCol; col++) {
+                if (headList.get(col).getHeadNameList().size() <= row) {
+                    return false; // Cell doesn't exist
+                }
+                String cellName = headList.get(col).getHeadNameList().get(row);
+                if (!Objects.equals(expectedName, cellName)) {
+                    return false; // Cell name doesn't match
+                }
+            }
+        }
+        return true;
     }
 }

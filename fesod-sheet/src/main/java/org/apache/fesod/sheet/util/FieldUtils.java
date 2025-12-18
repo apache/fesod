@@ -23,9 +23,6 @@ import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
-import org.apache.commons.lang3.Validate;
-import org.apache.fesod.common.util.MemberUtils;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.metadata.NullObject;
 
 public class FieldUtils {
@@ -114,9 +111,9 @@ public class FieldUtils {
      *                    only
      *                    match {@code public} fields.
      * @return the Field object
-     * @throws NullPointerException     if the class is {@code null}
+     * @throws NullPointerException if the class is {@code null}
      * @throws IllegalArgumentException if the field name is blank or empty or is matched at multiple places
-     *                                  in the inheritance hierarchy
+     * in the inheritance hierarchy
      */
     public static Field getField(final Class<?> cls, final String fieldName, final boolean forceAccess) {
         Validate.isTrue(cls != null, "The class must not be null");

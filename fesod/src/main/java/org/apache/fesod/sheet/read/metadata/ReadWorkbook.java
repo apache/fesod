@@ -88,15 +88,15 @@ public class ReadWorkbook extends ReadBasicParameter {
      */
     private ReadCache readCache;
     /**
-     * Ignore empty rows.Default is true.
+     * Ignore empty rows. Default is true.
      */
     private Boolean ignoreEmptyRow;
     /**
-     * Select the cache.Default use {@link SimpleReadCacheSelector}
+     * Select the cache. Default use {@link SimpleReadCacheSelector}
      */
     private ReadCacheSelector readCacheSelector;
     /**
-     * Whether the encryption
+     * Password for encrypted Excel file.
      */
     private String password;
     /**

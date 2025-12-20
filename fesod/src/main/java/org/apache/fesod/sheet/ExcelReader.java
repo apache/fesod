@@ -49,7 +49,7 @@ public class ExcelReader implements Closeable {
     /**
      * Parse all sheet content by default
      *
-     * @deprecated lease use {@link #readAll()}
+     * @deprecated Please use {@link #readAll()}
      */
     @Deprecated
     public void read() {

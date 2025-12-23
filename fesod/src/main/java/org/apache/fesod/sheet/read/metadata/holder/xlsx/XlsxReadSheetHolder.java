@@ -20,7 +20,9 @@
 package org.apache.fesod.sheet.read.metadata.holder.xlsx;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,6 +57,18 @@ public class XlsxReadSheetHolder extends ReadSheetHolder {
      */
     private StringBuilder tempFormula;
     /**
+     * Formula type for current label.
+     */
+    private String tempFormulaType;
+    /**
+     * Formula shared index for current label.
+     */
+    private Integer tempFormulaSharedIndex;
+    /**
+     * Map to store master shared formulas by their shared index.
+     */
+    private Map<Integer, SharedFormulaInfo> sharedFormulaMap;
+    /**
      * excel Relationship
      */
     private PackageRelationshipCollection packageRelationshipCollection;
@@ -62,8 +76,35 @@ public class XlsxReadSheetHolder extends ReadSheetHolder {
     public XlsxReadSheetHolder(ReadSheet readSheet, ReadWorkbookHolder readWorkbookHolder) {
         super(readSheet, readWorkbookHolder);
         this.tagDeque = new LinkedList<String>();
+        this.sharedFormulaMap = new HashMap<>();
         packageRelationshipCollection = ((XlsxReadWorkbookHolder) readWorkbookHolder)
                 .getPackageRelationshipCollectionMap()
                 .get(readSheet.getSheetNo());
+    }
+
+    /**
+     * Information about a shared formula master cell.
+     */
+    @Getter
+    @Setter
+    public static class SharedFormulaInfo {
+        /**
+         * The master formula text.
+         */
+        private String formulaText;
+        /**
+         * Row index of the master formula cell.
+         */
+        private int firstRow;
+        /**
+         * Column index of the master formula cell.
+         */
+        private int firstCol;
+
+        public SharedFormulaInfo(String formulaText, int firstRow, int firstCol) {
+            this.formulaText = formulaText;
+            this.firstRow = firstRow;
+            this.firstCol = firstCol;
+        }
     }
 }

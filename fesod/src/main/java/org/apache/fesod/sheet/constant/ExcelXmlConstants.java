@@ -78,6 +78,14 @@ public class ExcelXmlConstants {
      */
     public static final String ATTRIBUTE_T = "t";
     /**
+     * si attribute
+     */
+    public static final String ATTRIBUTE_SI = "si";
+    /**
+     * shared attribute
+     */
+    public static final String ATTRIBUTE_SHARED = "shared";
+    /**
      * location attribute
      */
     public static final String ATTRIBUTE_LOCATION = "location";

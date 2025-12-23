@@ -141,8 +141,10 @@ public class OdsExcelReadExecutor implements ExcelReadExecutor {
     private void dealRow(OdfTable table, OdfTableRow row, int rowIndex) {
         Map<Integer, Cell> cellMap = new LinkedHashMap<>();
         int cellCount = row.getCellCount();
-        Boolean autoTrim = odsReadContext.odsReadWorkbookHolder().globalConfiguration().getAutoTrim();
-        Boolean autoStrip = odsReadContext.odsReadWorkbookHolder().globalConfiguration().getAutoStrip();
+        Boolean autoTrim =
+                odsReadContext.odsReadWorkbookHolder().globalConfiguration().getAutoTrim();
+        Boolean autoStrip =
+                odsReadContext.odsReadWorkbookHolder().globalConfiguration().getAutoStrip();
 
         for (int columnIndex = 0; columnIndex < cellCount; columnIndex++) {
             OdfTableCell odfCell = row.getCellByIndex(columnIndex);
@@ -280,4 +282,3 @@ public class OdsExcelReadExecutor implements ExcelReadExecutor {
         }
     }
 }
-

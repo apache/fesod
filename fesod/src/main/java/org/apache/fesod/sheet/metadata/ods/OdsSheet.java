@@ -692,4 +692,3 @@ public class OdsSheet implements Sheet {
         return rowIterator();
     }
 }
-

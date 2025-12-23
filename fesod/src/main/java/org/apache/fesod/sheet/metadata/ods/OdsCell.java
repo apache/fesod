@@ -357,4 +357,3 @@ public class OdsCell extends CellBase {
         return false;
     }
 }
-

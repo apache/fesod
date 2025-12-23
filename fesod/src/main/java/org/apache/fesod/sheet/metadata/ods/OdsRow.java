@@ -209,4 +209,3 @@ public class OdsRow implements Row {
         return cellIterator();
     }
 }
-

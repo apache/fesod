@@ -290,4 +290,3 @@ public class OdsCellStyle implements CellStyle {
     @Override
     public void invalidateCachedProperties() {}
 }
-

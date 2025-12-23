@@ -19,6 +19,9 @@
 
 package org.apache.fesod.sheet.ods;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,10 +38,6 @@ import org.apache.fesod.sheet.util.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for ODS (OpenDocument Spreadsheet) read and write functionality.
@@ -96,16 +95,18 @@ public class OdsReadWriteTest {
         // Then read it back
         List<OdsTestData> readData = new ArrayList<>();
         FesodSheet.read(fileName, OdsTestData.class, new ReadListener<OdsTestData>() {
-            @Override
-            public void invoke(OdsTestData data, AnalysisContext context) {
-                readData.add(data);
-            }
+                    @Override
+                    public void invoke(OdsTestData data, AnalysisContext context) {
+                        readData.add(data);
+                    }
 
-            @Override
-            public void doAfterAllAnalysed(AnalysisContext context) {
-                // Reading complete
-            }
-        }).sheet().doRead();
+                    @Override
+                    public void doAfterAllAnalysed(AnalysisContext context) {
+                        // Reading complete
+                    }
+                })
+                .sheet()
+                .doRead();
 
         // Verify
         assertNotNull(readData, "Read data should not be null");
@@ -136,14 +137,16 @@ public class OdsReadWriteTest {
         // Read
         List<OdsTestData> readBackData = new ArrayList<>();
         FesodSheet.read(fileName, OdsTestData.class, new ReadListener<OdsTestData>() {
-            @Override
-            public void invoke(OdsTestData data, AnalysisContext context) {
-                readBackData.add(data);
-            }
+                    @Override
+                    public void invoke(OdsTestData data, AnalysisContext context) {
+                        readBackData.add(data);
+                    }
 
-            @Override
-            public void doAfterAllAnalysed(AnalysisContext context) {}
-        }).sheet().doRead();
+                    @Override
+                    public void doAfterAllAnalysed(AnalysisContext context) {}
+                })
+                .sheet()
+                .doRead();
 
         // Verify count
         assertEquals(originalData.size(), readBackData.size(), "Data count should match");
@@ -189,4 +192,3 @@ public class OdsReadWriteTest {
         private Double doubleData;
     }
 }
-

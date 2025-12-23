@@ -429,4 +429,3 @@ public class OdsWorkbook implements Workbook {
         return sheetIterator();
     }
 }
-

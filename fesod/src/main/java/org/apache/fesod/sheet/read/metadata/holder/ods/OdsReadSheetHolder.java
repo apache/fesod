@@ -39,4 +39,3 @@ public class OdsReadSheetHolder extends ReadSheetHolder {
         super(readSheet, readWorkbookHolder);
     }
 }
-

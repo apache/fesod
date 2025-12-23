@@ -274,7 +274,9 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
         try {
             if ((readWorkbookHolder instanceof OdsReadWorkbookHolder)
                     && ((OdsReadWorkbookHolder) readWorkbookHolder).getOdfSpreadsheetDocument() != null) {
-                ((OdsReadWorkbookHolder) readWorkbookHolder).getOdfSpreadsheetDocument().close();
+                ((OdsReadWorkbookHolder) readWorkbookHolder)
+                        .getOdfSpreadsheetDocument()
+                        .close();
             }
         } catch (Throwable t) {
             throwable = t;

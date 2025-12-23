@@ -42,4 +42,3 @@ public interface OdsReadContext extends AnalysisContext {
      */
     OdsReadSheetHolder odsReadSheetHolder();
 }
-

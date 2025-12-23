@@ -45,4 +45,3 @@ public class DefaultOdsReadContext extends AnalysisContextImpl implements OdsRea
         return (OdsReadSheetHolder) readSheetHolder();
     }
 }
-

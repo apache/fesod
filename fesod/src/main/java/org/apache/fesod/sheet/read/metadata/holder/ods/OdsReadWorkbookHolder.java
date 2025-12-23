@@ -46,4 +46,3 @@ public class OdsReadWorkbookHolder extends ReadWorkbookHolder {
         setExcelType(ExcelTypeEnum.ODS);
     }
 }
-

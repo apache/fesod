@@ -53,6 +53,7 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.test.skip>true</maven.test.skip>
         <commons-csv.version>1.11.0</commons-csv.version>
+        <odfdom.version>0.12.0</odfdom.version>
         <poi.version>5.5.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>
         <commons-io.version>2.16.1</commons-io.version>
@@ -131,6 +132,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>${commons-csv.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.odftoolkit</groupId>
+                <artifactId>odfdom-java</artifactId>
+                <version>${odfdom.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>

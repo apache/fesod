@@ -50,7 +50,12 @@ public enum ExcelTypeEnum {
     /**
      * xlsx
      */
-    XLSX(".xlsx", new byte[] {80, 75, 3, 4});
+    XLSX(".xlsx", new byte[] {80, 75, 3, 4}),
+
+    /**
+     * ods (OpenDocument Spreadsheet)
+     */
+    ODS(".ods", new byte[] {80, 75, 3, 4});
 
     final String value;
     final byte[] magic;
@@ -100,6 +105,8 @@ public enum ExcelTypeEnum {
                     return XLS;
                 } else if (fileName.endsWith(CSV.getValue())) {
                     return CSV;
+                } else if (fileName.endsWith(ODS.getValue())) {
+                    return ODS;
                 }
                 try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file))) {
                     return recognitionExcelType(bufferedInputStream);

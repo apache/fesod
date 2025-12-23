@@ -56,6 +56,7 @@ const sidebars = {
                         'sheet/read/sheet',
                         'sheet/read/num-rows',
                         'sheet/read/csv',
+                        'sheet/read/ods',
                         'sheet/read/head',
                         'sheet/read/extra',
                         'sheet/read/exception',

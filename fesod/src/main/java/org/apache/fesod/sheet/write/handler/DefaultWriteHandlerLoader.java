@@ -72,6 +72,10 @@ public class DefaultWriteHandlerLoader {
                 handlerList.add(new DefaultRowWriteHandler());
                 handlerList.add(new FillStyleCellWriteHandler());
                 break;
+            case ODS:
+                handlerList.add(new DefaultRowWriteHandler());
+                handlerList.add(new FillStyleCellWriteHandler());
+                break;
             default:
                 break;
         }

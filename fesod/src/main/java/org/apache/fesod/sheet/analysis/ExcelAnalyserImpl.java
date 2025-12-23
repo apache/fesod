@@ -24,11 +24,14 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.sheet.analysis.csv.CsvExcelReadExecutor;
+import org.apache.fesod.sheet.analysis.ods.OdsExcelReadExecutor;
 import org.apache.fesod.sheet.analysis.v03.XlsSaxAnalyser;
 import org.apache.fesod.sheet.analysis.v07.XlsxSaxAnalyser;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.context.csv.CsvReadContext;
 import org.apache.fesod.sheet.context.csv.DefaultCsvReadContext;
+import org.apache.fesod.sheet.context.ods.DefaultOdsReadContext;
+import org.apache.fesod.sheet.context.ods.OdsReadContext;
 import org.apache.fesod.sheet.context.xls.DefaultXlsReadContext;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.context.xlsx.DefaultXlsxReadContext;
@@ -39,6 +42,7 @@ import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.read.metadata.holder.ReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadWorkbookHolder;
+import org.apache.fesod.sheet.read.metadata.holder.ods.OdsReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadWorkbookHolder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
@@ -165,6 +169,12 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 analysisContext = csvReadContext;
                 excelReadExecutor = new CsvExcelReadExecutor(csvReadContext);
                 break;
+            case ODS:
+                // Create a context and executor for processing ODS files
+                OdsReadContext odsReadContext = new DefaultOdsReadContext(readWorkbook, ExcelTypeEnum.ODS);
+                analysisContext = odsReadContext;
+                excelReadExecutor = new OdsExcelReadExecutor(odsReadContext);
+                break;
             default:
                 // Reserved branch for handling potential future Excel types
                 break;
@@ -255,6 +265,16 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                     && ((CsvReadWorkbookHolder) readWorkbookHolder).getCsvParser() != null
                     && analysisContext.readWorkbookHolder().getAutoCloseStream()) {
                 ((CsvReadWorkbookHolder) readWorkbookHolder).getCsvParser().close();
+            }
+        } catch (Throwable t) {
+            throwable = t;
+        }
+
+        // close ods.
+        try {
+            if ((readWorkbookHolder instanceof OdsReadWorkbookHolder)
+                    && ((OdsReadWorkbookHolder) readWorkbookHolder).getOdfSpreadsheetDocument() != null) {
+                ((OdsReadWorkbookHolder) readWorkbookHolder).getOdfSpreadsheetDocument().close();
             }
         } catch (Throwable t) {
             throwable = t;

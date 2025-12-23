@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
+import org.apache.fesod.sheet.metadata.ods.OdsWorkbook;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
@@ -105,6 +106,14 @@ public class WorkBookUtil {
                 }
                 writeWorkbookHolder.setCachedWorkbook(csvWorkbook);
                 writeWorkbookHolder.setWorkbook(csvWorkbook);
+                return;
+            case ODS:
+                OdsWorkbook odsWorkbook = new OdsWorkbook(
+                        writeWorkbookHolder.getGlobalConfiguration().getLocale(),
+                        writeWorkbookHolder.getGlobalConfiguration().getUse1904windowing(),
+                        writeWorkbookHolder.getGlobalConfiguration().getUseScientificFormat());
+                writeWorkbookHolder.setCachedWorkbook(odsWorkbook);
+                writeWorkbookHolder.setWorkbook(odsWorkbook);
                 return;
             default:
                 throw new UnsupportedOperationException("Wrong excel type.");

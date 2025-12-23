@@ -255,7 +255,7 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
 
         // Set converterMap
         if (parentAbstractWriteHolder == null) {
-            setConverterMap(DefaultConverterLoader.loadDefaultWriteConverter());
+            setConverterMap(new HashMap<>(DefaultConverterLoader.loadDefaultWriteConverter()));
         } else {
             setConverterMap(new HashMap<>(parentAbstractWriteHolder.getConverterMap()));
         }

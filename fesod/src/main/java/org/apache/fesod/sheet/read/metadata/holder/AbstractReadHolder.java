@@ -114,7 +114,7 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
         }
 
         if (parentAbstractReadHolder == null) {
-            setConverterMap(DefaultConverterLoader.loadDefaultReadConverter());
+            setConverterMap(new HashMap<>(DefaultConverterLoader.loadDefaultReadConverter()));
         } else {
             setConverterMap(new HashMap<>(parentAbstractReadHolder.getConverterMap()));
         }

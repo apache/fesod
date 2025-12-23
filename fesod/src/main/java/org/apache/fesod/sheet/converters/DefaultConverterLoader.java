@@ -19,6 +19,7 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.util.Collections;
 import java.util.Map;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
 import org.apache.fesod.sheet.converters.bigdecimal.BigDecimalBooleanConverter;
@@ -175,10 +176,10 @@ public class DefaultConverterLoader {
     /**
      * Load default write converter
      *
-     * @return
+     * @return Unmodifiable map of default write converters
      */
     public static Map<ConverterKey, Converter<?>> loadDefaultWriteConverter() {
-        return defaultWriteConverter;
+        return Collections.unmodifiableMap(defaultWriteConverter);
     }
 
     private static void putWriteConverter(Converter<?> converter) {
@@ -193,7 +194,7 @@ public class DefaultConverterLoader {
     /**
      * Load default read converter
      *
-     * @return
+     * @return Unmodifiable map of default read converters
      */
     public static Map<ConverterKey, Converter<?>> loadDefaultReadConverter() {
         return loadAllConverter();
@@ -202,10 +203,10 @@ public class DefaultConverterLoader {
     /**
      * Load all converter
      *
-     * @return
+     * @return Unmodifiable map of all converters
      */
     public static Map<ConverterKey, Converter<?>> loadAllConverter() {
-        return allConverter;
+        return Collections.unmodifiableMap(allConverter);
     }
 
     private static void putAllConverter(Converter<?> converter) {

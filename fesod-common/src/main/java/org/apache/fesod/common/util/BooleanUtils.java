@@ -54,7 +54,6 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code false}
      * @return {@code true} only if the input is non-null and true
-     * @since 2.1
      */
     public static boolean isTrue(final Boolean bool) {
         return Boolean.TRUE.equals(bool);
@@ -72,7 +71,6 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code true}
      * @return {@code true} if the input is null or false
-     * @since 2.3
      */
     public static boolean isNotTrue(final Boolean bool) {
         return !isTrue(bool);
@@ -90,7 +88,6 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code false}
      * @return {@code true} only if the input is non-null and false
-     * @since 2.1
      */
     public static boolean isFalse(final Boolean bool) {
         return Boolean.FALSE.equals(bool);
@@ -108,7 +105,6 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code true}
      * @return {@code true} if the input is null or true
-     * @since 2.3
      */
     public static boolean isNotFalse(final Boolean bool) {
         return !isFalse(bool);

@@ -152,10 +152,12 @@ ODS support is provided through the Apache ODF Toolkit. The dependency is automa
 
 ## Notes
 
-1. **File Detection**: ODS files are automatically detected by their `.ods` extension. When reading from streams, use `excelType(ExcelTypeEnum.ODS)` to specify the format explicitly.
+1. **File Detection**: ODS files are automatically detected by their `.ods` extension. When reading from streams without a file extension, Fesod will automatically detect ODS format by checking the ZIP internal structure (ODS files contain a `mimetype` file or `content.xml`). However, it's recommended to use `excelType(ExcelTypeEnum.ODS)` to specify the format explicitly for better performance and reliability.
 
-2. **Performance**: ODS reading and writing performance is comparable to XLSX for typical use cases.
+2. **1904 Date System**: ODS format uses the ISO 8601 date standard (1900 date system) and does not support Excel's 1904 date windowing. If you set `use1904windowing(true)` when writing ODS files, a warning will be logged and the setting will be ignored. ODS always uses the standard 1900 date system.
 
-3. **Compatibility**: Files created by Fesod are compatible with LibreOffice, OpenOffice, and other applications that support the ODF standard.
+3. **Performance**: ODS reading and writing performance is comparable to XLSX for typical use cases.
 
-4. **Formula Syntax**: ODS uses a different formula syntax than Excel. Cross-format formula conversion is not automatically performed.
+4. **Compatibility**: Files created by Fesod are compatible with LibreOffice, OpenOffice, and other applications that support the ODF standard.
+
+5. **Formula Syntax**: ODS uses a different formula syntax than Excel. Cross-format formula conversion is not automatically performed.

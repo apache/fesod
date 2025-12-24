@@ -20,9 +20,12 @@
 package org.apache.fesod.sheet.support;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import lombok.Getter;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
@@ -135,12 +138,73 @@ public enum ExcelTypeEnum {
         // Grab the first bytes of this stream
         byte[] data = IOUtils.peekFirstNBytes(inputStream, MAX_PATTERN_LENGTH);
         if (findMagic(XLSX.magic, data)) {
-            return XLSX;
+            // Both XLSX and ODS are ZIP files with the same magic bytes {80, 75, 3, 4}
+            // Need to check internal structure to distinguish them
+            return distinguishZipBasedFormat(inputStream);
         } else if (findMagic(XLS.magic, data)) {
             return XLS;
         }
         // csv has no fixed prefix, if the format is not specified, it defaults to csv
         return CSV;
+    }
+
+    /**
+     * Distinguish between XLSX and ODS formats by checking ZIP internal structure.
+     * ODS files contain a 'mimetype' file with content 'application/vnd.oasis.opendocument.spreadsheet'.
+     * XLSX files contain '[Content_Types].xml' or 'xl/' directory.
+     *
+     * @param inputStream the input stream (must support mark/reset)
+     * @return ODS if it's an ODS file, XLSX otherwise (default for ZIP-based spreadsheets)
+     */
+    private static ExcelTypeEnum distinguishZipBasedFormat(InputStream inputStream) throws Exception {
+        // Read enough bytes to check the ZIP structure
+        // Most ZIP files have the first entry within the first 4KB
+        final int BUFFER_SIZE = 4096;
+        if (!inputStream.markSupported()) {
+            // If mark is not supported, default to XLSX
+            return XLSX;
+        }
+
+        inputStream.mark(BUFFER_SIZE);
+        try {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = inputStream.read(buffer);
+            if (bytesRead <= 0) {
+                return XLSX; // Default to XLSX for empty files
+            }
+
+            try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(buffer, 0, bytesRead))) {
+                ZipEntry entry;
+                while ((entry = zipInputStream.getNextEntry()) != null) {
+                    String entryName = entry.getName();
+                    // ODS files have 'mimetype' as the first file (usually)
+                    if ("mimetype".equals(entryName)) {
+                        // Verify it's ODS by reading the mimetype content
+                        byte[] mimeBytes = new byte[64];
+                        int len = zipInputStream.read(mimeBytes);
+                        if (len > 0) {
+                            String mimeType = new String(mimeBytes, 0, len).trim();
+                            if (mimeType.contains("opendocument.spreadsheet")) {
+                                return ODS;
+                            }
+                        }
+                    }
+                    // XLSX files typically have these entries
+                    if (entryName.equals("[Content_Types].xml") || entryName.startsWith("xl/")) {
+                        return XLSX;
+                    }
+                    // ODS files also have content.xml
+                    if ("content.xml".equals(entryName) || entryName.equals("META-INF/manifest.xml")) {
+                        return ODS;
+                    }
+                    zipInputStream.closeEntry();
+                }
+            }
+        } finally {
+            inputStream.reset();
+        }
+        // Default to XLSX for unrecognized ZIP-based format
+        return XLSX;
     }
 
     private static boolean findMagic(byte[] expected, byte[] actual) {

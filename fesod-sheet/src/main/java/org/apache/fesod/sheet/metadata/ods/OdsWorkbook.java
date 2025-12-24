@@ -28,6 +28,7 @@ import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
@@ -52,6 +53,7 @@ import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Slf4j
 public class OdsWorkbook implements Workbook {
 
     /**
@@ -99,6 +101,14 @@ public class OdsWorkbook implements Workbook {
         this.useScientificFormat = useScientificFormat;
         this.odsSheetList = new ArrayList<>();
         this.odsCellStyleList = new ArrayList<>();
+
+        // ODS format uses ISO 8601 date standard and does not support Excel's 1904 date windowing
+        if (Boolean.TRUE.equals(use1904windowing)) {
+            log.warn(
+                    "ODS format does not support 1904 date windowing. The 'use1904windowing' parameter will be ignored. "
+                            + "ODS uses the standard 1900 date system (ISO 8601).");
+        }
+
         try {
             this.odfDocument = OdfSpreadsheetDocument.newSpreadsheetDocument();
             // Remove the default sheet that OdfToolkit creates

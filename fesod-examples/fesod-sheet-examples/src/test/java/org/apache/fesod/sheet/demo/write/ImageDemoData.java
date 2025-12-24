@@ -32,7 +32,7 @@ import org.apache.fesod.sheet.converters.string.StringImageConverter;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 
 /**
- * 图片导出类
+ * Image export class
  */
 @Getter
 @Setter
@@ -43,19 +43,23 @@ public class ImageDemoData {
     private File file;
     private InputStream inputStream;
     /**
-     * 如果string类型 必须指定转换器，string默认转换成string
+     * If it is a String type, a converter must be specified; String is converted to String by default.
      */
     @ExcelProperty(converter = StringImageConverter.class)
     private String string;
 
     private byte[] byteArray;
     /**
-     * 根据url导出
+     * Export by URL
+     *
+     * @since 2.1.1
      */
     private URL url;
 
     /**
-     * 根据文件导出 并设置导出的位置。
+     * Export by file and set the export location.
+     *
+     * @since 3.0.0-beta1
      */
     private WriteCellData<Void> writeCellDataFile;
 }

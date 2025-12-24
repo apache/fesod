@@ -26,7 +26,7 @@ import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * 复杂头数据.这里最终效果是第一行就一个主标题，第二行分类
+ * Complex header data. The final effect is a main title on the first row, and categories on the second row.
  *
  *
  **/
@@ -34,12 +34,12 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class ComplexHeadData {
-    @ExcelProperty({"主标题", "字符串标题"})
+    @ExcelProperty({"Main Title", "String Title"})
     private String string;
 
-    @ExcelProperty({"主标题", "日期标题"})
+    @ExcelProperty({"Main Title", "Date Title"})
     private Date date;
 
-    @ExcelProperty({"主标题", "数字标题"})
+    @ExcelProperty({"Main Title", "Double Title"})
     private Double doubleData;
 }

@@ -30,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
- * 自定义拦截器.新增注释,第一行头加批注
+ * Custom handler. Add comment to the header of the first row.
  *
  *
  */
@@ -42,12 +42,12 @@ public class CommentWriteHandler implements RowWriteHandler {
         if (BooleanUtils.isTrue(context.getHead())) {
             Sheet sheet = context.getWriteSheetHolder().getSheet();
             Drawing<?> drawingPatriarch = sheet.createDrawingPatriarch();
-            // 在第一行 第二列创建一个批注
+            // Create a comment in the first row, second column
             Comment comment =
                     drawingPatriarch.createCellComment(new XSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 2, 1));
-            // 输入批注信息
-            comment.setString(new XSSFRichTextString("创建批注!"));
-            // 将批注添加到单元格对象中
+            // Input comment information
+            comment.setString(new XSSFRichTextString("Create comment!"));
+            // Add comment to cell object
             sheet.getRow(0).getCell(1).setCellComment(comment);
         }
     }

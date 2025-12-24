@@ -31,36 +31,36 @@ import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 import org.apache.fesod.sheet.enums.poi.FillPatternTypeEnum;
 
 /**
- * 样式的数据类
+ * Style data class
  *
  *
  **/
 @Getter
 @Setter
 @EqualsAndHashCode
-// 头背景设置成红色 IndexedColors.RED.getIndex()
+// Head background red
 @HeadStyle(fillPatternType = FillPatternTypeEnum.SOLID_FOREGROUND, fillForegroundColor = 10)
-// 头字体设置成20
+// Head font size 20
 @HeadFontStyle(fontHeightInPoints = 20)
-// 内容的背景设置成绿色 IndexedColors.GREEN.getIndex()
+// Content background green
 @ContentStyle(fillPatternType = FillPatternTypeEnum.SOLID_FOREGROUND, fillForegroundColor = 17)
-// 内容字体设置成20
+// Content font size 20
 @ContentFontStyle(fontHeightInPoints = 20)
 public class DemoStyleData {
-    // 字符串的头背景设置成粉红 IndexedColors.PINK.getIndex()
+    // String head background pink
     @HeadStyle(fillPatternType = FillPatternTypeEnum.SOLID_FOREGROUND, fillForegroundColor = 14)
-    // 字符串的头字体设置成20
+    // String head font size 30
     @HeadFontStyle(fontHeightInPoints = 30)
-    // 字符串的内容的背景设置成天蓝 IndexedColors.SKY_BLUE.getIndex()
+    // String content background sky blue
     @ContentStyle(fillPatternType = FillPatternTypeEnum.SOLID_FOREGROUND, fillForegroundColor = 40)
-    // 字符串的内容字体设置成20
+    // String content font size 30
     @ContentFontStyle(fontHeightInPoints = 30)
-    @ExcelProperty("字符串标题")
+    @ExcelProperty("String Title")
     private String string;
 
-    @ExcelProperty("日期标题")
+    @ExcelProperty("Date Title")
     private Date date;
 
-    @ExcelProperty("数字标题")
+    @ExcelProperty("Double Title")
     private Double doubleData;
 }

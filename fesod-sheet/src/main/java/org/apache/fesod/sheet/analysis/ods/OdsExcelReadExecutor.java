@@ -42,6 +42,8 @@ import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+import org.odftoolkit.odfdom.dom.element.table.TableTableCellElementBase;
+import org.w3c.dom.Node;
 
 /**
  * ODS Excel Read Executor, responsible for reading and processing ODS (OpenDocument Spreadsheet) files.
@@ -133,6 +135,7 @@ public class OdsExcelReadExecutor implements ExcelReadExecutor {
 
     /**
      * Process a single row from the ODS table.
+     * Uses DOM traversal to avoid performance issues with getCellByIndex() and getCellCount().
      *
      * @param table    The ODF table
      * @param row      The ODF table row
@@ -140,63 +143,34 @@ public class OdsExcelReadExecutor implements ExcelReadExecutor {
      */
     private void dealRow(OdfTable table, OdfTableRow row, int rowIndex) {
         Map<Integer, Cell> cellMap = new LinkedHashMap<>();
-        int cellCount = row.getCellCount();
         Boolean autoTrim =
                 odsReadContext.odsReadWorkbookHolder().globalConfiguration().getAutoTrim();
         Boolean autoStrip =
                 odsReadContext.odsReadWorkbookHolder().globalConfiguration().getAutoStrip();
 
-        for (int columnIndex = 0; columnIndex < cellCount; columnIndex++) {
-            OdfTableCell odfCell = row.getCellByIndex(columnIndex);
-            if (odfCell == null) {
-                continue;
+        // Use DOM traversal to iterate through cells directly
+        // This avoids performance issues with getCellByIndex() which can trigger column expansion
+        int columnIndex = 0;
+        Node cellNode = row.getOdfElement().getFirstChild();
+
+        while (cellNode != null) {
+            if (cellNode instanceof TableTableCellElementBase) {
+                TableTableCellElementBase cellElement = (TableTableCellElementBase) cellNode;
+
+                // Handle repeated cells
+                int repeatCount = 1;
+                Integer columnsRepeated = cellElement.getTableNumberColumnsRepeatedAttribute();
+                if (columnsRepeated != null && columnsRepeated > 1) {
+                    repeatCount = columnsRepeated;
+                }
+
+                // Process cell data directly from the DOM element
+                processCellDataFromElement(cellMap, cellElement, rowIndex, columnIndex, autoTrim, autoStrip);
+
+                // For repeated cells, advance the column index accordingly
+                columnIndex += repeatCount;
             }
-
-            ReadCellData<String> readCellData = new ReadCellData<>();
-            readCellData.setRowIndex(rowIndex);
-            readCellData.setColumnIndex(columnIndex);
-
-            String cellValue = getCellValue(odfCell);
-
-            if (StringUtils.isNotBlank(cellValue)) {
-                readCellData.setType(determineCellType(odfCell));
-                if (autoStrip) {
-                    readCellData.setStringValue(StringUtils.strip(cellValue));
-                } else if (autoTrim) {
-                    readCellData.setStringValue(cellValue.trim());
-                } else {
-                    readCellData.setStringValue(cellValue);
-                }
-
-                // Handle numeric values
-                if (readCellData.getType() == CellDataTypeEnum.NUMBER) {
-                    try {
-                        Double numericValue = odfCell.getDoubleValue();
-                        if (numericValue != null) {
-                            readCellData.setNumberValue(new java.math.BigDecimal(numericValue.toString()));
-                        }
-                    } catch (Exception e) {
-                        // Keep as string if parsing fails
-                        readCellData.setType(CellDataTypeEnum.STRING);
-                    }
-                }
-
-                // Handle boolean values
-                if (readCellData.getType() == CellDataTypeEnum.BOOLEAN) {
-                    try {
-                        Boolean boolValue = odfCell.getBooleanValue();
-                        if (boolValue != null) {
-                            readCellData.setBooleanValue(boolValue);
-                        }
-                    } catch (Exception e) {
-                        readCellData.setType(CellDataTypeEnum.STRING);
-                    }
-                }
-            } else {
-                readCellData.setType(CellDataTypeEnum.EMPTY);
-            }
-
-            cellMap.put(columnIndex, readCellData);
+            cellNode = cellNode.getNextSibling();
         }
 
         RowTypeEnum rowType = MapUtils.isEmpty(cellMap) ? RowTypeEnum.EMPTY : RowTypeEnum.DATA;
@@ -207,6 +181,132 @@ public class OdsExcelReadExecutor implements ExcelReadExecutor {
         odsReadContext.odsReadSheetHolder().setCellMap(cellMap);
         odsReadContext.odsReadSheetHolder().setRowIndex(rowIndex);
         odsReadContext.analysisEventProcessor().endRow(odsReadContext);
+    }
+
+    /**
+     * Process cell data directly from DOM element and add to the cell map.
+     */
+    private void processCellDataFromElement(
+            Map<Integer, Cell> cellMap,
+            TableTableCellElementBase cellElement,
+            int rowIndex,
+            int columnIndex,
+            Boolean autoTrim,
+            Boolean autoStrip) {
+        ReadCellData<String> readCellData = new ReadCellData<>();
+        readCellData.setRowIndex(rowIndex);
+        readCellData.setColumnIndex(columnIndex);
+
+        String cellValue = getCellValueFromElement(cellElement);
+        String valueType = cellElement.getOfficeValueTypeAttribute();
+
+        if (StringUtils.isNotBlank(cellValue)) {
+            readCellData.setType(determineCellTypeFromElement(valueType));
+            if (autoStrip) {
+                readCellData.setStringValue(StringUtils.strip(cellValue));
+            } else if (autoTrim) {
+                readCellData.setStringValue(cellValue.trim());
+            } else {
+                readCellData.setStringValue(cellValue);
+            }
+
+            // Handle numeric values
+            if (readCellData.getType() == CellDataTypeEnum.NUMBER) {
+                try {
+                    Double numericValue = cellElement.getOfficeValueAttribute();
+                    if (numericValue != null) {
+                        readCellData.setNumberValue(new java.math.BigDecimal(numericValue.toString()));
+                    }
+                } catch (Exception e) {
+                    // Keep as string if parsing fails
+                    readCellData.setType(CellDataTypeEnum.STRING);
+                }
+            }
+
+            // Handle boolean values
+            if (readCellData.getType() == CellDataTypeEnum.BOOLEAN) {
+                try {
+                    Boolean boolValue = cellElement.getOfficeBooleanValueAttribute();
+                    if (boolValue != null) {
+                        readCellData.setBooleanValue(boolValue);
+                    }
+                } catch (Exception e) {
+                    readCellData.setType(CellDataTypeEnum.STRING);
+                }
+            }
+
+            cellMap.put(columnIndex, readCellData);
+        } else {
+            readCellData.setType(CellDataTypeEnum.EMPTY);
+            // Don't add empty cells to the map to save memory
+        }
+    }
+
+    /**
+     * Get cell value directly from DOM element.
+     */
+    private String getCellValueFromElement(TableTableCellElementBase cellElement) {
+        if (cellElement == null) {
+            return null;
+        }
+
+        String valueType = cellElement.getOfficeValueTypeAttribute();
+        if (valueType == null) {
+            // Try to get text content
+            return cellElement.getTextContent();
+        }
+
+        switch (valueType) {
+            case "float":
+            case "currency":
+            case "percentage":
+                Double doubleValue = cellElement.getOfficeValueAttribute();
+                if (doubleValue != null) {
+                    // Remove trailing zeros for display
+                    if (doubleValue == Math.floor(doubleValue) && !Double.isInfinite(doubleValue)) {
+                        return String.valueOf(doubleValue.longValue());
+                    }
+                    return doubleValue.toString();
+                }
+                return cellElement.getTextContent();
+            case "date":
+            case "time":
+                return cellElement.getTextContent();
+            case "boolean":
+                Boolean boolValue = cellElement.getOfficeBooleanValueAttribute();
+                return boolValue != null ? boolValue.toString() : cellElement.getTextContent();
+            case "string":
+            default:
+                String stringValue = cellElement.getOfficeStringValueAttribute();
+                if (stringValue != null) {
+                    return stringValue;
+                }
+                return cellElement.getTextContent();
+        }
+    }
+
+    /**
+     * Determine cell type from value type string.
+     */
+    private CellDataTypeEnum determineCellTypeFromElement(String valueType) {
+        if (valueType == null) {
+            return CellDataTypeEnum.STRING;
+        }
+
+        switch (valueType) {
+            case "float":
+            case "currency":
+            case "percentage":
+                return CellDataTypeEnum.NUMBER;
+            case "date":
+            case "time":
+                return CellDataTypeEnum.STRING;
+            case "boolean":
+                return CellDataTypeEnum.BOOLEAN;
+            case "string":
+            default:
+                return CellDataTypeEnum.STRING;
+        }
     }
 
     /**

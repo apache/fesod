@@ -33,12 +33,14 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.FileUtils;
+import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -210,16 +212,13 @@ public class OdsReadWriteTest {
         List<OdsTestData> dataList1 = generateTestData(5);
         List<OdsTestData> dataList2 = generateTestData(3);
 
-        // Write multiple sheets
-        FesodSheet.write(fileName, OdsTestData.class)
+        // Write multiple sheets using ExcelWriter
+        try (ExcelWriter excelWriter = FesodSheet.write(fileName, OdsTestData.class)
                 .excelType(ExcelTypeEnum.ODS)
-                .sheet("Sheet1")
-                .doWrite(dataList1);
-
-        FesodSheet.write(fileName, OdsTestData.class)
-                .excelType(ExcelTypeEnum.ODS)
-                .sheet("Sheet2")
-                .doWrite(dataList2);
+                .build()) {
+            excelWriter.write(dataList1, FesodSheet.writerSheet("Sheet1").build());
+            excelWriter.write(dataList2, FesodSheet.writerSheet("Sheet2").build());
+        }
 
         // Read first sheet
         List<OdsTestData> readData1 = new ArrayList<>();
@@ -358,6 +357,55 @@ public class OdsReadWriteTest {
         File outputFile = new File(fileName);
         assertTrue(outputFile.exists(), "ODS file should be created");
         assertTrue(outputFile.length() > 0, "ODS file should not be empty");
+    }
+
+    /**
+     * Test reading from real ODS file with multiple sheets.
+     * The test file has:
+     * - First sheet: 3 rows of data
+     * - Second sheet: 2 rows of data
+     */
+    @Test
+    public void testReadRealOdsFile() {
+        File resourceFile = TestFileUtil.readFile("ods/ods.ods");
+        assertTrue(resourceFile.exists(), "Test ODS file should exist");
+
+        // Read first sheet (should have 3 rows)
+        List<OdsTestData> readData1 = new ArrayList<>();
+        FesodSheet.read(resourceFile.getAbsolutePath(), OdsTestData.class, new ReadListener<OdsTestData>() {
+                    @Override
+                    public void invoke(OdsTestData data, AnalysisContext context) {
+                        readData1.add(data);
+                    }
+
+                    @Override
+                    public void doAfterAllAnalysed(AnalysisContext context) {}
+                })
+                .excelType(ExcelTypeEnum.ODS)
+                .sheet(0)
+                .doRead();
+
+        assertEquals(3, readData1.size(), "First sheet should have 3 rows");
+
+        // Read second sheet (should have 2 rows)
+        List<OdsTestData> readData2 = new ArrayList<>();
+        FesodSheet.read(resourceFile.getAbsolutePath(), OdsTestData.class, new ReadListener<OdsTestData>() {
+                    @Override
+                    public void invoke(OdsTestData data, AnalysisContext context) {
+                        readData2.add(data);
+                    }
+
+                    @Override
+                    public void doAfterAllAnalysed(AnalysisContext context) {}
+                })
+                .excelType(ExcelTypeEnum.ODS)
+                .sheet(1)
+                .doRead();
+
+        assertEquals(2, readData2.size(), "Second sheet should have 2 rows");
+
+        // Verify total rows across all sheets
+        assertEquals(5, readData1.size() + readData2.size(), "Total rows should be 5");
     }
 
     /**

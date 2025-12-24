@@ -56,6 +56,10 @@
             <artifactId>fastexcel-support</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.odftoolkit</groupId>
+            <artifactId>odfdom-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <exclusions>

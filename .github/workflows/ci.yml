@@ -82,13 +82,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
       - name: Test with Maven
-        run: ./mvnw test -B -Dmaven.test.skip=false -pl fesod
+        run: ./mvnw test -B -Dmaven.test.skip=false -pl fesod-common,fesod-sheet
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: (!cancelled())
         with:
           files: "**/target/surefire-reports/*.xml"
       - name: Maven Build
-        run: ./mvnw install -B -V -pl fesod
+        run: ./mvnw install -B -V -pl fesod-common,fesod-sheet
       - name: Java Doc
         run: ./mvnw javadoc:javadoc

@@ -22,17 +22,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.apache.fesod</groupId>
-        <artifactId>fesod-parent</artifactId>
+        <artifactId>fesod-examples</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>fesod-examples</artifactId>
-    <packaging>pom</packaging>
-    <name>Fesod Examples</name>
+    <artifactId>fesod-sheet-examples</artifactId>
+    <packaging>jar</packaging>
+    <name>Fesod Sheet Examples</name>
 
-    <modules>
-        <module>fesod-sheet-examples</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.fesod</groupId>
+            <artifactId>fesod-sheet</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

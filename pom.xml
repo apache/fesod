@@ -24,6 +24,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache</groupId>
@@ -31,7 +32,6 @@
         <version>23</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-parent</artifactId>
@@ -426,11 +426,6 @@
                     <version>1.2.7</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.central</groupId>
-                    <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.4.0</version>
-                </plugin>
-                <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
                     <version>2.46.1</version>
@@ -610,17 +605,22 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>ossrh</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>website/**</exclude>
+                        <exclude>logo.svg</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>.git/**</exclude>
+                        <exclude>.github/**</exclude>
+                        <exclude>**/target/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>23</version>
+        <version>31</version>
     </parent>
 
 
@@ -54,14 +54,13 @@
     </modules>
 
     <properties>
-        <revision>2.0.0</revision>
+        <revision>2.0.0-incubating</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven-compiler-plugin>3.14.1</maven-compiler-plugin>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <gpg.skip>true</gpg.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.test.skip>true</maven.test.skip>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -129,23 +128,12 @@
         </license>
     </licenses>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>oss</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
-              <groupId>org.apache.commons</groupId>
-              <artifactId>commons-collections4</artifactId>
-              <version>${commons-collections4.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -153,9 +141,9 @@
                 <version>${commons-csv.version}</version>
             </dependency>
             <dependency>
-              <groupId>org.apache.commons</groupId>
-              <artifactId>commons-lang3</artifactId>
-              <version>${commons-lang3.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
@@ -203,7 +191,6 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
             </dependency>
-            <!-- provided -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -386,21 +373,6 @@
                     <version>${maven-compiler-plugin}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.projectlombok</groupId>
                     <artifactId>lombok-maven-plugin</artifactId>
                     <version>1.18.20.0</version>
@@ -478,52 +450,6 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <configuration>
-                    <attach>true</attach>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <!-- Configuration GPG plug-ins don't tip password -->
-                <configuration>
-                    <gpgArguments>
-                        <argument>--pinentry-mode</argument>
-                        <argument>loopback</argument>
-                    </gpgArguments>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.projectlombok</groupId>

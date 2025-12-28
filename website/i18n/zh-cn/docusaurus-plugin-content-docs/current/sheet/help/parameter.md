@@ -56,6 +56,7 @@ class ReadWorkbook {
 class WriteBasicParameter {
   - Boolean useDefaultStyle
   - Boolean automaticMergeHead
+  - HeaderMergeStrategy headerMergeStrategy
   - Collection~Integer~ includeColumnIndexes
   - Collection~String~ excludeColumnFieldNames
   - Boolean orderByIncludeColumn
@@ -165,11 +166,37 @@ WriteWorkbook  --|>  WriteBasicParameter
 | needHead                | true  | 是否需要写入头到电子表格                                                                                               |
 | useDefaultStyle         | true  | 是否使用默认的样式                                                                                                  |
 | automaticMergeHead      | true  | 自动合并头，头中相同的字段上下左右都会去尝试匹配                                                                                   |
+| headerMergeStrategy     | null  | 表头合并策略。如果为 null，则根据 `automaticMergeHead` 决定行为以保持向后兼容。可选值：`NONE`、`HORIZONTAL_ONLY`、`VERTICAL_ONLY`、`FULL_RECTANGLE`、`AUTO`。详见下方说明。 |
 | excludeColumnIndexes    | 空     | 需要排除对象中的 index 的数据                                                                                         |
 | excludeColumnFieldNames | 空     | 需要排除对象中的字段的数据                                                                                              |
 | includeColumnIndexes    | 空     | 只要导出对象中的 index 的数据                                                                                         |
 | includeColumnFieldNames | 空     | 只要导出对象中的字段的数据                                                                                              |
 | orderByIncludeColumn    | false | 在使用了参数 includeColumnFieldNames 或者 includeColumnIndexes的时候，会根据传入集合的顺序排序                                     |
+
+#### 表头合并策略
+
+`headerMergeStrategy` 参数提供了对表头合并行为的精细控制：
+
+- **NONE**: 不进行任何自动合并。
+- **HORIZONTAL_ONLY**: 仅水平合并（同一行内的相同单元格）。
+- **VERTICAL_ONLY**: 仅垂直合并（同一列内的相同单元格）。
+- **FULL_RECTANGLE**: 仅合并完整的矩形区域（所有单元格名称相同）。
+- **AUTO**: 自动合并（默认行为，向后兼容）。
+
+**示例**:
+
+```java
+FastExcel.write(fileName)
+    .head(head)
+    .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
+    .sheet()
+    .doWrite(data());
+```
+
+**注意**: 如果未设置 `headerMergeStrategy`，则根据 `automaticMergeHead` 决定行为：
+
+- `automaticMergeHead == true` → `HeaderMergeStrategy.AUTO`
+- `automaticMergeHead == false` → `HeaderMergeStrategy.NONE`
 
 ### WriteWorkbook 参数
 

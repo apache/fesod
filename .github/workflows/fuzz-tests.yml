@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
           cache: 'maven'
 
       - name: Run fuzz tests (fesod module)
@@ -50,7 +50,7 @@ jobs:
         run: |
           mkdir -p "${{ runner.temp }}/jazzer-artifacts/"
           # Execute only tests under fuzz package and force tests not to be skipped
-          mvn -B -pl fesod -am -D"maven.test.skip=false" -DtrimStackTrace=false -D"test=org.apache.fesod.sheet.fuzz.*Test" test
+          mvn -B -pl fesod-sheet -am -D"maven.test.skip=false" -DtrimStackTrace=false -D"test=org.apache.fesod.sheet.fuzz.*Test"  -D"surefire.failIfNoSpecifiedTests=false"  test
 
       - name: Upload Jazzer artifacts (crashes, repros)
         if: always()

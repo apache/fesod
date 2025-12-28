@@ -69,7 +69,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <poi.version>5.5.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>
-        <commons-io.version>2.16.1</commons-io.version>
+        <commons-io.version>2.21.0</commons-io.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <lombok.version>1.18.42</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>

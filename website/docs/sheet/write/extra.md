@@ -80,7 +80,7 @@ public void writeHyperlinkDataWrite() {
     String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
     WriteCellDemoData data = new WriteCellDemoData();
     // Set hyperlink
-    WriteCellData cellData = new WriteCellData<>("点击访问");
+    WriteCellData cellData = new WriteCellData<>("Click to visit");
     HyperlinkData hyperlinkData = new HyperlinkData();
     hyperlinkData.setAddress("https://example.com");
     hyperlinkData.setHyperlinkType(HyperlinkData.HyperlinkType.URL);

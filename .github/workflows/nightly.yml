@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        java: [ 8, 11, 17, 21, 25-ea ]
+        java: [ 8, 11, 17, 21, 25 ]
         distribution: [ 'temurin' ]
       fail-fast: false
       max-parallel: 5

@@ -46,16 +46,50 @@
                 <include>**/*</include>
             </includes>
         </fileSet>
+
+        <!-- Fesod CLI Scripts -->
+        <fileSet>
+            <directory>../fesod-cli/src/main/scripts</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>fesod-cli</include>
+                <include>fesod-cli.bat</include>
+            </includes>
+            <fileMode>755</fileMode>
+        </fileSet>
+
+        <!-- Fesod CLI Configuration -->
+        <fileSet>
+            <directory>../fesod-cli/src/main/resources</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>logback.xml</include>
+                <include>application.properties</include>
+                <include>default-config.yaml</include>
+            </includes>
+        </fileSet>
+
+        <!-- Fesod CLI Documentation -->
+        <fileSet>
+            <directory>../fesod-cli</directory>
+            <outputDirectory>cli</outputDirectory>
+            <includes>
+                <include>README.md</include>
+                <include>BUILDING.md</include>
+                <include>LICENSE</include>
+                <include>NOTICE</include>
+            </includes>
+        </fileSet>
     </fileSets>
 
     <dependencySets>
 
         <dependencySet>
-            <outputDirectory>bin</outputDirectory>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>lib</outputDirectory>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>org.apache.fesod:*</include>
+                <include>org.apache.fesod:fesod-cli:jar:*</include>
             </includes>
         </dependencySet>
 

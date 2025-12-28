@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+##############################################################################
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.   See the License for the
+# specific language governing permissions and limitations
+# under the License.
+##############################################################################
+
+##############################################################################
+# Apache Fesod CLI Launcher Script
+# Supports:  JDK 8+
+# Platforms: Linux, macOS, Unix
+##############################################################################
+
+set -e
+
+# 脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Fesod CLI 主目录
+FESOD_HOME="${FESOD_HOME:-$(dirname "$SCRIPT_DIR")}"
+
+# JAR 文件
+FESOD_JAR="$FESOD_HOME/lib/fesod-cli-2.0.0.jar"
+
+# 检查 JAR 是否存在
+if [ ! -f "$FESOD_JAR" ]; then
+    echo "Error: Cannot find fesod-cli JAR at $FESOD_JAR"
+    exit 1
+fi
+
+# 查找 Java
+find_java() {
+    # 1. 检查 JAVA_HOME
+    if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+        echo "$JAVA_HOME/bin/java"
+        return 0
+    fi
+    
+    # 2. 检查 PATH
+    if command -v java &> /dev/null; then
+        echo "java"
+        return 0
+    fi
+    
+    # 3. macOS 特定查找
+    if [ "$(uname)" = "Darwin" ]; then
+        if [ -x "/usr/libexec/java_home" ]; then
+            JAVA_HOME_CANDIDATE=$(/usr/libexec/java_home 2>/dev/null)
+            if [ -n "$JAVA_HOME_CANDIDATE" ] && [ -x "$JAVA_HOME_CANDIDATE/bin/java" ]; then
+                echo "$JAVA_HOME_CANDIDATE/bin/java"
+                return 0
+            fi
+        fi
+    fi
+    
+    # 4. Linux 常见路径
+    for candidate in \
+        /usr/lib/jvm/java-8-openjdk-amd64/bin/java \
+        /usr/lib/jvm/java-11-openjdk-amd64/bin/java \
+        /usr/lib/jvm/default-java/bin/java
+    do
+        if [ -x "$candidate" ]; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+    
+    return 1
+}
+
+JAVA_CMD=$(find_java)
+
+# 验证 Java 可用性
+if [ -z "$JAVA_CMD" ]; then
+    echo "Error: Java is not installed or not in PATH"
+    echo ""
+    echo "Please install Java 8 or higher:"
+    echo "  - Ubuntu/Debian: sudo apt-get install openjdk-8-jdk"
+    echo "  - CentOS/RHEL:    sudo yum install java-1.8.0-openjdk"
+    echo "  - macOS:         brew install openjdk@8"
+    echo "  - Or download:    https://adoptium.net/"
+    echo ""
+    echo "Or set JAVA_HOME environment variable:"
+    echo "  export JAVA_HOME=/path/to/jdk"
+    exit 1
+fi
+
+# 检查 Java 版本
+check_java_version() {
+    local java_cmd=$1
+    local version_output=$("$java_cmd" -version 2>&1)
+    local version=$(echo "$version_output" | head -n 1 | awk -F '"' '{print $2}')
+    
+    # 提取主版本号
+    local major_version=$(echo "$version" | awk -F.  '{print $1}')
+    if [ "$major_version" -eq 1 ]; then
+        major_version=$(echo "$version" | awk -F. '{print $2}')
+    fi
+    
+    if [ "$major_version" -lt 8 ]; then
+        echo "Error: Java 8 or higher is required"
+        echo "Current Java version: $version"
+        echo "Java command: $java_cmd"
+        exit 1
+    fi
+}
+
+check_java_version "$JAVA_CMD"
+
+# JVM 参数
+JAVA_OPTS="${FESOD_JAVA_OPTS:--Xms128m -Xmx1g}"
+
+# 日志配置
+if [ -f "$FESOD_HOME/conf/logback.xml" ]; then
+    JAVA_OPTS="$JAVA_OPTS -Dlogback.configurationFile=$FESOD_HOME/conf/logback.xml"
+fi
+
+# 字符编码
+JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
+
+# 执行命令
+exec "$JAVA_CMD" $JAVA_OPTS -jar "$FESOD_JAR" "$@"
+

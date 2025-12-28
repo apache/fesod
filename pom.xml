@@ -51,6 +51,7 @@
         <module>fesod-common</module>
         <module>fesod-examples</module>
         <module>fesod-sheet</module>
+        <module>fesod-cli</module>
         <module>fesod-distribution</module>
     </modules>
 
@@ -74,6 +75,7 @@
         <lombok.version>1.18.42</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
         <fastjson2.version>2.0.60</fastjson2.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
@@ -207,6 +209,11 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

@@ -65,7 +65,7 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.test.skip>true</maven.test.skip>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <commons-csv.version>1.11.0</commons-csv.version>
+        <commons-csv.version>1.14.1</commons-csv.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <poi.version>5.5.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>

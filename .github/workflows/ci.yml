@@ -89,6 +89,6 @@ jobs:
         with:
           files: "**/target/surefire-reports/*.xml"
       - name: Maven Build
-        run: ./mvnw install -B -V -pl fesod-common,fesod-sheet
+        run: ./mvnw install -B -V
       - name: Java Doc
         run: ./mvnw javadoc:javadoc

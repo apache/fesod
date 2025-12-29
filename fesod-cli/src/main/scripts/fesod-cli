@@ -14,14 +14,14 @@
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.   See the License for the
+# KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
 ##############################################################################
 
 ##############################################################################
 # Apache Fesod CLI Launcher Script
-# Supports:  JDK 8+
+# Supports: JDK 8+
 # Platforms: Linux, macOS, Unix
 ##############################################################################
 
@@ -34,11 +34,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FESOD_HOME="${FESOD_HOME:-$(dirname "$SCRIPT_DIR")}"
 
 # 构建 CLASSPATH
-# Include Fesod modules
+# Fesod modules
 CLASSPATH="$FESOD_HOME/lib/*"
-# Include third-party dependencies
+# Third-party dependencies
 CLASSPATH="$CLASSPATH:$FESOD_HOME/lib/ext/*"
-# Include configuration directory
+# Configuration directory
 CLASSPATH="$CLASSPATH:$FESOD_HOME/conf"
 
 # 检查 lib 目录是否存在
@@ -54,13 +54,13 @@ find_java() {
         echo "$JAVA_HOME/bin/java"
         return 0
     fi
-    
+
     # 2. 检查 PATH
     if command -v java &> /dev/null; then
         echo "java"
         return 0
     fi
-    
+
     # 3. macOS 特定查找
     if [ "$(uname)" = "Darwin" ]; then
         if [ -x "/usr/libexec/java_home" ]; then
@@ -71,7 +71,7 @@ find_java() {
             fi
         fi
     fi
-    
+
     # 4. Linux 常见路径
     for candidate in \
         /usr/lib/jvm/java-8-openjdk-amd64/bin/java \
@@ -83,7 +83,7 @@ find_java() {
             return 0
         fi
     done
-    
+
     return 1
 }
 
@@ -95,9 +95,9 @@ if [ -z "$JAVA_CMD" ]; then
     echo ""
     echo "Please install Java 8 or higher:"
     echo "  - Ubuntu/Debian: sudo apt-get install openjdk-8-jdk"
-    echo "  - CentOS/RHEL:    sudo yum install java-1.8.0-openjdk"
+    echo "  - CentOS/RHEL:   sudo yum install java-1.8.0-openjdk"
     echo "  - macOS:         brew install openjdk@8"
-    echo "  - Or download:    https://adoptium.net/"
+    echo "  - Or download:   https://adoptium.net/"
     echo ""
     echo "Or set JAVA_HOME environment variable:"
     echo "  export JAVA_HOME=/path/to/jdk"
@@ -109,13 +109,13 @@ check_java_version() {
     local java_cmd=$1
     local version_output=$("$java_cmd" -version 2>&1)
     local version=$(echo "$version_output" | head -n 1 | awk -F '"' '{print $2}')
-    
+
     # 提取主版本号
-    local major_version=$(echo "$version" | awk -F.  '{print $1}')
+    local major_version=$(echo "$version" | awk -F. '{print $1}')
     if [ "$major_version" -eq 1 ]; then
         major_version=$(echo "$version" | awk -F. '{print $2}')
     fi
-    
+
     if [ "$major_version" -lt 8 ]; then
         echo "Error: Java 8 or higher is required"
         echo "Current Java version: $version"
@@ -139,4 +139,3 @@ JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
 
 # 执行命令
 exec "$JAVA_CMD" $JAVA_OPTS -cp "$CLASSPATH" org.apache.fesod.cli.FesodCli "$@"
-

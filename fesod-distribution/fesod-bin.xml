@@ -68,18 +68,6 @@
                 <include>default-config.yaml</include>
             </includes>
         </fileSet>
-
-        <!-- Fesod CLI Documentation -->
-        <fileSet>
-            <directory>../fesod-cli</directory>
-            <outputDirectory>cli</outputDirectory>
-            <includes>
-                <include>README.md</include>
-                <include>BUILDING.md</include>
-                <include>LICENSE</include>
-                <include>NOTICE</include>
-            </includes>
-        </fileSet>
     </fileSets>
 
     <dependencySets>

@@ -30,11 +30,11 @@ set SCRIPT_DIR=%~dp0
 set FESOD_HOME=%SCRIPT_DIR%..
 
 REM 构建 CLASSPATH
-REM Include Fesod modules
+REM Fesod modules
 set CLASSPATH=%FESOD_HOME%\lib\*
-REM Include third-party dependencies
+REM Third-party dependencies
 set CLASSPATH=%CLASSPATH%;%FESOD_HOME%\lib\ext\*
-REM Include configuration directory
+REM Configuration directory
 set CLASSPATH=%CLASSPATH%;%FESOD_HOME%\conf
 
 REM 检查 lib 目录是否存在
@@ -77,7 +77,7 @@ for %%d in (
 
 :java_not_found
 echo Error: Java is not installed or not in PATH
-echo. 
+echo.
 echo Please install Java 8 or higher:
 echo   - Download from: https://adoptium.net/
 echo   - Or install via Chocolatey: choco install openjdk8
@@ -125,4 +125,3 @@ set JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8
 REM 执行命令
 "%JAVA_CMD%" %JAVA_OPTS% -cp "%CLASSPATH%" org.apache.fesod.cli.FesodCli %*
 exit /b %ERRORLEVEL%
-

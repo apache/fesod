@@ -29,12 +29,17 @@ REM 脚本所在目录
 set SCRIPT_DIR=%~dp0
 set FESOD_HOME=%SCRIPT_DIR%..
 
-REM JAR 文件
-set FESOD_JAR=%FESOD_HOME%\lib\fesod-cli-2.0.0.jar
+REM 构建 CLASSPATH
+REM Include Fesod modules
+set CLASSPATH=%FESOD_HOME%\lib\*
+REM Include third-party dependencies
+set CLASSPATH=%CLASSPATH%;%FESOD_HOME%\lib\ext\*
+REM Include configuration directory
+set CLASSPATH=%CLASSPATH%;%FESOD_HOME%\conf
 
-REM 检查 JAR 是否存在
-if not exist "%FESOD_JAR%" (
-    echo Error:  Cannot find fesod-cli JAR at %FESOD_JAR%
+REM 检查 lib 目录是否存在
+if not exist "%FESOD_HOME%\lib" (
+    echo Error: Cannot find lib directory at %FESOD_HOME%\lib
     exit /b 1
 )
 
@@ -118,6 +123,6 @@ REM 字符编码
 set JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8
 
 REM 执行命令
-"%JAVA_CMD%" %JAVA_OPTS% -jar "%FESOD_JAR%" %*
+"%JAVA_CMD%" %JAVA_OPTS% -cp "%CLASSPATH%" org.apache.fesod.cli.FesodCli %*
 exit /b %ERRORLEVEL%
 

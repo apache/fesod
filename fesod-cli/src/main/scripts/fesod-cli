@@ -33,12 +33,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Fesod CLI 主目录
 FESOD_HOME="${FESOD_HOME:-$(dirname "$SCRIPT_DIR")}"
 
-# JAR 文件
-FESOD_JAR="$FESOD_HOME/lib/fesod-cli-2.0.0.jar"
+# 构建 CLASSPATH
+# Include Fesod modules
+CLASSPATH="$FESOD_HOME/lib/*"
+# Include third-party dependencies
+CLASSPATH="$CLASSPATH:$FESOD_HOME/lib/ext/*"
+# Include configuration directory
+CLASSPATH="$CLASSPATH:$FESOD_HOME/conf"
 
-# 检查 JAR 是否存在
-if [ ! -f "$FESOD_JAR" ]; then
-    echo "Error: Cannot find fesod-cli JAR at $FESOD_JAR"
+# 检查 lib 目录是否存在
+if [ ! -d "$FESOD_HOME/lib" ]; then
+    echo "Error: Cannot find lib directory at $FESOD_HOME/lib"
     exit 1
 fi
 
@@ -133,5 +138,5 @@ fi
 JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
 
 # 执行命令
-exec "$JAVA_CMD" $JAVA_OPTS -jar "$FESOD_JAR" "$@"
+exec "$JAVA_CMD" $JAVA_OPTS -cp "$CLASSPATH" org.apache.fesod.cli.FesodCli "$@"
 

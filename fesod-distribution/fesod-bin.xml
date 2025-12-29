@@ -83,18 +83,21 @@
     </fileSets>
 
     <dependencySets>
-
+        <!-- Fesod modules: put in lib/ directory -->
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
                 <include>org.apache.fesod:fesod-cli:jar:*</include>
+                <include>org.apache.fesod:fesod-sheet:jar:*</include>
+                <include>org.apache.fesod:fesod-common:jar:*</include>
             </includes>
         </dependencySet>
 
+        <!-- Third-party dependencies: put in lib/ext/ directory -->
         <dependencySet>
-            <outputDirectory>lib</outputDirectory>
+            <outputDirectory>lib/ext</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <useProjectArtifact>false</useProjectArtifact>
             <excludes>

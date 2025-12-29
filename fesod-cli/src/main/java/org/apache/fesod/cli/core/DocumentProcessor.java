@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fesod.cli.core;
 
 import java.nio.file.Path;
@@ -25,30 +26,29 @@ import java.util.Map;
  * Document processor abstraction for different document types
  */
 public interface DocumentProcessor {
-    
+
     /**
      * Read document and return data
      */
     Map<String, Object> read(Path inputPath, Map<String, Object> options);
-    
+
     /**
      * Write data to document
      */
     void write(Map<String, Object> data, Path outputPath, Map<String, Object> options);
-    
+
     /**
      * Convert document format
      */
     void convert(Path inputPath, Path outputPath, Map<String, Object> options);
-    
+
     /**
      * Get document information
      */
     Map<String, Object> getInfo(Path inputPath);
-    
+
     /**
      * Get supported module name
      */
     String getModuleName();
 }
-

@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,26 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.fesod.cli.core.sheet;
 
-import org.apache.fesod.sheet.FesodSheet;
+package org.apache.fesod.cli.core.sheet;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.fesod.sheet.FesodSheet;
 
 /**
  * Sheet format converter
  */
 public class SheetConverter {
-    
+
     public void convert(Path inputPath, Path outputPath, Map<String, Object> options) {
-        List<Map<Integer, String>> result = FesodSheet.read(inputPath.toFile())
-            .headRowNumber(0)
-            .sheet(0)
-            .doReadSync();
-        
+        List<Map<Integer, String>> result =
+                FesodSheet.read(inputPath.toFile()).headRowNumber(0).sheet(0).doReadSync();
+
         List<List<String>> allData = new ArrayList<List<String>>();
         for (Map<Integer, String> rowData : result) {
             List<String> row = new ArrayList<String>();
@@ -44,10 +42,7 @@ public class SheetConverter {
             }
             allData.add(row);
         }
-        
-        FesodSheet.write(outputPath.toFile())
-            .sheet("Sheet1")
-            .doWrite(allData);
+
+        FesodSheet.write(outputPath.toFile()).sheet("Sheet1").doWrite(allData);
     }
 }
-

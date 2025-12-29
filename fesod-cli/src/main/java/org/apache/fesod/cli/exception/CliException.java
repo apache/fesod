@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,35 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fesod.cli.exception;
 
 /**
  * Base CLI exception
  */
 public class CliException extends RuntimeException {
-    
+
     private final int exitCode;
-    
+
     public CliException(String message) {
         this(message, 1);
     }
-    
+
     public CliException(String message, int exitCode) {
         super(message);
         this.exitCode = exitCode;
     }
-    
+
     public CliException(String message, Throwable cause) {
         this(message, cause, 1);
     }
-    
+
     public CliException(String message, Throwable cause, int exitCode) {
         super(message, cause);
         this.exitCode = exitCode;
     }
-    
+
     public int getExitCode() {
         return exitCode;
     }
 }
-

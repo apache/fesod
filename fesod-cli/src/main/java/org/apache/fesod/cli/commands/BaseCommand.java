@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,38 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fesod.cli.commands;
 
+import java.nio.file.Paths;
 import org.apache.fesod.cli.config.CliConfig;
 import org.apache.fesod.cli.config.ConfigLoader;
 import org.apache.fesod.cli.core.DocumentProcessor;
 import org.apache.fesod.cli.core.ModuleRegistry;
 import picocli.CommandLine.Option;
 
-import java.nio.file.Paths;
-
 /**
  * Base class for all CLI commands
  */
 public abstract class BaseCommand implements Runnable {
-    
+
     @Option(
-        names = {"--config", "-c"},
-        description = "Configuration file path (default: ~/.fesod/config.yaml)",
-        paramLabel = "<file>"
-    )
+            names = {"--config", "-c"},
+            description = "Configuration file path (default: ~/.fesod/config.yaml)",
+            paramLabel = "<file>")
     protected String configFile;
-    
+
     @Option(
-        names = {"--module", "-m"},
-        description = "Document module:  sheet (default: sheet)",
-        defaultValue = "sheet"
-    )
+            names = {"--module", "-m"},
+            description = "Document module:  sheet (default: sheet)",
+            defaultValue = "sheet")
     protected String module;
-    
+
     protected CliConfig config;
     protected DocumentProcessor processor;
-    
+
     protected void initialize() {
         ConfigLoader loader = new ConfigLoader();
         if (configFile != null) {
@@ -55,16 +53,15 @@ public abstract class BaseCommand implements Runnable {
         } else {
             config = loader.loadDefault();
         }
-        
+
         processor = ModuleRegistry.getProcessor(module);
     }
-    
+
     @Override
     public void run() {
         initialize();
         execute();
     }
-    
+
     protected abstract void execute();
 }
-

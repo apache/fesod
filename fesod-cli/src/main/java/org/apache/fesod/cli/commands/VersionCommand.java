@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fesod.cli.commands;
 
 import picocli.CommandLine.Command;
@@ -23,13 +24,9 @@ import picocli.CommandLine.Command;
 /**
  * Version command implementation
  */
-@Command(
-    name = "version",
-    description = "Display version information",
-    mixinStandardHelpOptions = true
-)
+@Command(name = "version", description = "Display version information", mixinStandardHelpOptions = true)
 public class VersionCommand implements Runnable {
-    
+
     @Override
     public void run() {
         System.out.println("Apache Fesod CLI");
@@ -41,4 +38,3 @@ public class VersionCommand implements Runnable {
         System.out.println("Licensed under the Apache License 2.0");
     }
 }
-

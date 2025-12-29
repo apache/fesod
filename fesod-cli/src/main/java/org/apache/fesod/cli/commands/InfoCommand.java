@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,44 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.fesod.cli.commands;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
 import org.apache.fesod.cli.formatters.FormatterFactory;
 import org.apache.fesod.cli.formatters.OutputFormatter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-
 /**
  * Info command implementation
  */
-@Command(
-    name = "info",
-    description = "Display spreadsheet file information",
-    mixinStandardHelpOptions = true
-)
+@Command(name = "info", description = "Display spreadsheet file information", mixinStandardHelpOptions = true)
 public class InfoCommand extends BaseCommand {
-    
-    @Parameters(
-        index = "0",
-        description = "Input file path",
-        paramLabel = "<file>"
-    )
+
+    @Parameters(index = "0", description = "Input file path", paramLabel = "<file>")
     private String inputFile;
-    
+
     @Override
     protected void execute() {
         Path input = Paths.get(inputFile);
-        
+
         Map<String, Object> info = processor.getInfo(input);
-        
+
         OutputFormatter formatter = FormatterFactory.getFormatter("json");
         String output = formatter.format(info);
-        
+
         System.out.println(output);
     }
 }
-

@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.fesod.cli.config;
 
-import org.apache.fesod.cli.exception.ConfigurationException;
+package org.apache.fesod.cli.config;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.fesod.cli.exception.ConfigurationException;
 
 /**
  * Configuration validator
@@ -30,7 +30,8 @@ import java.util.List;
 public class ConfigValidator {
 
     private static final List<String> SUPPORTED_OUTPUT_FORMATS = Arrays.asList("json", "csv", "xml");
-    private static final List<String> SUPPORTED_ENCODINGS = Arrays.asList("UTF-8", "UTF-16", "ISO-8859-1", "GBK", "GB2312");
+    private static final List<String> SUPPORTED_ENCODINGS =
+            Arrays.asList("UTF-8", "UTF-16", "ISO-8859-1", "GBK", "GB2312");
 
     public static void validate(CliConfig config) {
         if (config == null) {
@@ -49,10 +50,8 @@ public class ConfigValidator {
 
         if (defaults.getOutputFormat() != null) {
             if (!SUPPORTED_OUTPUT_FORMATS.contains(defaults.getOutputFormat().toLowerCase())) {
-                throw new ConfigurationException(
-                    "Unsupported output format: " + defaults.getOutputFormat() +
-                    ". Supported formats: " + String.join(", ", SUPPORTED_OUTPUT_FORMATS)
-                );
+                throw new ConfigurationException("Unsupported output format: " + defaults.getOutputFormat()
+                        + ". Supported formats: " + String.join(", ", SUPPORTED_OUTPUT_FORMATS));
             }
         }
 
@@ -60,10 +59,8 @@ public class ConfigValidator {
             try {
                 Charset.forName(defaults.getEncoding());
             } catch (Exception e) {
-                throw new ConfigurationException(
-                    "Unsupported encoding: " + defaults.getEncoding() +
-                    ". Supported encodings: " + String.join(", ", SUPPORTED_ENCODINGS)
-                );
+                throw new ConfigurationException("Unsupported encoding: " + defaults.getEncoding()
+                        + ". Supported encodings: " + String.join(", ", SUPPORTED_ENCODINGS));
             }
         }
     }
@@ -99,4 +96,3 @@ public class ConfigValidator {
         }
     }
 }
-

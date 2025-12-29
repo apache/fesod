@@ -5,7 +5,7 @@
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.   You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,30 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.fesod.cli.formatters;
 
-import org.apache.fesod.cli.exception.CliException;
+package org.apache.fesod.cli.formatters;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.fesod.cli.exception.CliException;
 
 /**
  * Formatter factory
  */
 public class FormatterFactory {
-    
+
     private static final Map<String, OutputFormatter> FORMATTERS = new HashMap<String, OutputFormatter>();
-    
+
     static {
         registerFormatter(new JsonFormatter());
         registerFormatter(new CsvFormatter());
         registerFormatter(new XmlFormatter());
     }
-    
+
     public static void registerFormatter(OutputFormatter formatter) {
         FORMATTERS.put(formatter.getFormatType().toLowerCase(), formatter);
     }
-    
+
     public static OutputFormatter getFormatter(String formatType) {
         OutputFormatter formatter = FORMATTERS.get(formatType.toLowerCase());
         if (formatter == null) {
@@ -48,4 +48,3 @@ public class FormatterFactory {
         return formatter;
     }
 }
-

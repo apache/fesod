@@ -44,11 +44,13 @@ public class ConfigLoader {
 
     public CliConfig loadFromFile(Path configPath) {
         try {
-            InputStream is = Files.newInputStream(configPath);
-            Yaml yaml = new Yaml();
-            CliConfig config = yaml.loadAs(is, CliConfig.class);
-            is.close();
-            return config != null ? config : createDefaultConfig();
+            try (InputStream is = Files.newInputStream(configPath)) {
+                Yaml yaml = new Yaml();
+                CliConfig config = yaml.loadAs(is, CliConfig.class);
+                ConfigValidator.validate(config);
+                return config;
+            }
+
         } catch (Exception e) {
             System.err.println("Warning: Failed to load config from " + configPath + ", using defaults");
             return createDefaultConfig();

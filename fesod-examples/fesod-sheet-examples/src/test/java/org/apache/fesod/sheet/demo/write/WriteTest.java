@@ -84,12 +84,14 @@ public class WriteTest {
      */
     @Test
     public void simpleWrite() {
-        // Note: simpleWrite can be used when the data volume is not large (within 5000, depending on the actual situation). For large data volumes, refer to repeated writes.
+        // Note: simpleWrite can be used when the data volume is not large (within 5000, depending on the actual
+        // situation). For large data volumes, refer to repeated writes.
 
         // Method 1 JDK8+
         // since: 3.0.0-beta1
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         // If you want to use Excel 03, pass the excelType parameter.
         FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(() -> {
             // Paging query data
@@ -98,7 +100,8 @@ public class WriteTest {
 
         // Method 2
         fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         // If you want to use Excel 03, pass the excelType parameter.
         FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 
@@ -135,12 +138,15 @@ public class WriteTest {
     @Test
     public void excludeOrIncludeWrite() {
         String fileName = TestFileUtil.getPath() + "excludeOrIncludeWrite" + System.currentTimeMillis() + ".xlsx";
-        // Note: When using the ExcelProperty annotation, if you want to avoid empty columns, you need to use the 'order' field instead of 'index'. 'order' will ignore empty columns and continue sequentially, while 'index' will not ignore empty columns (it stays in the specified column).
+        // Note: When using the ExcelProperty annotation, if you want to avoid empty columns, you need to use the
+        // 'order' field instead of 'index'. 'order' will ignore empty columns and continue sequentially, while 'index'
+        // will not ignore empty columns (it stays in the specified column).
 
         // Based on user input fields, assuming we want to ignore 'date'
         Set<String> excludeColumnFieldNames = new HashSet<>();
         excludeColumnFieldNames.add("date");
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .excludeColumnFieldNames(excludeColumnFieldNames)
                 .sheet("Template")
@@ -150,7 +156,8 @@ public class WriteTest {
         // Based on user input fields, assuming we only want to export 'date'
         Set<String> includeColumnFieldNames = new HashSet<>();
         includeColumnFieldNames.add("date");
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .includeColumnFieldNames(includeColumnFieldNames)
                 .sheet("Template")
@@ -169,7 +176,8 @@ public class WriteTest {
     @Test
     public void indexWrite() {
         String fileName = TestFileUtil.getPath() + "indexWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, IndexData.class).sheet("Template").doWrite(data());
     }
 
@@ -185,7 +193,8 @@ public class WriteTest {
     @Test
     public void complexHeadWrite() {
         String fileName = TestFileUtil.getPath() + "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, ComplexHeadData.class).sheet("Template").doWrite(data());
     }
 
@@ -207,7 +216,8 @@ public class WriteTest {
                 FesodSheet.write(fileName, DemoData.class).build()) {
             // Note: Create the writeSheet only once if writing to the same sheet
             WriteSheet writeSheet = FesodSheet.writerSheet("Template").build();
-            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the database query.
+            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the
+            // database query.
             for (int i = 0; i < 5; i++) {
                 // Paging query data from the database. Here you can query the data for each page.
                 List<DemoData> data = data();
@@ -220,10 +230,12 @@ public class WriteTest {
         // Specify file
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName, DemoData.class).build()) {
-            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the database query. Eventually it will be written to 5 sheets.
+            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the
+            // database query. Eventually it will be written to 5 sheets.
             for (int i = 0; i < 5; i++) {
                 // Create writeSheet every time. Note that sheetNo must be specified and sheetName must be different.
-                WriteSheet writeSheet = FesodSheet.writerSheet(i, "Template" + i).build();
+                WriteSheet writeSheet =
+                        FesodSheet.writerSheet(i, "Template" + i).build();
                 // Paging query data from the database. Here you can query the data for each page.
                 List<DemoData> data = data();
                 excelWriter.write(data, writeSheet);
@@ -234,13 +246,15 @@ public class WriteTest {
         fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
         // Specify file
         try (ExcelWriter excelWriter = FesodSheet.write(fileName).build()) {
-            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the database query. Eventually it will be written to 5 sheets.
+            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the
+            // database query. Eventually it will be written to 5 sheets.
             for (int i = 0; i < 5; i++) {
                 // Create writeSheet every time. Note that sheetNo must be specified and sheetName must be different.
                 // Note that DemoData.class can change each time; I used the same class here for convenience.
                 // In reality, it can change every time.
-                WriteSheet writeSheet =
-                        FesodSheet.writerSheet(i, "Template" + i).head(DemoData.class).build();
+                WriteSheet writeSheet = FesodSheet.writerSheet(i, "Template" + i)
+                        .head(DemoData.class)
+                        .build();
                 // Paging query data from the database. Here you can query the data for each page.
                 List<DemoData> data = data();
                 excelWriter.write(data, writeSheet);
@@ -260,7 +274,8 @@ public class WriteTest {
     @Test
     public void converterWrite() {
         String fileName = TestFileUtil.getPath() + "converterWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, ConverterData.class).sheet("Template").doWrite(data());
     }
 
@@ -275,8 +290,10 @@ public class WriteTest {
     public void imageWrite() throws Exception {
         String fileName = TestFileUtil.getPath() + "imageWrite" + System.currentTimeMillis() + ".xlsx";
 
-        // Note: All images will be loaded into memory. There is no good solution for now. For large numbers of images, it is recommended to:
-        // 1. Upload images to OSS or other storage sites: https://www.aliyun.com/product/oss, then verify the link directly
+        // Note: All images will be loaded into memory. There is no good solution for now. For large numbers of images,
+        // it is recommended to:
+        // 1. Upload images to OSS or other storage sites: https://www.aliyun.com/product/oss, then verify the link
+        // directly
         // 2. Use: https://github.com/coobird/thumbnailator or other tools to compress images
 
         String imagePath = TestFileUtil.getPath() + "converter" + File.separator + "img.jpg";
@@ -313,7 +330,8 @@ public class WriteTest {
             imageData.setImageType(ImageData.ImageType.PICTURE_TYPE_PNG);
             // Top, Right, Bottom, Left need padding
             // Similar to CSS margin
-            // Tested: cannot set too large. If it exceeds the original cell size, opening it will prompt repair. No good solution found yet.
+            // Tested: cannot set too large. If it exceeds the original cell size, opening it will prompt repair. No
+            // good solution found yet.
             imageData.setTop(5);
             imageData.setRight(40);
             imageData.setBottom(5);
@@ -334,7 +352,8 @@ public class WriteTest {
             imageData.setRelativeFirstRowIndex(0);
             imageData.setRelativeFirstColumnIndex(0);
             imageData.setRelativeLastRowIndex(0);
-            // First 3 can be omitted. The following one needs to be written, meaning the end needs to move one cell to the right relative to the current cell.
+            // First 3 can be omitted. The following one needs to be written, meaning the end needs to move one cell to
+            // the right relative to the current cell.
             // This image will cover the current cell and the next one.
             imageData.setRelativeLastColumnIndex(1);
 
@@ -373,7 +392,8 @@ public class WriteTest {
         comment.setCommentData(commentData);
         commentData.setAuthor("Jiaju Zhuang");
         commentData.setRichTextStringData(new RichTextStringData("This is a comment"));
-        // The default size of the comment is the size of the cell. Here we want to adjust it to the size of 4 cells, so we occupy one extra cell to the right and one extra cell down.
+        // The default size of the comment is the size of the cell. Here we want to adjust it to the size of 4 cells, so
+        // we occupy one extra cell to the right and one extra cell down.
         commentData.setRelativeLastColumnIndex(1);
         commentData.setRelativeLastRowIndex(1);
 
@@ -383,7 +403,8 @@ public class WriteTest {
         FormulaData formulaData = new FormulaData();
         formula.setFormulaData(formulaData);
         // Replace the first digit in 123456789 with 2
-        // This is just an example. If it involves formulas, try to calculate them in memory if possible. Avoid using formulas if possible.
+        // This is just an example. If it involves formulas, try to calculate them in memory if possible. Avoid using
+        // formulas if possible.
         formulaData.setFormulaValue("REPLACE(123456789,1,1,2)");
 
         // Set style for a single cell. If there are many styles, you can use annotations.
@@ -392,7 +413,8 @@ public class WriteTest {
         writeCellDemoData.setWriteCellStyle(writeCellStyle);
         WriteCellStyle writeCellStyleData = new WriteCellStyle();
         writeCellStyle.setWriteCellStyle(writeCellStyleData);
-        // Need to specify FillPatternType as FillPatternType.SOLID_FOREGROUND, otherwise background color will not be displayed.
+        // Need to specify FillPatternType as FillPatternType.SOLID_FOREGROUND, otherwise background color will not be
+        // displayed.
         writeCellStyleData.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
         // Green background
         writeCellStyleData.setFillForegroundColor(IndexedColors.GREEN.getIndex());
@@ -437,9 +459,13 @@ public class WriteTest {
     public void templateWrite() {
         String templateFileName = TestFileUtil.getPath() + "demo" + File.separator + "demo.xlsx";
         String fileName = TestFileUtil.getPath() + "templateWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
-        // Note: withTemplate will store the entire template file in memory, so try not to use it for appending files. If the template file is too large, it will cause OOM.
-        // If you want to append to a file (cannot be processed in one thread, refer to the repeated writing demo recommended for one thread), it is recommended to store temporarily in the database or disk cache (ehcache) and then write all at once.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        // Note: withTemplate will store the entire template file in memory, so try not to use it for appending files.
+        // If the template file is too large, it will cause OOM.
+        // If you want to append to a file (cannot be processed in one thread, refer to the repeated writing demo
+        // recommended for one thread), it is recommended to store temporarily in the database or disk cache (ehcache)
+        // and then write all at once.
         FesodSheet.write(fileName, DemoData.class)
                 .withTemplate(templateFileName)
                 .sheet()
@@ -458,7 +484,8 @@ public class WriteTest {
     @Test
     public void widthAndHeightWrite() {
         String fileName = TestFileUtil.getPath() + "widthAndHeightWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, WidthAndHeightData.class).sheet("Template").doWrite(data());
     }
 
@@ -472,7 +499,8 @@ public class WriteTest {
     @Test
     public void annotationStyleWrite() {
         String fileName = TestFileUtil.getPath() + "annotationStyleWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoStyleData.class).sheet("Template").doWrite(data());
     }
 
@@ -500,7 +528,8 @@ public class WriteTest {
         headWriteCellStyle.setWriteFont(headWriteFont);
         // Content strategy
         WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
-        // Need to specify FillPatternType as SOLID_FOREGROUND. The head defaults to FillPatternType so it can be omitted.
+        // Need to specify FillPatternType as SOLID_FOREGROUND. The head defaults to FillPatternType so it can be
+        // omitted.
         contentWriteCellStyle.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
         // Background green
         contentWriteCellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
@@ -512,7 +541,8 @@ public class WriteTest {
         HorizontalCellStyleStrategy horizontalCellStyleStrategy =
                 new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
 
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(horizontalCellStyleStrategy)
                 .sheet("Template")
@@ -528,18 +558,23 @@ public class WriteTest {
                         // Check if it's not a head. If it's fill, this will be null, so use not true.
                         if (BooleanUtils.isNotTrue(context.getHead())) {
                             // First cell
-                            // As long as it's not a head, there will be data. Of course in fill scenarios, use context.getCellDataList(). Depending on the template, a cell may have multiple WriteCellData.
+                            // As long as it's not a head, there will be data. Of course in fill scenarios, use
+                            // context.getCellDataList(). Depending on the template, a cell may have multiple
+                            // WriteCellData.
                             WriteCellData<?> cellData = context.getFirstCellData();
                             // Need to get style from cellData
-                            // A very important reason is that WriteCellStyle is bound to dataFormatData. For example, if you add DateTimeFormat,
-                            // the dataFormatData in writeCellStyle has been changed. If you new a WriteCellStyle yourself, the annotation style may be lost.
+                            // A very important reason is that WriteCellStyle is bound to dataFormatData. For example,
+                            // if you add DateTimeFormat,
+                            // the dataFormatData in writeCellStyle has been changed. If you new a WriteCellStyle
+                            // yourself, the annotation style may be lost.
                             // getOrCreateStyle returns a style, creating one if it's null.
                             WriteCellStyle writeCellStyle = cellData.getOrCreateStyle();
                             writeCellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
                             // Need to specify FillPatternType as SOLID_FOREGROUND
                             writeCellStyle.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
 
-                            // The style is set. There is a FillStyleCellWriteHandler later that will default set WriteCellStyle to the cell, so you don't need to worry about it.
+                            // The style is set. There is a FillStyleCellWriteHandler later that will default set
+                            // WriteCellStyle to the cell, so you don't need to worry about it.
                         }
                     }
                 })
@@ -547,7 +582,8 @@ public class WriteTest {
                 .doWrite(data());
 
         // Method 3: Use POI styles directly. Not recommended.
-        // Pitfall 1: Style contains dataformat for formatting data, so setting it yourself may cause formatting annotations to fail.
+        // Pitfall 1: Style contains dataformat for formatting data, so setting it yourself may cause formatting
+        // annotations to fail.
         // Pitfall 2: Don't keep creating styles. Remember to cache them. Creating more than 60,000 will crash.
         fileName = TestFileUtil.getPath() + "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
         FesodSheet.write(fileName, DemoData.class)
@@ -570,7 +606,8 @@ public class WriteTest {
 
                             // Since dataformat is not specified here, the displayed data format may be incorrect.
 
-                            // Clear the style of WriteCellData. Otherwise, FillStyleCellWriteHandler will override your settings.
+                            // Clear the style of WriteCellData. Otherwise, FillStyleCellWriteHandler will override your
+                            // settings.
                             context.getFirstCellData().setWriteCellStyle(null);
                         }
                     }
@@ -593,14 +630,17 @@ public class WriteTest {
         // Method 1: Annotation
         String fileName = TestFileUtil.getPath() + "mergeWrite" + System.currentTimeMillis() + ".xlsx";
         // Add ContentLoopMerge annotation in DemoStyleData
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoMergeData.class).sheet("Template").doWrite(data());
 
         // Method 2: Custom merge strategy
         fileName = TestFileUtil.getPath() + "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-        // Merge every 2 rows. Set eachColumn to 3 (length of our data), so only the first column will merge. Other merge strategies can be implemented.
+        // Merge every 2 rows. Set eachColumn to 3 (length of our data), so only the first column will merge. Other
+        // merge strategies can be implemented.
         LoopMergeStrategy loopMergeStrategy = new LoopMergeStrategy(2, 0);
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(loopMergeStrategy)
                 .sheet("Template")
@@ -621,10 +661,12 @@ public class WriteTest {
         // Specify the class to use for writing
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName, DemoData.class).build()) {
-            // Set sheet to not need head, otherwise it will output sheet head, looking like the first table has 2 heads.
+            // Set sheet to not need head, otherwise it will output sheet head, looking like the first table has 2
+            // heads.
             WriteSheet writeSheet =
                     FesodSheet.writerSheet("Template").needHead(Boolean.FALSE).build();
-            // Must specify need head here. Table inherits sheet configuration. If sheet is configured not to need it, table defaults to not needing it.
+            // Must specify need head here. Table inherits sheet configuration. If sheet is configured not to need it,
+            // table defaults to not needing it.
             WriteTable writeTable0 =
                     FesodSheet.writerTable(0).needHead(Boolean.TRUE).build();
             WriteTable writeTable1 =
@@ -675,7 +717,8 @@ public class WriteTest {
     public void longestMatchColumnWidthWrite() {
         String fileName =
                 TestFileUtil.getPath() + "longestMatchColumnWidthWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, LongestMatchColumnWidthData.class)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("Template")
@@ -696,7 +739,8 @@ public class WriteTest {
     @Test
     public void customHandlerWrite() {
         String fileName = TestFileUtil.getPath() + "customHandlerWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CustomSheetWriteHandler())
                 .registerWriteHandler(new CustomCellWriteHandler())
@@ -716,8 +760,10 @@ public class WriteTest {
     @Test
     public void commentWrite() {
         String fileName = TestFileUtil.getPath() + "commentWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
-        // Note that inMemory must be set to true to support comments. Currently there is no good way to handle comments without being in memory.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        // Note that inMemory must be set to true to support comments. Currently there is no good way to handle comments
+        // without being in memory.
         FesodSheet.write(fileName, DemoData.class)
                 .inMemory(Boolean.TRUE)
                 .registerWriteHandler(new CommentWriteHandler())
@@ -738,7 +784,8 @@ public class WriteTest {
     public void variableTitleWrite() {
         // Method 1
         String fileName = TestFileUtil.getPath() + "variableTitleWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, ConverterData.class)
                 .head(variableTitleHead())
                 .sheet("Template")
@@ -752,7 +799,8 @@ public class WriteTest {
     public void noModelWrite() {
         // Method 1
         String fileName = TestFileUtil.getPath() + "noModelWrite" + System.currentTimeMillis() + ".xlsx";
-        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream will be automatically closed.
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName).head(head()).sheet("Template").doWrite(dataList());
     }
 

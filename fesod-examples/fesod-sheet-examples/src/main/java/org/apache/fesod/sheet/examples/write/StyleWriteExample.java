@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.examples.write;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 import org.apache.fesod.sheet.examples.write.data.DemoStyleData;
@@ -29,6 +30,7 @@ import org.apache.fesod.sheet.examples.write.data.DemoStyleData;
 /**
  * Example demonstrating how to set styles when writing an Excel file.
  */
+@Slf4j
 public class StyleWriteExample {
 
     public static void main(String[] args) {
@@ -42,7 +44,7 @@ public class StyleWriteExample {
         String fileName = ExampleFileUtil.getTempPath("styleWrite" + System.currentTimeMillis() + ".xlsx");
 
         FesodSheet.write(fileName, DemoStyleData.class).sheet("Template").doWrite(data());
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
     }
 
     private static List<DemoStyleData> data() {

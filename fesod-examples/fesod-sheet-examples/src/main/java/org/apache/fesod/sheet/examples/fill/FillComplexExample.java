@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.examples.fill.data.FillData;
@@ -32,6 +33,7 @@ import org.apache.fesod.sheet.write.metadata.WriteSheet;
 /**
  * Complex example demonstrating how to fill a list of data into an Excel template.
  */
+@Slf4j
 public class FillComplexExample {
 
     public static void main(String[] args) {
@@ -47,7 +49,7 @@ public class FillComplexExample {
         // Option 1: Load all data into memory at once and fill
         String fileName = ExampleFileUtil.getTempPath("listFill" + System.currentTimeMillis() + ".xlsx");
         FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(data());
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
 
         // Option 2: Fill in multiple passes, using file caching (saves memory)
         fileName = ExampleFileUtil.getPath() + "listFillMultiple" + System.currentTimeMillis() + ".xlsx";
@@ -57,7 +59,7 @@ public class FillComplexExample {
             excelWriter.fill(data(), writeSheet);
             excelWriter.fill(data(), writeSheet);
         }
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
     }
 
     private static List<FillData> data() {

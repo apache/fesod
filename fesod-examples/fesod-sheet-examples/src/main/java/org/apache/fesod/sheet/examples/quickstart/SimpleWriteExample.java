@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.examples.quickstart;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.examples.quickstart.data.DemoData;
 import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
@@ -29,6 +30,7 @@ import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 /**
  * Simplest way to write an Excel file.
  */
+@Slf4j
 public class SimpleWriteExample {
 
     public static void main(String[] args) {
@@ -48,7 +50,7 @@ public class SimpleWriteExample {
 
         // Specify the class to write, then write to the first sheet named "Template"
         FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
     }
 
     private static List<DemoData> data() {

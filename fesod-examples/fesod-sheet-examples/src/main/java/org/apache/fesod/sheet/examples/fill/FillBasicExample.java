@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.examples.fill;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.examples.fill.data.FillData;
 import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
@@ -29,6 +30,7 @@ import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 /**
  * Basic example demonstrating how to fill data into an Excel template.
  */
+@Slf4j
 public class FillBasicExample {
 
     public static void main(String[] args) {
@@ -47,7 +49,7 @@ public class FillBasicExample {
         fillData.setName("Zhang San");
         fillData.setNumber(5.2);
         FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(fillData);
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
 
         // Option 2: Fill based on a Map
         fileName = ExampleFileUtil.getPath() + "simpleFillMap" + System.currentTimeMillis() + ".xlsx";
@@ -55,6 +57,6 @@ public class FillBasicExample {
         map.put("name", "Zhang San");
         map.put("number", 5.2);
         FesodSheet.write(fileName).withTemplate(templateFileName).sheet().doFill(map);
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
     }
 }

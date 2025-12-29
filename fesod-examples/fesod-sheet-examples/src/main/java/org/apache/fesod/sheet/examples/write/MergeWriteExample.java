@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.examples.write;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 import org.apache.fesod.sheet.examples.write.data.DemoMergeData;
@@ -30,6 +31,7 @@ import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 /**
  * Example demonstrating how to merge cells when writing an Excel file.
  */
+@Slf4j
 public class MergeWriteExample {
 
     public static void main(String[] args) {
@@ -46,7 +48,7 @@ public class MergeWriteExample {
         FesodSheet.write(fileName, DemoMergeData.class)
                 .sheet("Annotation Merge")
                 .doWrite(data());
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
 
         // Method 2: Use a merge strategy
         fileName = ExampleFileUtil.getPath() + "mergeWriteStrategy" + System.currentTimeMillis() + ".xlsx";
@@ -56,7 +58,7 @@ public class MergeWriteExample {
                 .registerWriteHandler(loopMergeStrategy)
                 .sheet("Strategy Merge")
                 .doWrite(data());
-        System.out.println("Successfully wrote file: " + fileName);
+        log.info("Successfully wrote file: {}", fileName);
     }
 
     private static List<DemoMergeData> data() {

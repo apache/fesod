@@ -20,46 +20,22 @@
 package org.apache.fesod.sheet.examples.util;
 
 import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
+import java.nio.file.Files;
+import lombok.SneakyThrows;
 
 /**
  * Utility for example files.
  */
 public class ExampleFileUtil {
 
-    public static InputStream getResourcesFileInputStream(String fileName) {
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream("" + fileName);
-    }
+    public static final String EXAMPLE = "example";
 
     public static String getPath() {
-        return ExampleFileUtil.class.getResource("/").getPath();
-    }
-
-    public static ExamplePathBuild pathBuild() {
-        return new ExamplePathBuild();
-    }
-
-    public static File createNewFile(String pathName) {
-        File file = new File(getPath() + pathName);
-        if (file.exists()) {
-            file.delete();
-        } else {
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
+        java.net.URL resource = ExampleFileUtil.class.getResource("/");
+        if (resource == null) {
+            throw new IllegalStateException("Cannot find classpath root resource");
         }
-        return file;
-    }
-
-    public static File readFile(String pathName) {
-        return new File(getPath() + pathName);
-    }
-
-    public static File readUserHomeFile(String pathName) {
-        return new File(System.getProperty("user.home") + File.separator + pathName);
+        return resource.getPath();
     }
 
     /**
@@ -69,28 +45,7 @@ public class ExampleFileUtil {
      * @return the full path to the file
      */
     public static String getExamplePath(String fileName) {
-        return getPath() + "example" + File.separator + fileName;
-    }
-
-    /**
-     * Check if a file exists in the example resource directory.
-     *
-     * @param fileName the file name relative to the example directory
-     * @return true if the file exists, false otherwise
-     */
-    public static boolean exampleFileExists(String fileName) {
-        File file = new File(getExamplePath(fileName));
-        return file.exists();
-    }
-
-    /**
-     * Get a File object for a file in the example resource directory.
-     *
-     * @param fileName the file name relative to the example directory
-     * @return the File object
-     */
-    public static File getExampleFile(String fileName) {
-        return new File(getExamplePath(fileName));
+        return getPath() + EXAMPLE + File.separator + fileName;
     }
 
     /**
@@ -99,40 +54,8 @@ public class ExampleFileUtil {
      * @param fileName the output file name
      * @return the full path to the output file in temp directory
      */
+    @SneakyThrows
     public static String getTempPath(String fileName) {
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        return tmpDir + File.separator + fileName;
-    }
-
-    /**
-     * build to example file path
-     **/
-    public static class ExamplePathBuild {
-        private ExamplePathBuild() {
-            subPath = new ArrayList<>();
-        }
-
-        private final List<String> subPath;
-
-        public ExamplePathBuild sub(String dirOrFile) {
-            subPath.add(dirOrFile);
-            return this;
-        }
-
-        public String getPath() {
-            if (CollectionUtils.isEmpty(subPath)) {
-                return ExampleFileUtil.class.getResource("/").getPath();
-            }
-            if (subPath.size() == 1) {
-                return ExampleFileUtil.class.getResource("/").getPath() + subPath.get(0);
-            }
-            StringBuilder path =
-                    new StringBuilder(ExampleFileUtil.class.getResource("/").getPath());
-            path.append(subPath.get(0));
-            for (int i = 1; i < subPath.size(); i++) {
-                path.append(File.separator).append(subPath.get(i));
-            }
-            return path.toString();
-        }
+        return Files.createTempDirectory("fesod-sheet-examples").toAbsolutePath() + File.separator + fileName;
     }
 }

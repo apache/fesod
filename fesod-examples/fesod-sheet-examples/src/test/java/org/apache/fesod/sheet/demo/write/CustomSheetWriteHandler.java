@@ -39,7 +39,8 @@ public class CustomSheetWriteHandler implements SheetWriteHandler {
     public void afterSheetCreate(SheetWriteHandlerContext context) {
         log.info("Sheet {} write success.", context.getWriteSheetHolder().getSheetNo());
 
-        // Set range for first column, first and second data rows. Since the first row is head, the data is actually in the 2nd and 3rd rows.
+        // Set range for first column, first and second data rows. Since the first row is head, the data is actually in
+        // the 2nd and 3rd rows.
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(1, 2, 0, 0);
         DataValidationHelper helper = context.getWriteSheetHolder().getSheet().getDataValidationHelper();
         DataValidationConstraint constraint = helper.createExplicitListConstraint(new String[] {"Test1", "Test2"});

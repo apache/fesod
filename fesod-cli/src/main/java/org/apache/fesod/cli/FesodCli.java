@@ -27,14 +27,10 @@ import org.apache.fesod.cli.commands.WriteCommand;
 import org.apache.fesod.cli.exception.CliException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 
-/**
- * Apache Fesod CLI - Main Entry Point
- *
- * @author Apache Fesod Team
- * @since 2.0.0
- */
 @Command(
         name = "fesod-cli",
         mixinStandardHelpOptions = true,
@@ -61,6 +57,9 @@ import picocli.CommandLine.Option;
         })
 public class FesodCli implements Runnable {
 
+    @Spec
+    CommandSpec spec;
+
     @Option(
             names = {"--verbose", "-v"},
             description = "Enable verbose logging")
@@ -68,8 +67,8 @@ public class FesodCli implements Runnable {
 
     @Override
     public void run() {
-        // Default:  show help when no command specified
-        CommandLine.usage(this, System.out);
+        // Default: show help when no command specified
+        spec.commandLine().usage(spec.commandLine().getOut());
     }
 
     public static void main(String[] args) {

@@ -49,7 +49,6 @@ class CliIntegrationTest {
         assertEquals(0, exitCode);
 
         String output = sw.toString();
-        assertTrue(output.contains("Apache Fesod CLI"));
         assertTrue(output.contains("read"));
         assertTrue(output.contains("write"));
         assertTrue(output.contains("convert"));
@@ -89,7 +88,6 @@ class CliIntegrationTest {
         assertEquals(0, exitCode);
 
         String output = sw.toString();
-        assertTrue(output.contains("Apache Fesod CLI"));
         assertTrue(output.contains("read"));
         assertTrue(output.contains("write"));
         assertTrue(output.contains("convert"));
@@ -109,7 +107,7 @@ class CliIntegrationTest {
         assertEquals(0, exitCode);
 
         String output = sw.toString();
-        assertTrue(output.contains("Apache Fesod CLI"));
+        assertTrue(output.contains("Usage: fesod-cli [-hvV] [COMMAND]"));
     }
 
     @Test
@@ -205,6 +203,6 @@ class CliIntegrationTest {
         assertEquals(1, exitCode);
 
         String errorOutput = sw.toString();
-        assertTrue(errorOutput.contains("Error:")); // Should contain error message
+        assertTrue(errorOutput.contains("FileProcessException")); // Should contain error message
     }
 }

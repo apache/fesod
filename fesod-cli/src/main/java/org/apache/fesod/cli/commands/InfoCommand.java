@@ -45,6 +45,6 @@ public class InfoCommand extends BaseCommand {
         OutputFormatter formatter = FormatterFactory.getFormatter("json");
         String output = formatter.format(info);
 
-        System.out.println(output);
+        getOut().println(output);
     }
 }

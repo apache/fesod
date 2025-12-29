@@ -19,17 +19,23 @@
 
 package org.apache.fesod.cli.commands;
 
+import java.io.PrintWriter;
 import java.nio.file.Paths;
 import org.apache.fesod.cli.config.CliConfig;
 import org.apache.fesod.cli.config.ConfigLoader;
 import org.apache.fesod.cli.core.DocumentProcessor;
 import org.apache.fesod.cli.core.ModuleRegistry;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 
 /**
  * Base class for all CLI commands
  */
 public abstract class BaseCommand implements Runnable {
+
+    @Spec
+    protected CommandSpec spec;
 
     @Option(
             names = {"--config", "-c"},
@@ -39,12 +45,19 @@ public abstract class BaseCommand implements Runnable {
 
     @Option(
             names = {"--module", "-m"},
-            description = "Document module:  sheet (default: sheet)",
+            description = "Document module: sheet (default: sheet)",
             defaultValue = "sheet")
     protected String module;
 
     protected CliConfig config;
     protected DocumentProcessor processor;
+
+    /**
+     * Get the output print writer for this command
+     */
+    protected PrintWriter getOut() {
+        return spec.commandLine().getOut();
+    }
 
     protected void initialize() {
         ConfigLoader loader = new ConfigLoader();

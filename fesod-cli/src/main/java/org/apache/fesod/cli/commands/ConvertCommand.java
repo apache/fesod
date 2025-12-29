@@ -50,6 +50,6 @@ public class ConvertCommand extends BaseCommand {
 
         processor.convert(input, output, options);
 
-        System.out.println("✓ Conversion completed:  " + inputFile + " → " + outputFile);
+        getOut().println("✓ Conversion completed:  " + inputFile + " → " + outputFile);
     }
 }

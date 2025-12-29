@@ -88,9 +88,9 @@ public class ReadCommand extends BaseCommand {
 
         if (outputFile != null) {
             formatter.writeToFile(output, Paths.get(outputFile));
-            System.out.println("✓ Output written to: " + outputFile);
+            getOut().println("✓ Output written to: " + outputFile);
         } else {
-            System.out.println(output);
+            getOut().println(output);
         }
     }
 }

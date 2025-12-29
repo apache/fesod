@@ -19,7 +19,10 @@
 
 package org.apache.fesod.cli.commands;
 
+import java.io.PrintWriter;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Spec;
 
 /**
  * Version command implementation
@@ -27,14 +30,18 @@ import picocli.CommandLine.Command;
 @Command(name = "version", description = "Display version information", mixinStandardHelpOptions = true)
 public class VersionCommand implements Runnable {
 
+    @Spec
+    CommandSpec spec;
+
     @Override
     public void run() {
-        System.out.println("Apache Fesod CLI");
-        System.out.println("Version: 2.0.0");
-        System.out.println("Java Version: " + System.getProperty("java.version"));
-        System.out.println("OS:  " + System.getProperty("os.name") + " " + System.getProperty("os.arch"));
-        System.out.println();
-        System.out.println("Copyright © 2025 The Apache Software Foundation");
-        System.out.println("Licensed under the Apache License 2.0");
+        PrintWriter out = spec.commandLine().getOut();
+        out.println("Apache Fesod CLI");
+        out.println("Version: 2.0.0");
+        out.println("Java Version: " + System.getProperty("java.version"));
+        out.println("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch"));
+        out.println();
+        out.println("Copyright © 2025 The Apache Software Foundation");
+        out.println("Licensed under the Apache License 2.0");
     }
 }

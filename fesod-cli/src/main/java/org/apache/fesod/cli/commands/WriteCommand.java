@@ -73,7 +73,7 @@ public class WriteCommand extends BaseCommand {
 
             processor.write(data, output, options);
 
-            System.out.println("✓ Data written to: " + outputFile);
+            getOut().println("✓ Data written to: " + outputFile);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to write data:  " + e.getMessage(), e);

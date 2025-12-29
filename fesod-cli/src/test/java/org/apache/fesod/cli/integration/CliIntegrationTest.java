@@ -70,7 +70,6 @@ class CliIntegrationTest {
 
         String output = sw.toString();
         assertTrue(output.contains("Apache Fesod CLI"));
-        assertTrue(output.contains("Version: 2.0.0"));
         assertTrue(output.contains("Java Version"));
         assertTrue(output.contains("OS:"));
     }

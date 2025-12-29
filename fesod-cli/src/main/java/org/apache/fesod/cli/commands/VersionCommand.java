@@ -37,7 +37,6 @@ public class VersionCommand implements Runnable {
     public void run() {
         PrintWriter out = spec.commandLine().getOut();
         out.println("Apache Fesod CLI");
-        out.println("Version: 2.0.0");
         out.println("Java Version: " + System.getProperty("java.version"));
         out.println("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.arch"));
         out.println();

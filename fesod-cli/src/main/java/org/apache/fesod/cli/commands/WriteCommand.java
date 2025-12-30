@@ -59,6 +59,15 @@ public class WriteCommand extends BaseCommand {
             Path input = Paths.get(inputFile);
             Path output = Paths.get(outputFile);
 
+            if (!Files.exists(input)) {
+                throw new RuntimeException("Input file does not exist: " + inputFile);
+            }
+            if (!Files.isRegularFile(input)) {
+                throw new RuntimeException("Input path is not a regular file: " + inputFile);
+            }
+            if (!Files.isReadable(input)) {
+                throw new RuntimeException("Input file is not readable: " + inputFile);
+            }
             String content = new String(Files.readAllBytes(input), "UTF-8");
             Map<String, Object> data = new HashMap<String, Object>();
 

@@ -43,7 +43,7 @@ public class FormatterFactory {
     public static OutputFormatter getFormatter(String formatType) {
         OutputFormatter formatter = FORMATTERS.get(formatType.toLowerCase());
         if (formatter == null) {
-            throw new CliException("Unsupported format:  " + formatType);
+            throw new CliException("Unsupported format: " + formatType);
         }
         return formatter;
     }

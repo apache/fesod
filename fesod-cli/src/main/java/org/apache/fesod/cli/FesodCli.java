@@ -34,7 +34,7 @@ import picocli.CommandLine.Spec;
 @Command(
         name = "fesod-cli",
         mixinStandardHelpOptions = true,
-        version = {"Apache Fesod CLI", "Java Runtime:  ${java.version}", "OS: ${os.name} ${os.arch}"},
+        version = {"Apache Fesod CLI", "Java Runtime: ${java.version}", "OS: ${os.name} ${os.arch}"},
         description = "Fast and Easy spreadsheet processing from the command line",
         subcommands = {
             ReadCommand.class,

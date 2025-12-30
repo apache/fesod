@@ -52,8 +52,8 @@ import picocli.CommandLine.Spec;
             "  fesod-cli convert input.xls output.xlsx",
             "  fesod-cli info data.xlsx",
             "",
-            "Documentation:  https://fesod.apache.org/docs/cli",
-            "Report bugs:  https://github.com/apache/fesod/issues"
+            "Documentation: https://fesod.apache.org/docs/cli",
+            "Report bugs: https://github.com/apache/fesod/issues"
         })
 public class FesodCli implements Runnable {
 

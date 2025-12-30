@@ -31,7 +31,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Fesod CLI 主目录
-FESOD_HOME="${FESOD_HOME:-$(dirname "$SCRIPT_DIR")}"
+if [ -z "$FESOD_HOME" ]; then
+    FESOD_HOME="$(dirname "$SCRIPT_DIR")"
+    export FESOD_HOME
+fi
 
 # 构建 CLASSPATH
 # Fesod modules

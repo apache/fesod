@@ -30,15 +30,35 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class ConfigLoader {
 
-    private static final String DEFAULT_CONFIG_PATH = System.getProperty("user.home") + "/.fesod/config.yaml";
+    private static final String USER_CONFIG_PATH = System.getProperty("user.home") + "/.fesod/config.yaml";
 
     public CliConfig loadDefault() {
-        Path defaultPath = Paths.get(DEFAULT_CONFIG_PATH);
-
-        if (Files.exists(defaultPath)) {
-            return loadFromFile(defaultPath);
+        // 1. Try user home config (~/.fesod/config.yaml)
+        Path userConfig = Paths.get(USER_CONFIG_PATH);
+        if (Files.exists(userConfig)) {
+            System.out.println("Loading config from: " + userConfig);
+            return loadFromFile(userConfig);
         }
 
+        // 2. Try FESOD_HOME/conf/default-config.yaml
+        String fesodHome = System.getenv("FESOD_HOME");
+        if (fesodHome != null && !fesodHome.isEmpty()) {
+            Path installConfig = Paths.get(fesodHome, "conf", "default-config.yaml");
+            if (Files.exists(installConfig)) {
+                System.out.println("Loading config from: " + installConfig);
+                return loadFromFile(installConfig);
+            }
+        }
+
+        // 3. Try relative path: conf/default-config.yaml
+        Path relativeConfig = Paths.get("conf", "default-config.yaml");
+        if (Files.exists(relativeConfig)) {
+            System.out.println("Loading config from: " + relativeConfig.toAbsolutePath());
+            return loadFromFile(relativeConfig);
+        }
+
+        // 4. Fallback to embedded config in JAR
+        System.out.println("Loading default config from JAR");
         return createDefaultConfig();
     }
 
@@ -58,6 +78,15 @@ public class ConfigLoader {
     }
 
     private CliConfig createDefaultConfig() {
+
+        try (InputStream is = getClass().getResourceAsStream("/default-config.yaml")) {
+            if (is != null) {
+                Yaml yaml = new Yaml();
+                return yaml.loadAs(is, CliConfig.class);
+            }
+        } catch (Exception e) {
+            // fallback
+        }
         return new CliConfig();
     }
 }

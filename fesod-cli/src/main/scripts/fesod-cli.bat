@@ -27,7 +27,11 @@ REM ============================================================================
 
 REM 脚本所在目录
 set SCRIPT_DIR=%~dp0
-set FESOD_HOME=%SCRIPT_DIR%..
+
+REM Fesod CLI 主目录
+if not defined FESOD_HOME (
+    set FESOD_HOME=%SCRIPT_DIR%..
+)
 
 REM 构建 CLASSPATH
 REM Fesod modules

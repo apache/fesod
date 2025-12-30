@@ -52,20 +52,17 @@ public class SheetReader {
 
     private List<Map<String, Object>> readAllSheets(Path inputPath) {
         List<Map<String, Object>> allSheets = new ArrayList<Map<String, Object>>();
-        List<ReadSheet> sheets;
 
         try (ExcelReader excelReader = FesodSheet.read(inputPath.toFile()).build()) {
-            sheets = excelReader.excelExecutor().sheetList();
+            List<ReadSheet> sheets = excelReader.excelExecutor().sheetList();
+            for (ReadSheet sheet : sheets) {
+                Map<String, Object> sheetData = new LinkedHashMap<String, Object>();
+                sheetData.put("name", sheet.getSheetName());
+                sheetData.put("index", sheet.getSheetNo());
+                sheetData.put("rows", readSheetByIndex(inputPath, sheet.getSheetNo()));
+                allSheets.add(sheetData);
+            }
         }
-
-        for (ReadSheet sheet : sheets) {
-            Map<String, Object> sheetData = new LinkedHashMap<String, Object>();
-            sheetData.put("name", sheet.getSheetName());
-            sheetData.put("index", sheet.getSheetNo());
-            sheetData.put("rows", readSheetByIndex(inputPath, sheet.getSheetNo()));
-            allSheets.add(sheetData);
-        }
-
         return allSheets;
     }
 

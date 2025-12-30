@@ -12,7 +12,7 @@ Apache Fesod CLI is a command-line tool for processing Excel spreadsheets. It al
 
 - **Read**: Extract data from Excel files and output in JSON or CSV format
 - **Write**: Create Excel files from JSON data
-- **Convert**: Convert between different spreadsheet formats (XLS ↔ XLSX)
+- **Convert**: Convert between different spreadsheet formats (XLS ↔ XLSX) with support for multiple sheets
 - **Info**: Display detailed information about spreadsheet files
 
 ## Installation
@@ -76,11 +76,14 @@ fesod-cli read data.xlsx --output result.json
 ### Convert File Format
 
 ```bash
-# Convert XLS to XLSX
+# Convert XLS to XLSX (all sheets)
 fesod-cli convert legacy.xls modern.xlsx
 
-# Convert XLSX to XLS
+# Convert XLSX to XLS (all sheets)
 fesod-cli convert data.xlsx data.xls
+
+# Convert specific sheet only
+fesod-cli convert data.xlsx output.xlsx --sheet 0
 ```
 
 ### Display File Information
@@ -164,9 +167,13 @@ fesod-cli read sales.xlsx --sheet 2
 # Read all sheets
 fesod-cli read sales.xlsx --all
 
-# Export as CSV
+# Export as CSV (includes column headers)
 fesod-cli read sales.xlsx --format csv --output sales.csv
 ```
+
+:::info CSV Format
+When using `--format csv`, the output includes column headers extracted from the first row of data, making it easier to understand the CSV structure.
+:::
 
 ### write
 
@@ -215,7 +222,7 @@ fesod-cli write data.json report.xlsx --sheet-name "Monthly Report"
 Convert spreadsheet between different formats.
 
 ```bash
-fesod-cli convert <input> <output>
+fesod-cli convert <input> <output> [options]
 ```
 
 **Arguments:**
@@ -224,6 +231,14 @@ fesod-cli convert <input> <output>
 |----------|-------------|
 | `<input>` | Input file path |
 | `<output>` | Output file path |
+
+**Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--sheet`, `-s` | Sheet index (0-based) to convert | All sheets |
+| `--sheet-name`, `-n` | Sheet name to convert | All sheets |
+| `--all`, `-a` | Convert all sheets (explicit) | `true` |
 
 **Supported Conversions:**
 
@@ -237,15 +252,25 @@ fesod-cli convert <input> <output>
 **Examples:**
 
 ```bash
-# XLS to XLSX
+# Convert all sheets (default behavior)
 fesod-cli convert legacy.xls modern.xlsx
 
-# XLSX to XLS
-fesod-cli convert data.xlsx data.xls
+# Convert only the first sheet (index 0)
+fesod-cli convert data.xlsx data.xls --sheet 0
 
-# Excel to CSV
-fesod-cli convert data.xlsx data.csv
+# Convert specific sheet by name
+fesod-cli convert data.xlsx output.xlsx --sheet-name "Sales"
+
+# Excel to CSV (first sheet only)
+fesod-cli convert data.xlsx data.csv --sheet 0
+
+# Convert all sheets explicitly
+fesod-cli convert multi-sheet.xlsx output.xlsx --all
 ```
+
+:::tip
+By default, the `convert` command converts **all sheets** from the input file to preserve data integrity. If you only need a specific sheet, use the `--sheet` or `--sheet-name` option.
+:::
 
 ### info
 

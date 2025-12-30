@@ -50,6 +50,8 @@ import picocli.CommandLine.Spec;
             "Examples:",
             "  fesod-cli read data.xlsx --format json",
             "  fesod-cli convert input.xls output.xlsx",
+            "  fesod-cli convert input.xlsx output.csv --sheet 0",
+            "  fesod-cli convert input.xlsx output.xlsx --sheet-name \"Sales\"",
             "  fesod-cli info data.xlsx",
             "",
             "Documentation: https://fesod.apache.org/docs/cli",

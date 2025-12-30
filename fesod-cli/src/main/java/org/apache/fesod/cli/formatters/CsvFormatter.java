@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -45,12 +47,30 @@ public class CsvFormatter implements OutputFormatter {
             if (dataObj instanceof JSONArray) {
                 JSONArray array = (JSONArray) dataObj;
 
-                for (int i = 0; i < array.size(); i++) {
-                    Object item = array.get(i);
+                if (array.size() > 0) {
+                    // Get headers from the first JSONObject
+                    Object firstItem = array.get(0);
+                    if (firstItem instanceof JSONObject) {
+                        JSONObject firstObj = (JSONObject) firstItem;
+                        List<String> headers = new ArrayList<>(firstObj.keySet());
 
-                    if (item instanceof JSONObject) {
-                        JSONObject obj = (JSONObject) item;
-                        printer.printRecord(obj.values());
+                        // Print header row
+                        printer.printRecord(headers);
+
+                        // Print data rows
+                        for (int i = 0; i < array.size(); i++) {
+                            Object item = array.get(i);
+
+                            if (item instanceof JSONObject) {
+                                JSONObject obj = (JSONObject) item;
+                                // Print values in the same order as headers
+                                List<Object> values = new ArrayList<>();
+                                for (String header : headers) {
+                                    values.add(obj.get(header));
+                                }
+                                printer.printRecord(values);
+                            }
+                        }
                     }
                 }
             }

@@ -48,14 +48,25 @@
         </fileSet>
 
         <!-- Fesod CLI Scripts -->
+        <!-- Unix/Linux/macOS shell script -->
         <fileSet>
             <directory>../fesod-cli/src/main/scripts</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>fesod-cli</include>
+            </includes>
+            <fileMode>755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+        <!-- Windows batch script -->
+        <fileSet>
+            <directory>../fesod-cli/src/main/scripts</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
                 <include>fesod-cli.bat</include>
             </includes>
             <fileMode>755</fileMode>
+            <lineEnding>crlf</lineEnding>
         </fileSet>
 
         <!-- Fesod CLI Configuration -->

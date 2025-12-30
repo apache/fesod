@@ -12,7 +12,7 @@ Apache Fesod CLI 是一个用于处理 Excel 电子表格的命令行工具。�
 
 - **读取 (read)**：从 Excel 文件中提取数据，输出为 JSON 或 CSV 格式
 - **写入 (write)**：从 JSON 数据创建 Excel 文件
-- **转换 (convert)**：在不同电子表格格式之间转换 (XLS ↔ XLSX)
+- **转换 (convert)**：在不同电子表格格式之间转换 (XLS ↔ XLSX)，支持多工作表转换
 - **信息 (info)**：显示电子表格文件的详细信息
 
 ## 安装
@@ -76,11 +76,14 @@ fesod-cli read data.xlsx --output result.json
 ### 转换文件格式
 
 ```bash
-# XLS 转 XLSX
+# XLS 转 XLSX（所有工作表）
 fesod-cli convert legacy.xls modern.xlsx
 
-# XLSX 转 XLS
+# XLSX 转 XLS（所有工作表）
 fesod-cli convert data.xlsx data.xls
+
+# 仅转换指定工作表
+fesod-cli convert data.xlsx output.xlsx --sheet 0
 ```
 
 ### 显示文件信息
@@ -164,9 +167,13 @@ fesod-cli read sales.xlsx --sheet 2
 # 读取所有工作表
 fesod-cli read sales.xlsx --all
 
-# 导出为 CSV
+# 导出为 CSV（包含列标题）
 fesod-cli read sales.xlsx --format csv --output sales.csv
 ```
+
+:::info CSV 格式
+当使用 `--format csv` 时，输出会包含从数据第一行提取的列标题，让 CSV 结构更易于理解。
+:::
 
 ### write 命令
 
@@ -215,7 +222,7 @@ fesod-cli write data.json report.xlsx --sheet-name "月度报表"
 在不同电子表格格式之间转换。
 
 ```bash
-fesod-cli convert <input> <output>
+fesod-cli convert <input> <output> [options]
 ```
 
 **参数：**
@@ -224,6 +231,14 @@ fesod-cli convert <input> <output>
 |-----|------|
 | `<input>` | 输入文件路径 |
 | `<output>` | 输出文件路径 |
+
+**选项：**
+
+| 选项 | 描述 | 默认值 |
+|-----|------|-------|
+| `--sheet`, `-s` | 要转换的工作表索引（从 0 开始） | 所有工作表 |
+| `--sheet-name`, `-n` | 要转换的工作表名称 | 所有工作表 |
+| `--all`, `-a` | 转换所有工作表（显式） | `true` |
 
 **支持的转换：**
 
@@ -237,15 +252,25 @@ fesod-cli convert <input> <output>
 **示例：**
 
 ```bash
-# XLS 转 XLSX
+# 转换所有工作表（默认行为）
 fesod-cli convert legacy.xls modern.xlsx
 
-# XLSX 转 XLS
-fesod-cli convert data.xlsx data.xls
+# 仅转换第一个工作表（索引 0）
+fesod-cli convert data.xlsx data.xls --sheet 0
 
-# Excel 转 CSV
-fesod-cli convert data.xlsx data.csv
+# 按名称转换指定工作表
+fesod-cli convert data.xlsx output.xlsx --sheet-name "销售数据"
+
+# Excel 转 CSV（仅第一个工作表）
+fesod-cli convert data.xlsx data.csv --sheet 0
+
+# 显式转换所有工作表
+fesod-cli convert multi-sheet.xlsx output.xlsx --all
 ```
+
+:::tip 提示
+默认情况下，`convert` 命令会转换输入文件的**所有工作表**以保持数据完整性。如果只需要特定工作表，请使用 `--sheet` 或 `--sheet-name` 选项。
+:::
 
 ### info 命令
 

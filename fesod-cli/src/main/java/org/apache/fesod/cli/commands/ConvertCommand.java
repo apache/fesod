@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 /**
@@ -41,15 +42,42 @@ public class ConvertCommand extends BaseCommand {
     @Parameters(index = "1", description = "Output file path", paramLabel = "<output>")
     private String outputFile;
 
+    @Option(
+            names = {"-s", "--sheet"},
+            description = "Sheet index (0-based) to convert. If not specified, all sheets will be converted.")
+    private Integer sheetIndex;
+
+    @Option(
+            names = {"-n", "--sheet-name"},
+            description = "Sheet name to convert")
+    private String sheetName;
+
+    @Option(
+            names = {"-a", "--all"},
+            description = "Convert all sheets (default if no sheet is specified)")
+    private Boolean convertAll;
+
     @Override
     protected void execute() {
         Path input = Paths.get(inputFile);
         Path output = Paths.get(outputFile);
 
         Map<String, Object> options = new HashMap<String, Object>();
+        options.put("sheetIndex", sheetIndex);
+        options.put("sheetName", sheetName);
+        options.put("convertAll", convertAll);
 
         processor.convert(input, output, options);
 
-        getOut().println("✓ Conversion completed:  " + inputFile + " → " + outputFile);
+        String sheetInfo = "";
+        if (sheetIndex != null) {
+            sheetInfo = " (sheet " + sheetIndex + ")";
+        } else if (sheetName != null) {
+            sheetInfo = " (sheet '" + sheetName + "')";
+        } else {
+            sheetInfo = " (all sheets)";
+        }
+
+        getOut().println("✓ Conversion completed" + sheetInfo + ":  " + inputFile + " → " + outputFile);
     }
 }

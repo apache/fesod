@@ -61,6 +61,7 @@
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <!-- YAML Configuration -->

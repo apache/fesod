@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests {@link MemberUtilsTest}
+ * Tests {@link MemberUtils}
  */
 class MemberUtilsTest {
 

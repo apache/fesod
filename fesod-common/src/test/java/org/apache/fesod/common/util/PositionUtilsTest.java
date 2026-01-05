@@ -28,11 +28,11 @@ import org.junit.jupiter.api.Test;
 class PositionUtilsTest {
 
     @Test
-    void test_getRowByRowTagt() {
-        Assertions.assertEquals(0, PositionUtils.getRowByRowTagt("1", null));
-        Assertions.assertEquals(9, PositionUtils.getRowByRowTagt("10", 5));
-        Assertions.assertEquals(6, PositionUtils.getRowByRowTagt(null, 5));
-        Assertions.assertEquals(0, PositionUtils.getRowByRowTagt(null, null));
+    void test_getRowByRowTag() {
+        Assertions.assertEquals(0, PositionUtils.getRowByRowTag("1", null));
+        Assertions.assertEquals(9, PositionUtils.getRowByRowTag("10", 5));
+        Assertions.assertEquals(6, PositionUtils.getRowByRowTag(null, 5));
+        Assertions.assertEquals(0, PositionUtils.getRowByRowTag(null, null));
     }
 
     @Test

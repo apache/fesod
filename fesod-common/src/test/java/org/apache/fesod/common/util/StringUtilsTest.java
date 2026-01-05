@@ -41,7 +41,7 @@ class StringUtilsTest {
         }
     }
 
-    static class TestData {
+    private static class TestData {
         final String source;
         final boolean ignoreCase;
         final int toffset;

@@ -49,12 +49,17 @@ class PositionUtilsTest {
 
     @Test
     void test_getCol() {
-        Assertions.assertEquals(0, PositionUtils.getCol("A1", null)); // A -> 0
-        Assertions.assertEquals(1, PositionUtils.getCol("B10", null)); // B -> 1
-        Assertions.assertEquals(25, PositionUtils.getCol("Z1", null)); // Z -> 25
+        // A -> 0
+        Assertions.assertEquals(0, PositionUtils.getCol("A1", null));
+        // B -> 1
+        Assertions.assertEquals(1, PositionUtils.getCol("B10", null));
+        // Z -> 25
+        Assertions.assertEquals(25, PositionUtils.getCol("Z1", null));
 
-        Assertions.assertEquals(26, PositionUtils.getCol("AA1", null)); // AA -> 26
-        Assertions.assertEquals(51, PositionUtils.getCol("AZ1", null)); // AZ -> 51
+        // AA -> 26
+        Assertions.assertEquals(26, PositionUtils.getCol("AA1", null));
+        // AZ -> 51
+        Assertions.assertEquals(51, PositionUtils.getCol("AZ1", null));
 
         Assertions.assertEquals(0, PositionUtils.getCol("$A1", null));
         Assertions.assertEquals(1, PositionUtils.getCol("$B$2", null));

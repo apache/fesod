@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -59,7 +59,7 @@ public class HeaderMergeStrategyTest {
     @Test
     public void testNoneStrategy() {
         List<List<String>> head = createTestHead();
-        FastExcel.write(fileNone)
+        FesodSheet.write(fileNone)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.NONE)
                 .sheet()
@@ -79,7 +79,7 @@ public class HeaderMergeStrategyTest {
     @Test
     public void testHorizontalOnlyStrategy() {
         List<List<String>> head = createTestHead();
-        FastExcel.write(fileHorizontalOnly)
+        FesodSheet.write(fileHorizontalOnly)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.HORIZONTAL_ONLY)
                 .sheet()
@@ -107,7 +107,7 @@ public class HeaderMergeStrategyTest {
     @Test
     public void testVerticalOnlyStrategy() {
         List<List<String>> head = createTestHead();
-        FastExcel.write(fileVerticalOnly)
+        FesodSheet.write(fileVerticalOnly)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.VERTICAL_ONLY)
                 .sheet()
@@ -135,7 +135,7 @@ public class HeaderMergeStrategyTest {
     @Test
     public void testFullRectangleStrategy() {
         List<List<String>> head = createTestHead();
-        FastExcel.write(fileFullRectangle)
+        FesodSheet.write(fileFullRectangle)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
                 .sheet()
@@ -164,7 +164,7 @@ public class HeaderMergeStrategyTest {
     @Test
     public void testAutoStrategy() {
         List<List<String>> head = createTestHead();
-        FastExcel.write(fileAuto)
+        FesodSheet.write(fileAuto)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.AUTO)
                 .sheet()

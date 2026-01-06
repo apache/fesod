@@ -28,7 +28,7 @@ import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 import org.apache.fesod.sheet.annotation.format.NumberFormat;
 
 /**
- * 基础数据类.这里的排序和excel里面的排序一致
+ * Basic data class. The sorting here is consistent with the sorting in Excel.
  *
  *
  **/
@@ -37,20 +37,20 @@ import org.apache.fesod.sheet.annotation.format.NumberFormat;
 @EqualsAndHashCode
 public class ConverterData {
     /**
-     * 我想所有的 字符串起前面加上"自定义："三个字
+     * I want to add "Custom:" to the beginning of all strings.
      */
-    @ExcelProperty(value = "字符串标题", converter = CustomStringStringConverter.class)
+    @ExcelProperty(value = "String Title", converter = CustomStringStringConverter.class)
     private String string;
     /**
-     * 我想写到excel 用年月日的格式
+     * I want to write to Excel using the format "yyyy-MM-dd HH:mm:ss"
      */
-    @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
-    @ExcelProperty("日期标题")
+    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
+    @ExcelProperty("Date Title")
     private Date date;
     /**
-     * 我想写到excel 用百分比表示
+     * I want to write to Excel using percentage format.
      */
     @NumberFormat("#.##%")
-    @ExcelProperty(value = "数字标题")
+    @ExcelProperty(value = "Double Title")
     private Double doubleData;
 }

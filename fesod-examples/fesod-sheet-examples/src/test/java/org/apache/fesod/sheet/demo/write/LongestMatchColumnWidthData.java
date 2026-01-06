@@ -26,7 +26,7 @@ import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * 基础数据类
+ * Basic data class
  *
  *
  **/
@@ -34,12 +34,12 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class LongestMatchColumnWidthData {
-    @ExcelProperty("字符串标题")
+    @ExcelProperty("String Title")
     private String string;
 
-    @ExcelProperty("日期标题很长日期标题很长日期标题很长很长")
+    @ExcelProperty("Date Title is very long Date Title is very long")
     private Date date;
 
-    @ExcelProperty("数字")
+    @ExcelProperty("Double")
     private Double doubleData;
 }

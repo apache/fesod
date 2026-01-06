@@ -186,7 +186,7 @@ WriteWorkbook  --|>  WriteBasicParameter
 **示例**:
 
 ```java
-FastExcel.write(fileName)
+FesodSheet.write(fileName)
     .head(head)
     .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
     .sheet()

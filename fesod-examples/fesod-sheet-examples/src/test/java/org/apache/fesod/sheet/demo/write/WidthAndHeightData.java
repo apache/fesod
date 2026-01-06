@@ -29,7 +29,7 @@ import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 
 /**
- * 基础数据类
+ * Basic data class
  *
  *
  **/
@@ -40,15 +40,15 @@ import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 @HeadRowHeight(20)
 @ColumnWidth(25)
 public class WidthAndHeightData {
-    @ExcelProperty("字符串标题")
+    @ExcelProperty("String Title")
     private String string;
 
-    @ExcelProperty("日期标题")
+    @ExcelProperty("Date Title")
     private Date date;
     /**
-     * 宽度为50
+     * Width is 50
      */
     @ColumnWidth(50)
-    @ExcelProperty("数字标题")
+    @ExcelProperty("Double Title")
     private Double doubleData;
 }

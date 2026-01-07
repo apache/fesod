@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.write.executor;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,6 +43,7 @@ import org.apache.fesod.sheet.write.metadata.MapRowData;
 import org.apache.fesod.sheet.write.metadata.RowData;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
+import org.apache.fesod.support.cglib.beans.BeanMap;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 

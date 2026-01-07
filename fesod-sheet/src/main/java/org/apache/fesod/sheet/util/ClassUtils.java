@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.util;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -59,6 +58,7 @@ import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
+import org.apache.fesod.support.cglib.beans.BeanMap;
 
 public class ClassUtils {
 

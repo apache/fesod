@@ -49,6 +49,7 @@
     <modules>
         <module>fesod-bom</module>
         <module>fesod-common</module>
+        <module>fesod-support</module>
         <module>fesod-examples</module>
         <module>fesod-sheet</module>
     </modules>
@@ -83,7 +84,6 @@
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
-        <fastexcel.support.version>1.3.0</fastexcel.support.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <argLine></argLine>
@@ -176,11 +176,7 @@
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
             </dependency>
-            <dependency>
-                <groupId>cn.idev.excel</groupId>
-                <artifactId>fastexcel-support</artifactId>
-                <version>${fastexcel.support.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>

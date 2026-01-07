@@ -103,11 +103,11 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
                                     <resource>META-INF/LICENSE</resource>
-                                    <file>${project.basedir}/src/main/resources/META-INF/LICENSE_BINARY</file>
+                                    <file>${project.basedir}/src/main/resources/META-INF/LICENSE</file>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
                                     <resource>META-INF/NOTICE</resource>
-                                    <file>${project.basedir}/src/main/resources/META-INF/NOTICE_BINARY</file>
+                                    <file>${project.basedir}/src/main/resources/META-INF/NOTICE</file>
                                 </transformer>
                             </transformers>
                         </configuration>

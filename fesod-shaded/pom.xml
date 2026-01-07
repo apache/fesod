@@ -48,27 +48,34 @@
 
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>META-INF/LICENSE_BINARY</exclude>
+                    <exclude>META-INF/NOTICE_BINARY</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
                             <createSourcesJar>true</createSourcesJar>
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
                             <createDependencyReducedPom>true</createDependencyReducedPom>
-                            <!-- Make sure the transitive dependencies are written to the generated pom under <dependencies> -->
-                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+
                             <artifactSet>
                                 <includes>
                                     <include>org.springframework:spring-core</include>
                                 </includes>
                             </artifactSet>
+
                             <filters>
                                 <filter>
                                     <artifact>org.springframework:spring-core</artifact>
@@ -77,35 +84,33 @@
                                         <include>org/springframework/cglib/**</include>
                                     </includes>
                                 </filter>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/LICENSE*</exclude>
+                                        <exclude>META-INF/NOTICE*</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
+
                             <relocations>
                                 <relocation>
                                     <pattern>org.springframework</pattern>
                                     <shadedPattern>org.apache.fesod.shaded</shadedPattern>
                                 </relocation>
                             </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>flatten.process-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>META-INF/LICENSE</resource>
+                                    <file>${project.basedir}/src/main/resources/META-INF/LICENSE_BINARY</file>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>META-INF/NOTICE</resource>
+                                    <file>${project.basedir}/src/main/resources/META-INF/NOTICE_BINARY</file>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

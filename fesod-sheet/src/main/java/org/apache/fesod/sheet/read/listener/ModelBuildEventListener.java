@@ -38,7 +38,7 @@ import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.ConverterUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.MapUtils;
-import org.apache.fesod.support.cglib.beans.BeanMap;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 
 /**
  * Convert to the object the user needs

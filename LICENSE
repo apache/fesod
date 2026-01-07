@@ -199,3 +199,20 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+  =======================================================================
+   Apache Fesod(incubating) Subcomponents:
+
+   The Apache Fesod(incubating) project contains subcomponents with separate copyright
+   notices and license terms. Your use of the source code for these
+   subcomponents is subject to the terms and conditions of the following
+   licenses.
+
+   ========================================================================
+    Apache License 2.0
+   ========================================================================
+   This product bundles modified portions of the Spring Framework,
+   which includes code derived from ASM and CGLIB.
+
+   * Source: https://github.com/spring-projects/spring-framework
+   * Shaded Package: org.apache.fesod.shaded

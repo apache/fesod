@@ -19,8 +19,8 @@
 
 package org.apache.fesod.sheet.util;
 
-import org.apache.fesod.support.cglib.beans.BeanMap;
-import org.apache.fesod.support.cglib.core.DefaultNamingPolicy;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.shaded.cglib.core.DefaultNamingPolicy;
 
 /**
  * bean utils

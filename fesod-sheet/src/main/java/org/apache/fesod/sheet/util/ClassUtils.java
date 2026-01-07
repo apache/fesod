@@ -58,7 +58,7 @@ import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
-import org.apache.fesod.support.cglib.beans.BeanMap;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 
 public class ClassUtils {
 

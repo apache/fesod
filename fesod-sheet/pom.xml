@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod-support</artifactId>
+            <artifactId>fesod-shaded</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

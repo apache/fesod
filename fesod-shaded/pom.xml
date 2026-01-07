@@ -29,8 +29,8 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>fesod-support</artifactId>
-    <name>Fesod Support</name>
+    <artifactId>fesod-shaded</artifactId>
+    <name>Fesod Shaded</name>
 
     <dependencies>
         <dependency>
@@ -81,7 +81,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.springframework</pattern>
-                                    <shadedPattern>org.apache.fesod.support</shadedPattern>
+                                    <shadedPattern>org.apache.fesod.shaded</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

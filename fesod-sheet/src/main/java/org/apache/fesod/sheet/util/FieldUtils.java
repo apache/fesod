@@ -23,7 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import org.apache.fesod.sheet.metadata.NullObject;
-import org.apache.fesod.support.cglib.beans.BeanMap;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 
 public class FieldUtils {
 

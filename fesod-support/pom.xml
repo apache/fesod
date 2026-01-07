@@ -30,13 +30,13 @@
     </parent>
 
     <artifactId>fesod-support</artifactId>
-    <packaging>jar</packaging>
     <name>Fesod Support</name>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>

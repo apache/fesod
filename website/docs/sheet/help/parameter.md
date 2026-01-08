@@ -186,7 +186,7 @@ The `headerMergeStrategy` parameter provides fine-grained control over how heade
 **Example**:
 
 ```java
-FastExcel.write(fileName)
+FesodSheet.write(fileName)
     .head(head)
     .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
     .sheet()

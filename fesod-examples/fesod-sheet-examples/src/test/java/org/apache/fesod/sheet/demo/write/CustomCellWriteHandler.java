@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 
 /**
- * 自定义拦截器
+ * Custom handler
  *
  *
  */
@@ -39,8 +39,8 @@ public class CustomCellWriteHandler implements CellWriteHandler {
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
         Cell cell = context.getCell();
-        // 这里可以对cell进行任何操作
-        log.info("第{}行，第{}列写入完成。", cell.getRowIndex(), cell.getColumnIndex());
+        // Can perform any operation on the cell here
+        log.info("Finished writing row {}, column {}", cell.getRowIndex(), cell.getColumnIndex());
         if (BooleanUtils.isTrue(context.getHead()) && cell.getColumnIndex() == 0) {
             CreationHelper createHelper =
                     context.getWriteSheetHolder().getSheet().getWorkbook().getCreationHelper();

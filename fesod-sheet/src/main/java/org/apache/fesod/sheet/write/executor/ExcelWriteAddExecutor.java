@@ -19,13 +19,13 @@
 
 package org.apache.fesod.sheet.write.executor;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.metadata.FieldCache;

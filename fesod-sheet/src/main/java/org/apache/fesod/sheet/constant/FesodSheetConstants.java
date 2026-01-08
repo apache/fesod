@@ -27,7 +27,7 @@ import java.math.RoundingMode;
  *
  *
  */
-public class FastExcelConstants {
+public class FesodSheetConstants {
 
     /**
      * Excel by default with 15 to store Numbers, and the double in Java can use to store number 17, led to the accuracy

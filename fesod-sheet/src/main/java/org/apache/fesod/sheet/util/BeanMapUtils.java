@@ -19,8 +19,8 @@
 
 package org.apache.fesod.sheet.util;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
-import cn.idev.excel.support.cglib.core.DefaultNamingPolicy;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.shaded.cglib.core.DefaultNamingPolicy;
 
 /**
  * bean utils
@@ -43,12 +43,12 @@ public class BeanMapUtils {
         BeanMap.Generator gen = new BeanMap.Generator();
         gen.setBean(bean);
         gen.setContextClass(bean.getClass());
-        gen.setNamingPolicy(FastExcelNamingPolicy.INSTANCE);
+        gen.setNamingPolicy(FesodSheetNamingPolicy.INSTANCE);
         return gen.create();
     }
 
-    public static class FastExcelNamingPolicy extends DefaultNamingPolicy {
-        public static final FastExcelNamingPolicy INSTANCE = new FastExcelNamingPolicy();
+    public static class FesodSheetNamingPolicy extends DefaultNamingPolicy {
+        public static final FesodSheetNamingPolicy INSTANCE = new FesodSheetNamingPolicy();
 
         @Override
         protected String getTag() {

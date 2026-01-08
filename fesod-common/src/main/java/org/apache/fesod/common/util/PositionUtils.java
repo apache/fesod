@@ -33,10 +33,10 @@ public class PositionUtils {
 
     private PositionUtils() {}
 
-    public static int getRowByRowTagt(String rowTagt, Integer before) {
+    public static int getRowByRowTag(String rowTag, Integer before) {
         int row;
-        if (rowTagt != null) {
-            row = Integer.parseInt(rowTagt) - 1;
+        if (rowTag != null) {
+            row = Integer.parseInt(rowTag) - 1;
             return row;
         } else {
             if (before == null) {

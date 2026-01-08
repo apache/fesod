@@ -54,8 +54,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>cn.idev.excel</groupId>
-            <artifactId>fastexcel-support</artifactId>
+            <groupId>org.apache.fesod</groupId>
+            <artifactId>fesod-shaded</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>

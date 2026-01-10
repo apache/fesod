@@ -57,7 +57,9 @@ public class DimensionWorkbookWriteHandler implements WorkbookWriteHandler {
             return;
         }
         for (WriteSheetHolder writeSheetHolder : writeSheetHolderMap.values()) {
-            if (writeSheetHolder.getSheet() == null || !(writeSheetHolder.getSheet() instanceof SXSSFSheet)) {
+            if (writeSheetHolder == null
+                    || writeSheetHolder.getSheet() == null
+                    || !(writeSheetHolder.getSheet() instanceof SXSSFSheet)) {
                 continue;
             }
             SXSSFSheet sxssfSheet = ((SXSSFSheet) writeSheetHolder.getSheet());

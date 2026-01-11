@@ -61,16 +61,6 @@
             </includes>
         </fileSet>
 
-        <!-- Documentation -->
-        <fileSet>
-            <directory>${project.basedir}</directory>
-            <outputDirectory>.</outputDirectory>
-            <includes>
-                <include>README.md</include>
-                <include>BUILDING.md</include>
-            </includes>
-        </fileSet>
-
         <!-- License files from root -->
         <fileSet>
             <directory>${project.basedir}/..</directory>

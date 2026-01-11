@@ -85,7 +85,7 @@ public void dynamicHeadWrite() {
 
 ### Overview
 
-By default, FastExcel automatically merges header cells with the same name. However, you can control the merge behavior using the `headerMergeStrategy` parameter.
+By default, Fesod automatically merges header cells with the same name. However, you can control the merge behavior using the `headerMergeStrategy` parameter.
 
 ### Merge Strategies
 
@@ -107,7 +107,7 @@ public void dynamicHeadWriteWithStrategy() {
         Collections.singletonList("动态数字标题"),
         Collections.singletonList("动态日期标题"));
 
-    FastExcel.write(fileName)
+    FesodSheet.write(fileName)
         .head(head)
         .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
         .sheet()
@@ -120,7 +120,7 @@ public void dynamicHeadWriteWithStrategy() {
 **Disable merging**: Use `NONE` to completely disable automatic merging:
 
 ```java
-FastExcel.write(fileName)
+FesodSheet.write(fileName)
     .head(head)
     .headerMergeStrategy(HeaderMergeStrategy.NONE)
     .sheet()

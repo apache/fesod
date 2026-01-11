@@ -38,7 +38,7 @@ import org.apache.poi.util.TempFileCreationStrategy;
  *
  *
  */
-public class FastExcelTempFileCreationStrategy implements TempFileCreationStrategy {
+public class FesodTempFileCreationStrategy implements TempFileCreationStrategy {
     /**
      * Name of POI files directory in temporary directory.
      */
@@ -64,7 +64,7 @@ public class FastExcelTempFileCreationStrategy implements TempFileCreationStrate
      *
      * @see File#createTempFile(String, String)
      */
-    public FastExcelTempFileCreationStrategy() {
+    public FesodTempFileCreationStrategy() {
         this(null);
     }
 
@@ -75,13 +75,13 @@ public class FastExcelTempFileCreationStrategy implements TempFileCreationStrate
      *            directory).
      * @see Files#createTempFile(Path, String, String, FileAttribute[])
      */
-    public FastExcelTempFileCreationStrategy(File dir) {
+    public FesodTempFileCreationStrategy(File dir) {
         this.dir = dir;
     }
 
     private void createPOIFilesDirectory() throws IOException {
         // Create our temp dir only once by double-checked locking
-        // The directory is not deleted, even if it was created by this TempFileCreationStrategy
+        // The directory is not deleted, even if it was created by this FesodTempFileCreationStrategy
         if (dir == null || !dir.exists()) {
             dirLock.lock();
             try {

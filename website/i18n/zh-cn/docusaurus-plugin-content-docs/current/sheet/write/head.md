@@ -85,7 +85,7 @@ public void dynamicHeadWrite() {
 
 ### 概述
 
-默认情况下，FastExcel 会自动合并名称相同的表头单元格。但是，您可以使用 `headerMergeStrategy` 参数来控制合并行为。
+默认情况下，Fesod 会自动合并名称相同的表头单元格。但是，您可以使用 `headerMergeStrategy` 参数来控制合并行为。
 
 ### 合并策略
 
@@ -107,7 +107,7 @@ public void dynamicHeadWriteWithStrategy() {
         Collections.singletonList("动态数字标题"),
         Collections.singletonList("动态日期标题"));
 
-    FastExcel.write(fileName)
+    FesodSheet.write(fileName)
         .head(head)
         .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
         .sheet()
@@ -120,7 +120,7 @@ public void dynamicHeadWriteWithStrategy() {
 **禁用合并**: 使用 `NONE` 完全禁用自动合并：
 
 ```java
-FastExcel.write(fileName)
+FesodSheet.write(fileName)
     .head(head)
     .headerMergeStrategy(HeaderMergeStrategy.NONE)
     .sheet()

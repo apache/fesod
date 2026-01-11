@@ -76,7 +76,7 @@ public class ExcelWriterTableBuilder extends AbstractExcelWriterParameterBuilder
 
     public void doWrite(Collection<?> data) {
         if (excelWriter == null) {
-            throw new ExcelGenerateException("Must use 'FastExcelFactory.write().sheet().table()' to call this method");
+            throw new ExcelGenerateException("Must use 'FesodSheet.write().sheet().table()' to call this method");
         }
         excelWriter.write(data, writeSheet, build());
         excelWriter.finish();

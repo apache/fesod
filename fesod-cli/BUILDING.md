@@ -61,7 +61,6 @@ fesod-cli-2.0.0/
 │   └── fesod-cli.bat      # Windows 启动脚本
 ├── conf/
 │   ├── logback.xml        # 日志配置
-│   ├── application.properties  # 应用配置
 │   └── default-config.yaml     # 默认配置模板
 ├── lib/
 │   └── fesod-cli-2.0.0.jar    # 主程序 JAR (Fat JAR)

@@ -34,6 +34,12 @@ website/.env.production.local
 website/npm-debug.log*
 website/yarn-debug.log*
 website/yarn-error.log*
+website/pnpm-debug.log*
+website/pnpm-error.log*
+website/.yarnrc
+website/yarn.lock
+website/package-lock.json
+website/pnpm-lock.yaml
 
 # fuzzing
 **/.cifuzz-corpus/

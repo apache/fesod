@@ -138,7 +138,7 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
 
     public void doWrite(Collection<?> data) {
         if (writeWorkbook == null) {
-            throw new ExcelGenerateException("Must use 'FastExcelFactory.write().csv()' to call this method");
+            throw new ExcelGenerateException("Must use 'FesodSheet.write().csv()' to call this method");
         }
         ExcelWriter excelWriter = buildExcelWriter();
         excelWriter.write(data, this.writeSheet);

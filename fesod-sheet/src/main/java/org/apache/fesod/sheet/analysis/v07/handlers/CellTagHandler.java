@@ -21,7 +21,7 @@ package org.apache.fesod.sheet.analysis.v07.handlers;
 
 import java.math.BigDecimal;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
-import org.apache.fesod.sheet.constant.FastExcelConstants;
+import org.apache.fesod.sheet.constant.FesodSheetConstants;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -109,7 +109,7 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
                 tempCellData.setType(CellDataTypeEnum.NUMBER);
                 tempCellData.setOriginalNumberValue(new BigDecimal(tempDataString));
                 tempCellData.setNumberValue(
-                        tempCellData.getOriginalNumberValue().round(FastExcelConstants.EXCEL_MATH_CONTEXT));
+                        tempCellData.getOriginalNumberValue().round(FesodSheetConstants.EXCEL_MATH_CONTEXT));
                 break;
             default:
                 throw new IllegalStateException("Cannot set values now");

@@ -25,34 +25,46 @@ import lombok.Setter;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 
 /**
- * 根据WriteCellData写
+ * Write via WriteCellData
+ *
+ *
  */
 @Getter
 @Setter
 @EqualsAndHashCode
 public class WriteCellDemoData {
     /**
-     * 超链接
+     * Hyperlink
+     *
+     * @since 3.0.0-beta1
      */
     private WriteCellData<String> hyperlink;
 
     /**
-     * 备注
+     * Comment
+     *
+     * @since 3.0.0-beta1
      */
     private WriteCellData<String> commentData;
 
     /**
-     * 公式
+     * Formula
+     *
+     * @since 3.0.0-beta1
      */
     private WriteCellData<String> formulaData;
 
     /**
-     * 指定单元格的样式。当然样式 也可以用注解等方式。
+     * Specify cell style. Annotations can also be used.
+     *
+     * @since 3.0.0-beta1
      */
     private WriteCellData<String> writeCellStyle;
 
     /**
-     * 指定一个单元格有多个样式
+     * Specify multiple styles for a single cell
+     *
+     * @since 3.0.0-beta1
      */
     private WriteCellData<String> richText;
 }

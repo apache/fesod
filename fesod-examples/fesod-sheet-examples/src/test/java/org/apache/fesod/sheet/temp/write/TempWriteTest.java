@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.temp.write;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -27,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.ListUtils;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.FastExcel;
 import org.apache.fesod.sheet.demo.write.CustomStringStringConverter;
 import org.apache.fesod.sheet.util.BeanMapUtils;

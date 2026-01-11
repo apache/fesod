@@ -26,7 +26,7 @@ import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * 基础数据类
+ * Basic data class
  *
  *
  **/
@@ -34,14 +34,14 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class IndexData {
-    @ExcelProperty(value = "字符串标题", index = 0)
+    @ExcelProperty(value = "String Title", index = 0)
     private String string;
 
-    @ExcelProperty(value = "日期标题", index = 1)
+    @ExcelProperty(value = "Date Title", index = 1)
     private Date date;
     /**
-     * 这里设置3 会导致第二列空的
+     * Setting index to 3 will result in the second column being empty.
      */
-    @ExcelProperty(value = "数字标题", index = 3)
+    @ExcelProperty(value = "Double Title", index = 3)
     private Double doubleData;
 }

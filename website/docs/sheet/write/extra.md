@@ -80,7 +80,12 @@ public void writeHyperlinkDataWrite() {
     String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
     WriteCellDemoData data = new WriteCellDemoData();
     // Set hyperlink
-    data.setHyperlink(new WriteCellData<>("点击访问").hyperlink("https://example.com"));
+    WriteCellData cellData = new WriteCellData<>("Click to visit");
+    HyperlinkData hyperlinkData = new HyperlinkData();
+    hyperlinkData.setAddress("https://example.com");
+    hyperlinkData.setHyperlinkType(HyperlinkData.HyperlinkType.URL);
+    cellData.setHyperlinkData(hyperlinkData);
+    data.setHyperlink(cellData);
 
     FesodSheet.write(fileName, WriteCellDemoData.class)
         .sheet()
@@ -117,7 +122,13 @@ public void writeFormulaDataWrite() {
     String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
     WriteCellDemoData data = new WriteCellDemoData();
     // Set formula
-    data.setFormulaData(new WriteCellData<>("=SUM(A1:A10)"));
+    WriteCellData<String> cellData = new WriteCellData<>();
+    FormulaData formulaData = new FormulaData();
+    formulaData.setFormulaValue("SUM(A1:A10)");
+    // Or
+    // formulaData.setFormulaValue("=SUM(A1:A10)");
+    cellData.setFormulaData(formulaData);
+    data.setFormulaData(cellData);
 
     FesodSheet.write(fileName, WriteCellDemoData.class)
         .sheet()

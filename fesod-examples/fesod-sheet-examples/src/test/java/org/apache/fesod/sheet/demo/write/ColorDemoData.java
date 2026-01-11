@@ -39,13 +39,13 @@ import org.apache.poi.ss.usermodel.Font;
 @NoArgsConstructor
 public class ColorDemoData {
 
-    @ExcelProperty("姓名")
+    @ExcelProperty("Name")
     private String name;
 
-    @ExcelProperty("年龄")
+    @ExcelProperty("Age")
     @HeadFontStyle(color = Font.COLOR_RED)
     private Integer age;
 
-    @ExcelProperty("性别")
+    @ExcelProperty("Sex")
     private String sex;
 }

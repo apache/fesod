@@ -19,6 +19,10 @@ name: Check License Header
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: license-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   license:
     runs-on: ubuntu-latest

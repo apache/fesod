@@ -93,7 +93,7 @@ public class ExcelWriterSheetBuilder extends AbstractExcelWriterParameterBuilder
 
     public void doWrite(Collection<?> data) {
         if (excelWriter == null) {
-            throw new ExcelGenerateException("Must use 'FastExcelFactory.write().sheet()' to call this method");
+            throw new ExcelGenerateException("Must use 'FesodSheet.write().sheet()' to call this method");
         }
         excelWriter.write(data, build());
         excelWriter.finish();
@@ -105,7 +105,7 @@ public class ExcelWriterSheetBuilder extends AbstractExcelWriterParameterBuilder
 
     public void doFill(Object data, FillConfig fillConfig) {
         if (excelWriter == null) {
-            throw new ExcelGenerateException("Must use 'FastExcelFactory.write().sheet()' to call this method");
+            throw new ExcelGenerateException("Must use 'FesodSheet.write().sheet()' to call this method");
         }
         excelWriter.fill(data, fillConfig, build());
         excelWriter.finish();

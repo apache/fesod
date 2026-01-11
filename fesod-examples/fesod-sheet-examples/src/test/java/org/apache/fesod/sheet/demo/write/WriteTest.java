@@ -69,45 +69,48 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.junit.jupiter.api.Test;
 
 /**
- * 写的常见写法
+ * Common writing examples
  *
  *
  */
 public class WriteTest {
 
     /**
-     * 最简单的写
+     * Simple write
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 直接写即可
+     * 2. Write directly
      */
     @Test
     public void simpleWrite() {
-        // 注意 simpleWrite在数据量不大的情况下可以使用（5000以内，具体也要看实际情况），数据量大参照 重复多次写入
+        // Note: simpleWrite can be used when the data volume is not large (within 5000, depending on the actual
+        // situation). For large data volumes, refer to repeated writes.
 
-        // 写法1 JDK8+
+        // Method 1 JDK8+
         // since: 3.0.0-beta1
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        // 如果这里想使用03 则 传入excelType参数即可
-        FesodSheet.write(fileName, DemoData.class).sheet("模板").doWrite(() -> {
-            // 分页查询数据
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        // If you want to use Excel 03, pass the excelType parameter.
+        FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(() -> {
+            // Paging query data
             return data();
         });
 
-        // 写法2
+        // Method 2
         fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        // 如果这里想使用03 则 传入excelType参数即可
-        FesodSheet.write(fileName, DemoData.class).sheet("模板").doWrite(data());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        // If you want to use Excel 03, pass the excelType parameter.
+        FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
 
-        // 写法3
+        // Method 3
         fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写
+        // Specify the class to use for writing
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName, DemoData.class).build()) {
-            WriteSheet writeSheet = FesodSheet.writerSheet("模板").build();
+            WriteSheet writeSheet = FesodSheet.writerSheet("Template").build();
             excelWriter.write(data(), writeSheet);
         }
     }
@@ -116,7 +119,7 @@ public class WriteTest {
     public void testEscapeHex() {
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
         FesodSheet.write(fileName, DemoData.class)
-                .sheet("template")
+                .sheet("Template")
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .doWrite(() -> {
                     return dataHex();
@@ -124,123 +127,135 @@ public class WriteTest {
     }
 
     /**
-     * 根据参数只导出指定列
+     * Export only specified columns based on parameters
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 根据自己或者排除自己需要的列
+     * 2. Include or exclude columns as needed
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void excludeOrIncludeWrite() {
         String fileName = TestFileUtil.getPath() + "excludeOrIncludeWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里需要注意 在使用ExcelProperty注解的使用，如果想不空列则需要加入order字段，而不是index,order会忽略空列，然后继续往后，而index，不会忽略空列，在第几列就是第几列。
+        // Note: When using the ExcelProperty annotation, if you want to avoid empty columns, you need to use the
+        // 'order' field instead of 'index'. 'order' will ignore empty columns and continue sequentially, while 'index'
+        // will not ignore empty columns (it stays in the specified column).
 
-        // 根据用户传入字段 假设我们要忽略 date
+        // Based on user input fields, assuming we want to ignore 'date'
         Set<String> excludeColumnFieldNames = new HashSet<>();
         excludeColumnFieldNames.add("date");
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .excludeColumnFieldNames(excludeColumnFieldNames)
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
 
         fileName = TestFileUtil.getPath() + "excludeOrIncludeWrite" + System.currentTimeMillis() + ".xlsx";
-        // 根据用户传入字段 假设我们只要导出 date
+        // Based on user input fields, assuming we only want to export 'date'
         Set<String> includeColumnFieldNames = new HashSet<>();
         includeColumnFieldNames.add("date");
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .includeColumnFieldNames(includeColumnFieldNames)
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
     }
 
     /**
-     * 指定写入的列
+     * Specify columns to write
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link IndexData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link IndexData}
      * <p>
-     * 2. 使用{@link ExcelProperty}注解指定写入的列
+     * 2. Use {@link ExcelProperty} annotation to specify columns to write
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void indexWrite() {
         String fileName = TestFileUtil.getPath() + "indexWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName, IndexData.class).sheet("模板").doWrite(data());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName, IndexData.class).sheet("Template").doWrite(data());
     }
 
     /**
-     * 复杂头写入
+     * Complex header writing
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link ComplexHeadData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link ComplexHeadData}
      * <p>
-     * 2. 使用{@link ExcelProperty}注解指定复杂的头
+     * 2. Use {@link ExcelProperty} annotation to specify complex headers
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void complexHeadWrite() {
         String fileName = TestFileUtil.getPath() + "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName, ComplexHeadData.class).sheet("模板").doWrite(data());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName, ComplexHeadData.class).sheet("Template").doWrite(data());
     }
 
     /**
-     * 重复多次写入
+     * Repeated writes
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link ComplexHeadData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link ComplexHeadData}
      * <p>
-     * 2. 使用{@link ExcelProperty}注解指定复杂的头
+     * 2. Use {@link ExcelProperty} annotation to specify complex headers
      * <p>
-     * 3. 直接调用二次写入即可
+     * 3. Call write multiple times
      */
     @Test
     public void repeatedWrite() {
-        // 方法1: 如果写到同一个sheet
+        // Method 1: Writing to the same sheet
         String fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写
+        // Specify the class to use for writing
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName, DemoData.class).build()) {
-            // 这里注意 如果同一个sheet只要创建一次
-            WriteSheet writeSheet = FesodSheet.writerSheet("模板").build();
-            // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来
+            // Note: Create the writeSheet only once if writing to the same sheet
+            WriteSheet writeSheet = FesodSheet.writerSheet("Template").build();
+            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the
+            // database query.
             for (int i = 0; i < 5; i++) {
-                // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
+                // Paging query data from the database. Here you can query the data for each page.
                 List<DemoData> data = data();
                 excelWriter.write(data, writeSheet);
             }
         }
 
-        // 方法2: 如果写到不同的sheet 同一个对象
+        // Method 2: Writing to different sheets with the same object
         fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 指定文件
+        // Specify file
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName, DemoData.class).build()) {
-            // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
+            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the
+            // database query. Eventually it will be written to 5 sheets.
             for (int i = 0; i < 5; i++) {
-                // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样
-                WriteSheet writeSheet = FesodSheet.writerSheet(i, "模板" + i).build();
-                // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
-                List<DemoData> data = data();
-                excelWriter.write(data, writeSheet);
-            }
-        }
-
-        // 方法3 如果写到不同的sheet 不同的对象
-        fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 指定文件
-        try (ExcelWriter excelWriter = FesodSheet.write(fileName).build()) {
-            // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
-            for (int i = 0; i < 5; i++) {
-                // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样。这里注意DemoData.class 可以每次都变，我这里为了方便 所以用的同一个class
-                // 实际上可以一直变
+                // Create writeSheet every time. Note that sheetNo must be specified and sheetName must be different.
                 WriteSheet writeSheet =
-                        FesodSheet.writerSheet(i, "模板" + i).head(DemoData.class).build();
-                // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
+                        FesodSheet.writerSheet(i, "Template" + i).build();
+                // Paging query data from the database. Here you can query the data for each page.
+                List<DemoData> data = data();
+                excelWriter.write(data, writeSheet);
+            }
+        }
+
+        // Method 3: Writing to different sheets with different objects
+        fileName = TestFileUtil.getPath() + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
+        // Specify file
+        try (ExcelWriter excelWriter = FesodSheet.write(fileName).build()) {
+            // Call write. Here I called it five times. In actual use, loop based on the total number of pages in the
+            // database query. Eventually it will be written to 5 sheets.
+            for (int i = 0; i < 5; i++) {
+                // Create writeSheet every time. Note that sheetNo must be specified and sheetName must be different.
+                // Note that DemoData.class can change each time; I used the same class here for convenience.
+                // In reality, it can change every time.
+                WriteSheet writeSheet = FesodSheet.writerSheet(i, "Template" + i)
+                        .head(DemoData.class)
+                        .build();
+                // Paging query data from the database. Here you can query the data for each page.
                 List<DemoData> data = data();
                 excelWriter.write(data, writeSheet);
             }
@@ -248,77 +263,81 @@ public class WriteTest {
     }
 
     /**
-     * 日期、数字或者自定义格式转换
+     * Date, number, or custom format conversion
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link ConverterData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link ConverterData}
      * <p>
-     * 2. 使用{@link ExcelProperty}配合使用注解{@link DateTimeFormat}、{@link NumberFormat}或者自定义注解
+     * 2. Use {@link ExcelProperty} with annotations {@link DateTimeFormat}, {@link NumberFormat}, or custom annotations
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void converterWrite() {
         String fileName = TestFileUtil.getPath() + "converterWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName, ConverterData.class).sheet("模板").doWrite(data());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName, ConverterData.class).sheet("Template").doWrite(data());
     }
 
     /**
-     * 图片导出
+     * Image export
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link ImageDemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link ImageDemoData}
      * <p>
-     * 2. 直接写即可
+     * 2. Write directly
      */
     @Test
     public void imageWrite() throws Exception {
         String fileName = TestFileUtil.getPath() + "imageWrite" + System.currentTimeMillis() + ".xlsx";
 
-        // 这里注意下 所有的图片都会放到内存 暂时没有很好的解法，大量图片的情况下建议 2选1:
-        // 1. 将图片上传到oss 或者其他存储网站: https://www.aliyun.com/product/oss ，然后直接放链接
-        // 2. 使用: https://github.com/coobird/thumbnailator 或者其他工具压缩图片
+        // Note: All images will be loaded into memory. There is no good solution for now. For large numbers of images,
+        // it is recommended to:
+        // 1. Upload images to OSS or other storage sites: https://www.aliyun.com/product/oss, then verify the link
+        // directly
+        // 2. Use: https://github.com/coobird/thumbnailator or other tools to compress images
 
         String imagePath = TestFileUtil.getPath() + "converter" + File.separator + "img.jpg";
         try (InputStream inputStream = FileUtils.openInputStream(new File(imagePath))) {
             List<ImageDemoData> list = ListUtils.newArrayList();
             ImageDemoData imageDemoData = new ImageDemoData();
             list.add(imageDemoData);
-            // 放入五种类型的图片 实际使用只要选一种即可
+            // Put five types of images. In actual use, just choose one.
             imageDemoData.setByteArray(FileUtils.readFileToByteArray(new File(imagePath)));
             imageDemoData.setFile(new File(imagePath));
             imageDemoData.setString(imagePath);
             imageDemoData.setInputStream(inputStream);
             imageDemoData.setUrl(new URL("https://poi.apache.org/images/project-header.png"));
 
-            // 这里演示
-            // 需要额外放入文字
-            // 而且需要放入2个图片
-            // 第一个图片靠左
-            // 第二个靠右 而且要额外的占用他后面的单元格
+            // Demonstration
+            // Need to add extra text
+            // And need to add 2 images
+            // The first image is on the left
+            // The second is on the right and occupies the cell behind it
             WriteCellData<Void> writeCellData = new WriteCellData<>();
             imageDemoData.setWriteCellDataFile(writeCellData);
-            // 这里可以设置为 EMPTY 则代表不需要其他数据了
+            // Set to EMPTY to indicate no other data is needed
             writeCellData.setType(CellDataTypeEnum.STRING);
-            writeCellData.setStringValue("额外的放一些文字");
+            writeCellData.setStringValue("Extra text");
 
-            // 可以放入多个图片
+            // Can put multiple images
             List<ImageData> imageDataList = new ArrayList<>();
             ImageData imageData = new ImageData();
             imageDataList.add(imageData);
             writeCellData.setImageDataList(imageDataList);
-            // 放入2进制图片
+            // Put binary image
             imageData.setImage(FileUtils.readFileToByteArray(new File(imagePath)));
-            // 图片类型
+            // Image type
             imageData.setImageType(ImageData.ImageType.PICTURE_TYPE_PNG);
-            // 上 右 下 左 需要留空
-            // 这个类似于 css 的 margin
-            // 这里实测 不能设置太大 超过单元格原始大小后 打开会提示修复。暂时未找到很好的解法。
+            // Top, Right, Bottom, Left need padding
+            // Similar to CSS margin
+            // Tested: cannot set too large. If it exceeds the original cell size, opening it will prompt repair. No
+            // good solution found yet.
             imageData.setTop(5);
             imageData.setRight(40);
             imageData.setBottom(5);
             imageData.setLeft(5);
 
-            // 放入第二个图片
+            // Put second image
             imageData = new ImageData();
             imageDataList.add(imageData);
             writeCellData.setImageDataList(imageDataList);
@@ -328,117 +347,125 @@ public class WriteTest {
             imageData.setRight(5);
             imageData.setBottom(5);
             imageData.setLeft(50);
-            // 设置图片的位置 假设 现在目标 是 覆盖 当前单元格 和当前单元格右边的单元格
-            // 起点相对于当前单元格为0 当然可以不写
+            // Set image position. Assume the target is to cover the current cell and the cell to the right.
+            // Start point relative to current cell is 0. Can be omitted.
             imageData.setRelativeFirstRowIndex(0);
             imageData.setRelativeFirstColumnIndex(0);
             imageData.setRelativeLastRowIndex(0);
-            // 前面3个可以不写  下面这个需要写 也就是 结尾 需要相对当前单元格 往右移动一格
-            // 也就是说 这个图片会覆盖当前单元格和 后面的那一格
+            // First 3 can be omitted. The following one needs to be written, meaning the end needs to move one cell to
+            // the right relative to the current cell.
+            // This image will cover the current cell and the next one.
             imageData.setRelativeLastColumnIndex(1);
 
-            // 写入数据
+            // Write data
             FesodSheet.write(fileName, ImageDemoData.class).sheet().doWrite(list);
-            // 如果图片资源不可访问，XLSX格式会报错 SXSSFWorkbook - Failed to dispose sheet
-            // 也可以考虑声明为XLS格式
+            // If image resource is inaccessible, XLSX format will error: SXSSFWorkbook - Failed to dispose sheet
+            // Can consider declaring as XLS format
             // FesodSheet.write(fileName, ImageDemoData.class).excelType(ExcelTypeEnum.XLS).sheet().doWrite(list);
         }
     }
 
     /**
-     * 超链接、备注、公式、指定单个单元格的样式、单个单元格多种样式
+     * Hyperlinks, comments, formulas, single cell styling, multiple styles in a single cell
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link WriteCellDemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link WriteCellDemoData}
      * <p>
-     * 2. 直接写即可
+     * 2. Write directly
      */
     @Test
     public void writeCellDataWrite() {
         String fileName = TestFileUtil.getPath() + "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
         WriteCellDemoData writeCellDemoData = new WriteCellDemoData();
 
-        // 设置超链接
-        WriteCellData<String> hyperlink = new WriteCellData<>("官方网站");
+        // Set hyperlink
+        WriteCellData<String> hyperlink = new WriteCellData<>("Official Website");
         writeCellDemoData.setHyperlink(hyperlink);
         HyperlinkData hyperlinkData = new HyperlinkData();
         hyperlink.setHyperlinkData(hyperlinkData);
         hyperlinkData.setAddress("https://github.com/fast-excel/fastexcel");
         hyperlinkData.setHyperlinkType(HyperlinkData.HyperlinkType.URL);
 
-        // 设置备注
-        WriteCellData<String> comment = new WriteCellData<>("备注的单元格信息");
+        // Set comment
+        WriteCellData<String> comment = new WriteCellData<>("Comment cell info");
         writeCellDemoData.setCommentData(comment);
         CommentData commentData = new CommentData();
         comment.setCommentData(commentData);
         commentData.setAuthor("Jiaju Zhuang");
-        commentData.setRichTextStringData(new RichTextStringData("这是一个备注"));
-        // 备注的默认大小是按照单元格的大小 这里想调整到4个单元格那么大 所以向后 向下 各额外占用了一个单元格
+        commentData.setRichTextStringData(new RichTextStringData("This is a comment"));
+        // The default size of the comment is the size of the cell. Here we want to adjust it to the size of 4 cells, so
+        // we occupy one extra cell to the right and one extra cell down.
         commentData.setRelativeLastColumnIndex(1);
         commentData.setRelativeLastRowIndex(1);
 
-        // 设置公式
+        // Set formula
         WriteCellData<String> formula = new WriteCellData<>();
         writeCellDemoData.setFormulaData(formula);
         FormulaData formulaData = new FormulaData();
         formula.setFormulaData(formulaData);
-        // 将 123456789 中的第一个数字替换成 2
-        // 这里只是例子 如果真的涉及到公式 能内存算好尽量内存算好 公式能不用尽量不用
+        // Replace the first digit in 123456789 with 2
+        // This is just an example. If it involves formulas, try to calculate them in memory if possible. Avoid using
+        // formulas if possible.
         formulaData.setFormulaValue("REPLACE(123456789,1,1,2)");
 
-        // 设置单个单元格的样式 当然样式 很多的话 也可以用注解等方式。
-        WriteCellData<String> writeCellStyle = new WriteCellData<>("单元格样式");
+        // Set style for a single cell. If there are many styles, you can use annotations.
+        WriteCellData<String> writeCellStyle = new WriteCellData<>("Cell Style");
         writeCellStyle.setType(CellDataTypeEnum.STRING);
         writeCellDemoData.setWriteCellStyle(writeCellStyle);
         WriteCellStyle writeCellStyleData = new WriteCellStyle();
         writeCellStyle.setWriteCellStyle(writeCellStyleData);
-        // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.
+        // Need to specify FillPatternType as FillPatternType.SOLID_FOREGROUND, otherwise background color will not be
+        // displayed.
         writeCellStyleData.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
-        // 背景绿色
+        // Green background
         writeCellStyleData.setFillForegroundColor(IndexedColors.GREEN.getIndex());
 
-        // 设置单个单元格多种样式
-        // 这里需要设置 inMemory=true 不然会导致无法展示单个单元格多种样式，所以慎用
+        // Set multiple styles in a single cell
+        // Need to set inMemory=true, otherwise multiple styles in a single cell cannot be displayed. Use with caution.
         WriteCellData<String> richTest = new WriteCellData<>();
         richTest.setType(CellDataTypeEnum.RICH_TEXT_STRING);
         writeCellDemoData.setRichText(richTest);
         RichTextStringData richTextStringData = new RichTextStringData();
         richTest.setRichTextStringDataValue(richTextStringData);
-        richTextStringData.setTextString("红色绿色默认");
-        // 前2个字红色
+        richTextStringData.setTextString("Red Green Default");
+        // First 3 characters are red
         WriteFont writeFont = new WriteFont();
         writeFont.setColor(IndexedColors.RED.getIndex());
-        richTextStringData.applyFont(0, 2, writeFont);
-        // 接下来2个字绿色
+        richTextStringData.applyFont(0, 3, writeFont);
+        // Next 5 characters are green
         writeFont = new WriteFont();
         writeFont.setColor(IndexedColors.GREEN.getIndex());
-        richTextStringData.applyFont(2, 4, writeFont);
+        richTextStringData.applyFont(4, 9, writeFont);
 
         List<WriteCellDemoData> data = new ArrayList<>();
         data.add(writeCellDemoData);
         FesodSheet.write(fileName, WriteCellDemoData.class)
                 .inMemory(true)
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data);
     }
 
     /**
-     * 根据模板写入
+     * Write according to template
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link IndexData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link IndexData}
      * <p>
-     * 2. 使用{@link ExcelProperty}注解指定写入的列
+     * 2. Use {@link ExcelProperty} annotation to specify columns to write
      * <p>
-     * 3. 使用withTemplate 写取模板
+     * 3. Use withTemplate to read template
      * <p>
-     * 4. 直接写即可
+     * 4. Write directly
      */
     @Test
     public void templateWrite() {
         String templateFileName = TestFileUtil.getPath() + "demo" + File.separator + "demo.xlsx";
         String fileName = TestFileUtil.getPath() + "templateWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        // 这里要注意 withTemplate 的模板文件会全量存储在内存里面，所以尽量不要用于追加文件，如果文件模板文件过大会OOM
-        // 如果要再文件中追加（无法在一个线程里面处理，可以在一个线程的建议参照多次写入的demo） 建议临时存储到数据库 或者 磁盘缓存(ehcache) 然后再一次性写入
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        // Note: withTemplate will store the entire template file in memory, so try not to use it for appending files.
+        // If the template file is too large, it will cause OOM.
+        // If you want to append to a file (cannot be processed in one thread, refer to the repeated writing demo
+        // recommended for one thread), it is recommended to store temporarily in the database or disk cache (ehcache)
+        // and then write all at once.
         FesodSheet.write(fileName, DemoData.class)
                 .withTemplate(templateFileName)
                 .sheet()
@@ -446,327 +473,347 @@ public class WriteTest {
     }
 
     /**
-     * 列宽、行高
+     * Column width and row height
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link WidthAndHeightData }
+     * 1. Create the entity object corresponding to Excel. Refer to {@link WidthAndHeightData }
      * <p>
-     * 2. 使用注解{@link ColumnWidth}、{@link HeadRowHeight}、{@link ContentRowHeight}指定宽度或高度
+     * 2. Use annotations {@link ColumnWidth}, {@link HeadRowHeight}, {@link ContentRowHeight} to specify width or height
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void widthAndHeightWrite() {
         String fileName = TestFileUtil.getPath() + "widthAndHeightWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName, WidthAndHeightData.class).sheet("模板").doWrite(data());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName, WidthAndHeightData.class).sheet("Template").doWrite(data());
     }
 
     /**
-     * 注解形式自定义样式
+     * Custom style via annotations
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoStyleData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoStyleData}
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void annotationStyleWrite() {
         String fileName = TestFileUtil.getPath() + "annotationStyleWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName, DemoStyleData.class).sheet("模板").doWrite(data());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName, DemoStyleData.class).sheet("Template").doWrite(data());
     }
 
     /**
-     * 拦截器形式自定义样式
+     * Custom style via handlers
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 创建一个style策略 并注册
+     * 2. Create a style strategy and register it
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void handlerStyleWrite() {
-        // 方法1 使用已有的策略 推荐
-        // HorizontalCellStyleStrategy 每一行的样式都一样 或者隔行一样
-        // AbstractVerticalCellStyleStrategy 每一列的样式都一样 需要自己回调每一页
+        // Method 1: Use existing strategies (Recommended)
+        // HorizontalCellStyleStrategy: styles are the same for each row or alternating rows
+        // AbstractVerticalCellStyleStrategy: styles are the same for each column. Need to subclass and implement.
         String fileName = TestFileUtil.getPath() + "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
-        // 头的策略
+        // Head strategy
         WriteCellStyle headWriteCellStyle = new WriteCellStyle();
-        // 背景设置为红色
+        // Background red
         headWriteCellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
         WriteFont headWriteFont = new WriteFont();
         headWriteFont.setFontHeightInPoints((short) 20);
         headWriteCellStyle.setWriteFont(headWriteFont);
-        // 内容的策略
+        // Content strategy
         WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
-        // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.头默认了 FillPatternType所以可以不指定
+        // Need to specify FillPatternType as SOLID_FOREGROUND. The head defaults to FillPatternType so it can be
+        // omitted.
         contentWriteCellStyle.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
-        // 背景绿色
+        // Background green
         contentWriteCellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
         WriteFont contentWriteFont = new WriteFont();
-        // 字体大小
+        // Font size
         contentWriteFont.setFontHeightInPoints((short) 20);
         contentWriteCellStyle.setWriteFont(contentWriteFont);
-        // 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
+        // This strategy separates head style and content style. You can implement other strategies yourself.
         HorizontalCellStyleStrategy horizontalCellStyleStrategy =
                 new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
 
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(horizontalCellStyleStrategy)
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
 
-        // 方法2: 使用Fesod的方式完全自己写 不太推荐 尽量使用已有策略
+        // Method 2: Write your own handler using Fesod API. Not recommended. Try to use existing strategies.
         fileName = TestFileUtil.getPath() + "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CellWriteHandler() {
                     @Override
                     public void afterCellDispose(CellWriteHandlerContext context) {
-                        // 当前事件会在 数据设置到poi的cell里面才会回调
-                        // 判断不是头的情况 如果是fill 的情况 这里会==null 所以用not true
+                        // This event is called after data is set into the POI cell
+                        // Check if it's not a head. If it's fill, this will be null, so use not true.
                         if (BooleanUtils.isNotTrue(context.getHead())) {
-                            // 第一个单元格
-                            // 只要不是头 一定会有数据 当然fill的情况 可能要context.getCellDataList() ,这个需要看模板，因为一个单元格会有多个 WriteCellData
+                            // First cell
+                            // As long as it's not a head, there will be data. Of course in fill scenarios, use
+                            // context.getCellDataList(). Depending on the template, a cell may have multiple
+                            // WriteCellData.
                             WriteCellData<?> cellData = context.getFirstCellData();
-                            // 这里需要去cellData 获取样式
-                            // 很重要的一个原因是 WriteCellStyle 和 dataFormatData绑定的 简单的说 比如你加了 DateTimeFormat
-                            // ，已经将writeCellStyle里面的dataFormatData 改了 如果你自己new了一个WriteCellStyle，可能注解的样式就失效了
-                            // 然后 getOrCreateStyle 用于返回一个样式，如果为空，则创建一个后返回
+                            // Need to get style from cellData
+                            // A very important reason is that WriteCellStyle is bound to dataFormatData. For example,
+                            // if you add DateTimeFormat,
+                            // the dataFormatData in writeCellStyle has been changed. If you new a WriteCellStyle
+                            // yourself, the annotation style may be lost.
+                            // getOrCreateStyle returns a style, creating one if it's null.
                             WriteCellStyle writeCellStyle = cellData.getOrCreateStyle();
                             writeCellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
-                            // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND
+                            // Need to specify FillPatternType as SOLID_FOREGROUND
                             writeCellStyle.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
 
-                            // 这样样式就设置好了 后面有个FillStyleCellWriteHandler 默认会将 WriteCellStyle 设置到 cell里面去 所以可以不用管了
+                            // The style is set. There is a FillStyleCellWriteHandler later that will default set
+                            // WriteCellStyle to the cell, so you don't need to worry about it.
                         }
                     }
                 })
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
 
-        // 方法3: 使用poi的样式完全自己写 不推荐
-        // 坑1：style里面有dataformat 用来格式化数据的 所以自己设置可能导致格式化注解不生效
-        // 坑2：不要一直去创建style 记得缓存起来 最多创建6W个就挂了
+        // Method 3: Use POI styles directly. Not recommended.
+        // Pitfall 1: Style contains dataformat for formatting data, so setting it yourself may cause formatting
+        // annotations to fail.
+        // Pitfall 2: Don't keep creating styles. Remember to cache them. Creating more than 60,000 will crash.
         fileName = TestFileUtil.getPath() + "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CellWriteHandler() {
                     @Override
                     public void afterCellDispose(CellWriteHandlerContext context) {
-                        // 当前事件会在 数据设置到poi的cell里面才会回调
-                        // 判断不是头的情况 如果是fill 的情况 这里会==null 所以用not true
+                        // This event is called after data is set into the POI cell
+                        // Check if it's not a head. If it's fill, this will be null, so use not true.
                         if (BooleanUtils.isNotTrue(context.getHead())) {
                             Cell cell = context.getCell();
-                            // 拿到poi的workbook
+                            // Get POI workbook
                             Workbook workbook = context.getWriteWorkbookHolder().getWorkbook();
-                            // 这里千万记住 想办法能复用的地方把他缓存起来 一个表格最多创建6W个样式
-                            // 不同单元格尽量传同一个 cellStyle
+                            // Remember to cache reusable parts. A table can have at most 60,000 styles.
+                            // Try to pass the same cellStyle for different cells
                             CellStyle cellStyle = workbook.createCellStyle();
                             cellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
-                            // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND
+                            // Need to specify FillPatternType as SOLID_FOREGROUND
                             cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                             cell.setCellStyle(cellStyle);
 
-                            // 由于这里没有指定dataformat 最后展示的数据 格式可能会不太正确
+                            // Since dataformat is not specified here, the displayed data format may be incorrect.
 
-                            // 这里要把 WriteCellData的样式清空， 不然后面还有一个拦截器 FillStyleCellWriteHandler 默认会将 WriteCellStyle 设置到
-                            // cell里面去 会导致自己设置的不一样
+                            // Clear the style of WriteCellData. Otherwise, FillStyleCellWriteHandler will override your
+                            // settings.
                             context.getFirstCellData().setWriteCellStyle(null);
                         }
                     }
                 })
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
     }
 
     /**
-     * 合并单元格
+     * Merge cells
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData} {@link DemoMergeData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData} {@link DemoMergeData}
      * <p>
-     * 2. 创建一个merge策略 并注册
+     * 2. Create a merge strategy and register it
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void mergeWrite() {
-        // 方法1 注解
+        // Method 1: Annotation
         String fileName = TestFileUtil.getPath() + "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-        // 在DemoStyleData里面加上ContentLoopMerge注解
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName, DemoMergeData.class).sheet("模板").doWrite(data());
+        // Add ContentLoopMerge annotation in DemoStyleData
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName, DemoMergeData.class).sheet("Template").doWrite(data());
 
-        // 方法2 自定义合并单元格策略
+        // Method 2: Custom merge strategy
         fileName = TestFileUtil.getPath() + "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-        // 每隔2行会合并 把eachColumn 设置成 3 也就是我们数据的长度，所以就第一列会合并。当然其他合并策略也可以自己写
+        // Merge every 2 rows. Set eachColumn to 3 (length of our data), so only the first column will merge. Other
+        // merge strategies can be implemented.
         LoopMergeStrategy loopMergeStrategy = new LoopMergeStrategy(2, 0);
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(loopMergeStrategy)
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
     }
 
     /**
-     * 使用table去写入
+     * Write using table
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 然后写入table即可
+     * 2. Then write to the table
      */
     @Test
     public void tableWrite() {
         String fileName = TestFileUtil.getPath() + "tableWrite" + System.currentTimeMillis() + ".xlsx";
-        // 方法1 这里直接写多个table的案例了，如果只有一个 也可以直一行代码搞定，参照其他案
-        // 这里 需要指定写用哪个class去写
+        // Method 1: Writing multiple tables here. If there is only one, it can be done in one line.
+        // Specify the class to use for writing
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName, DemoData.class).build()) {
-            // 把sheet设置为不需要头 不然会输出sheet的头 这样看起来第一个table 就有2个头了
+            // Set sheet to not need head, otherwise it will output sheet head, looking like the first table has 2
+            // heads.
             WriteSheet writeSheet =
-                    FesodSheet.writerSheet("模板").needHead(Boolean.FALSE).build();
-            // 这里必须指定需要头，table 会继承sheet的配置，sheet配置了不需要，table 默认也是不需要
+                    FesodSheet.writerSheet("Template").needHead(Boolean.FALSE).build();
+            // Must specify need head here. Table inherits sheet configuration. If sheet is configured not to need it,
+            // table defaults to not needing it.
             WriteTable writeTable0 =
                     FesodSheet.writerTable(0).needHead(Boolean.TRUE).build();
             WriteTable writeTable1 =
                     FesodSheet.writerTable(1).needHead(Boolean.TRUE).build();
-            // 第一次写入会创建头
+            // First write will create head
             excelWriter.write(data(), writeSheet, writeTable0);
-            // 第二次写如也会创建头，然后在第一次的后面写入数据
+            // Second write will also create head, writing data after the first one.
             excelWriter.write(data(), writeSheet, writeTable1);
         }
     }
 
     /**
-     * 动态头，实时生成头写入
+     * Dynamic header writing
      * <p>
-     * 思路是这样子的，先创建List<String>头格式的sheet仅仅写入头,然后通过table 不写入头的方式 去写入数据
+     * The idea is to first create a sheet with List<String> head format, writing only the head, then write data via table without writing head.
      *
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 然后写入table即可
+     * 2. Then write to the table
      */
     @Test
     public void dynamicHeadWrite() {
         String fileName = TestFileUtil.getPath() + "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
         FesodSheet.write(fileName)
-                // 这里放入动态头
+                // Put dynamic head here
                 .head(head())
-                .sheet("模板")
-                // 当然这里数据也可以用 List<List<String>> 去传入
+                .sheet("Template")
+                // Of course data can also be passed as List<List<String>>
                 .doWrite(data());
     }
 
     /**
-     * 自动列宽(不太精确)
+     * Auto column width (not very precise)
      * <p>
-     * 这个目前不是很好用，比如有数字就会导致换行。而且长度也不是刚好和实际长度一致。 所以需要精确到刚好列宽的慎用。 当然也可以自己参照 {@link LongestMatchColumnWidthStyleStrategy}
-     * 重新实现.
+     * This is not very easy to use currently. For example, numbers will cause line breaks. And the length is not exactly consistent with actual length. Use with caution if precise column width is needed. You can also re-implement referencing {@link LongestMatchColumnWidthStyleStrategy}.
      * <p>
-     * poi 自带{@link SXSSFSheet#autoSizeColumn(int)} 对中文支持也不太好。目前没找到很好的算法。 有的话可以推荐下。
+     * POI's built-in {@link SXSSFSheet#autoSizeColumn(int)} also doesn't support Chinese very well. No good algorithm found yet.
      *
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link LongestMatchColumnWidthData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link LongestMatchColumnWidthData}
      * <p>
-     * 2. 注册策略{@link LongestMatchColumnWidthStyleStrategy}
+     * 2. Register strategy {@link LongestMatchColumnWidthStyleStrategy}
      * <p>
-     * 3. 直接写即可
+     * 3. Write directly
      */
     @Test
     public void longestMatchColumnWidthWrite() {
         String fileName =
                 TestFileUtil.getPath() + "longestMatchColumnWidthWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, LongestMatchColumnWidthData.class)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(dataLong());
     }
 
     /**
-     * 下拉，超链接等自定义拦截器（上面几点都不符合但是要对单元格进行操作的参照这个）
+     * Custom handlers for dropdowns, hyperlinks, etc. (Refer to this for operations that don't fit above points but need to manipulate cells)
      * <p>
-     * demo这里实现2点。1. 对第一行第一列的头超链接到:https://github.com/fast-excel/fastexcel 2. 对第一列第一行和第二行的数据新增下拉框，显示 测试1 测试2
+     * Demo implements 2 points: 1. Hyperlink the head of the first row and first column to URL. 2. Add dropdown box for data in the first column, first and second rows, displaying "Test1", "Test2".
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 注册拦截器 {@link CustomCellWriteHandler} {@link CustomSheetWriteHandler}
+     * 2. Register handlers {@link CustomCellWriteHandler} {@link CustomSheetWriteHandler}
      * <p>
-     * 2. 直接写即可
+     * 2. Write directly
      */
     @Test
     public void customHandlerWrite() {
         String fileName = TestFileUtil.getPath() + "customHandlerWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new CustomSheetWriteHandler())
                 .registerWriteHandler(new CustomCellWriteHandler())
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
     }
 
     /**
-     * 插入批注
+     * Insert comment
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link DemoData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link DemoData}
      * <p>
-     * 2. 注册拦截器 {@link CommentWriteHandler}
+     * 2. Register handler {@link CommentWriteHandler}
      * <p>
-     * 2. 直接写即可
+     * 2. Write directly
      */
     @Test
     public void commentWrite() {
         String fileName = TestFileUtil.getPath() + "commentWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        // 这里要注意inMemory 要设置为true，才能支持批注。目前没有好的办法解决 不在内存处理批注。这个需要自己选择。
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        // Note that inMemory must be set to true to support comments. Currently there is no good way to handle comments
+        // without being in memory.
         FesodSheet.write(fileName, DemoData.class)
                 .inMemory(Boolean.TRUE)
                 .registerWriteHandler(new CommentWriteHandler())
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
     }
 
     /**
-     * 可变标题处理(包括标题国际化等)
+     * Variable title handling (including title internationalization, etc.)
      * <p>
-     * 简单的说用List<List<String>>的标题 但是还支持注解
+     * Simply put, use List<List<String>> for titles but still support annotations
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link ConverterData}
+     * 1. Create the entity object corresponding to Excel. Refer to {@link ConverterData}
      * <p>
-     * 2. 直接写即可
+     * 2. Write directly
      */
     @Test
     public void variableTitleWrite() {
-        // 写法1
+        // Method 1
         String fileName = TestFileUtil.getPath() + "variableTitleWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
         FesodSheet.write(fileName, ConverterData.class)
                 .head(variableTitleHead())
-                .sheet("模板")
+                .sheet("Template")
                 .doWrite(data());
     }
 
     /**
-     * 不创建对象的写
+     * Write without creating objects
      */
     @Test
     public void noModelWrite() {
-        // 写法1
+        // Method 1
         String fileName = TestFileUtil.getPath() + "noModelWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        FesodSheet.write(fileName).head(head()).sheet("模板").doWrite(dataList());
+        // Specify the class to use for writing, then write to the first sheet with the name "Template". The file stream
+        // will be automatically closed.
+        FesodSheet.write(fileName).head(head()).sheet("Template").doWrite(dataList());
     }
 
     @Test
     public void sheetDisposeTest() {
         String fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
         FesodSheet.write(fileName, DemoData.class)
-                .sheet("模板")
+                .sheet("Template")
                 .registerWriteHandler(new SheetWriteHandler() {
                     @Override
                     public void afterSheetDispose(SheetWriteHandlerContext context) {
                         Sheet sheet = context.getWriteSheetHolder().getSheet();
-                        // 合并区域单元格
+                        // Merge region cells
                         sheet.addMergedRegionUnsafe(new CellRangeAddress(1, 10, 2, 2));
                     }
                 })
@@ -778,7 +825,7 @@ public class WriteTest {
         List<LongestMatchColumnWidthData> list = ListUtils.newArrayList();
         for (int i = 0; i < 10; i++) {
             LongestMatchColumnWidthData data = new LongestMatchColumnWidthData();
-            data.setString("测试很长的字符串测试很长的字符串测试很长的字符串" + i);
+            data.setString("Testing very long string Testing very long string Testing very long string" + i);
             data.setDate(new Date());
             data.setDoubleData(1000000000000.0);
             list.add(data);
@@ -803,11 +850,11 @@ public class WriteTest {
     private List<List<String>> head() {
         List<List<String>> list = ListUtils.newArrayList();
         List<String> head0 = ListUtils.newArrayList();
-        head0.add("字符串" + System.currentTimeMillis());
+        head0.add("String" + System.currentTimeMillis());
         List<String> head1 = ListUtils.newArrayList();
-        head1.add("数字" + System.currentTimeMillis());
+        head1.add("Double" + System.currentTimeMillis());
         List<String> head2 = ListUtils.newArrayList();
-        head2.add("日期" + System.currentTimeMillis());
+        head2.add("Date" + System.currentTimeMillis());
         list.add(head0);
         list.add(head1);
         list.add(head2);
@@ -818,7 +865,7 @@ public class WriteTest {
         List<List<Object>> list = ListUtils.newArrayList();
         for (int i = 0; i < 10; i++) {
             List<Object> data = ListUtils.newArrayList();
-            data.add("字符串" + i);
+            data.add("String" + i);
             data.add(0.56);
             data.add(new Date());
             list.add(data);

@@ -19,11 +19,11 @@
 
 package org.apache.fesod.sheet.read.listener;
 
-import cn.idev.excel.support.cglib.beans.BeanMap;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.HeadKindEnum;

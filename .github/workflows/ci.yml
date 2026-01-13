@@ -33,6 +33,10 @@ on:
       - 'LICENSE'
       - 'NOTICE'
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   checks: write
   pull-requests: write
@@ -82,7 +86,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
       - name: Test with Maven
-        run: ./mvnw test -B -Dmaven.test.skip=false -pl fesod-common,fesod-sheet
+        run: ./mvnw clean package -B -Dmaven.test.skip=false -pl fesod-common,fesod-shaded,fesod-sheet
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: (!cancelled())

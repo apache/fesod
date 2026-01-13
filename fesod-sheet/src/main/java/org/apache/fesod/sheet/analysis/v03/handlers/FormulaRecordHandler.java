@@ -24,7 +24,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.constant.BuiltinFormats;
-import org.apache.fesod.sheet.constant.FastExcelConstants;
+import org.apache.fesod.sheet.constant.FesodSheetConstants;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
@@ -74,7 +74,7 @@ public class FormulaRecordHandler extends AbstractXlsRecordHandler implements Ig
                 tempCellData.setType(CellDataTypeEnum.NUMBER);
                 tempCellData.setOriginalNumberValue(BigDecimal.valueOf(frec.getValue()));
                 tempCellData.setNumberValue(
-                        tempCellData.getOriginalNumberValue().round(FastExcelConstants.EXCEL_MATH_CONTEXT));
+                        tempCellData.getOriginalNumberValue().round(FesodSheetConstants.EXCEL_MATH_CONTEXT));
                 int dataFormat = xlsReadContext
                         .xlsReadWorkbookHolder()
                         .getFormatTrackingHSSFListener()

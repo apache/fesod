@@ -157,7 +157,7 @@ public class FileUtils {
     }
 
     public static void createPoiFilesDirectory() {
-        TempFile.setTempFileCreationStrategy(new FastExcelTempFileCreationStrategy());
+        TempFile.setTempFileCreationStrategy(new FesodTempFileCreationStrategy());
     }
 
     public static File createCacheTmpFile() {

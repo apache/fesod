@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.fesod.sheet.constant.FastExcelConstants;
+import org.apache.fesod.sheet.constant.FesodSheetConstants;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 
 /**
@@ -154,7 +154,7 @@ public class ReadCellData<T> extends CellData<T> {
         cellData.setRowIndex(rowIndex);
         cellData.setColumnIndex(columnIndex);
         cellData.setOriginalNumberValue(numberValue);
-        cellData.setNumberValue(numberValue.round(FastExcelConstants.EXCEL_MATH_CONTEXT));
+        cellData.setNumberValue(numberValue.round(FesodSheetConstants.EXCEL_MATH_CONTEXT));
         return cellData;
     }
 

@@ -138,7 +138,7 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
 
     public void doRead() {
         if (this.readWorkbook == null) {
-            throw new ExcelGenerateException("Must use 'FastExcelFactory.read().csv()' to call this method");
+            throw new ExcelGenerateException("Must use 'FesodSheet.read().csv()' to call this method");
         }
         ExcelReader excelReader = buildExcelReader();
         excelReader.read(this.readSheet);
@@ -152,7 +152,7 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
      */
     public <T> List<T> doReadSync() {
         if (this.readWorkbook == null) {
-            throw new ExcelGenerateException("Must use 'FastExcelFactory.read().csv()' to call this method");
+            throw new ExcelGenerateException("Must use 'FesodSheet.read().csv()' to call this method");
         }
         ExcelReader excelReader = buildExcelReader();
         // Register a synchronous read listener

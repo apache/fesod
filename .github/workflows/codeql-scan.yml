@@ -27,6 +27,10 @@ on:
   schedule:
     - cron: '0 0 * * *' # 每天0点自动扫描
 
+concurrency:
+  group: codeql-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   codeql:
     if: (github.event_name == 'schedule' && github.repository == 'apache/fesod') || (github.event_name != 'schedule')

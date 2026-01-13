@@ -50,7 +50,7 @@ jobs:
         run: |
           mkdir -p "${{ runner.temp }}/jazzer-artifacts/"
           # Execute only tests under fuzz package and force tests not to be skipped
-          mvn -B -pl fesod-sheet -am -D"maven.test.skip=false" -DtrimStackTrace=false -D"test=org.apache.fesod.sheet.fuzz.*Test"  -D"surefire.failIfNoSpecifiedTests=false"  test
+          mvn -B -pl fesod-sheet -am -D"maven.test.skip=false" -DtrimStackTrace=false -D"test=org.apache.fesod.sheet.fuzz.*Test"  -D"surefire.failIfNoSpecifiedTests=false"  package
 
       - name: Upload Jazzer artifacts (crashes, repros)
         if: always()

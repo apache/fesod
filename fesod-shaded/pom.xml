@@ -32,12 +32,6 @@
     <artifactId>fesod-shaded</artifactId>
     <name>Fesod Shaded</name>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
     <description>
         Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
@@ -53,6 +47,13 @@
         or stability of the code, it does indicate that the project has yet to be
         fully endorsed by the ASF.
     </description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>

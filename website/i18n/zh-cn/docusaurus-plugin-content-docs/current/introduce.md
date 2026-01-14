@@ -10,7 +10,7 @@ slug: /
 
 **Apache Fesod (Incubating)** 是一款高性能且内存高效的 Java 库，用于读写电子表格文件，旨在简化开发并确保可靠性。
 
-Apache Fesod (Incubating)）能为开发者和企业提供极大的自由度与灵活性。我们计划在未来引入更多新功能，持续提升用户体验与工具实用性。Apache
+Apache Fesod (Incubating) 能为开发者和企业提供极大的自由度与灵活性。我们计划在未来引入更多新功能，持续提升用户体验与工具实用性。Apache
 Fesod (Incubating) 致力于成为您处理电子表格文件的最佳选择。
 
 项目名称fesod（发音`/ˈfɛsɒd/`）是“fast easy spreadsheet and other documents”的缩写，体现了项目的起源、背景与愿景。

@@ -149,9 +149,10 @@ Manually check the following files in the root directory:
 
 * [ ] **LICENSE:** Exists and contains the Apache License 2.0.
 * [ ] **NOTICE:**
-* Exists.
-* Copyright year is current (e.g., includes 2025/2026).
-* Contains required attributions for bundled dependencies (if any).
+* * Exists.
+* * Copyright year is current (e.g., includes 2025/2026).
+* * Contains required attributions for bundled dependencies (if any).
+* [ ] **DISCLAIMER：** Exists.
 
 ### 4. Email Reply Templates
 

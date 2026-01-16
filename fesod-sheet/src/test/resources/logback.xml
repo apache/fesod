@@ -20,16 +20,17 @@
 
 -->
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             <charset>utf8</charset>
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
+
+    <!-- Reduce noise from POI -->
+    <logger name="org.apache.poi" level="WARN"/>
 </configuration>

@@ -78,6 +78,7 @@
         <module>fesod-shaded</module>
         <module>fesod-examples</module>
         <module>fesod-sheet</module>
+        <module>fesod-benchmark</module>
     </modules>
 
     <properties>

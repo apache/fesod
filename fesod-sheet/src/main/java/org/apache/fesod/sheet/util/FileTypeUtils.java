@@ -33,6 +33,7 @@ public class FileTypeUtils {
     private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
     private static final int IMAGE_TYPE_MARK_LENGTH = 28;
+    private static final int IMAGE_TYPE_MARK_MIN_LENGTH = 4;
 
     private static final Map<String, ImageData.ImageType> FILE_TYPE_MAP;
 
@@ -56,12 +57,21 @@ public class FileTypeUtils {
     }
 
     public static ImageData.ImageType getImageType(byte[] image) {
-        if (image == null || image.length <= IMAGE_TYPE_MARK_LENGTH) {
+        if (image == null || image.length < IMAGE_TYPE_MARK_MIN_LENGTH) {
             return null;
         }
-        byte[] typeMarkByte = new byte[IMAGE_TYPE_MARK_LENGTH];
-        System.arraycopy(image, 0, typeMarkByte, 0, IMAGE_TYPE_MARK_LENGTH);
-        return FILE_TYPE_MAP.get(encodeHexStr(typeMarkByte));
+        int lengthToCopy = Math.min(image.length, IMAGE_TYPE_MARK_LENGTH);
+        byte[] typeMarkByte = new byte[lengthToCopy];
+        System.arraycopy(image, 0, typeMarkByte, 0, lengthToCopy);
+
+        String hexString = encodeHexStr(typeMarkByte);
+        for (Map.Entry<String, ImageData.ImageType> entry : FILE_TYPE_MAP.entrySet()) {
+            String magicNumber = entry.getKey();
+            if (hexString.startsWith(magicNumber)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     private static String encodeHexStr(byte[] data) {

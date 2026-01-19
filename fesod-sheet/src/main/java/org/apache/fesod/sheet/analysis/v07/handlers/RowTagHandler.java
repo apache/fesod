@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.analysis.v07.handlers;
 
 import java.util.LinkedHashMap;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.fesod.common.util.PositionUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -29,7 +30,6 @@ import org.apache.fesod.sheet.metadata.Cell;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.ReadRowHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
-import org.apache.fesod.sheet.util.PositionUtils;
 import org.xml.sax.Attributes;
 
 /**
@@ -41,7 +41,7 @@ public class RowTagHandler extends AbstractXlsxTagHandler {
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
-        int rowIndex = PositionUtils.getRowByRowTagt(
+        int rowIndex = PositionUtils.getRowByRowTag(
                 attributes.getValue(ExcelXmlConstants.ATTRIBUTE_R), xlsxReadSheetHolder.getRowIndex());
         Integer lastRowIndex = xlsxReadContext.readSheetHolder().getRowIndex();
         while (lastRowIndex + 1 < rowIndex) {

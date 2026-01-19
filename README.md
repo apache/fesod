@@ -46,8 +46,8 @@ Apache Fesod (Incubating) can provide developers and enterprises with great free
 introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod (
 Incubating) is committed to being your best choice for handling spreadsheet files.
 
-The name fesod(pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents" expresses the
-project's origin, background and vision.
+The name fesod (pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents," expresses the
+project's origin, background, and vision.
 
 ### Features
 
@@ -72,7 +72,7 @@ new features in the latest version will enhance your experience.
 
 
 > We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache
-> releases. You can see previous version in this link: https://fesod.apache.org/docs/quickstart/guide/
+> releases. You can see previous versions in this link: https://fesod.apache.org/docs/quickstart/guide/
 
 ### Maven
 

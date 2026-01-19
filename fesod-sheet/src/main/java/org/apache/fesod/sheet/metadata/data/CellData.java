@@ -23,9 +23,9 @@ import java.math.BigDecimal;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.AbstractCell;
-import org.apache.fesod.sheet.util.StringUtils;
 
 /**
  * Excel internal cell data.

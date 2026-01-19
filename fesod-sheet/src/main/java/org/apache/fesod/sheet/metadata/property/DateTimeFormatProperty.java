@@ -22,8 +22,8 @@ package org.apache.fesod.sheet.metadata.property;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
-import org.apache.fesod.sheet.util.BooleanUtils;
 
 /**
  * Configuration from annotations

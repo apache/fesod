@@ -28,13 +28,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.metadata.FieldWrapper;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.util.ClassUtils;
-import org.apache.fesod.sheet.util.StringUtils;
 import org.apache.fesod.sheet.write.metadata.holder.AbstractWriteHolder;
 
 /**

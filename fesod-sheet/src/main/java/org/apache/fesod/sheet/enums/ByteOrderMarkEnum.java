@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import lombok.Getter;
 import org.apache.commons.io.ByteOrderMark;
-import org.apache.fesod.sheet.util.MapUtils;
+import org.apache.fesod.common.util.MapUtils;
 
 /**
  * byte order mark

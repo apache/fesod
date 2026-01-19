@@ -19,12 +19,12 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
-import org.apache.fesod.sheet.util.StringUtils;
 import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.Record;
 

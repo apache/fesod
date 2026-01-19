@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converters.string;
 
 import java.math.BigDecimal;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -29,7 +30,6 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
 import org.apache.fesod.sheet.util.NumberUtils;
-import org.apache.fesod.sheet.util.StringUtils;
 
 /**
  * String and number converter

@@ -24,8 +24,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
-import org.apache.fesod.sheet.util.MapUtils;
 
 /**
  * Converter unique key.Consider that you can just use class as the key.

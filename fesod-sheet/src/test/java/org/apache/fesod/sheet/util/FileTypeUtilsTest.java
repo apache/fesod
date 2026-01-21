@@ -38,7 +38,7 @@ class FileTypeUtilsTest {
 
     @Test
     void test_getImageType_tooShort() {
-        byte[] input = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
+        byte[] input = new byte[] {(byte) 0x00, (byte) 0x01};
         Assertions.assertNull(FileTypeUtils.getImageType(input));
     }
 

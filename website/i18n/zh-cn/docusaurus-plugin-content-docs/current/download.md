@@ -3,23 +3,10 @@ id: 'download'
 title: '下载'
 ---
 
-这是 Apache Fesod (Incubating) 的官方下载页面。Apache Fesod 提供可从 ASF 发布站点下载的源码发布。二进制构件可通过 Maven 中央仓库获取。
+这是 Apache Fesod (Incubating) 的官方下载页面。Apache Fesod 提供可从 ASF 发布站点下载的源码发布。二进制构件可通过 Maven
+中央仓库获取。
 
 # 如何使用 Apache Fesod (Incubating)
-
-## 使用 Maven 中央仓库（推荐）
-
-对于大多数用户，只需在项目里添加以下依赖：
-
-```xml
-<dependency>
-    <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod-sheet</artifactId>
-    <version>2.0.0-incubating</version>
-</dependency>
-```
-
-浏览所有构件：[Maven 中央仓库](https://repo1.maven.org/maven2/org/apache/fesod/)
 
 ## 可用模块
 
@@ -32,9 +19,9 @@ title: '下载'
 
 ## 最新版本
 
-|        版本        |    发布日期    |                                                                                                  源码下载                                                                                                  |                                版本说明                                 |
-|:----------------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------:|
-| 2.0.0-incubating | 2026-01-24 | [源码](https://downloads.apache.org/incubator/fesod/2.0.0-incubating/) ([asc](https://downloads.apache.org/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.0-incubating) |
+|        版本        |    发布日期    |  源码下载  |  版本说明  |
+|:----------------:|:----------:|:------:|:------:|
+| 2.0.0-incubating | 2026-01-24 | NA(无效) | NA(无效) |
 
 # 发布版本（非 Apache 版本）
 

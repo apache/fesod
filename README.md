@@ -34,12 +34,13 @@
 [![DeepWiki](https://img.shields.io/badge/DeepWiki-apache%2Ffesod-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==)](https://deepwiki.com/apache/fesod)
 
 **Home: [fesod.apache.org](https://fesod.apache.org)**   
-**Email: <a href="mailto:dev-subscribe@fesod.apache.org">Mail to `dev-subscribe@fesod.apache.org`</a> to subscribe mailing lists**
-
+**Email: <a href="mailto:dev-subscribe@fesod.apache.org">Mail to `dev-subscribe@fesod.apache.org`</a> to subscribe
+mailing lists**
 
 ## Introduction
 
-**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing spreadsheet
+**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing
+spreadsheet
 files, designed to simplify development and ensure reliability.
 
 Apache Fesod (Incubating) can provide developers and enterprises with great freedom and flexibility. We plan to
@@ -52,7 +53,8 @@ project's origin, background, and vision.
 ### Features
 
 - **High-performance Reading and Writing**: Apache Fesod (Incubating) focuses on performance optimization, capable of
-  efficiently handling large-scale spreadsheet data. Compared to some traditional spreadsheet processing libraries, it can
+  efficiently handling large-scale spreadsheet data. Compared to some traditional spreadsheet processing libraries, it
+  can
   significantly reduce memory consumption.
 - **Simplicity and Ease of Use**: The library offers a simple and intuitive API, allowing developers to easily integrate
   it into projects, whether for simple spreadsheet operations or complex data processing.
@@ -67,18 +69,14 @@ strongly recommend using the latest version of Apache Fesod (Incubating), as per
 new features in the latest version will enhance your experience.
 
 > Currently, Apache Fesod (Incubating) uses POI as its underlying package. If your project already includes POI-related
-> components, you
-> will need to manually exclude POI-related jar files.
-
-
-> We are currently preparing for the first release under the Apache Incubator. Current releases were non-Apache
-> releases. You can see previous versions in this link: https://fesod.apache.org/docs/quickstart/guide/
+> components, you will need to manually exclude POI-related jar files.
 
 ### Maven
 
 If you are using Maven for project building, add the following configuration in the `pom.xml` file:
 
 ```xml
+
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>

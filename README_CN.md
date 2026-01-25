@@ -56,8 +56,6 @@ Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最�
 
 > 目前，Apache Fesod (Incubating) 使用 POI 作为底层包。如果您的项目已包含 POI 相关组件，您需要手动排除 POI 相关的 jar 文件。
 
-> 我们目前正在准备 Apache 孵化器下的第一个版本。当前的版本都是非 Apache 版本。您可以通过此链接查看之前的版本：https://fesod.apache.org/docs/quickstart/guide/
-
 ### Maven
 
 如果使用 Maven 进行项目构建，请在 `pom.xml` 文件中添加以下配置：

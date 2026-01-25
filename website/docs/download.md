@@ -3,23 +3,8 @@ id: 'download'
 title: 'Download'
 ---
 
-Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
-
-# How to Use Apache Fesod (Incubating)
-
-## Using Maven Central (Recommended)
-
-For most users, simply add the dependency to your project:
-
-```xml
-<dependency>
-    <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod-sheet</artifactId>
-    <version>2.0.0-incubating</version>
-</dependency>
-```
-
-Browse all artifacts: [Maven Central Repository](https://repo1.maven.org/maven2/org/apache/fesod/)
+Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be
+downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
 
 ## Available Modules
 
@@ -32,9 +17,9 @@ Browse all artifacts: [Maven Central Repository](https://repo1.maven.org/maven2/
 
 ## The Latest Release
 
-|      Version      |    Date    |                                                                                                  Source Download                                                                                                  |                              Release Notes                               |
-|:-----------------:|:----------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
-| 2.0.0-incubating  | 2026-01-24 | [Source](https://downloads.apache.org/incubator/fesod/2.0.0-incubating/) ([asc](https://downloads.apache.org/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz.sha512)) | [Release Notes](https://github.com/apache/fesod/releases/tag/2.0.0-incubating) |
+|     Version      |    Date    |  Source Download  |   Release Notes   |
+|:----------------:|:----------:|:-----------------:|:-----------------:|
+| 2.0.0-incubating | 2026-01-24 | NA(Not Available) | NA(Not Available) |
 
 # Previous Releases (Non-Apache)
 
@@ -52,11 +37,13 @@ Browse all artifacts: [Maven Central Repository](https://repo1.maven.org/maven2/
 
 # Verifying Apache Releases
 
-All Apache releases must be verified before use. Follow these steps to verify the integrity and authenticity of the source release:
+All Apache releases must be verified before use. Follow these steps to verify the integrity and authenticity of the
+source release:
 
 ## Download Verification Files
 
-Download the [KEYS](https://downloads.apache.org/incubator/fesod/KEYS) file containing the public keys used for signing releases.
+Download the [KEYS](https://downloads.apache.org/incubator/fesod/KEYS) file containing the public keys used for signing
+releases.
 
 ## Verify Signature
 

@@ -24,8 +24,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
-import org.apache.fesod.sheet.util.ListUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 

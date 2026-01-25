@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
-import org.apache.fesod.sheet.util.ListUtils;
 
 /**
  * Listener to read headers with compatibility for both Chinese and English.

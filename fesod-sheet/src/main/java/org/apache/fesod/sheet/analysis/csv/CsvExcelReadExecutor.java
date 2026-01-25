@@ -35,6 +35,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.ExcelReadExecutor;
 import org.apache.fesod.sheet.context.csv.CsvReadContext;
 import org.apache.fesod.sheet.enums.ByteOrderMarkEnum;
@@ -48,7 +49,6 @@ import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.holder.ReadRowHolder;
 import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadWorkbookHolder;
 import org.apache.fesod.sheet.util.SheetUtils;
-import org.apache.fesod.sheet.util.StringUtils;
 
 /**
  * CSV Excel Read Executor, responsible for reading and processing CSV files.

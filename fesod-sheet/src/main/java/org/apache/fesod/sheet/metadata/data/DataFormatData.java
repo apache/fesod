@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.metadata.data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.fesod.sheet.util.StringUtils;
+import org.apache.fesod.common.util.StringUtils;
 
 /**
  * data format

@@ -107,9 +107,21 @@ title: '常见问题'
 - **A:** 可以通过实现`WriteHandler`接口来自定义单元格样式。例如：
 
   ```java
-  public class CustomCellStyleWriteHandler extends AbstractCellStyleWriteHandler {
+  public class CustomCellStyleWriteHandler extends AbstractCellStyleStrategy {
+  
       @Override
-      protected void setCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
+      public int order() {
+          // 自定义执行顺序
+          return OrderConstant.SHEET_ORDER;
+      }
+
+      @Override
+      protected void setHeadCellStyle(CellWriteHandlerContext context) {
+          // 自定义表头单元格样式
+      }
+  
+      @Override
+      protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
           CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
           style.setFillForegroundColor(IndexedColors.RED.getIndex());
           style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -257,13 +269,25 @@ title: '常见问题'
 - **A:** 可以通过实现`WriteHandler`接口来自定义表头样式。例如：
 
   ```java
-  public class CustomHeadStyleWriteHandler extends AbstractHeadStyleWriteHandler {
+  public class CustomHeadStyleWriteHandler extends AbstractCellStyleStrategy {
+  
+       @Override
+      public int order() {
+          // 自定义执行顺序
+          return OrderConstant.SHEET_ORDER;
+      }
+  
       @Override
       protected void setHeadCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
           CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
           style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
           style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
           cell.setCellStyle(style);
+      }
+  
+      @Override
+      protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
+          // 自定义内容单元格样式
       }
   }
   ```
@@ -299,9 +323,21 @@ title: '常见问题'
 - **A:** 可以通过创建`Font`对象并应用到`CellStyle`中来设置字体。例如：
 
   ```java
-  public class CustomFontWriteHandler extends AbstractCellStyleWriteHandler {
+  public class CustomFontWriteHandler extends AbstractCellStyleStrategy {
+  
       @Override
-      protected void setCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
+      public int order() {
+          // 自定义执行顺序
+          return OrderConstant.SHEET_ORDER;
+      }
+
+      @Override
+      protected void setHeadCellStyle(CellWriteHandlerContext context) {
+          // 自定义表头单元格样式
+      }
+  
+      @Override
+      protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
           Workbook workbook = cell.getSheet().getWorkbook();
           Font font = workbook.createFont();
           font.setFontName("Arial");

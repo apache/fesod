@@ -22,8 +22,8 @@ package org.apache.fesod.sheet.read.listener;
 import java.util.List;
 import java.util.function.Consumer;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.context.AnalysisContext;
-import org.apache.fesod.sheet.util.ListUtils;
 
 /**
  * page read listener

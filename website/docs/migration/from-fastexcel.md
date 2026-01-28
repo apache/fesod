@@ -41,23 +41,25 @@ Replace your existing dependency with Apache Fesod (Incubating):
 | Source | GroupId | ArtifactId | Version |
 |--------|---------|------------|----------|
 | **cn.idev FastExcel** | cn.idev.excel | fastexcel | 1.3.0 |
-| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod | 1.3.0+ |
+| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod-sheet | 2.0.0-incubating+ |
 
 **Maven:**
 
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod</artifactId>
-    <version>1.3.0</version>
+    <artifactId>fesod-sheet</artifactId>
+    <version>2.0.0-incubating</version>
 </dependency>
 ```
 
 **Gradle:**
 
 ```gradle
-implementation 'org.apache.fesod:fesod:1.3.0'
+implementation 'org.apache.fesod:fesod-sheet:2.0.0-incubating'
 ```
+
+> **Note**: The `fesod-sheet` module is the core module for Excel/CSV processing. It automatically includes the necessary dependencies (`fesod-common` and `fesod-shaded`).
 
 ### Step 2: Package Import Updates
 

@@ -19,11 +19,11 @@
 
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.enums.CellExtraTypeEnum;
 import org.apache.fesod.sheet.metadata.CellExtra;
-import org.apache.fesod.sheet.util.StringUtils;
 import org.xml.sax.Attributes;
 
 /**

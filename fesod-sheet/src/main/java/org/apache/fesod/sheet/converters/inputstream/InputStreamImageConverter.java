@@ -21,11 +21,11 @@ package org.apache.fesod.sheet.converters.inputstream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.IoUtils;
 
 /**
  * File and image converter

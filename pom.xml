@@ -42,6 +42,16 @@
     <description>
         Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
+        Apache Fesod (incubating) is an effort undergoing incubation at the Apache
+        Software Foundation (ASF), sponsored by the Apache Incubator PMC.
+
+        Incubation is required of all newly accepted projects until a further review
+        indicates that the infrastructure, communications, and decision making process
+        have stabilized in a manner consistent with other successful ASF projects.
+
+        While incubation status is not necessarily a reflection of the completeness
+        or stability of the code, it does indicate that the project has yet to be
+        fully endorsed by the ASF.
     </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
@@ -78,7 +88,7 @@
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>1.7.36</log4j-over-slf4j.version>
-        <logback-classic.version>1.5.24</logback-classic.version>
+        <logback-classic.version>1.5.25</logback-classic.version>
         <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.14</jacoco.version>
         <junit.version>5.13.4</junit.version>
@@ -522,6 +532,10 @@
                         <exclude>website/**</exclude>
                         <exclude>logo.svg</exclude>
                         <exclude>**/*.md</exclude>
+                        <exclude>dist/**</exclude>
+                        <exclude>**/*.xlsx</exclude>
+                        <exclude>**/*.xls</exclude>
+                        <exclude>**/*.csv</exclude>
                         <exclude>.git/**</exclude>
                         <exclude>.github/**</exclude>
                         <exclude>**/target/**</exclude>

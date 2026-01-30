@@ -21,8 +21,10 @@ package org.apache.fesod.sheet.write.executor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,7 @@ import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.enums.FillMergeStrategy;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.enums.WriteTemplateAnalysisCellTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
@@ -60,6 +63,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Fill the data into excel
@@ -87,6 +91,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
      */
     private final Map<UniqueDataFlagKey, Map<AnalysisCell, CellStyle>> collectionFieldStyleCache =
             MapUtils.newHashMap();
+    /**
+     * Cell range cache for collection fields
+     */
+    private final Map<UniqueDataFlagKey, CellRangeAddressContext> collectionFieldRangeCache = MapUtils.newHashMap();
     /**
      * Row height cache for collection
      */
@@ -140,12 +148,62 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && fillConfig.getForceNewRow()) {
                 shiftRows(collectionData.size(), analysisCellList);
             }
+            int rowSpan = calculateRowSpan(analysisCellList);
             while (iterator.hasNext()) {
-                doFill(analysisCellList, iterator.next(), fillConfig, getRelativeRowIndex());
+                doFill(analysisCellList, iterator.next(), fillConfig, getRelativeRowIndex(), rowSpan);
             }
+
+            addMergedRegionIfNecessary(fillConfig);
         } else {
-            doFill(readTemplateData(templateAnalysisCache), realData, fillConfig, null);
+            doFill(readTemplateData(templateAnalysisCache), realData, fillConfig, null, 0);
         }
+    }
+
+    private void addMergedRegionIfNecessary(FillConfig fillConfig) {
+        FillMergeStrategy mergeStrategy = fillConfig.getMergeStrategy();
+        if (FillMergeStrategy.NONE.equals(mergeStrategy)) {
+            return;
+        }
+
+        CellRangeAddressContext rangeContext = collectionFieldRangeCache.get(currentUniqueDataFlag);
+        if (null == rangeContext || CollectionUtils.isEmpty(rangeContext.getRegions())) {
+            return;
+        }
+
+        // Merge cells
+        Sheet sheet = writeContext.writeSheetHolder().getSheet();
+        for (CellRangeAddress range : rangeContext.getRegions()) {
+            sheet.addMergedRegionUnsafe(range.copy());
+        }
+
+        // Unify the style using anchor cells
+        if (FillMergeStrategy.MERGE_CELL_STYLE.equals(mergeStrategy)) {
+            rangeContext.indexMergedRegionsMap();
+
+            Map<CellCoordinate, Set<CellCoordinate>> mergedRegions = rangeContext.getMergedRegions();
+            if (mergedRegions == null || mergedRegions.isEmpty()) {
+                return;
+            }
+
+            for (Map.Entry<CellCoordinate, Set<CellCoordinate>> entry : mergedRegions.entrySet()) {
+                CellCoordinate anchor = entry.getKey();
+                CellStyle anchorStyle = anchor.getOrCreateCell(sheet).getCellStyle();
+
+                for (CellCoordinate mergedCell : entry.getValue()) {
+                    Cell cell = mergedCell.getOrCreateCell(sheet);
+                    cell.setCellStyle(anchorStyle);
+                }
+            }
+        }
+    }
+
+    private int calculateRowSpan(List<AnalysisCell> analysisCellList) {
+        if (CollectionUtils.isEmpty(analysisCellList)) {
+            return 0;
+        }
+        IntSummaryStatistics stats =
+                analysisCellList.stream().mapToInt(AnalysisCell::getRowIndex).summaryStatistics();
+        return stats.getMax() - stats.getMin() + 1;
     }
 
     private void shiftRows(int size, List<AnalysisCell> analysisCellList) {
@@ -205,7 +263,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
     }
 
     private void doFill(
-            List<AnalysisCell> analysisCellList, Object oneRowData, FillConfig fillConfig, Integer relativeRowIndex) {
+            List<AnalysisCell> analysisCellList,
+            Object oneRowData,
+            FillConfig fillConfig,
+            Integer relativeRowIndex,
+            Integer rowSpan) {
         if (CollectionUtils.isEmpty(analysisCellList) || oneRowData == null) {
             return;
         }
@@ -247,7 +309,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                         writeContext.currentWriteHolder());
                 cellWriteHandlerContext.setExcelContentProperty(excelContentProperty);
 
-                createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext);
+                createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext, rowSpan);
                 cellWriteHandlerContext.setOriginalValue(value);
                 cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
 
@@ -268,7 +330,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 cellWriteHandlerContext.setExcelContentProperty(ExcelContentProperty.EMPTY);
                 cellWriteHandlerContext.setIgnoreFillStyle(Boolean.TRUE);
 
-                createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext);
+                createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext, rowSpan);
                 Cell cell = cellWriteHandlerContext.getCell();
 
                 for (String variable : analysisCell.getVariableList()) {
@@ -348,7 +410,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             AnalysisCell analysisCell,
             FillConfig fillConfig,
             CellWriteHandlerContext cellWriteHandlerContext,
-            RowWriteHandlerContext rowWriteHandlerContext) {
+            RowWriteHandlerContext rowWriteHandlerContext,
+            Integer rowSpan) {
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         if (WriteTemplateAnalysisCellTypeEnum.COMMON.equals(analysisCell.getCellType())) {
             Row row = cachedSheet.getRow(analysisCell.getRowIndex());
@@ -375,7 +438,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     collectionLastIndexMap.put(analysisCell, lastRowIndex);
                     isOriginalCell = true;
                 } else {
-                    collectionLastIndexMap.put(analysisCell, ++lastRowIndex);
+                    lastRowIndex += rowSpan;
+                    collectionLastIndexMap.put(analysisCell, lastRowIndex);
                 }
                 lastColumnIndex = analysisCell.getColumnIndex();
                 break;
@@ -407,6 +471,45 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             Map<AnalysisCell, CellStyle> collectionFieldStyleMap =
                     collectionFieldStyleCache.computeIfAbsent(currentUniqueDataFlag, key -> MapUtils.newHashMap());
             collectionFieldStyleMap.put(analysisCell, cell.getCellStyle());
+        }
+
+        checkMergedRegion(lastRowIndex, analysisCell, fillConfig, isOriginalCell);
+    }
+
+    private void checkMergedRegion(
+            Integer lastRowIndex, AnalysisCell cell, FillConfig fillConfig, boolean isOriginalCell) {
+        if (!WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection())
+                || FillMergeStrategy.NONE.equals(fillConfig.getMergeStrategy())) {
+            return;
+        }
+
+        CellRangeAddressContext regionsContext =
+                collectionFieldRangeCache.computeIfAbsent(currentUniqueDataFlag, key -> new CellRangeAddressContext());
+
+        if (isOriginalCell) {
+            Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
+
+            for (CellRangeAddress cachedRegion : cachedSheet.getMergedRegions()) {
+                if (cachedRegion.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
+                    regionsContext.addCachedRegion(cachedRegion);
+                }
+            }
+            return;
+        }
+
+        for (CellRangeAddress region : regionsContext.getCachedRegions()) {
+            int firstRow = lastRowIndex;
+            int lastRow = firstRow + (region.getLastRow() - region.getFirstRow());
+            int firstCol = region.getFirstColumn();
+            int lastCol = region.getLastColumn();
+            CellRangeAddress shadowRegion = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+
+            if (regionsContext.contains(shadowRegion)) {
+                continue;
+            }
+            if (shadowRegion.isInRange(lastRowIndex, cell.getColumnIndex())) {
+                regionsContext.addRegion(shadowRegion);
+            }
         }
     }
 
@@ -672,5 +775,90 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         private Integer sheetNo;
         private String sheetName;
         private String wrapperName;
+    }
+
+    @EqualsAndHashCode
+    public static class CellRangeAddressContext {
+        private final List<CellRangeAddress> cachedRegions;
+        private final Set<CellRangeAddress> regions;
+        private final Map<CellCoordinate, Set<CellCoordinate>> mergedRegions;
+
+        public CellRangeAddressContext() {
+            this.cachedRegions = new ArrayList<>();
+            this.regions = new HashSet<>();
+            this.mergedRegions = new HashMap<>();
+        }
+
+        public void addCachedRegion(CellRangeAddress cachedRegion) {
+            cachedRegions.add(cachedRegion);
+        }
+
+        public void addRegion(CellRangeAddress region) {
+            regions.add(region);
+        }
+
+        public List<CellRangeAddress> getCachedRegions() {
+            return Collections.unmodifiableList(cachedRegions);
+        }
+
+        public Set<CellRangeAddress> getRegions() {
+            return Collections.unmodifiableSet(regions);
+        }
+
+        public Map<CellCoordinate, Set<CellCoordinate>> getMergedRegions() {
+            return Collections.unmodifiableMap(mergedRegions);
+        }
+
+        public boolean contains(CellRangeAddress region) {
+            return regions.contains(region);
+        }
+
+        /**
+         * Indexes the structure of merged regions (excluding head row and loop template variable rows).
+         */
+        private void indexMergedRegionsMap() {
+            if (CollectionUtils.isEmpty(regions)) {
+                return;
+            }
+
+            for (CellRangeAddress range : regions) {
+                int firstRow = range.getFirstRow();
+                int firstCol = range.getFirstColumn();
+
+                // Anchor cell -> In merged cells
+                Set<CellCoordinate> cells =
+                        mergedRegions.computeIfAbsent(new CellCoordinate(firstRow, firstCol), key -> new HashSet<>());
+
+                for (int row = range.getFirstRow(); row <= range.getLastRow(); row++) {
+                    for (int col = firstCol; col <= range.getLastColumn(); col++) {
+                        // Skip anchor cell
+                        if (row == firstRow && col == firstCol) {
+                            continue;
+                        }
+                        cells.add(new CellCoordinate(row, col));
+                    }
+                }
+            }
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    public static class CellCoordinate {
+        private final Integer rownum;
+        private final Integer column;
+
+        public Cell getOrCreateCell(Sheet sheet) {
+            Row row = sheet.getRow(rownum);
+            if (null == row) {
+                row = sheet.createRow(rownum);
+            }
+            Cell cell = row.getCell(column);
+            if (null == cell) {
+                return row.createCell(column);
+            }
+            return cell;
+        }
     }
 }

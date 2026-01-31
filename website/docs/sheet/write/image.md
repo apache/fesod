@@ -1,3 +1,8 @@
+---
+
+id: 'image'
+title: 'Image'
+---
 
 <!--
 - Licensed to the Apache Software Foundation (ASF) under one or more
@@ -15,11 +20,6 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-
----
-id: 'image'
-title: 'Image'
----
 
 # Images
 

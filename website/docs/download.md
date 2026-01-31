@@ -1,3 +1,10 @@
+
+---
+
+id: 'download'
+title: 'Download'
+---
+
 <!--
 - Licensed to the Apache Software Foundation (ASF) under one or more
 - contributor license agreements.  See the NOTICE file distributed with
@@ -14,11 +21,6 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-
----
-id: 'download'
-title: 'Download'
----
 
 Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be
 downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.

@@ -145,10 +145,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 return;
             }
             Iterator<?> iterator = collectionData.iterator();
-            if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && fillConfig.getForceNewRow()) {
-                shiftRows(collectionData.size(), analysisCellList);
-            }
             int rowSpan = calculateRowSpan(analysisCellList);
+            if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && fillConfig.getForceNewRow()) {
+                shiftRows(collectionData.size(), rowSpan, analysisCellList);
+            }
             while (iterator.hasNext()) {
                 doFill(analysisCellList, iterator.next(), fillConfig, getRelativeRowIndex(), rowSpan);
             }
@@ -170,11 +170,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             return;
         }
 
-        // Merge cells
         Sheet sheet = writeContext.writeSheetHolder().getSheet();
-        for (CellRangeAddress range : rangeContext.getRegions()) {
-            sheet.addMergedRegionUnsafe(range.copy());
-        }
 
         // Unify the style using anchor cells
         if (FillMergeStrategy.MERGE_CELL_STYLE.equals(mergeStrategy)) {
@@ -184,16 +180,23 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             if (mergedRegions == null || mergedRegions.isEmpty()) {
                 return;
             }
+            Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
 
             for (Map.Entry<CellCoordinate, Set<CellCoordinate>> entry : mergedRegions.entrySet()) {
                 CellCoordinate anchor = entry.getKey();
-                CellStyle anchorStyle = anchor.getOrCreateCell(sheet).getCellStyle();
+                CellStyle anchorStyle =
+                        anchor.getOrCreateCell(sheet, cachedSheet).getCellStyle();
 
                 for (CellCoordinate mergedCell : entry.getValue()) {
-                    Cell cell = mergedCell.getOrCreateCell(sheet);
+                    Cell cell = mergedCell.getOrCreateCell(sheet, cachedSheet);
                     cell.setCellStyle(anchorStyle);
                 }
             }
+        }
+
+        // Merge cells
+        for (CellRangeAddress range : rangeContext.getRegions()) {
+            sheet.addMergedRegionUnsafe(range.copy());
         }
     }
 
@@ -206,7 +209,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         return stats.getMax() - stats.getMin() + 1;
     }
 
-    private void shiftRows(int size, List<AnalysisCell> analysisCellList) {
+    private void shiftRows(int size, int rowSpan, List<AnalysisCell> analysisCellList) {
         if (CollectionUtils.isEmpty(analysisCellList)) {
             return;
         }
@@ -232,9 +235,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             return;
         }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
-        int number = size;
+        int number = size * rowSpan;
         if (collectionLastIndexMap == null) {
-            number--;
+            number -= rowSpan;
         }
         if (number <= 0) {
             return;
@@ -849,10 +852,20 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         private final Integer rownum;
         private final Integer column;
 
-        public Cell getOrCreateCell(Sheet sheet) {
+        public Cell getOrCreateCell(Sheet sheet, Sheet cachedSheet) {
             Row row = sheet.getRow(rownum);
             if (null == row) {
-                row = sheet.createRow(rownum);
+                // The last row of the middle disk inside empty rows, resulting in cachedSheet can not get inside.
+                // Will throw Attempting to write a row[" + rownum + "] " + "in the range [0," + this._sh
+                // .getLastRowNum() + "] that is already written to disk.
+                row = cachedSheet.getRow(rownum);
+                if (null == row) {
+                    try {
+                        row = sheet.createRow(rownum);
+                    } catch (IllegalArgumentException ignore) {
+                        row = cachedSheet.createRow(rownum);
+                    }
+                }
             }
             Cell cell = row.getCell(column);
             if (null == cell) {

@@ -26,15 +26,19 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.FillMergeStrategy;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.write.executor.ExcelWriteFillExecutor;
+import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -74,7 +78,28 @@ class LoopRowFillingMergeTest {
     private File caseC03;
     private File caseCTemplate03;
 
+    // Case 4: combined base filling of collection-based data (list rows) and common data
+    private File caseD07;
+    private File caseDTemplate07;
+    private File caseD03;
+    private File caseDTemplate03;
+
+    // Case 5: combined filling of collection-based data (list rows) with auto merge and common data
+    private File caseE07;
+    private File caseETemplate07;
+    private File caseE03;
+    private File caseETemplate03;
+
+    // Case 6: combined filling of collection-based data (list rows)  with auto merge, copy merged cell-styles and
+    // common data
+    private File caseF07;
+    private File caseFTemplate07;
+    private File caseF03;
+    private File caseFTemplate03;
+
+    private static final int MOCK_DATA_SIZE = 1000;
     private List<LoopRowFillingMergeModel> mockDatas;
+    private Map<String, String> mockCommonData;
 
     @BeforeEach
     void setup(@TempDir Path dir) throws Exception {
@@ -93,7 +118,27 @@ class LoopRowFillingMergeTest {
         this.caseC03 = createTmpFile(dir, "case_c_03.xls");
         this.caseCTemplate03 = loadTemplate("case_c_03.xls");
 
+        this.caseD07 = createTmpFile(dir, "case_d_07.xlsx");
+        this.caseDTemplate07 = loadTemplate("case_d_07.xlsx");
+        this.caseD03 = createTmpFile(dir, "case_d_03.xls");
+        this.caseDTemplate03 = loadTemplate("case_d_03.xls");
+
+        this.caseE07 = createTmpFile(dir, "case_e_07.xlsx");
+        this.caseETemplate07 = loadTemplate("case_e_07.xlsx");
+        this.caseE03 = createTmpFile(dir, "case_e_03.xls");
+        this.caseETemplate03 = loadTemplate("case_e_03.xls");
+
+        this.caseF07 = createTmpFile(dir, "case_f_07.xlsx");
+        this.caseFTemplate07 = loadTemplate("case_f_07.xlsx");
+        this.caseF03 = createTmpFile(dir, "case_f_03.xls");
+        this.caseFTemplate03 = loadTemplate("case_f_03.xls");
+
         this.mockDatas = datas();
+
+        Map<String, String> tmp = new HashMap<>();
+        tmp.put("string4", "String4");
+        tmp.put("string5", "String5");
+        this.mockCommonData = tmp;
     }
 
     private File loadTemplate(String filename) throws URISyntaxException {
@@ -107,7 +152,7 @@ class LoopRowFillingMergeTest {
     }
 
     private static List<LoopRowFillingMergeModel> datas() {
-        return IntStream.rangeClosed(1, 15)
+        return IntStream.rangeClosed(1, MOCK_DATA_SIZE)
                 .mapToObj(no -> {
                     LoopRowFillingMergeModel result = new LoopRowFillingMergeModel();
                     result.setNo(no);
@@ -139,6 +184,24 @@ class LoopRowFillingMergeTest {
     void test_fill_with_autoMerge_copyMergedCellStyles() throws IOException {
         doTestFillWithAutoMergeAndCopyMergedCellStyles(caseCTemplate03, caseC03);
         doTestFillWithAutoMergeAndCopyMergedCellStyles(caseCTemplate07, caseC07);
+    }
+
+    @Test
+    void test_combine_base_fill() throws IOException {
+        doTestCombineBaseFill(caseDTemplate03, caseD03);
+        doTestCombineBaseFill(caseDTemplate07, caseD07);
+    }
+
+    @Test
+    void test_combine_fill_with_autoMerge() throws IOException {
+        doTestCombineFillWithAutoMerge(caseETemplate03, caseE03);
+        doTestCombineFillWithAutoMerge(caseETemplate07, caseE07);
+    }
+
+    @Test
+    void test_combine_fill_with_autoMerge_copyMergedCellStyles() throws IOException {
+        doTestCombineFillWithAutoMergeAndCopyMergedCellStyles(caseFTemplate03, caseF03);
+        doTestCombineFillWithAutoMergeAndCopyMergedCellStyles(caseFTemplate07, caseF07);
     }
 
     @Test
@@ -179,6 +242,29 @@ class LoopRowFillingMergeTest {
         }
     }
 
+    private void doTestCombineBaseFill(File template, File output) throws IOException {
+        Assertions.assertDoesNotThrow(() -> {
+            FillConfig fillConfig = FillConfig.builder().forceNewRow(true).build();
+
+            try (ExcelWriter writer =
+                    FesodSheet.write(output).withTemplate(template).build()) {
+                WriteSheet sheet = FesodSheet.writerSheet(0).build();
+                writer.fill(mockDatas, fillConfig, sheet);
+                writer.fill(mockCommonData, sheet);
+
+                writer.finish();
+            }
+        });
+
+        try (Workbook workbook = WorkbookFactory.create(output)) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            validateHeadRow(sheet);
+            validateLoopFillingRowData(sheet);
+            validateCommonData(sheet);
+        }
+    }
+
     private void doTestFillWithAutoMerge(File template, File output) throws IOException {
         Assertions.assertDoesNotThrow(() -> {
             FesodSheet.write(output)
@@ -200,6 +286,33 @@ class LoopRowFillingMergeTest {
         }
     }
 
+    private void doTestCombineFillWithAutoMerge(File template, File output) throws IOException {
+        Assertions.assertDoesNotThrow(() -> {
+            FillConfig fillConfig = FillConfig.builder()
+                    .forceNewRow(true)
+                    .mergeStrategy(FillMergeStrategy.AUTO)
+                    .build();
+
+            try (ExcelWriter writer =
+                    FesodSheet.write(output).withTemplate(template).build()) {
+                WriteSheet sheet = FesodSheet.writerSheet(0).build();
+                writer.fill(mockDatas, fillConfig, sheet);
+                writer.fill(mockCommonData, sheet);
+
+                writer.finish();
+            }
+        });
+
+        try (Workbook workbook = WorkbookFactory.create(output)) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            validateHeadRow(sheet);
+            validateLoopFillingRowData(sheet);
+            validateLoopFillingCellMergedStrategies(sheet);
+            validateCommonData(sheet);
+        }
+    }
+
     private void doTestFillWithAutoMergeAndCopyMergedCellStyles(File template, File output) throws IOException {
         Assertions.assertDoesNotThrow(() -> {
             FesodSheet.write(output)
@@ -208,6 +321,7 @@ class LoopRowFillingMergeTest {
                     .doFill(
                             mockDatas,
                             FillConfig.builder()
+                                    .forceNewRow(true)
                                     .mergeStrategy(FillMergeStrategy.MERGE_CELL_STYLE)
                                     .build());
         });
@@ -219,6 +333,34 @@ class LoopRowFillingMergeTest {
             validateLoopFillingRowData(sheet);
             validateLoopFillingCellMergedStrategies(sheet);
             validateMergedCellStyles(sheet);
+        }
+    }
+
+    private void doTestCombineFillWithAutoMergeAndCopyMergedCellStyles(File template, File output) throws IOException {
+        Assertions.assertDoesNotThrow(() -> {
+            FillConfig fillConfig = FillConfig.builder()
+                    .forceNewRow(true)
+                    .mergeStrategy(FillMergeStrategy.MERGE_CELL_STYLE)
+                    .build();
+
+            try (ExcelWriter writer =
+                    FesodSheet.write(output).withTemplate(template).build()) {
+                WriteSheet sheet = FesodSheet.writerSheet(0).build();
+                writer.fill(mockDatas, fillConfig, sheet);
+                writer.fill(mockCommonData, sheet);
+
+                writer.finish();
+            }
+        });
+
+        try (Workbook workbook = WorkbookFactory.create(output)) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            validateHeadRow(sheet);
+            validateLoopFillingRowData(sheet);
+            validateLoopFillingCellMergedStrategies(sheet);
+            validateMergedCellStyles(sheet);
+            validateCommonData(sheet);
         }
     }
 
@@ -279,12 +421,12 @@ class LoopRowFillingMergeTest {
         List<CellRangeAddress> dataMergedRegions = getMergedRegionsForDataRow(sheet);
 
         // ignored head row and template variable rows
-        Assertions.assertEquals(14 * 5, dataMergedRegions.size());
+        Assertions.assertEquals((MOCK_DATA_SIZE - 1) * 5, dataMergedRegions.size());
 
         Set<CellRangeAddress> removeFlag = new HashSet<>();
         int totalMergedRegions = 5;
         int rowSpan = 2;
-        int maxDataSize = 30;
+        int maxDataSize = MOCK_DATA_SIZE * rowSpan;
         for (int currentStartRow = 3; currentStartRow <= maxDataSize; currentStartRow += rowSpan) {
             // Model first row
             List<CellRangeAddress> col0 = findMergedRegions(dataMergedRegions, currentStartRow, 0);
@@ -387,6 +529,26 @@ class LoopRowFillingMergeTest {
                 }
             }
         }
+    }
+
+    private void validateCommonData(Sheet sheet) {
+        // validate common head row
+        // first head row + data rows + space rows
+        int commonHeadRow = 1 + (MOCK_DATA_SIZE * 2) + 2;
+        Row headRow = sheet.getRow(commonHeadRow);
+        Assertions.assertNotNull(headRow);
+        Assertions.assertNotNull(headRow.getCell(0));
+        Assertions.assertEquals("String4 (Normal Common)", headRow.getCell(0).getStringCellValue());
+        Assertions.assertNotNull(headRow.getCell(2));
+        Assertions.assertEquals("String5 (Normal Common)", headRow.getCell(2).getStringCellValue());
+
+        // validate common data row
+        Row dataRow = sheet.getRow(commonHeadRow + 1);
+        Assertions.assertNotNull(dataRow);
+        Assertions.assertEquals(
+                mockCommonData.get("string4"), dataRow.getCell(0).getStringCellValue());
+        Assertions.assertEquals(
+                mockCommonData.get("string5"), dataRow.getCell(2).getStringCellValue());
     }
 
     private static List<CellRangeAddress> getMergedRegionsForDataRow(Sheet sheet) {

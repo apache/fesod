@@ -27,6 +27,22 @@ public class FillData {
 }
 ```
 
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class MultiRowFillData {
+    private Integer no;
+    private String string1;
+    private String string2;
+    private String string3;
+    private LocalDate localDate1;
+    private LocalDate localDate2;
+    private Long long1;
+    private Long long2;
+}
+```
+
 ### Code Example
 
 ```java
@@ -101,6 +117,100 @@ public void listFill() {
 ### Result
 
 ![img](/img/docs/fill/listFill_result.png)
+
+---
+
+## Multi-Row Loop Filling Merge Strategy
+
+### Overview
+
+When filling list data, the template often contains complex merged regions spanning across rows or
+columns. By default, Fesod fills the data but does not automatically replicate these merged regions. You can use
+the `mergeStrategy` parameter to control the merging behavior of the generated rows.
+
+### Merge Strategies
+
+- **NONE**: No automatic merging is performed (Default).
+- **AUTO**: Fesod will replicate the merge structure defined in the template row and apply it to each generated data row.
+- **MERGE_CELL_STYLE**: In addition to the behavior of `AUTO`, this strategy copies the style of the anchor cell
+(top-left cell) and applies it to all cells within the merged region.
+  - *Warning：Excessive cell style instances may lead to performance issues and could exceed the cell style limit
+  (64,000 for .xlsx format, 4,000 for .xls format). Please use with caution when handling large volumes of data.*
+
+### Code Example
+
+#### `FillMergeStrategy.NONE`
+
+```java
+
+@Test
+public void listMultiRowFill() {
+    String templateFileName = "path/to/list.xlsx";
+
+    FesodSheet.write("listMultiRowFill.xlsx")
+            .withTemplate(templateFileName)
+            .sheet()
+            .doFill(data(), FillConfig.builder().mergeStrategy(FillMergeStrategy.NONE).build());
+}
+```
+
+##### Template
+
+![img](/img/docs/fill/listMultiRowFill_file.png)
+
+##### Result
+
+![img](/img/docs/fill/listMultiRowFill_file_result.png)
+
+#### `FillMergeStrategy.AUTO`
+
+```java
+
+@Test
+public void listMultiRowFill() {
+    String templateFileName = "path/to/list.xlsx";
+
+    FesodSheet.write("listMultiRowFill.xlsx")
+            .withTemplate(templateFileName)
+            .sheet()
+            .doFill(data(), FillConfig.builder().mergeStrategy(FillMergeStrategy.AUTO).build());
+}
+```
+
+##### Template
+
+![img](/img/docs/fill/listMultiRowFillWithAutoMerge_file.png)
+
+##### Result
+
+![img](/img/docs/fill/listMultiRowFillWithAutoMerge_file_result.png)
+
+#### `FillMergeStrategy.MERGE_CELL_STYLE`
+
+```java
+
+@Test
+public void listMultiRowFill() {
+    String templateFileName = "path/to/list.xlsx";
+
+    FesodSheet.write("listMultiRowFill.xlsx")
+            .withTemplate(templateFileName)
+            .sheet()
+            .doFill(data(), FillConfig.builder().mergeStrategy(FillMergeStrategy.MERGE_CELL_STYLE).build());
+}
+```
+
+##### Template
+
+![img](/img/docs/fill/listMultiRowFillWithAutoMergeAndUnifyStyle_file.png)
+
+##### Result
+
+![img](/img/docs/fill/listMultiRowFillWithAutoMergeAndUnifyStyle_file_result.png)
+
+> Note: In `MERGE_CELL_STYLE` mode, why do some cells lack styles?  
+> This is because the template variables do not cover these cells, so the styles from the template are not copied.
+> The appearance of lines in some cells not covered by template variables is due to the border rendering of surrounding cells.
 
 ---
 

@@ -147,8 +147,6 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             while (iterator.hasNext()) {
                 doFill(analysisCellList, iterator.next(), fillConfig, getRelativeRowIndex(), rowSpan);
-
-                addMergedRegionIfNecessary(analysisCellList, fillConfig);
             }
         } else {
             doFill(readTemplateData(templateAnalysisCache), realData, fillConfig, null, 0);
@@ -434,6 +432,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
         }
+
+        // Handle multi-rows merge strategies
+        addMergedRegionIfNecessary(analysisCellList, fillConfig);
 
         // In the case of the fill line may be called many times
         if (rowWriteHandlerContext.getRow() != null) {

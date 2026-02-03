@@ -1,5 +1,4 @@
 ---
-
 id: 'pojo'
 title: 'POJO'
 ---

@@ -1,6 +1,4 @@
-
 ---
-
 id: 'introduce'
 title: 'Introduction'
 slug: /

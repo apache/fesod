@@ -1,5 +1,4 @@
 ---
-
 id: 'simple'
 title: 'Simple'
 ---

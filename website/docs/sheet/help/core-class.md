@@ -1,5 +1,4 @@
 ---
-
 id: 'core-class'
 title: 'Core Class'
 ---

@@ -1,6 +1,4 @@
-
 ---
-
 id: 'guide'
 title: 'Guide'
 ---

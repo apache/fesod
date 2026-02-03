@@ -1,5 +1,4 @@
 ---
-
 id: 'style'
 title: 'Style'
 ---

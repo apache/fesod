@@ -1,5 +1,4 @@
 ---
-
 id: 'head'
 title: 'Head'
 ---

@@ -1,6 +1,4 @@
-
 ---
-
 id: 'simple-example'
 title: 'Simple example'
 ---

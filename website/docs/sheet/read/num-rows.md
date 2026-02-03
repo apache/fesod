@@ -1,5 +1,4 @@
 ---
-
 id: 'num-rows'
 title: 'Rows'
 ---

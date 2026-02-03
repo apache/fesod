@@ -1,5 +1,4 @@
 ---
-
 id: 'exception'
 title: 'Exception'
 ---

@@ -1,5 +1,4 @@
 ---
-
 id: 'extra'
 title: 'Extra'
 ---

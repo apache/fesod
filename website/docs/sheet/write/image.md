@@ -1,5 +1,4 @@
 ---
-
 id: 'image'
 title: 'Image'
 ---

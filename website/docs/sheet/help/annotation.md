@@ -1,5 +1,4 @@
 ---
-
 id: 'annotation'
 title: 'Annotation'
 ---

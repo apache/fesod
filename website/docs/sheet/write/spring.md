@@ -1,5 +1,4 @@
 ---
-
 id: 'spring'
 title: 'Spring'
 ---

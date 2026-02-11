@@ -9,13 +9,14 @@ title: '指南'
 
 下表列出了各版本 Apache Fesod(Incubating) 基础库对 Java 语言版本最低要求的情况：
 
-| 版本               | jdk版本支持范围    | 备注          |
-|------------------|--------------|-------------|
-| 2.0.0-incubating | jdk8 - jdk25 | NA(无效)      |
-| 1.3.x            | jdk8 - jdk25 | 非 Apache 版本 |
-| 1.2.x            | jdk8 - jdk21 | 非 Apache 版本 |
-| 1.1.x            | jdk8 - jdk21 | 非 Apache 版本 |
-| 1.0.x            | jdk8 - jdk21 | 非 Apache 版本 |
+| 版本               | jdk版本支持范围    | 备注           |
+|------------------|--------------|--------------|
+| 2.0.1-incubating | jdk8 - jdk25 | Apache 孵化器版本 |
+| 2.0.0-incubating | jdk8 - jdk25 | NA(无效)       |
+| 1.3.x            | jdk8 - jdk25 | 非 Apache 版本  |
+| 1.2.x            | jdk8 - jdk21 | 非 Apache 版本  |
+| 1.1.x            | jdk8 - jdk21 | 非 Apache 版本  |
+| 1.0.x            | jdk8 - jdk21 | 非 Apache 版本  |
 
 我们强烈建议您使用最新版本的 Apache Fesod(Incubating)，因为最新版本中的性能优化、BUG 修复和新功能都会让您的使用更加方便。
 
@@ -44,7 +45,7 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>版本号</version>
+    <version>2.0.1-incubating</version>
 </dependency>
 ```
 
@@ -59,7 +60,7 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
         <dependency>
             <groupId>org.apache.fesod</groupId>
             <artifactId>fesod-bom</artifactId>
-            <version>版本号</version>
+            <version>2.0.1-incubating</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -81,6 +82,6 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod-sheet:版本号'
+    implementation 'org.apache.fesod:fesod-sheet:2.0.1-incubating'
 }
 ```

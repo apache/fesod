@@ -3,6 +3,23 @@ id: 'faq'
 title: 'FAQ'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # FAQ
 
 This section describes common issues that may arise when using this project.
@@ -122,9 +139,21 @@ This section describes common issues that may arise when using this project.
 - **A:** You can customize cell styles by implementing the `WriteHandler` interface. For example:
 
   ```java
-  public class CustomCellStyleWriteHandler extends AbstractCellStyleWriteHandler {
+  public class CustomCellStyleWriteHandler extends AbstractCellStyleStrategy {
+    
       @Override
-      protected void setCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
+      public int order() {
+          // Customize the execution order
+          return OrderConstant.SHEET_ORDER;
+      }
+
+      @Override
+      protected void setHeadCellStyle(CellWriteHandlerContext context) {
+          // Customize the head cell style
+      }
+  
+      @Override
+      protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
           CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
           style.setFillForegroundColor(IndexedColors.RED.getIndex());
           style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -274,13 +303,25 @@ This section describes common issues that may arise when using this project.
 - **A:** You can customize the header style by implementing the `WriteHandler` interface. For example:
 
   ```java
-  public class CustomHeadStyleWriteHandler extends AbstractHeadStyleWriteHandler {
+  public class CustomHeadStyleWriteHandler extends AbstractCellStyleStrategy {
+  
+      @Override
+      public int order() {
+          // Customize the execution order
+          return OrderConstant.SHEET_ORDER;
+      }
+  
       @Override
       protected void setHeadCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
           CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
           style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
           style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
           cell.setCellStyle(style);
+      }
+  
+      @Override
+      protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
+          // Customize the content cell style
       }
   }
   ```
@@ -316,9 +357,21 @@ This section describes common issues that may arise when using this project.
 - **A:** You can set the font by creating a `Font` object and applying it to the `CellStyle`. For example:
 
   ```java
-  public class CustomFontWriteHandler extends AbstractCellStyleWriteHandler {
+  public class CustomFontWriteHandler extends AbstractCellStyleStrategy {
+  
       @Override
-      protected void setCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
+      public int order() {
+          // Customize the execution order
+          return OrderConstant.SHEET_ORDER;
+      }
+
+      @Override
+      protected void setHeadCellStyle(CellWriteHandlerContext context) {
+          // Customize the head cell style
+      }
+  
+      @Override
+      protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
           Workbook workbook = cell.getSheet().getWorkbook();
           Font font = workbook.createFont();
           font.setFontName("Arial");

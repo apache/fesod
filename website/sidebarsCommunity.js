@@ -20,7 +20,7 @@
 const sidebarsCommunity = {
     community: [
         {
-            id: "community",
+            id: "index",
             type: "doc",
         },
         {
@@ -52,7 +52,7 @@ const sidebarsCommunity = {
             items: [
                 'committer/become-committer',
                 'committer/icla',
-                'committer/committer-onboarding',
+                'committer/onboarding',
             ]
         },
         {
@@ -60,7 +60,7 @@ const sidebarsCommunity = {
             label: 'PPMC Members',
             items: [
                 'pmc/become-pmc-member',
-                'pmc/pmc-onboarding',
+                'pmc/onboarding',
                 'pmc/nominate-committer',
             ]
         },

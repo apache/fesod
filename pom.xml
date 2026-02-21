@@ -35,13 +35,39 @@
 
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-parent</artifactId>
-    <version>${revision}</version>
+    <version>2.0.1-incubating</version>
 
     <packaging>pom</packaging>
     <name>fesod-parent</name>
     <description>
         Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
+
+        Apache Fesod (incubating) is an effort undergoing incubation at The Apache
+        Software Foundation (ASF), sponsored by the Apache Incubator PMC.
+
+        Incubation is required of all newly accepted projects until a further review
+        indicates that the infrastructure, communications, and decision making process
+        have stabilized in a manner consistent with other successful ASF projects.
+
+        While incubation status is not necessarily a reflection of the completeness
+        or stability of the code, it does indicate that the project has yet to be
+        fully endorsed by the ASF.
+
+        Some of the incubating project’s releases may not be fully compliant with ASF
+        policy. For example, releases may have incomplete or un-reviewed licensing
+        conditions. What follows is a list of issues the project is currently aware of
+        (this list is likely to be incomplete):
+
+        1. IP Clearance and license header updates for legacy code derived from Alibaba
+        EasyExcel are currently in progress.
+
+        If you are planning to incorporate this work into your product/project,please be
+        aware that you will need to conduct a thorough licensing review to determine the
+        overall implications of including this work.
+
+        For the current status of this project through the Apache Incubator,
+        visit: https://incubator.apache.org/projects/fesod.html
     </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
@@ -55,7 +81,7 @@
     </modules>
 
     <properties>
-        <revision>2.0.0-incubating</revision>
+        <revision>2.0.1-incubating</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -78,7 +104,7 @@
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>1.7.36</log4j-over-slf4j.version>
-        <logback-classic.version>1.5.25</logback-classic.version>
+        <logback-classic.version>1.5.29</logback-classic.version>
         <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.14</jacoco.version>
         <junit.version>5.13.4</junit.version>
@@ -450,6 +476,10 @@
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>oss</flattenMode>
+                    <pomElements>
+                        <url>remove</url>
+                        <scm>remove</scm>
+                    </pomElements>
                 </configuration>
                 <executions>
                     <execution>
@@ -522,6 +552,10 @@
                         <exclude>website/**</exclude>
                         <exclude>logo.svg</exclude>
                         <exclude>**/*.md</exclude>
+                        <exclude>dist/**</exclude>
+                        <exclude>**/*.xlsx</exclude>
+                        <exclude>**/*.xls</exclude>
+                        <exclude>**/*.csv</exclude>
                         <exclude>.git/**</exclude>
                         <exclude>.github/**</exclude>
                         <exclude>**/target/**</exclude>

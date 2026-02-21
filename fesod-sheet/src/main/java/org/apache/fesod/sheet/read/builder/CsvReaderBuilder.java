@@ -61,6 +61,11 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
 
     /**
      * Sets the quote character
+     * <p>
+     * If set to {@link org.apache.fesod.sheet.metadata.csv.CsvConstant#NONE_QUOTE}, the quote parsing logic will be disabled,
+     * and quote characters will be treated as regular text.This is equivalent to setting
+     * {@code quote} to {@code null} in Apache Commons CSV.
+     * </p>
      *
      * @param quote the quote character
      * @return Returns a CsvReaderBuilder object, enabling method chaining

@@ -196,7 +196,7 @@ Then continue with the specific import mappings below.
 | `import cn.idev.excel.read.listener.PageReadListener;` | `import org.apache.fesod.sheet.read.listener.PageReadListener;` |
 | `import cn.idev.excel.read.metadata.ReadSheet;` | `import org.apache.fesod.sheet.read.metadata.ReadSheet;` |
 | `import cn.idev.excel.read.metadata.ReadWorkbook;` | `import org.apache.fesod.sheet.read.metadata.ReadWorkbook;` |
-| `import cn.idev.excel.read.metadata.ReadTable;` | `import org.apache.fesod.sheet.read.metadata.ReadTable;` |
+| `import cn.idev.excel.read.metadata.ReadBasicParameter;` | `import org.apache.fesod.sheet.read.metadata.ReadBasicParameter;` |
 | `import cn.idev.excel.read.builder.ExcelReaderBuilder;` | `import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;` |
 | `import cn.idev.excel.read.builder.ExcelReaderSheetBuilder;` | `import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;` |
 | `import cn.idev.excel.context.AnalysisContext;` | `import org.apache.fesod.sheet.context.AnalysisContext;` |
@@ -209,6 +209,7 @@ Then continue with the specific import mappings below.
 | `import cn.idev.excel.write.metadata.WriteSheet;` | `import org.apache.fesod.sheet.write.metadata.WriteSheet;` |
 | `import cn.idev.excel.write.metadata.WriteWorkbook;` | `import org.apache.fesod.sheet.write.metadata.WriteWorkbook;` |
 | `import cn.idev.excel.write.metadata.WriteTable;` | `import org.apache.fesod.sheet.write.metadata.WriteTable;` |
+| `import cn.idev.excel.write.metadata.WriteBasicParameter;` | `import org.apache.fesod.sheet.write.metadata.WriteBasicParameter;` |
 | `import cn.idev.excel.write.builder.ExcelWriterBuilder;` | `import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;` |
 | `import cn.idev.excel.write.builder.ExcelWriterSheetBuilder;` | `import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;` |
 | `import cn.idev.excel.write.builder.ExcelWriterTableBuilder;` | `import org.apache.fesod.sheet.write.builder.ExcelWriterTableBuilder;` |

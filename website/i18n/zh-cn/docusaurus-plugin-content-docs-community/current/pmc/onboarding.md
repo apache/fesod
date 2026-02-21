@@ -1,5 +1,5 @@
 ---
-id: 'pmc-onboarding'
+id: 'onboarding'
 title: 'PPMC 成员须知'
 ---
 

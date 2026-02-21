@@ -3,6 +3,23 @@ id: 'guide'
 title: 'Guide'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # Installation
 
 ## Compatibility Information
@@ -10,13 +27,14 @@ title: 'Guide'
 The following table lists the minimum Java language version requirements for each version of the Apache Fesod(
 Incubating) library:
 
-| Version          | JDK Version Support Range | Notes              |
-|------------------|---------------------------|--------------------|
-| 2.0.0-incubating | JDK8 - JDK25              | NA(not available)  |
-| 1.3.x            | JDK8 - JDK25              | Non-Apache release |
-| 1.2.x            | JDK8 - JDK21              | Non-Apache release |
-| 1.1.x            | JDK8 - JDK21              | Non-Apache release |
-| 1.0.x            | JDK8 - JDK21              | Non-Apache release |
+| Version          | JDK Version Support Range | Notes                    |
+|------------------|---------------------------|--------------------------|
+| 2.0.1-incubating | JDK8 - JDK25              | Apache Incubator release |
+| 2.0.0-incubating | JDK8 - JDK25              | NA(not available)        |
+| 1.3.x            | JDK8 - JDK25              | Non-Apache release       |
+| 1.2.x            | JDK8 - JDK21              | Non-Apache release       |
+| 1.1.x            | JDK8 - JDK21              | Non-Apache release       |
+| 1.0.x            | JDK8 - JDK21              | Non-Apache release       |
 
 We strongly recommend using the latest version of Apache Fesod(Incubating), as performance optimizations, bug fixes, and
 new features
@@ -48,7 +66,7 @@ If you are using Maven for project building, add the following configuration in 
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>version</version>
+    <version>2.0.1-incubating</version>
 </dependency>
 ```
 
@@ -63,7 +81,7 @@ For better dependency management, you can use the Fesod BOM:
         <dependency>
             <groupId>org.apache.fesod</groupId>
             <artifactId>fesod-bom</artifactId>
-            <version>version</version>
+            <version>2.0.1-incubating</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -85,6 +103,6 @@ If you are using Gradle for project building, add the following configuration in
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod-sheet:version'
+    implementation 'org.apache.fesod:fesod-sheet:2.0.1-incubating'
 }
 ```

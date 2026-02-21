@@ -231,7 +231,6 @@ Then continue with the specific import mappings below.
 | `import cn.idev.excel.annotation.ExcelProperty;` | `import org.apache.fesod.sheet.annotation.ExcelProperty;` |
 | `import cn.idev.excel.annotation.ExcelIgnore;` | `import org.apache.fesod.sheet.annotation.ExcelIgnore;` |
 | `import cn.idev.excel.annotation.ExcelIgnoreUnannotated;` | `import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;` |
-| `import cn.idev.excel.annotation.HeadRowNumber;` | `import org.apache.fesod.sheet.annotation.HeadRowNumber;` |
 | `import cn.idev.excel.annotation.format.DateTimeFormat;` | `import org.apache.fesod.sheet.annotation.format.DateTimeFormat;` |
 | `import cn.idev.excel.annotation.format.NumberFormat;` | `import org.apache.fesod.sheet.annotation.format.NumberFormat;` |
 | `import cn.idev.excel.annotation.write.style.ColumnWidth;` | `import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;` |
@@ -242,7 +241,7 @@ Then continue with the specific import mappings below.
 | `import cn.idev.excel.annotation.write.style.HeadRowHeight;` | `import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;` |
 | `import cn.idev.excel.annotation.write.style.ContentRowHeight;` | `import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;` |
 | `import cn.idev.excel.annotation.write.style.OnceAbsoluteMerge;` | `import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;` |
-| `import cn.idev.excel.annotation.write.style.DynamicHeight;` | `import org.apache.fesod.sheet.annotation.write.style.DynamicHeight;` |
+| `import cn.idev.excel.annotation.write.style.ContentLoopMerge;` | `import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;` |
 
 ### 2f. Converters
 
@@ -428,6 +427,3 @@ Remaining cn.idev.excel references : 0 ✅
 Remaining FastExcel. call sites    : 0 ✅  (or N ⚠️  if Phase 3 was skipped)
 Remaining ByFastExcelCGLIB refs    : 0 ✅  (or skipped — not present)
 ```
-
-If Phase 3 was deliberately skipped, note that `FastExcel`/`FastExcelFactory`
-are `@Deprecated` in Fesod and will be removed in a future version.

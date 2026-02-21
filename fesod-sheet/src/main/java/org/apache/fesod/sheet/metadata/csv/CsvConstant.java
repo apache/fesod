@@ -34,6 +34,12 @@ public class CsvConstant {
     public static final char DOUBLE_QUOTE = '"';
 
     /**
+     * Represents a disabled quote character.
+     * When the quote is set to this value, the CSV parser will treat all quote characters as regular text.
+     */
+    public static final char NONE_QUOTE = '\0';
+
+    /**
      * line break
      */
     public static final String CR = "\r";

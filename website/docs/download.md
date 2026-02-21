@@ -3,8 +3,43 @@ id: 'download'
 title: 'Download'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be
 downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
+
+# How to Use Apache Fesod (Incubating)
+
+## Using Maven Central (Recommended)
+
+For most users, simply add the dependency to your project:
+
+:::tip
+
+```xml
+<dependency>
+    <groupId>org.apache.fesod</groupId>
+    <artifactId>fesod-sheet</artifactId>
+    <version>2.0.1-incubating</version>
+</dependency>
+```
+
+:::
 
 ## Available Modules
 
@@ -17,9 +52,10 @@ downloaded from the ASF distribution site. Binary artifacts are available throug
 
 ## The Latest Release
 
-|     Version      |    Date    |  Source Download  |   Release Notes   |
-|:----------------:|:----------:|:-----------------:|:-----------------:|
-| 2.0.0-incubating | 2026-01-24 | NA(Not Available) | NA(Not Available) |
+|     Version      |    Date    |                                                                                                                                                    Source Download                                                                                                                                                    |                                 Release Notes                                  |
+|:----------------:|:----------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------:|
+| 2.0.1-incubating | 2026-02-11 | [Source](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/) ([asc](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.sha512)) | [Release Notes](https://github.com/apache/fesod/releases/tag/2.0.1-incubating) |
+| 2.0.0-incubating | 2026-01-24 |                                                                                                                                                   NA(Not Available)                                                                                                                                                   |                               NA(Not Available)                                |
 
 # Previous Releases (Non-Apache)
 
@@ -58,7 +94,7 @@ releases.
 3. Verify the GPG signature:
 
 ```bash
-gpg --verify apache-fesod-2.0.0-incubating-src.tar.gz.asc apache-fesod-2.0.0-incubating-src.tar.gz
+gpg --verify apache-fesod-2.0.1-incubating-src.tar.gz.asc apache-fesod-2.0.1-incubating-src.tar.gz
 ```
 
 ## Verify Checksum
@@ -66,11 +102,11 @@ gpg --verify apache-fesod-2.0.0-incubating-src.tar.gz.asc apache-fesod-2.0.0-inc
 Verify the SHA-512 checksum:
 
 ```bash
-shasum -a 512 -c apache-fesod-2.0.0-incubating-src.tar.gz.sha512
+shasum -a 512 -c apache-fesod-2.0.1-incubating-src.tar.gz.sha512
 ```
 
 Or on Linux:
 
 ```bash
-sha512sum -c apache-fesod-2.0.0-incubating-src.tar.gz.sha512
+sha512sum -c apache-fesod-2.0.1-incubating-src.tar.gz.sha512
 ```

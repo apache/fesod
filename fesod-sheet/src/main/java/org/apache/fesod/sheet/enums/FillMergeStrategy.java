@@ -25,17 +25,17 @@ package org.apache.fesod.sheet.enums;
 public enum FillMergeStrategy {
 
     /**
-     * Merged regions in the fill template will NOT be handing.
+     * Merged regions in the fill template will NOT be handled.
      */
     NONE,
 
     /**
-     * Automatically handling merged regions base on fill template.
+     * Automatically handling merged regions based on the fill template.
      */
     AUTO,
 
     /**
-     * Automatically handling merged regions and unify the style using anchor cells base on fill template.
+     * Automatically handling merged regions and unifying the style using anchor cells based on the fill template.
      * <p />
      * <b>Warning: Too many CellStyle instances may lead to performance issues and can exceed number of cell styles
      * limits (64000 for .xlsx and 4000 for .xls).</b>

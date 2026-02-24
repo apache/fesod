@@ -151,7 +151,7 @@ the `mergeStrategy` parameter to control the merging behavior of the generated r
 - **AUTO**: Fesod will replicate the merge structure defined in the template row and apply it to each generated data row.
 - **MERGE_CELL_STYLE**: In addition to the behavior of `AUTO`, this strategy copies the style of the anchor cell
 (top-left cell) and applies it to all cells within the merged region.
-  - *Warning：Excessive cell style instances may lead to performance issues and could exceed the cell style limit
+  - *Warning: Excessive cell style instances may lead to performance issues and could exceed the cell style limit
   (64,000 for .xlsx format, 4,000 for .xls format). Please use with caution when handling large volumes of data.*
 
 ### Code Example

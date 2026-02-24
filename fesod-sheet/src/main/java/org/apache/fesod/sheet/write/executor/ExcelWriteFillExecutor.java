@@ -203,11 +203,19 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
 
         Set<CellRangeAddress> absoluteRegions = new HashSet<>();
         Map<AnalysisCell, Integer> collectionLastIndexMap = collectionLastIndexCache.get(currentUniqueDataFlag);
+        if (collectionLastIndexMap == null || collectionLastIndexMap.isEmpty()) {
+            return Collections.emptySet();
+        }
 
         for (AnalysisCell cell : cells) {
+            Integer firstRow = collectionLastIndexMap.get(cell);
+            if (firstRow == null) {
+                // No recorded last index for this cell; skip to avoid NPE.
+                continue;
+            }
+
             for (CellRangeAddress range : sheet.getMergedRegions()) {
                 if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
-                    int firstRow = collectionLastIndexMap.get(cell);
                     int lastRow = firstRow + (range.getLastRow() - range.getFirstRow());
                     absoluteRegions.add(
                             new CellRangeAddress(firstRow, lastRow, range.getFirstColumn(), range.getLastColumn()));

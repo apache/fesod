@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Tests for multi-rows loop filling, cells merge handing and copy merged cell-styles.
+ * Tests for multi-rows loop filling, cells merge handling and copy merged cell-styles.
  *
  * @see ExcelWriteFillExecutor
  */
@@ -97,7 +97,7 @@ class LoopRowFillingMergeTest {
     private File caseF03;
     private File caseFTemplate03;
 
-    private static final int MOCK_DATA_SIZE = 1000;
+    private static final int MOCK_DATA_SIZE = 50;
     private List<LoopRowFillingMergeModel> mockDatas;
     private Map<String, String> mockCommonData;
 

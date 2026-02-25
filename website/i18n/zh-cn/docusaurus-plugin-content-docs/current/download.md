@@ -27,7 +27,6 @@ title: '下载'
 ## 可用模块
 
 - **fesod-sheet** - Excel/CSV 处理的核心模块（推荐大多数用户使用）
-- **fesod-bom** - 用于依赖管理的 BOM（Bill of Materials）
 - **fesod-common** - 公共工具类（会随 fesod-sheet 自动引入）
 - **fesod-shaded** - 隔离的依赖以避免冲突（会随 fesod-sheet 自动引入）
 

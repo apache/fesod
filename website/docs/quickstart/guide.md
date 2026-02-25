@@ -70,33 +70,6 @@ If you are using Maven for project building, add the following configuration in 
 </dependency>
 ```
 
-### Alternative: Using BOM for Version Management
-
-For better dependency management, you can use the Fesod BOM:
-
-```xml
-
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod-bom</artifactId>
-            <version>2.0.1-incubating</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-
-<dependencies>
-    <dependency>
-        <groupId>org.apache.fesod</groupId>
-        <artifactId>fesod-sheet</artifactId>
-        <!-- Version managed by BOM -->
-    </dependency>
-</dependencies>
-```
-
 ## Gradle
 
 If you are using Gradle for project building, add the following configuration in the `build.gradle` file:

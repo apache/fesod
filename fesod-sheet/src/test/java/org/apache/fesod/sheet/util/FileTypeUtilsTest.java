@@ -19,8 +19,13 @@
 
 package org.apache.fesod.sheet.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.fesod.sheet.metadata.data.ImageData;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -29,6 +34,31 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
  * Tests {@link FileTypeUtils}
  */
 class FileTypeUtilsTest {
+
+    private byte[] realJpeg;
+    private byte[] realPng;
+    private byte[] realSvg;
+
+    @BeforeEach
+    void setup() throws Exception {
+        realJpeg = loadImage("fesod-logo-jpeg.jpeg");
+        realPng = loadImage("fesod-logo-png.png");
+        realSvg = loadImage("fesod-logo-svg.svg");
+    }
+
+    private byte[] loadImage(String filename) throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("images" + File.separator + filename); ) {
+            Assertions.assertNotNull(is);
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] data = new byte[4096];
+            int n;
+            while ((n = is.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, n);
+            }
+            return buffer.toByteArray();
+        }
+    }
 
     @ParameterizedTest
     @NullAndEmptySource
@@ -66,6 +96,7 @@ class FileTypeUtilsTest {
         jpeg[2] = (byte) 0xFF;
 
         Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_JPEG, FileTypeUtils.getImageType(jpeg));
+        Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_JPEG, FileTypeUtils.getImageType(realJpeg));
     }
 
     @Test
@@ -78,12 +109,14 @@ class FileTypeUtilsTest {
         png[3] = (byte) 0x47;
 
         Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_PNG, FileTypeUtils.getImageType(png));
+        Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_PNG, FileTypeUtils.getImageType(realPng));
     }
 
     @Test
     void test_getImageType_unknown() {
         byte[] unknown = new byte[30];
         Assertions.assertNull(FileTypeUtils.getImageType(unknown));
+        Assertions.assertNull(FileTypeUtils.getImageType(realSvg));
     }
 
     @Test
@@ -93,8 +126,12 @@ class FileTypeUtilsTest {
         jpeg[1] = (byte) 0xD8;
         jpeg[2] = (byte) 0xFF;
 
-        int result = FileTypeUtils.getImageTypeFormat(jpeg);
-        Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_JPEG.getValue(), result);
+        int typeOfJpeg = FileTypeUtils.getImageTypeFormat(jpeg);
+        int typeOfRealJpeg = FileTypeUtils.getImageTypeFormat(realJpeg);
+        int typeOfPng = FileTypeUtils.getImageTypeFormat(realPng);
+        Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_JPEG.getValue(), typeOfJpeg);
+        Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_JPEG.getValue(), typeOfRealJpeg);
+        Assertions.assertEquals(ImageData.ImageType.PICTURE_TYPE_PNG.getValue(), typeOfPng);
     }
 
     @Test

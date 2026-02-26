@@ -35,7 +35,7 @@
 
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-parent</artifactId>
-    <version>2.0.1-incubating</version>
+    <version>2.1.0-incubating</version>
 
     <packaging>pom</packaging>
     <name>fesod-parent</name>

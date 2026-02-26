@@ -3,23 +3,50 @@ id: 'download'
 title: '下载'
 ---
 
-这是 Apache Fesod (Incubating)的官方下载页面。请从以下表格中选择要下载的版本。建议使用最新版本。
+这是 Apache Fesod (Incubating) 的官方下载页面。Apache Fesod 提供可从 ASF 发布站点下载的源码发布。二进制构件可通过 Maven
+中央仓库获取。
+
+# 如何使用 Apache Fesod (Incubating)
+
+## 使用 Maven 中央仓库（推荐）
+
+对于大多数用户，只需在项目里添加以下依赖：
 
 :::tip
 
-我们目前正准备进行在 Apache 孵化器下的首次发布。之前的版本并非基于 Apache 。
+```xml
+<dependency>
+    <groupId>org.apache.fesod</groupId>
+    <artifactId>fesod-sheet</artifactId>
+    <version>2.0.1-incubating</version>
+</dependency>
+```
 
 :::
 
-## 发布版本（非 Apache 版本）
+## 可用模块
 
-### 最新版本
+- **fesod-sheet** - Excel/CSV 处理的核心模块（推荐大多数用户使用）
+- **fesod-bom** - 用于依赖管理的 BOM（Bill of Materials）
+- **fesod-common** - 公共工具类（会随 fesod-sheet 自动引入）
+- **fesod-shaded** - 隔离的依赖以避免冲突（会随 fesod-sheet 自动引入）
+
+# Apache 源码发布
+
+## 最新版本
+
+|        版本        |    发布日期    |                                                                                                                                                       源码下载                                                                                                                                                        |                                 版本说明                                  |
+|:----------------:|:----------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+| 2.0.1-incubating | 2026-02-11 | [源码](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/) ([asc](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.1-incubating) |
+| 2.0.0-incubating | 2026-01-24 |                                                                                                                                                      NA(无效)                                                                                                                                                       |                                NA(无效)                                 |
+
+# 发布版本（非 Apache 版本）
+
+## 历史版本
 
 |  版本   |    发布日期    |                                                                                                                                                  下载地址                                                                                                                                                  |                            版本说明                             |
 |:-----:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
 | 1.3.0 | 2025-08-23 | [fastexcel-1.3.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.3.0/fastexcel-1.3.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.3.0/fastexcel-1.3.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.3.0/fastexcel-1.3.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.3.0) |
-
-### 历史版本
 
 |  版本   |    发布日期    |                                                                                                                                                  下载地址                                                                                                                                                  |                            版本说明                             |
 |:-----:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
@@ -27,32 +54,40 @@ title: '下载'
 | 1.1.0 | 2025-01-14 | [fastexcel-1.1.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.1.0/fastexcel-1.1.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.1.0/fastexcel-1.1.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.2.0/fastexcel-1.1.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.1.0) |
 | 1.0.0 | 2024-12-05 | [fastexcel-1.0.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.0.0/fastexcel-1.0.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.0.0/fastexcel-1.0.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.0.0/fastexcel-1.0.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.0.0) |
 
-## 说明
+# 验证 Apache 发布版本
 
-* 在下载版本时，请验证其符合 OpenPGP 标准的签名（如果无法验证，则需检查 SHA-512 签名）；这些文件应从 Apache 主站点获取。
-* KEYS 文件包含了用于签署发布版本的公钥。建议（在可能的情况下）采用信任网络的方式来确认这些公钥的身份。
+在使用前必须验证所有 Apache 发布版本。请按以下步骤验证源码发布的完整性和真实性：
 
-### 验证签名
+## 下载验证文件
 
-需要同时下载发布工件及其对应的 .asc 签名文件。然后通过以下步骤验证签名：
+下载包含用于签署发布版本的公钥的 [KEYS](https://downloads.apache.org/incubator/fesod/KEYS) 文件。
 
-* 下载相关发布版本的 KEYS 文件和 .asc 签名文件。
-* 将 KEYS 文件导入您的 GPG 密钥环：
+## 验证签名
+
+1. 将 KEYS 文件导入您的 GPG 密钥环：
+
+    ```bash
+    gpg --import KEYS
+    ```
+
+2. 下载源码发布包、.asc 签名文件和 .sha512 校验和文件。
+
+3. 验证 GPG 签名：
 
 ```bash
-gpg --import KEYS
+gpg --verify apache-fesod-2.0.1-incubating-src.tar.gz.asc apache-fesod-2.0.1-incubating-src.tar.gz
 ```
 
-* 使用以下命令验证发布版本的签名:
+## 验证校验和
+
+验证 SHA-512 校验和：
 
 ```bash
-gpg --verify <artifact>.asc <artifact>
+shasum -a 512 -c apache-fesod-2.0.1-incubating-src.tar.gz.sha512
 ```
 
-### 验证发布文件的校验码
-
-您需要下载该发布包以及该包的 .sha512 校验码文件。然后通过以下方式验证校验码：
+或在 Linux 上：
 
 ```bash
-shasum -a 512 -c <artifact>.sha512
+sha512sum -c apache-fesod-2.0.1-incubating-src.tar.gz.sha512
 ```

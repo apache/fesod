@@ -2,6 +2,24 @@
 id: 'verify-release'
 title: 'How to Verify Release'
 ---
+
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 For a detailed checklist, please refer to the official [Incubator Release Checklist](https://cwiki.apache.org/confluence/display/INCUBATOR/Incubator+Release+Checklist).
 
 ### 1. Download the Release Candidate
@@ -149,9 +167,10 @@ Manually check the following files in the root directory:
 
 * [ ] **LICENSE:** Exists and contains the Apache License 2.0.
 * [ ] **NOTICE:**
-* Exists.
-* Copyright year is current (e.g., includes 2025/2026).
-* Contains required attributions for bundled dependencies (if any).
+* * Exists.
+* * Copyright year is current (e.g., includes 2025/2026).
+* * Contains required attributions for bundled dependencies (if any).
+* [ ] **DISCLAIMER：** Exists.
 
 ### 4. Email Reply Templates
 

@@ -3,24 +3,53 @@ id: 'guide'
 title: 'Guide'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # Installation
 
 ## Compatibility Information
 
-The following table lists the minimum Java language version requirements for each version of the Fesod library:
+The following table lists the minimum Java language version requirements for each version of the Apache Fesod(
+Incubating) library:
 
-| Version | JDK Version Support Range | Notes |
-|---------|---------------------------|-------|
-| 1.3.x   | JDK8 - JDK25              |       |
-| 1.2.x   | JDK8 - JDK21              |       |
-| 1.1.x   | JDK8 - JDK21              |       |
-| 1.0.x   | JDK8 - JDK21              |       |
+| Version          | JDK Version Support Range | Notes                    |
+|------------------|---------------------------|--------------------------|
+| 2.0.1-incubating | JDK8 - JDK25              | Apache Incubator release |
+| 2.0.0-incubating | JDK8 - JDK25              | NA(not available)        |
+| 1.3.x            | JDK8 - JDK25              | Non-Apache release       |
+| 1.2.x            | JDK8 - JDK21              | Non-Apache release       |
+| 1.1.x            | JDK8 - JDK21              | Non-Apache release       |
+| 1.0.x            | JDK8 - JDK21              | Non-Apache release       |
 
-We strongly recommend using the latest version of Fesod, as performance optimizations, bug fixes, and new features
+We strongly recommend using the latest version of Apache Fesod(Incubating), as performance optimizations, bug fixes, and
+new features
 in the latest version will enhance your experience.
 
-> Currently, Fesod uses POI as its underlying package. If your project already includes POI-related components, you
-> will need to manually exclude POI-related jar files.
+### Dependencies
+
+Apache Fesod(Incubating) uses the following key dependencies:
+
+- **Apache POI 5.5.1** - For Excel file processing
+- **Apache Commons CSV 1.14.1** - For CSV file support
+- **Ehcache 3.9.11** - For caching functionality
+
+> If your project already includes POI-related components, you may need to manually exclude POI-related jar files to
+> avoid version conflicts.
 
 ## Version Update
 
@@ -36,9 +65,36 @@ If you are using Maven for project building, add the following configuration in 
 
 <dependency>
     <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod</artifactId>
-    <version>version</version>
+    <artifactId>fesod-sheet</artifactId>
+    <version>2.0.1-incubating</version>
 </dependency>
+```
+
+### Alternative: Using BOM for Version Management
+
+For better dependency management, you can use the Fesod BOM:
+
+```xml
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.fesod</groupId>
+            <artifactId>fesod-bom</artifactId>
+            <version>2.0.1-incubating</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>org.apache.fesod</groupId>
+        <artifactId>fesod-sheet</artifactId>
+        <!-- Version managed by BOM -->
+    </dependency>
+</dependencies>
 ```
 
 ## Gradle
@@ -47,6 +103,6 @@ If you are using Gradle for project building, add the following configuration in
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod:version'
+    implementation 'org.apache.fesod:fesod-sheet:2.0.1-incubating'
 }
 ```

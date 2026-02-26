@@ -52,7 +52,7 @@ public class BeanMapUtils {
 
         @Override
         protected String getTag() {
-            return "ByFastExcelCGLIB";
+            return "ByFesodCGLIB";
         }
     }
 }

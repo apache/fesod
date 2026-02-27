@@ -20,7 +20,7 @@
 package org.apache.fesod.sheet.examples.write.handlers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.sheet.util.BooleanUtils;
+import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.sheet.write.handler.RowWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.poi.ss.usermodel.Comment;

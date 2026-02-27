@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.write.metadata.style;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.fesod.sheet.util.StringUtils;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.ss.usermodel.Font;

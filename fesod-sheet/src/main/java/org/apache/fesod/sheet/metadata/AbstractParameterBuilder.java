@@ -19,12 +19,13 @@
 
 package org.apache.fesod.sheet.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
-import org.apache.fesod.sheet.util.ListUtils;
 
 /**
  * ExcelBuilder
@@ -39,8 +40,25 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
      * @return
      */
     public T head(List<List<String>> head) {
-        parameter().setHead(head);
+        parameter().setHead(toMutableListIfNecessary(head));
         return self();
+    }
+
+    /**
+     * Ensures and returns a mutable head list.
+     *
+     * @param head The source list to create a mutable from.
+     * @return A new mutable list, or the original list if the input is null or empty.
+     */
+    private List<List<String>> toMutableListIfNecessary(List<List<String>> head) {
+        if (null == head || head.isEmpty()) {
+            return head;
+        }
+        List<List<String>> result = new ArrayList<>();
+        for (List<String> headColumn : head) {
+            result.add(new ArrayList<>(headColumn));
+        }
+        return result;
     }
 
     /**

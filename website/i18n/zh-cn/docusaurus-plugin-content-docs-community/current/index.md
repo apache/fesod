@@ -1,5 +1,5 @@
 ---
-id: 'community'
+id: 'index'
 title: '加入社区'
 ---
 

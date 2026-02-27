@@ -49,33 +49,6 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 </dependency>
 ```
 
-### 可选：使用 BOM 管理版本
-
-为了更好地管理依赖版本，您可以使用 Apache Fesod(Incubating) BOM：
-
-```xml
-
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod-bom</artifactId>
-            <version>2.0.1-incubating</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-
-<dependencies>
-    <dependency>
-        <groupId>org.apache.fesod</groupId>
-        <artifactId>fesod-sheet</artifactId>
-        <!-- 版本号由 BOM 管理 -->
-    </dependency>
-</dependencies>
-```
-
 ## Gradle
 
 如果您使用 Gradle 进行项目构建，请在 `build.gradle` 文件中引入以下配置：

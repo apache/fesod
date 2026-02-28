@@ -5,7 +5,7 @@ authors: [GOODBOY008]
 tags: [opensource, apache, committer, fesod]
 ---
 
-![Apache Fesod New Committer](https://img.shields.io/badge/Apache%20Fesod-New%20Committer-blue?style=for-the-badge&logo=apache)
+![Apache Fesod New Committer](/img/blog/apache-fesod-new-committer.svg)
 
 > 大家好！非常荣幸受到 Apache Fesod 社区的邀请，成为一名 Committer。在此，我想与大家分享我的开源之旅以及一路走来的经历。
 

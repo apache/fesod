@@ -7,7 +7,7 @@ tags: [ announcement ]
 北京时间2025年09月17日，[Fesod](https://github.com/apache/fesod)
 正式顺利通过 Apache 基金会孵化器的投票决议，根据 Apache
 基金会[邮件列表](https://lists.apache.org/thread/k744v8ff22mom3bplqkjnc2qvtksj59f)显示，最终以 9
-个约束性投票 (binging votes) ，无弃权和反对票通过接受 Fesod 加入 Apache
+个约束性投票 (binding votes) ，无弃权和反对票通过接受 Fesod 加入 Apache
 孵化器决议。正式成为了全球最大的开源基金会 [Apache 软件基金会](https://www.apache.org/) 的孵化项目。2025年09月25日，Fesod
 仓库正式迁移至 Apache 软件基金会。
 

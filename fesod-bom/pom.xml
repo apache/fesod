@@ -19,13 +19,14 @@
     under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.fesod</groupId>
         <artifactId>fesod-parent</artifactId>
-        <version>2.1.0-incubating</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>fesod-bom</artifactId>
@@ -46,4 +47,23 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <flattenMode>bom</flattenMode>
+                    <pomElements>
+                        <parent>remove</parent>
+                        <repositories>remove</repositories>
+                        <dependencies>remove</dependencies>
+                        <properties>remove</properties>
+                        <dependencyManagement>interpolate</dependencyManagement>
+                    </pomElements>
+                </configuration>
+        </plugin>
+        </plugins>
+    </build>
 </project>

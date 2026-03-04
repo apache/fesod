@@ -31,7 +31,7 @@ public class ExampleFileUtil {
     public static final String EXAMPLE = "example";
 
     public static String getPath() {
-        java.net.URL resource = ExampleFileUtil.class.getResource("/");
+        java.net.URL resource = ExampleFileUtil.class.getClassLoader().getResource("");
         if (resource == null) {
             throw new IllegalStateException("Cannot find classpath root resource");
         }
@@ -45,6 +45,11 @@ public class ExampleFileUtil {
      * @return the full path to the file
      */
     public static String getExamplePath(String fileName) {
+        java.net.URL resource = ExampleFileUtil.class.getClassLoader().getResource(EXAMPLE + "/" + fileName);
+        if (resource != null) {
+            return resource.getPath();
+        }
+        // Fallback to classpath root + example path
         return getPath() + EXAMPLE + File.separator + fileName;
     }
 

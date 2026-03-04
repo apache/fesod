@@ -49,7 +49,7 @@ public class LargeFileWriteExample {
      */
     public static void compressedTemporaryFile() {
         log.info("Temporary XML files are stored at: {}", FileUtils.getPoiFilesPath());
-        String fileName = ExampleFileUtil.getPath() + "largeFile" + System.currentTimeMillis() + ".xlsx";
+        String fileName = ExampleFileUtil.getTempPath("largeFile" + System.currentTimeMillis() + ".xlsx");
 
         try (ExcelWriter excelWriter = FesodSheet.write(fileName, DemoData.class)
                 .registerWriteHandler(new WorkbookWriteHandler() {

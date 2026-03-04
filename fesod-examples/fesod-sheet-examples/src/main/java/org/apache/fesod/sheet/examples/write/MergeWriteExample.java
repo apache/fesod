@@ -51,7 +51,7 @@ public class MergeWriteExample {
         log.info("Successfully wrote file: {}", fileName);
 
         // Method 2: Use a merge strategy
-        fileName = ExampleFileUtil.getPath() + "mergeWriteStrategy" + System.currentTimeMillis() + ".xlsx";
+        fileName = ExampleFileUtil.getTempPath("mergeWriteStrategy" + System.currentTimeMillis() + ".xlsx");
         // Merge every 2 rows in the 0th column.
         LoopMergeStrategy loopMergeStrategy = new LoopMergeStrategy(2, 0);
         FesodSheet.write(fileName, DemoMergeData.class)

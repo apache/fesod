@@ -52,7 +52,7 @@ public class FillBasicExample {
         log.info("Successfully wrote file: {}", fileName);
 
         // Option 2: Fill based on a Map
-        fileName = ExampleFileUtil.getPath() + "simpleFillMap" + System.currentTimeMillis() + ".xlsx";
+        fileName = ExampleFileUtil.getTempPath("simpleFillMap" + System.currentTimeMillis() + ".xlsx");
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Zhang San");
         map.put("number", 5.2);

@@ -52,7 +52,7 @@ public class FillComplexExample {
         log.info("Successfully wrote file: {}", fileName);
 
         // Option 2: Fill in multiple passes, using file caching (saves memory)
-        fileName = ExampleFileUtil.getPath() + "listFillMultiple" + System.currentTimeMillis() + ".xlsx";
+        fileName = ExampleFileUtil.getTempPath("listFillMultiple" + System.currentTimeMillis() + ".xlsx");
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileName).withTemplate(templateFileName).build()) {
             WriteSheet writeSheet = FesodSheet.writerSheet().build();

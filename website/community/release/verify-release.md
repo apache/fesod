@@ -2,9 +2,27 @@
 id: 'verify-release'
 title: 'How to Verify Release'
 ---
+
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 For a detailed checklist, please refer to the official [Incubator Release Checklist](https://cwiki.apache.org/confluence/display/INCUBATOR/Incubator+Release+Checklist).
 
-### 1. Download the Release Candidate
+## 1. Download the Release Candidate
 
 > **Prerequisite:** Ensure you have `gpg` or `gpg2` installed.
 
@@ -33,9 +51,9 @@ wget https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-$
 
 ```
 
-### 2. Verify Compliance and Integrity
+## 2. Verify Compliance and Integrity
 
-#### 2.1 Check Package Completeness
+### 2.1 Check Package Completeness
 
 The uploaded artifacts must contain:
 
@@ -43,7 +61,7 @@ The uploaded artifacts must contain:
 2. **Signature file** (.asc, Required)
 3. **Hash file** (.sha512, Required)
 
-#### 2.2 Verify GPG Signature
+### 2.2 Verify GPG Signature
 
 **2.2.1 Import KEYS**
 
@@ -76,7 +94,7 @@ gpg --verify apache-fesod-${RELEASE_VERSION}-src.tar.gz.asc apache-fesod-${RELEA
 
 > **Success Indicator:** The output must include **`Good signature`**.
 
-#### 2.3 Verify SHA512 Checksum
+### 2.3 Verify SHA512 Checksum
 
 **Mac OS / Linux:**
 
@@ -97,7 +115,7 @@ certUtil -hashfile apache-fesod-${RELEASE_VERSION}-src.tar.gz SHA512
 
 ```
 
-### 3. Check Source Package Content (Crucial)
+## 3. Check Source Package Content (Crucial)
 
 Extract the source package:
 
@@ -107,11 +125,11 @@ cd apache-fesod-${RELEASE_VERSION}-src
 
 ```
 
-#### 3.1 Incubator Specific Checks
+### 3.1 Incubator Specific Checks
 
 * [ ] **DISCLAIMER:** Ensure a `DISCLAIMER` (or `DISCLAIMER-WIP`) file exists in the root directory. This is mandatory for incubating projects.
 
-#### 3.2 ASF License Header Check (RAT)
+### 3.2 ASF License Header Check (RAT)
 
 Run the Apache RAT (Release Audit Tool) check:
 
@@ -128,7 +146,7 @@ mvn apache-rat:check
 * **Unapproved Licenses:** Must be **0**.
 * **Binaries:** Should be **0** (Source packages should not contain compiled jars/classes).
 
-#### 3.3 Compilation Verification
+### 3.3 Compilation Verification
 
 Ensure the source code compiles successfully.
 
@@ -143,7 +161,7 @@ Ensure the source code compiles successfully.
 * [ ] Build Success.
 * [ ] No unexpected binary files in the source tree.
 
-#### 3.4 License and Notice
+### 3.4 License and Notice
 
 Manually check the following files in the root directory:
 
@@ -154,7 +172,7 @@ Manually check the following files in the root directory:
 * * Contains required attributions for bundled dependencies (if any).
 * [ ] **DISCLAIMER：** Exists.
 
-### 4. Email Reply Templates
+## 4. Email Reply Templates
 
 After verification, reply to the vote thread on `dev@fesod.apache.org`.
 

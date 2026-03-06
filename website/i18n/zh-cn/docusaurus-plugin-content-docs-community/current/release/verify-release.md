@@ -5,7 +5,7 @@ title: '如何验证版本'
 
 详细检查列表请参考官方的 [Incubator Release Checklist](https://cwiki.apache.org/confluence/display/INCUBATOR/Incubator+Release+Checklist)。
 
-### 1. 下载要发布的候选版本
+## 1. 下载要发布的候选版本
 
 > 验证环节需依赖 GPG 工具，建议预先安装 `gpg` 或 `gpg2`。
 
@@ -34,9 +34,9 @@ wget https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-$
 
 ```
 
-### 2. 验证上传的版本是否合规
+## 2. 验证上传的版本是否合规
 
-#### 2.1 检查发布包完整性
+### 2.1 检查发布包完整性
 
 上传到 dist 的包必须包含：
 
@@ -44,7 +44,7 @@ wget https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-$
 2. **签名文件** (.asc, 必须)
 3. **哈希文件** (.sha512, 必须)
 
-#### 2.2 检查 GPG 签名
+### 2.2 检查 GPG 签名
 
 首先导入发布人的公钥。
 
@@ -78,7 +78,7 @@ gpg --verify apache-fesod-${RELEASE_VERSION}-src.tar.gz.asc apache-fesod-${RELEA
 
 > **检查结果：** 必须出现 **`Good signature`** 字样。
 
-#### 2.3 检查 SHA512 哈希
+### 2.3 检查 SHA512 哈希
 
 **Mac OS / Linux:**
 
@@ -100,7 +100,7 @@ certUtil -hashfile apache-fesod-${RELEASE_VERSION}-src.tar.gz SHA512
 
 ```
 
-### 3. 检查源码包内容 (核心合规项)
+## 3. 检查源码包内容 (核心合规项)
 
 解压源码包：
 
@@ -110,13 +110,13 @@ cd apache-fesod-${RELEASE_VERSION}-src
 
 ```
 
-#### 3.1 孵化器特有检查 (Incubator Check)
+### 3.1 孵化器特有检查 (Incubator Check)
 
 作为孵化项目，必须检查根目录下是否存在 `DISCLAIMER` (或 `DISCLAIMER-WIP`) 文件。
 
 * **检查项：** 确认存在 `DISCLAIMER` 文件，且内容声明了这是一个处于孵化阶段的项目。
 
-#### 3.2 ASF License Header (RAT 检查)
+### 3.2 ASF License Header (RAT 检查)
 
 使用 Maven 插件进行 License 头检查。
 
@@ -140,7 +140,7 @@ find . -name rat.txt -print0 | xargs -0 -I file cat file | grep "Unapproved Lice
 
 ```
 
-#### 3.3 源码编译验证
+### 3.3 源码编译验证
 
 确保源码可以被正确编译打包。
 
@@ -155,7 +155,7 @@ find . -name rat.txt -print0 | xargs -0 -I file cat file | grep "Unapproved Lice
 * [ ] Build Success (编译成功)
 * [ ] 源码包中**不包含**任何非必要的二进制文件 (如 `.jar`, `.zip`, `.class`)。
 
-#### 3.4 许可证合规性检查
+### 3.4 许可证合规性检查
 
 进入解压后的目录，人工检查：
 
@@ -167,7 +167,7 @@ find . -name rat.txt -print0 | xargs -0 -I file cat file | grep "Unapproved Lice
 
 * [ ] **DISCLAIMER 文件：** 存在（孵化项目必须存在）。
 
-### 4. 邮件回复示例
+## 4. 邮件回复示例
 
 验证完成后，请在开发者邮件列表 (`dev@fesod.apache.org`) 回复投票邮件。
 

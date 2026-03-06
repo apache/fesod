@@ -191,6 +191,16 @@ mvn clean deploy -Papache-release -DskipTests -Dgpg.skip=false
 
 ### 2.2.2 打包源代码 (Package Source)
 
+:::caution 注意
+请勿在日常工作目录中运行发布流程！
+:::
+
+> 诸如 `node_modules`、IDE 配置文件（例如 `.idea`、`.vscode`）或重构后残留的空目录等本地文件，可能意外被打包到 `source-release.zip` 中。这将导致合规性问题（例如分发未经授权的二进制文件），并引发投票失败。
+
+您**必须**在**全新克隆的Git仓库**中执行发布流程，以确保构建产物可复现且干净。
+
+**注意**：请勿立即用IDE（如IntelliJ或VS Code）打开此目录，否则可能生成配置文件或编译缓存。请先在终端直接运行Maven发布命令。
+
 首先，确认当前代码库处于准备发布的状态。
 
 ```bash

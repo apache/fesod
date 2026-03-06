@@ -4,6 +4,8 @@
     "default": true,
     "MD001": true,
     "MD003": true,
+    "MD022": false,
+    "MD041": false,
     "MD013": {
         "line_length": 600,
         "code_blocks": false,
@@ -22,7 +24,8 @@
     "MD045": true,
     "MD046": true,
     "MD047": true,
-    "MD052": true
+    "MD052": true,
+    "MD060": false
   },
   "ignores": [
     "**/node_modules/**",

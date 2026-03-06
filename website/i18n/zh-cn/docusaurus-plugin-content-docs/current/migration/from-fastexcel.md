@@ -41,23 +41,25 @@ keywords: [fesod, 迁移, fastexcel, apache, excel, 升级]
 | 来源                    | GroupId          | ArtifactId | 版本     |
 |-----------------------|------------------|------------|--------|
 | **cn.idev FastExcel** | cn.idev.excel    | fastexcel  | 1.3.0  |
-| **Apache Fesod (Incubating)** ✅    | org.apache.fesod | fesod      | 1.3.0+ |
+| **Apache Fesod (Incubating)** ✅    | org.apache.fesod | fesod-sheet      | 2.0.0-incubating+ |
 
 **Maven 配置:**
 
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod</artifactId>
-    <version>1.3.0</version>
+    <artifactId>fesod-sheet</artifactId>
+    <version>2.0.0-incubating</version>
 </dependency>
 ```
 
 **Gradle 配置:**
 
 ```gradle
-implementation 'org.apache.fesod:fesod:1.3.0'
+implementation 'org.apache.fesod:fesod-sheet:2.0.0-incubating'
 ```
+
+> **注意**: `fesod-sheet` 模块是 Excel/CSV 处理的核心模块。它会自动引入必要的依赖（`fesod-common` 和 `fesod-shaded`）。
 
 ### 步骤 2: 更新包导入
 

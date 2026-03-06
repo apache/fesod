@@ -5,6 +5,23 @@ description: Complete migration guide for transitioning from cn.idev FastExcel t
 keywords: [fesod, migration, fastexcel, apache, excel, upgrade]
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # Migration Guide: FastExcel to Apache Fesod (Incubating)
 
 ## Overview
@@ -41,23 +58,25 @@ Replace your existing dependency with Apache Fesod (Incubating):
 | Source | GroupId | ArtifactId | Version |
 |--------|---------|------------|----------|
 | **cn.idev FastExcel** | cn.idev.excel | fastexcel | 1.3.0 |
-| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod | 1.3.0+ |
+| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod-sheet | 2.0.0-incubating+ |
 
 **Maven:**
 
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod</artifactId>
-    <version>1.3.0</version>
+    <artifactId>fesod-sheet</artifactId>
+    <version>2.0.0-incubating</version>
 </dependency>
 ```
 
 **Gradle:**
 
 ```gradle
-implementation 'org.apache.fesod:fesod:1.3.0'
+implementation 'org.apache.fesod:fesod-sheet:2.0.0-incubating'
 ```
+
+> **Note**: The `fesod-sheet` module is the core module for Excel/CSV processing. It automatically includes the necessary dependencies (`fesod-common` and `fesod-shaded`).
 
 ### Step 2: Package Import Updates
 

@@ -1,5 +1,5 @@
 ---
-id: 'committer-onboarding'
+id: 'onboarding'
 title: 'Committer 须知'
 ---
 

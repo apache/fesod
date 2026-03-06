@@ -21,7 +21,7 @@ package org.apache.fesod.sheet.enums;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.fesod.sheet.util.StringUtils;
+import org.apache.fesod.common.util.StringUtils;
 
 /**
  * excel internal data type

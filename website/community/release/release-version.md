@@ -3,6 +3,23 @@ id: 'release-version'
 title: 'How to Release'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # 1. Preface
 
 ## 1.1 Apache Release Documentation
@@ -188,6 +205,16 @@ At this point, the Fesod SDK is published to the [Staging Repository](https://re
 Note: If the close operation fails, it is likely because the public key corresponding to the signing key cannot be found on keys.openpgp.org. Please check via [OpenPGP Keyserver (ubuntu.com)](https://keyserver.ubuntu.com/).
 
 ### 2.2.2 Package Source
+
+:::caution Note
+Do NOT run the release process in your daily working directory!
+:::
+
+> Local files such as `node_modules`, IDE configurations (e.g., `.idea`, `.vscode`), or leftover empty directories from refactoring can accidentally be packaged into the `source-release.zip`. This will cause compliance issues (e.g., distributing unauthorized binaries) and lead to vote failures.
+
+You **MUST** perform the release process in a **fresh git clone** to ensure the artifacts are reproducible and clean.
+
+**Note**: Do not open this directory with an IDE (like IntelliJ or VS Code) immediately, as it may generate configuration files or compilation caches. Run the Maven release commands directly from the terminal first.
 
 First, confirm that the current codebase is ready for release.
 

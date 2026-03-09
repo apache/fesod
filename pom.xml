@@ -106,7 +106,8 @@
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>1.7.36</log4j-over-slf4j.version>
-        <logback-classic.version>1.5.32</logback-classic.version>
+        <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
+        <logback-classic.version>1.2.13</logback-classic.version>
         <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.14</jacoco.version>
         <junit.version>5.13.4</junit.version>
@@ -222,11 +223,6 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j-simple.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${jcl-over-slf4j.version}</version>
             </dependency>
@@ -234,6 +230,11 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>log4j-over-slf4j</artifactId>
                 <version>${log4j-over-slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>${log4j-to-slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -244,6 +245,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot-starter-web.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot-starter-web.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mock-server</groupId>
@@ -333,17 +340,17 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -533,10 +540,6 @@
                 <artifactId>spotless-maven-plugin</artifactId>
                 <configuration>
                     <java>
-                        <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/tools/spotless/license-header.txt</file>
-                            <delimiter>package |import |module </delimiter>
-                        </licenseHeader>
                         <palantirJavaFormat>
                             <version>2.72.0</version>
                         </palantirJavaFormat>

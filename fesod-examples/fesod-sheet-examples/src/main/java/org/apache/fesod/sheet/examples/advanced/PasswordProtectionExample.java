@@ -30,7 +30,46 @@ import org.apache.fesod.sheet.examples.write.data.DemoData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
 /**
- * Example demonstrating how to write and read password-protected Excel files.
+ * Demonstrates reading and writing password-protected Excel files.
+ *
+ * <h2>Scenario</h2>
+ * <p>You need to protect sensitive data (financial reports, personal information)
+ * with Excel's built-in password encryption. Fesod supports both writing encrypted
+ * files and reading them with the correct password.</p>
+ *
+ * <h2>Key Concepts</h2>
+ * <ul>
+ *   <li>{@code .password("xxx")} — Available on both read and write builders.
+ *       For write, it encrypts the output file. For read, it decrypts the input file.</li>
+ *   <li>Uses Excel's native encryption (AES for .xlsx), compatible with all Excel versions.</li>
+ *   <li>Without the correct password, reading will throw an
+ *       {@code EncryptedDocumentException}.</li>
+ * </ul>
+ *
+ * <h2>Usage</h2>
+ * <pre>{@code
+ * // Write with password
+ * FesodSheet.write(fileName).password("secret").head(MyData.class).sheet().doWrite(data);
+ *
+ * // Read with password
+ * FesodSheet.read(fileName, MyData.class, listener).password("secret").sheet().doRead();
+ * }</pre>
+ *
+ * <h2>Security Notes</h2>
+ * <ul>
+ *   <li>Excel password protection encrypts the file content, making it unreadable
+ *       without the password.</li>
+ *   <li>In production, avoid hardcoding passwords — use configuration or secrets management.</li>
+ * </ul>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link org.apache.fesod.sheet.examples.write.BasicWriteExample} — Write without encryption.</li>
+ *   <li>{@link org.apache.fesod.sheet.examples.read.BasicReadExample} — Read without encryption.</li>
+ * </ul>
+ *
+ * @see FesodSheet#write(String)
+ * @see FesodSheet#read(String, Class, org.apache.fesod.sheet.read.listener.ReadListener)
  */
 @Slf4j
 public class PasswordProtectionExample {
@@ -45,7 +84,13 @@ public class PasswordProtectionExample {
     }
 
     /**
-     * Write a password-protected Excel file.
+     * Writes an Excel file encrypted with the given password.
+     *
+     * <p>The output file can only be opened in Excel (or read by Fesod) with
+     * the matching password. The encryption is applied at the file level.</p>
+     *
+     * @param fileName output file path
+     * @param password encryption password
      */
     public static void passwordWrite(String fileName, String password) {
         FesodSheet.write(fileName)
@@ -57,7 +102,13 @@ public class PasswordProtectionExample {
     }
 
     /**
-     * Read a password-protected Excel file.
+     * Reads a password-protected Excel file.
+     *
+     * <p>The password must match the one used during write. If incorrect,
+     * an {@code EncryptedDocumentException} will be thrown.</p>
+     *
+     * @param fileName input file path
+     * @param password decryption password
      */
     public static void passwordRead(String fileName, String password) {
         FesodSheet.read(fileName, DemoData.class, new ReadListener<DemoData>() {

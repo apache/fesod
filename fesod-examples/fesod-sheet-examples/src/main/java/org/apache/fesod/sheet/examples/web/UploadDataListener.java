@@ -27,7 +27,27 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
 /**
- * Listener for web upload examples.
+ * Listener for processing uploaded Excel data in a web environment.
+ *
+ * <h2>Scenario</h2>
+ * <p>When a user uploads an Excel file via a web form, this listener processes the rows
+ * in batches and persists them using the injected {@link UploadDAO}.</p>
+ *
+ * <h2>Design Pattern</h2>
+ * <p>Follows the same batch-save pattern as {@link org.apache.fesod.sheet.examples.read.listeners.DemoDataListener}:
+ * caches up to {@value #BATCH_COUNT} rows, then flushes to the database.</p>
+ *
+ * <h2>Spring Integration</h2>
+ * <p>This listener is NOT a Spring bean. It accepts a Spring-managed {@link UploadDAO}
+ * via constructor injection. Create a new instance per upload request:</p>
+ * <pre>{@code
+ * // In WebExampleController
+ * FesodSheet.read(file.getInputStream(), UploadData.class, new UploadDataListener(uploadDAO))
+ *     .sheet().doRead();
+ * }</pre>
+ *
+ * @see org.apache.fesod.sheet.examples.web.WebExampleController#upload(MultipartFile)
+ * @see UploadDAO
  */
 @Slf4j
 public class UploadDataListener implements ReadListener<UploadData> {

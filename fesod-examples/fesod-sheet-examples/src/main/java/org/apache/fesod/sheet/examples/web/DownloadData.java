@@ -25,7 +25,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Data class for web download examples.
+ * Data model for the web download example.
+ *
+ * <p>Represents a row in the downloaded Excel file. In production, this would
+ * typically be populated from a database query or service call.</p>
+ *
+ * <p>Headers are generated from field names by default ("string", "date", "doubleData").
+ * Add {@code @ExcelProperty("Custom Header")} annotations for user-friendly column names.</p>
+ *
+ * @see org.apache.fesod.sheet.examples.web.WebExampleController#download(javax.servlet.http.HttpServletResponse)
  */
 @Getter
 @Setter

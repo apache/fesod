@@ -25,7 +25,20 @@ import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * Basic data class for write examples.
+ * Data model for the write examples, mapping Java fields to Excel columns.
+ *
+ * <p>Identical structure to the read examples' DemoData, but uses Lombok's
+ * {@code @Data} for brevity (generates getters, setters, equals, hashCode, toString).
+ * The {@link ExcelProperty} annotations define column headers in the output file,
+ * while {@link ExcelIgnore} excludes the {@code ignore} field from the Excel output.</p>
+ *
+ * <h2>Generated Excel Headers</h2>
+ * <pre>
+ * | String Title | Date Title | Number Title |
+ * </pre>
+ *
+ * @see ExcelProperty
+ * @see ExcelIgnore
  */
 @Data
 public class DemoData {

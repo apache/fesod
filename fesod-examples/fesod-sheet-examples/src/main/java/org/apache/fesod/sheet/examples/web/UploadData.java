@@ -25,7 +25,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Data class for web upload examples.
+ * Data model for the web upload example.
+ *
+ * <p>Represents a row in the uploaded Excel file. Fesod automatically maps
+ * Excel columns to these fields during the upload read operation.
+ * Field types must be compatible with Excel cell types for automatic conversion.</p>
+ *
+ * @see org.apache.fesod.sheet.examples.web.UploadDataListener
+ * @see org.apache.fesod.sheet.examples.web.WebExampleController#upload(MultipartFile)
  */
 @Getter
 @Setter

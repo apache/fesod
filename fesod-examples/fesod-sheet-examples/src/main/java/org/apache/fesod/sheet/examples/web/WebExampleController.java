@@ -34,7 +34,60 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Controller for web read and write examples.
+ * Spring MVC controller demonstrating Excel download and upload in a web application.
+ *
+ * <h2>Scenario</h2>
+ * <p>A typical enterprise application where users can:
+ * <ul>
+ *   <li><b>Download</b> — Export data as an Excel file via HTTP GET (browser download).</li>
+ *   <li><b>Upload</b> — Import data from an uploaded Excel file via HTTP POST (multipart form).</li>
+ * </ul>
+ *
+ * <h2>Download Flow ({@code GET /download})</h2>
+ * <pre>
+ * Browser GET /download
+ *     │
+ *     ├─ Set Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+ *     ├─ Set Content-Disposition: attachment;filename=test.xlsx
+ *     └─ FesodSheet.write(response.getOutputStream(), ...).sheet().doWrite(data)
+ *         └─ Excel bytes streamed directly to HTTP response (no temp file)
+ * </pre>
+ *
+ * <h2>Upload Flow ({@code POST /upload})</h2>
+ * <pre>
+ * Browser POST /upload (multipart/form-data)
+ *     │
+ *     └─ FesodSheet.read(file.getInputStream(), UploadData.class, listener).sheet().doRead()
+ *         └─ UploadDataListener processes rows in batches → saves to database
+ * </pre>
+ *
+ * <h2>Key Implementation Details</h2>
+ * <ul>
+ *   <li><b>Streaming download:</b> Writes directly to {@code response.getOutputStream()},
+ *       avoiding temporary files and enabling large exports.</li>
+ *   <li><b>Filename encoding:</b> Uses {@code URLEncoder} with UTF-8 for Chinese/special
+ *       characters in the filename.</li>
+ *   <li><b>Upload listener:</b> Creates a new {@link UploadDataListener} per request with
+ *       the injected {@link UploadDAO} (Spring-managed). The listener itself is NOT a bean.</li>
+ * </ul>
+ *
+ * <h2>curl Test Commands</h2>
+ * <pre>{@code
+ * # Download
+ * curl -o test.xlsx http://localhost:8080/download
+ *
+ * # Upload
+ * curl -F "file=@test.xlsx" http://localhost:8080/upload
+ * }</pre>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link org.apache.fesod.sheet.examples.write.BasicWriteExample} — Write to file.</li>
+ *   <li>{@link org.apache.fesod.sheet.examples.read.BasicReadExample} — Read from file.</li>
+ * </ul>
+ *
+ * @see UploadDataListener
+ * @see DownloadData
  */
 @Controller
 public class WebExampleController {
@@ -43,7 +96,16 @@ public class WebExampleController {
     private UploadDAO uploadDAO;
 
     /**
-     * File download.
+     * Downloads an Excel file as an HTTP response.
+     *
+     * <p>Writes directly to the response output stream — no temporary file is created.
+     * The response headers are configured for browser download with a UTF-8 encoded filename.</p>
+     *
+     * <p><b>Important:</b> Set {@code Content-Type} and {@code Content-Disposition} headers
+     * BEFORE writing to the output stream. Once bytes are written, headers cannot be modified.</p>
+     *
+     * @param response the HTTP servlet response
+     * @throws IOException if writing to the output stream fails
      */
     @GetMapping("download")
     public void download(HttpServletResponse response) throws IOException {
@@ -58,7 +120,15 @@ public class WebExampleController {
     }
 
     /**
-     * File upload.
+     * Uploads and parses an Excel file from a multipart form submission.
+     *
+     * <p>Uses {@code file.getInputStream()} to read the uploaded file directly from
+     * the multipart data, avoiding extra disk I/O. The {@link UploadDataListener}
+     * processes rows in batches and persists via the injected {@link UploadDAO}.</p>
+     *
+     * @param file the uploaded multipart file
+     * @return "success" on completion
+     * @throws IOException if reading the input stream fails
      */
     @PostMapping("upload")
     @ResponseBody

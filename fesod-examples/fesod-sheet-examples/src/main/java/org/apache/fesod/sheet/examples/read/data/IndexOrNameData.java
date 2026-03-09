@@ -26,7 +26,26 @@ import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * Data class for index or name matching examples.
+ * Data model demonstrating mixed index-based and name-based column matching.
+ *
+ * <h2>Mapping Strategy</h2>
+ * <pre>
+ * Field       | Annotation                  | Matches Column
+ * ────────────|─────────────────────────────|───────────────
+ * doubleData  | @ExcelProperty(index = 2)   | Column 3 (by position)
+ * string      | @ExcelProperty("String")    | Header "String" (by name)
+ * date        | @ExcelProperty("Date")      | Header "Date" (by name)
+ * </pre>
+ *
+ * <h2>Priority Rules</h2>
+ * <p>When both {@code index} and name are specified on the same field, {@code index} wins.
+ * The full priority order is: {@code index} &gt; {@code order} &gt; field declaration order.</p>
+ *
+ * <p><b>Tip:</b> Use index-based matching when the Excel column position is fixed and known.
+ * Use name-based matching when users might reorder columns but headers remain consistent.</p>
+ *
+ * @see org.apache.fesod.sheet.annotation.ExcelProperty
+ * @see org.apache.fesod.sheet.examples.read.IndexOrNameReadExample
  */
 @Getter
 @Setter

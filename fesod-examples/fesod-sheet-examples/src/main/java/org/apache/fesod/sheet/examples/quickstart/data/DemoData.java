@@ -27,7 +27,32 @@ import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * Basic data class for quickstart examples.
+ * Data model for the quickstart examples, mapping Java fields to Excel columns.
+ *
+ * <h2>Column Mapping</h2>
+ * <p>Each field annotated with {@link ExcelProperty} maps to an Excel column by header name.
+ * The generated Excel file will have these columns:</p>
+ * <pre>
+ * | String Title | Date Title          | Number Title |
+ * |------------- |---------------------|--------------|
+ * | (string)     | (date)              | (doubleData) |
+ * </pre>
+ *
+ * <h2>Annotations Used</h2>
+ * <ul>
+ *   <li>{@link ExcelProperty} — Maps a field to an Excel column by header name or index.</li>
+ *   <li>{@link ExcelIgnore} — Excludes a field from both reading and writing.
+ *       Useful for internal/transient fields like IDs or computed values.</li>
+ * </ul>
+ *
+ * <h2>Supported Field Types</h2>
+ * <p>Fesod automatically converts between Excel cell types and common Java types:
+ * {@code String}, {@code Date}, {@code Double}, {@code Integer}, {@code BigDecimal}, etc.
+ * For custom conversions, see
+ * {@link org.apache.fesod.sheet.examples.read.data.ConverterData}.</p>
+ *
+ * @see ExcelProperty
+ * @see ExcelIgnore
  */
 @Getter
 @Setter

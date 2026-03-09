@@ -24,7 +24,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Utility for generating example data.
+ * Utility class for generating sample data used across examples.
+ *
+ * <p>Provides convenient methods to create test data lists for demonstrating
+ * Fesod's features. In production, data would come from databases, APIs, or user input.</p>
  */
 public class ExampleDataGenerator {
 

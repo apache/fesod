@@ -35,7 +35,49 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 /**
- * Example demonstrating how to handle large files and compress temporary files.
+ * Demonstrates writing very large Excel files (100,000+ rows) with memory optimization.
+ *
+ * <h2>Scenario</h2>
+ * <p>You need to export a large dataset (e.g., database dump, log analysis) that would
+ * exhaust memory if all rows were held at once. Fesod uses Apache POI's streaming
+ * API (SXSSF) internally, but temporary XML files can consume significant disk space.</p>
+ *
+ * <h2>Key Optimization: Temporary File Compression</h2>
+ * <p>When POI writes large XLSX files, it creates temporary XML files on disk
+ * (one per sheet). These can be several times larger than the final file.
+ * Enabling compression via {@code setCompressTempFiles(true)} significantly reduces
+ * disk usage at the cost of slightly more CPU.</p>
+ *
+ * <h2>Architecture</h2>
+ * <pre>
+ * Data (in memory, batched)        Fesod          POI/SXSSF
+ *     │                              │                 │
+ *     ├─ 100 rows batch ───────────▶ write() ──────▶ temp XML (compressed)
+ *     ├─ 100 rows batch ───────────▶ write() ──────▶ temp XML (append)
+ *     │  ... (1000 batches)           │                 │
+ *     └─ close() ──────────────────▶ finalize ─────▶ final .xlsx
+ * </pre>
+ *
+ * <h2>Performance Tips</h2>
+ * <ul>
+ *   <li>Use {@code ExcelWriter} (try-with-resources) for batch writing instead of
+ *       loading all data with {@code doWrite()}.</li>
+ *   <li>Enable temp file compression for disk-constrained environments.</li>
+ *   <li>Tune batch size (100 rows here) based on your row width and available memory.</li>
+ *   <li>Monitor temp directory size: {@code FileUtils.getPoiFilesPath()}.</li>
+ * </ul>
+ *
+ * <h2>Expected Result</h2>
+ * <p>Writes 100,000 rows (1000 batches x 100 rows) to a single sheet without
+ * OutOfMemoryError, using compressed temp files on disk.</p>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link org.apache.fesod.sheet.examples.write.BasicWriteExample} — Simple small-file write.</li>
+ * </ul>
+ *
+ * @see ExcelWriter
+ * @see org.apache.poi.xssf.streaming.SXSSFWorkbook#setCompressTempFiles(boolean)
  */
 @Slf4j
 public class LargeFileWriteExample {
@@ -45,7 +87,11 @@ public class LargeFileWriteExample {
     }
 
     /**
-     * Compress temporary files to save disk space.
+     * Writes 100,000 rows in batches with compressed temporary files.
+     *
+     * <p>Uses a {@link WorkbookWriteHandler} to access the underlying POI
+     * {@link SXSSFWorkbook} and enable temp file compression. Writing is done
+     * in 1,000 batches of 100 rows each via the {@link ExcelWriter} API.</p>
      */
     public static void compressedTemporaryFile() {
         log.info("Temporary XML files are stored at: {}", FileUtils.getPoiFilesPath());

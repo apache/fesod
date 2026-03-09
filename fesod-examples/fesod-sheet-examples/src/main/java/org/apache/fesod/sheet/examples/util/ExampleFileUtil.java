@@ -24,7 +24,26 @@ import java.nio.file.Files;
 import lombok.SneakyThrows;
 
 /**
- * Utility for example files.
+ * Utility class for locating example input files and generating output file paths.
+ *
+ * <h2>File Locations</h2>
+ * <ul>
+ *   <li><b>Input files:</b> Located in the classpath under {@code example/} directory
+ *       (e.g., {@code src/main/resources/example/demo.xlsx}).
+ *       Access via {@link #getExamplePath(String)}.</li>
+ *   <li><b>Output files:</b> Written to the system temp directory to avoid polluting
+ *       the project workspace. Access via {@link #getTempPath(String)}.</li>
+ * </ul>
+ *
+ * <h2>Usage</h2>
+ * <pre>{@code
+ * // Get path to an input example file
+ * String input = ExampleFileUtil.getExamplePath("demo.xlsx");
+ * String template = ExampleFileUtil.getExamplePath("templates/simple.xlsx");
+ *
+ * // Get path for an output file (in temp directory)
+ * String output = ExampleFileUtil.getTempPath("result.xlsx");
+ * }</pre>
  */
 public class ExampleFileUtil {
 

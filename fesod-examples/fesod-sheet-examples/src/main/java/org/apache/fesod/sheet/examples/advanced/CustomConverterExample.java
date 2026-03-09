@@ -31,7 +31,50 @@ import org.apache.fesod.sheet.examples.write.data.DemoData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
 /**
- * Example demonstrating how to use custom converters for specialized data transformations.
+ * Demonstrates registering a custom converter at the builder level for read and write.
+ *
+ * <h2>Scenario</h2>
+ * <p>You need the same data transformation applied to ALL fields of a matching type,
+ * not just a specific annotated field. For example, adding a "Custom:" prefix to every
+ * string column, or encrypting/decrypting all string values.</p>
+ *
+ * <h2>Key Concepts: Per-Field vs. Global Converter Registration</h2>
+ * <table>
+ *   <tr><th>Approach</th><th>Scope</th><th>How</th></tr>
+ *   <tr>
+ *     <td>Per-field</td>
+ *     <td>Single field only</td>
+ *     <td>{@code @ExcelProperty(converter = MyConverter.class)}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>Global (this example)</td>
+ *     <td>All fields matching Java type + Excel type</td>
+ *     <td>{@code .registerConverter(new MyConverter())} on the builder</td>
+ *   </tr>
+ * </table>
+ *
+ * <h2>How It Works</h2>
+ * <ol>
+ *   <li><b>Write:</b> The {@link CustomStringStringConverter} is registered on the write builder.
+ *       During write, every {@code String} field is transformed (prefixed with "Custom:").</li>
+ *   <li><b>Read:</b> The same converter is registered on the read builder.
+ *       During read, every string cell is transformed back through the converter.</li>
+ * </ol>
+ *
+ * <h2>Converter Resolution Priority</h2>
+ * <pre>
+ * 1. Field-level converter (@ExcelProperty(converter = ...))  ← highest
+ * 2. Builder-level converter (.registerConverter(...))         ← this example
+ * 3. Built-in default converter                                ← lowest
+ * </pre>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link org.apache.fesod.sheet.examples.read.ConverterReadExample} — Per-field converter via annotation.</li>
+ * </ul>
+ *
+ * @see CustomStringStringConverter
+ * @see org.apache.fesod.sheet.converters.Converter
  */
 @Slf4j
 public class CustomConverterExample {
@@ -43,7 +86,10 @@ public class CustomConverterExample {
     }
 
     /**
-     * Write with a custom converter registered for the operation.
+     * Writes data with a globally registered converter that prefixes all string values.
+     *
+     * <p>The {@link CustomStringStringConverter} transforms "String0" → "Custom:String0"
+     * for every string field in the data model.</p>
      */
     public static void customConverterWrite(String fileName) {
         FesodSheet.write(fileName, DemoData.class)
@@ -54,7 +100,10 @@ public class CustomConverterExample {
     }
 
     /**
-     * Read with a custom converter registered for the operation.
+     * Reads the previously written file with the same converter registered.
+     *
+     * <p>The converter's {@code convertToJavaData()} method is applied during read,
+     * transforming cell values as they are parsed.</p>
      */
     public static void customConverterRead(String fileName) {
         FesodSheet.read(fileName, DemoData.class, new ReadListener<DemoData>() {

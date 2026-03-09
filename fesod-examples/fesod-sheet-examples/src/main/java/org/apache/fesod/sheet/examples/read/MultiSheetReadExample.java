@@ -28,7 +28,48 @@ import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 
 /**
- * Example demonstrating how to read multiple sheets from an Excel file.
+ * Demonstrates reading multiple sheets from a single Excel workbook.
+ *
+ * <h2>Scenario</h2>
+ * <p>Your Excel workbook contains multiple sheets (tabs), each with its own data.
+ * You need to read some or all of them, potentially with different data models
+ * or listeners for each sheet.</p>
+ *
+ * <h2>Two Approaches</h2>
+ *
+ * <h3>Approach 1: Read All Sheets ({@code doReadAll()})</h3>
+ * <p>Reads every sheet in the workbook using the same data model and listener.
+ * Simplest approach when all sheets share the same structure.</p>
+ * <pre>{@code
+ * FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).doReadAll();
+ * }</pre>
+ *
+ * <h3>Approach 2: Read Selected Sheets ({@code ExcelReader})</h3>
+ * <p>Creates an {@link ExcelReader} and configures individual {@link ReadSheet} objects.
+ * Each sheet can have its own data model, listener, and configuration.
+ * The {@code ExcelReader} must be closed after use (use try-with-resources).</p>
+ * <pre>{@code
+ * try (ExcelReader reader = FesodSheet.read(fileName).build()) {
+ *     ReadSheet sheet1 = FesodSheet.readSheet(0).head(TypeA.class).registerReadListener(listenerA).build();
+ *     ReadSheet sheet2 = FesodSheet.readSheet(1).head(TypeB.class).registerReadListener(listenerB).build();
+ *     reader.read(sheet1, sheet2);
+ * }
+ * }</pre>
+ *
+ * <h2>Expected Behavior</h2>
+ * <p>Each sheet's rows are delivered to its respective listener in order.
+ * When using {@code doReadAll()}, all sheets share the same listener instance,
+ * so the listener receives rows from all sheets sequentially.</p>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link BasicReadExample} — Single-sheet read.</li>
+ *   <li>{@link NoModelReadExample} — Read without a data model.</li>
+ * </ul>
+ *
+ * @see ExcelReader
+ * @see ReadSheet
+ * @see FesodSheet#readSheet(Integer)
  */
 @Slf4j
 public class MultiSheetReadExample {
@@ -38,7 +79,14 @@ public class MultiSheetReadExample {
     }
 
     /**
-     * Read multiple sheets.
+     * Demonstrates both approaches for reading multiple sheets.
+     *
+     * <p><b>Approach 1</b> uses {@code doReadAll()} for simplicity.<br/>
+     * <b>Approach 2</b> uses {@code ExcelReader} with individual {@code ReadSheet} configurations
+     * for full control over each sheet's data model and listener.</p>
+     *
+     * <p><b>Note:</b> In Approach 2, the {@link ExcelReader} is wrapped in try-with-resources
+     * to ensure proper resource cleanup. Always close the reader after use.</p>
      */
     public static void repeatedRead() {
         String fileName = ExampleFileUtil.getExamplePath("demo.xlsx");

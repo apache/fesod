@@ -29,7 +29,52 @@ import org.apache.fesod.sheet.examples.write.data.DemoMergeData;
 import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 
 /**
- * Example demonstrating how to merge cells when writing an Excel file.
+ * Demonstrates cell merging strategies when writing Excel files.
+ *
+ * <h2>Scenario</h2>
+ * <p>You need to create an Excel report where certain cells are merged — for example,
+ * merging repeated category names in the first column, or creating summary rows.
+ * Fesod supports two approaches: annotation-based and strategy-based merging.</p>
+ *
+ * <h2>Approach 1: Annotation-Based ({@code @ContentLoopMerge})</h2>
+ * <p>Annotate a field in the data class with {@code @ContentLoopMerge(eachRow = N)}
+ * to automatically merge every N rows in that column. See {@link DemoMergeData}.</p>
+ * <pre>
+ * Result (eachRow = 2):
+ * | String Title | Date Title          | Number Title |
+ * |--------------|---------------------|--------------|
+ * | String0      | 2025-01-01 00:00:00 | 0.56         |
+ * | (merged)     | 2025-01-01 00:00:00 | 0.56         |
+ * | String1      | 2025-01-01 00:00:00 | 0.56         |
+ * | (merged)     | 2025-01-01 00:00:00 | 0.56         |
+ * </pre>
+ *
+ * <h2>Approach 2: Strategy-Based ({@link LoopMergeStrategy})</h2>
+ * <p>Register a {@code LoopMergeStrategy(eachRow, columnIndex)} as a write handler.
+ * More flexible — can be configured at runtime and applied to any column.</p>
+ * <pre>{@code
+ * // Merge every 2 rows in column 0
+ * LoopMergeStrategy strategy = new LoopMergeStrategy(2, 0);
+ * FesodSheet.write(fileName, DemoMergeData.class)
+ *     .registerWriteHandler(strategy)
+ *     .sheet().doWrite(data);
+ * }</pre>
+ *
+ * <h2>When to Use Which</h2>
+ * <ul>
+ *   <li><b>Annotation</b> — Simple, fixed merge patterns baked into the data class.</li>
+ *   <li><b>Strategy</b> — Dynamic merging, multiple merge rules, or merging based on data content.</li>
+ * </ul>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link StyleWriteExample} — Style customization.</li>
+ *   <li>{@link BasicWriteExample} — Simple write without merging.</li>
+ * </ul>
+ *
+ * @see org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge
+ * @see LoopMergeStrategy
+ * @see DemoMergeData
  */
 @Slf4j
 public class MergeWriteExample {
@@ -39,7 +84,16 @@ public class MergeWriteExample {
     }
 
     /**
-     * Write with merged cells.
+     * Demonstrates both annotation-based and strategy-based cell merging.
+     *
+     * <p>Writes two separate files:
+     * <ol>
+     *   <li><b>Annotation merge</b> — Uses {@code @ContentLoopMerge(eachRow = 2)} on the
+     *       {@code string} field of {@link DemoMergeData}.</li>
+     *   <li><b>Strategy merge</b> — Registers a {@link LoopMergeStrategy} to merge every
+     *       2 rows in column 0.</li>
+     * </ol>
+     * Both produce the same visual result but via different mechanisms.</p>
      */
     public static void mergeWrite() {
         String fileName = ExampleFileUtil.getTempPath("mergeWrite" + System.currentTimeMillis() + ".xlsx");

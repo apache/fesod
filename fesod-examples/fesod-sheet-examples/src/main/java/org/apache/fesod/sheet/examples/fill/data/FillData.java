@@ -25,7 +25,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Data class for fill examples.
+ * Data model for template fill operations.
+ *
+ * <p>Field names must exactly match the placeholder names in the Excel template.
+ * For example, if the template contains {@code {name}}, this class must have
+ * a field named {@code name} (or a getter {@code getName()}).</p>
+ *
+ * <h2>Template Placeholder Mapping</h2>
+ * <pre>
+ * Template Placeholder → Java Field
+ * ────────────────────────────────────
+ * {name}    or {.name}   → name   (String)
+ * {number}  or {.number} → number (double)
+ * {date}    or {.date}   → date   (Date)
+ * </pre>
+ *
+ * <p>{@code @ExcelProperty} annotations are NOT needed for fill operations —
+ * the mapping is by field name to placeholder name.</p>
+ *
+ * @see org.apache.fesod.sheet.examples.fill.FillBasicExample
+ * @see org.apache.fesod.sheet.examples.fill.FillComplexExample
  */
 @Getter
 @Setter

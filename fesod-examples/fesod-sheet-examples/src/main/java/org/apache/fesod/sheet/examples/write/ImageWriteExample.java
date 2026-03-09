@@ -34,25 +34,54 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.util.FileUtils;
 
 /**
- * Example demonstrating how to export images to an Excel file.
+ * Demonstrates exporting images to Excel cells using five different source types.
  *
- * <p>This example shows:
+ * <h2>Scenario</h2>
+ * <p>You need to generate an Excel report containing images — for example, product photos
+ * in a catalog, user avatars in a report, or QR codes in an inventory sheet.</p>
+ *
+ * <h2>Five Image Source Types</h2>
+ * <pre>
+ * Type          | Field Type          | Use Case
+ * ──────────────|─────────────────────|──────────────────────────────────────────
+ * File          | File                | Local file on disk
+ * InputStream   | InputStream         | Classpath resource, servlet upload, etc.
+ * String path   | String              | File path (requires StringImageConverter)
+ * byte[]        | byte[]              | Pre-loaded binary data, generated images
+ * URL           | URL                 | Remote image (downloaded at write time)
+ * </pre>
+ *
+ * <h2>Advanced: Multiple Images per Cell ({@link WriteCellData})</h2>
+ * <p>Using {@code WriteCellData<Void>} you can:</p>
  * <ul>
- *   <li>Multiple ways to add images: File, InputStream, String path, byte[], URL</li>
- *   <li>Advanced image positioning with WriteCellData</li>
- *   <li>Adding multiple images to a single cell with custom positioning</li>
- *   <li>Combining images with text in the same cell</li>
+ *   <li>Add multiple images to a single cell</li>
+ *   <li>Combine text with images in the same cell</li>
+ *   <li>Control image positioning with margins (top, right, bottom, left)</li>
+ *   <li>Span images across adjacent cells using {@code relativeLastColumnIndex}</li>
  * </ul>
  *
- * <p><b>Important Notes:</b>
+ * <h2>Memory Considerations</h2>
+ * <p><b>Warning:</b> All images are loaded into memory during write. For large volumes:</p>
  * <ul>
- *   <li>All images will be loaded into memory. For large numbers of images, consider:
- *     <ol>
- *       <li>Uploading images to cloud storage (e.g., AWS S3, Aliyun OSS) and using URLs</li>
- *       <li>Using image compression tools like <a href="https://github.com/coobird/thumbnailator">Thumbnailator</a></li>
- *     </ol>
- *   </li>
+ *   <li>Upload images to cloud storage (e.g., AWS S3) and reference by URL.</li>
+ *   <li>Compress images before embedding.</li>
+ *   <li>Consider writing fewer images per batch.</li>
  * </ul>
+ *
+ * <h2>Expected Output</h2>
+ * <p>An Excel file with one row containing 6 columns, each showing the same image
+ * loaded from a different source. The last column contains two images with text,
+ * spanning into the adjacent cell.</p>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link BasicWriteExample} — Simple data write.</li>
+ *   <li>{@link StyleWriteExample} — Style customization.</li>
+ * </ul>
+ *
+ * @see ImageDemoData
+ * @see WriteCellData
+ * @see ImageData
  */
 @Slf4j
 public class ImageWriteExample {
@@ -62,7 +91,17 @@ public class ImageWriteExample {
     }
 
     /**
-     * Demonstrates how to write images to Excel in various formats.
+     * Writes images to Excel using all five source types plus advanced multi-image positioning.
+     *
+     * <p>The method demonstrates:
+     * <ol>
+     *   <li>Setting up five different image sources (File, InputStream, String, byte[], URL).</li>
+     *   <li>Creating a {@link WriteCellData} with text + two images at custom positions.</li>
+     *   <li>Using {@code relativeLastColumnIndex} to span an image across cells.</li>
+     * </ol>
+     *
+     * <p><b>Troubleshooting:</b> If image resources are inaccessible, XLSX format may error with
+     * "SXSSFWorkbook - Failed to dispose sheet". In that case, try XLS format instead.</p>
      *
      * @throws Exception if file operations fail
      */

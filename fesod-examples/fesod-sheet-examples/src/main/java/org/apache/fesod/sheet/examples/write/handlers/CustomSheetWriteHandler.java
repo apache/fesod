@@ -28,7 +28,43 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
- * Custom sheet write handler for examples.
+ * Custom {@link SheetWriteHandler} that adds a dropdown validation list to a sheet.
+ *
+ * <h2>Scenario</h2>
+ * <p>You want to add data validation, conditional formatting, or other sheet-level
+ * customizations when a worksheet is first created. The {@code SheetWriteHandler}
+ * provides a hook into the sheet creation lifecycle.</p>
+ *
+ * <h2>How It Works</h2>
+ * <ol>
+ *   <li>Implements {@link SheetWriteHandler#afterSheetCreate(SheetWriteHandlerContext)},
+ *       called immediately after a new sheet is created.</li>
+ *   <li>Creates a data validation constraint with explicit list values
+ *       ({@code "Test1", "Test2"}).</li>
+ *   <li>Applies the constraint to cells A2:A3 (rows 1-2, column 0).</li>
+ * </ol>
+ *
+ * <h2>Result</h2>
+ * <p>Cells A2 and A3 will show a dropdown arrow. Clicking it reveals the options
+ * "Test1" and "Test2". Entering other values triggers a validation error.</p>
+ *
+ * <h2>Registration</h2>
+ * <pre>{@code
+ * FesodSheet.write(fileName, DemoData.class)
+ *     .registerWriteHandler(new CustomSheetWriteHandler())
+ *     .sheet().doWrite(data);
+ * }</pre>
+ *
+ * <h2>Other Use Cases for SheetWriteHandler</h2>
+ * <ul>
+ *   <li>Setting print areas or page breaks</li>
+ *   <li>Freezing panes (freeze rows/columns)</li>
+ *   <li>Adding auto-filters</li>
+ *   <li>Setting sheet protection</li>
+ * </ul>
+ *
+ * @see SheetWriteHandler
+ * @see org.apache.poi.ss.usermodel.DataValidation
  */
 @Slf4j
 public class CustomSheetWriteHandler implements SheetWriteHandler {

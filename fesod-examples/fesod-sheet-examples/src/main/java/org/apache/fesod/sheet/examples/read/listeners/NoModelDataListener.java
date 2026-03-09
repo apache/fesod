@@ -28,7 +28,33 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 
 /**
- * Directly receive data using a map.
+ * Listener for schema-free Excel reading without a data model.
+ *
+ * <h2>Scenario</h2>
+ * <p>When you don't have (or don't want) a POJO mapped to the Excel structure,
+ * this listener receives each row as a {@code Map<Integer, String>} where:
+ * <ul>
+ *   <li><b>Key</b> = column index (0-based)</li>
+ *   <li><b>Value</b> = cell content as a string</li>
+ * </ul>
+ *
+ * <h2>Key Differences from Typed Listeners</h2>
+ * <ul>
+ *   <li>Extends {@link AnalysisEventListener}{@code <Map<Integer, String>>} instead of
+ *       implementing {@code ReadListener<SomePojo>}.</li>
+ *   <li>No {@code @ExcelProperty} annotations needed — all columns are automatically included.</li>
+ *   <li>All values arrive as strings, even if the Excel cell is numeric or date type.</li>
+ * </ul>
+ *
+ * <h2>When to Use</h2>
+ * <ul>
+ *   <li>Generic Excel import tools that accept any file layout.</li>
+ *   <li>Quick data inspection / debugging.</li>
+ *   <li>Dynamic column handling where structure is unknown at compile time.</li>
+ * </ul>
+ *
+ * @see org.apache.fesod.sheet.examples.read.NoModelReadExample
+ * @see AnalysisEventListener
  */
 @Slf4j
 public class NoModelDataListener extends AnalysisEventListener<Map<Integer, String>> {

@@ -27,7 +27,25 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 
 /**
- * Data class for merge examples.
+ * Data model demonstrating annotation-based cell merging.
+ *
+ * <p>The {@code @ContentLoopMerge(eachRow = 2)} annotation on the {@code string} field
+ * tells Fesod to merge every 2 consecutive rows in that column. This is useful for
+ * category grouping in reports.</p>
+ *
+ * <h2>Merge Effect</h2>
+ * <pre>
+ * Row 1: | String0 | 2025-01-01 | 0.56 |  ← merged with row 2
+ * Row 2: | (merged)| 2025-01-01 | 0.56 |
+ * Row 3: | String1 | 2025-01-01 | 0.56 |  ← merged with row 4
+ * Row 4: | (merged)| 2025-01-01 | 0.56 |
+ * </pre>
+ *
+ * <p>For runtime-configurable merging, use {@link org.apache.fesod.sheet.write.merge.LoopMergeStrategy}
+ * instead (see {@link org.apache.fesod.sheet.examples.write.MergeWriteExample}).</p>
+ *
+ * @see ContentLoopMerge
+ * @see org.apache.fesod.sheet.write.merge.LoopMergeStrategy
  */
 @Getter
 @Setter

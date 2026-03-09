@@ -25,7 +25,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Data class for exception handling examples.
+ * Data model intentionally designed to trigger conversion errors during reading.
+ *
+ * <p>This class maps all Excel data to a single {@code Date} field. When the Excel file
+ * contains string values (e.g., "String Title") that cannot be parsed as dates,
+ * Fesod throws an {@link org.apache.fesod.sheet.exception.ExcelDataConvertException}.</p>
+ *
+ * <p>Used by {@link org.apache.fesod.sheet.examples.read.ExceptionHandlingExample} to
+ * demonstrate the {@code onException()} callback in
+ * {@link org.apache.fesod.sheet.examples.read.listeners.ExceptionListener}.</p>
+ *
+ * @see org.apache.fesod.sheet.examples.read.ExceptionHandlingExample
+ * @see org.apache.fesod.sheet.exception.ExcelDataConvertException
  */
 @Getter
 @Setter

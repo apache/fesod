@@ -22,7 +22,29 @@ package org.apache.fesod.sheet.examples.read.data;
 import java.util.List;
 
 /**
- * Mock DAO for examples.
+ * Mock Data Access Object (DAO) simulating database persistence for examples.
+ *
+ * <p>In production, replace the {@code save()} method body with actual database operations
+ * (e.g., JDBC batch insert, MyBatis, or JPA). The batch pattern used in
+ * {@link org.apache.fesod.sheet.examples.read.listeners.DemoDataListener} calls this
+ * DAO every 100 rows to balance memory usage and database round-trips.</p>
+ *
+ * <p><b>Example production implementation:</b></p>
+ * <pre>{@code
+ * public void save(List<DemoData> list) {
+ *     // Using Spring JdbcTemplate batch insert
+ *     jdbcTemplate.batchUpdate(
+ *         "INSERT INTO demo (string, date, double_data) VALUES (?, ?, ?)",
+ *         list, list.size(),
+ *         (ps, data) -> {
+ *             ps.setString(1, data.getString());
+ *             ps.setDate(2, new java.sql.Date(data.getDate().getTime()));
+ *             ps.setDouble(3, data.getDoubleData());
+ *         });
+ * }
+ * }</pre>
+ *
+ * @see org.apache.fesod.sheet.examples.read.listeners.DemoDataListener
  */
 public class DemoDAO {
 

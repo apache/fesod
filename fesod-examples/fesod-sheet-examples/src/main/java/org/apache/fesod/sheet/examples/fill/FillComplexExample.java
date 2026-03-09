@@ -31,7 +31,49 @@ import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 
 /**
- * Complex example demonstrating how to fill a list of data into an Excel template.
+ * Demonstrates filling list data into a template with repeating rows.
+ *
+ * <h2>Scenario</h2>
+ * <p>Your template has a list area that should expand with multiple rows of data —
+ * for example, an invoice with line items, or a report with multiple data rows.
+ * The template uses {@code {.fieldName}} (dot prefix) placeholders to mark the
+ * repeating area.</p>
+ *
+ * <h2>Template Format</h2>
+ * <p>The template file ({@code templates/list.xlsx}) contains a single row with
+ * list placeholders:</p>
+ * <pre>
+ * Template:        | {.name}       | {.number} | {.date}     |
+ *                       ↓               ↓           ↓
+ * Filled result:   | Zhang San0    | 5.2       | 2025-01-01  |
+ *                  | Zhang San1    | 5.2       | 2025-01-02  |
+ *                  | ...           | ...       | ...         |
+ * </pre>
+ *
+ * <h2>Two Fill Strategies</h2>
+ *
+ * <h3>Strategy 1: Single-Pass Fill</h3>
+ * <p>Load all data into memory and fill at once with {@code doFill(list)}.
+ * Simple but requires all data in memory.</p>
+ *
+ * <h3>Strategy 2: Multi-Pass Fill (Memory-Efficient)</h3>
+ * <p>Use {@link ExcelWriter} to fill in batches. Fesod uses file-based caching
+ * between passes, keeping memory usage low for large datasets.</p>
+ * <pre>{@code
+ * try (ExcelWriter writer = FesodSheet.write(fileName).withTemplate(template).build()) {
+ *     WriteSheet sheet = FesodSheet.writerSheet().build();
+ *     writer.fill(batch1, sheet);  // First batch
+ *     writer.fill(batch2, sheet);  // Second batch
+ * }
+ * }</pre>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link FillBasicExample} — Simple single-value template fills.</li>
+ * </ul>
+ *
+ * @see ExcelWriter#fill(Object, WriteSheet)
+ * @see FillData
  */
 @Slf4j
 public class FillComplexExample {
@@ -41,7 +83,11 @@ public class FillComplexExample {
     }
 
     /**
-     * Fill a list of data.
+     * Fills a list template using both single-pass and multi-pass strategies.
+     *
+     * <p><b>Single-pass:</b> All 10 rows loaded into memory, filled in one call.<br/>
+     * <b>Multi-pass:</b> Two batches of 10 rows each, filled via {@link ExcelWriter}
+     * with file-backed caching for lower memory usage.</p>
      */
     public static void listFill() {
         String templateFileName = ExampleFileUtil.getExamplePath("templates" + File.separator + "list.xlsx");

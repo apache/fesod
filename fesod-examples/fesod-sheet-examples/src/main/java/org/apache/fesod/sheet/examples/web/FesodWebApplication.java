@@ -23,7 +23,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Spring Boot application for web examples.
+ * Spring Boot application entry point for the web examples.
+ *
+ * <p>Start this application to run the web-based Excel download/upload examples.
+ * The {@link WebExampleController} provides the following endpoints:</p>
+ * <ul>
+ *   <li>{@code GET /download} — Download an Excel file.</li>
+ *   <li>{@code POST /upload} — Upload and parse an Excel file.</li>
+ * </ul>
+ *
+ * <p><b>Note:</b> This application requires Spring Boot and Servlet API dependencies.
+ * It is provided as a reference for integrating Fesod into web applications.</p>
+ *
+ * @see WebExampleController
  */
 @SpringBootApplication
 public class FesodWebApplication {

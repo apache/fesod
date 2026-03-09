@@ -30,7 +30,37 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
- * Custom row write handler for adding comments.
+ * Custom {@link RowWriteHandler} that adds an Excel comment (note) to a header cell.
+ *
+ * <h2>Scenario</h2>
+ * <p>You want to add hover-able comments/notes to specific cells — for example, adding
+ * instructions or descriptions to column headers so end-users understand each column.</p>
+ *
+ * <h2>How It Works</h2>
+ * <ol>
+ *   <li>Implements {@link RowWriteHandler#afterRowDispose(RowWriteHandlerContext)},
+ *       which is called after each row is written.</li>
+ *   <li>Checks if the row is a header row via {@code context.getHead()}.</li>
+ *   <li>Creates a drawing patriarch on the sheet and adds a comment anchored
+ *       to cell B1 (row 0, column 1).</li>
+ * </ol>
+ *
+ * <h2>Result</h2>
+ * <p>The second column header cell will show a small red triangle indicator.
+ * Hovering over it displays "Created a comment!".</p>
+ *
+ * <h2>Registration</h2>
+ * <pre>{@code
+ * FesodSheet.write(fileName, DemoData.class)
+ *     .registerWriteHandler(new CommentWriteHandler())
+ *     .sheet().doWrite(data);
+ * }</pre>
+ *
+ * <p><b>Note:</b> This handler uses Apache POI's XSSF-specific classes ({@code XSSFClientAnchor},
+ * {@code XSSFRichTextString}), so it only works with {@code .xlsx} format.</p>
+ *
+ * @see RowWriteHandler
+ * @see org.apache.poi.ss.usermodel.Comment
  */
 @Slf4j
 public class CommentWriteHandler implements RowWriteHandler {

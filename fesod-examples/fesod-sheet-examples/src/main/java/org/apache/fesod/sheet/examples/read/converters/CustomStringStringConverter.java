@@ -26,7 +26,36 @@ import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 
 /**
- * Custom string converter for examples.
+ * Custom converter that transforms string cell values by prepending a prefix.
+ *
+ * <h2>Scenario</h2>
+ * <p>You need custom transformation logic that goes beyond simple formatting —
+ * for example, adding prefixes, decrypting values, or looking up reference data.
+ * Implement the {@link Converter} interface to create a reusable converter.</p>
+ *
+ * <h2>How It Works</h2>
+ * <ul>
+ *   <li><b>Read:</b> Excel cell "Hello" → Java string "Custom：Hello"</li>
+ *   <li><b>Write:</b> Java string "Hello" → Excel cell "Hello" (passthrough)</li>
+ * </ul>
+ *
+ * <h2>Registration</h2>
+ * <p>Converters can be registered in two ways:</p>
+ * <ol>
+ *   <li><b>Per-field:</b> {@code @ExcelProperty(converter = CustomStringStringConverter.class)}
+ *       on a specific field (see {@link org.apache.fesod.sheet.examples.read.data.ConverterData}).</li>
+ *   <li><b>Global:</b> {@code .registerConverter(new CustomStringStringConverter())} on the builder
+ *       (see {@link org.apache.fesod.sheet.examples.advanced.CustomConverterExample}).
+ *       Applies to all fields matching the Java type + Excel type key.</li>
+ * </ol>
+ *
+ * <h2>Type Keys</h2>
+ * <p>{@link #supportJavaTypeKey()} returns {@code String.class} and
+ * {@link #supportExcelTypeKey()} returns {@code CellDataTypeEnum.STRING},
+ * meaning this converter handles String↔String conversions only.</p>
+ *
+ * @see Converter
+ * @see org.apache.fesod.sheet.annotation.ExcelProperty#converter()
  */
 public class CustomStringStringConverter implements Converter<String> {
 

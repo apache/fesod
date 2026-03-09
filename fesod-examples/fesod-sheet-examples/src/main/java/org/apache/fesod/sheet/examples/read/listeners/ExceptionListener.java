@@ -31,7 +31,36 @@ import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
 /**
- * Listener for handling read and convert exceptions.
+ * Listener that demonstrates graceful exception handling during Excel reading.
+ *
+ * <h2>Scenario</h2>
+ * <p>When reading an Excel file with inconsistent data (e.g., text in a date column),
+ * Fesod throws an {@link ExcelDataConvertException}. This listener catches those errors,
+ * logs diagnostic information, and allows parsing to continue for the remaining rows.</p>
+ *
+ * <h2>Key Methods</h2>
+ * <ul>
+ *   <li>{@link #onException(Exception, AnalysisContext)} — Intercepts any exception during parsing.
+ *       If the exception is an {@code ExcelDataConvertException}, logs the exact row, column,
+ *       and cell value that caused the error. <em>Not rethrowing</em> the exception tells Fesod
+ *       to skip this row and continue.</li>
+ *   <li>{@link #invokeHead(Map, AnalysisContext)} — Called when the header row is parsed.
+ *       Receives a map of column index → {@link ReadCellData} containing header cell information.</li>
+ *   <li>{@link #invoke(ExceptionDemoData, AnalysisContext)} — Called for each successfully
+ *       converted data row.</li>
+ *   <li>{@link #doAfterAllAnalysed(AnalysisContext)} — Called after the last row.
+ *       Persists any remaining cached data.</li>
+ * </ul>
+ *
+ * <h2>Error Handling Strategy</h2>
+ * <pre>
+ * onException() is called:
+ *     ├─ ExcelDataConvertException → log row/column/value, continue
+ *     └─ Other exception → log message, continue (or rethrow to stop)
+ * </pre>
+ *
+ * @see ExcelDataConvertException
+ * @see org.apache.fesod.sheet.examples.read.ExceptionHandlingExample
  */
 @Slf4j
 public class ExceptionListener implements ReadListener<ExceptionDemoData> {

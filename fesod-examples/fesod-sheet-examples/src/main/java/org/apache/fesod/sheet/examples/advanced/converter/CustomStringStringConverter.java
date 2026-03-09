@@ -27,7 +27,38 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 
 /**
- * Custom String to String converter.
+ * Custom String-to-String converter that adds a "Custom:" prefix during both read and write.
+ *
+ * <h2>Conversion Behavior</h2>
+ * <pre>
+ * Read:  Excel cell "Hello"  →  Java string "Custom:Hello"
+ * Write: Java string "Hello" →  Excel cell "Custom:Hello"
+ * </pre>
+ *
+ * <h2>Difference from Read Converter</h2>
+ * <p>Unlike {@link org.apache.fesod.sheet.examples.read.converters.CustomStringStringConverter}
+ * (which uses the newer {@code ReadConverterContext}/{@code WriteConverterContext} API),
+ * this converter uses the legacy method signatures with
+ * {@link ExcelContentProperty} and {@link GlobalConfiguration} parameters.
+ * Both approaches are supported by Fesod.</p>
+ *
+ * <h2>API Versions</h2>
+ * <table>
+ *   <tr><th>Style</th><th>Method Signature</th><th>Used By</th></tr>
+ *   <tr>
+ *     <td>New (recommended)</td>
+ *     <td>{@code convertToJavaData(ReadConverterContext)}</td>
+ *     <td>read/converters/ package</td>
+ *   </tr>
+ *   <tr>
+ *     <td>Legacy (still supported)</td>
+ *     <td>{@code convertToJavaData(ReadCellData, ExcelContentProperty, GlobalConfiguration)}</td>
+ *     <td>this class</td>
+ *   </tr>
+ * </table>
+ *
+ * @see Converter
+ * @see org.apache.fesod.sheet.examples.advanced.CustomConverterExample
  */
 public class CustomStringStringConverter implements Converter<String> {
 

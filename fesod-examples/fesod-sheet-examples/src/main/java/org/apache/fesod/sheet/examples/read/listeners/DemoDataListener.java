@@ -29,10 +29,53 @@ import org.apache.fesod.sheet.examples.read.data.DemoData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
 /**
- * Template reading class.
- * <p>
- * An important point is that DemoDataListener should not be managed by Spring.
- * It needs to be newly created each time an Excel file is read.
+ * Production-pattern listener demonstrating batch read-and-persist for Excel data.
+ *
+ * <h2>Scenario</h2>
+ * <p>Reading a large Excel file (thousands or millions of rows) and inserting the data
+ * into a database. Loading all rows into memory at once would cause an OutOfMemoryError.
+ * This listener accumulates rows in a small batch and persists every {@value #BATCH_COUNT}
+ * rows, then clears the cache.</p>
+ *
+ * <h2>Lifecycle</h2>
+ * <pre>
+ * ┌───────────────────────────────────────────────────────────────────┐
+ * │  invoke(data, context)  ← called once per data row              │
+ * │    └─ add to cachedDataList                                    │
+ * │    └─ if cache.size() >= 100 → saveData() → clear cache       │
+ * ├───────────────────────────────────────────────────────────────────┤
+ * │  doAfterAllAnalysed(context)  ← called once after last row      │
+ * │    └─ saveData() for remaining rows in cache                   │
+ * └───────────────────────────────────────────────────────────────────┘
+ * </pre>
+ *
+ * <h2>Thread Safety &amp; Lifecycle</h2>
+ * <p><b>IMPORTANT:</b> This class must NOT be managed by Spring (or any IoC container) as a
+ * singleton. Create a <em>new instance</em> for each read operation because:
+ * <ul>
+ *   <li>The {@code cachedDataList} is mutable state that must not be shared.</li>
+ *   <li>Reusing a listener across files would mix data from different files.</li>
+ * </ul>
+ *
+ * <h2>Spring Integration</h2>
+ * <p>If you need to inject Spring beans (e.g., a real DAO), use the constructor that
+ * accepts a {@link DemoDAO} parameter. Create the listener in your service method:</p>
+ * <pre>{@code
+ * @Service
+ * public class ExcelService {
+ *     @Autowired
+ *     private DemoDAO demoDAO;
+ *
+ *     public void importExcel(String fileName) {
+ *         // Create a NEW listener for each read, passing the Spring-managed DAO
+ *         FesodSheet.read(fileName, DemoData.class, new DemoDataListener(demoDAO))
+ *             .sheet().doRead();
+ *     }
+ * }
+ * }</pre>
+ *
+ * @see ReadListener
+ * @see org.apache.fesod.sheet.examples.read.BasicReadExample
  */
 @Slf4j
 public class DemoDataListener implements ReadListener<DemoData> {

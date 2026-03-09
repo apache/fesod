@@ -27,7 +27,48 @@ import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
 
 /**
- * Example demonstrating how to use converters when reading an Excel file.
+ * Demonstrates reading Excel files with data format converters.
+ *
+ * <h2>Scenario</h2>
+ * <p>Your Excel file contains dates and numbers in specific formats (e.g., "2025-01-01 12:30:00"
+ * or "56.00%"), and you want them read as formatted {@code String} values rather than raw types.
+ * Or you need a completely custom transformation for a column.</p>
+ *
+ * <h2>Key Concepts</h2>
+ * <ul>
+ *   <li>{@link org.apache.fesod.sheet.annotation.format.DateTimeFormat} — Converts date cells
+ *       to formatted strings using the specified pattern (e.g., {@code "yyyy-MM-dd HH:mm:ss"}).</li>
+ *   <li>{@link org.apache.fesod.sheet.annotation.format.NumberFormat} — Converts number cells
+ *       to formatted strings using {@link java.text.DecimalFormat} patterns (e.g., {@code "#.##%"}).</li>
+ *   <li>{@link org.apache.fesod.sheet.examples.read.converters.CustomStringStringConverter} —
+ *       A custom converter that prepends "Custom：" to string values, demonstrating
+ *       the {@link org.apache.fesod.sheet.converters.Converter} interface.</li>
+ * </ul>
+ *
+ * <h2>Data Class Mapping ({@link ConverterData})</h2>
+ * <pre>
+ * Excel Cell           → Java Field (String)
+ * ─────────────────────────────────────────
+ * "Hello"              → "Custom：Hello"       (via CustomStringStringConverter)
+ * 2025-01-01 12:30:00  → "2025-01-01 12:30:00" (via @DateTimeFormat)
+ * 0.56                 → "56%"                (via @NumberFormat("#.##%"))
+ * </pre>
+ *
+ * <h2>Expected Behavior</h2>
+ * <p>All fields in {@link ConverterData} are {@code String} type. Fesod applies the configured
+ * converter/format to transform the raw Excel cell value before setting the field.</p>
+ *
+ * <h2>Related Examples</h2>
+ * <ul>
+ *   <li>{@link org.apache.fesod.sheet.examples.advanced.CustomConverterExample} —
+ *       Register a custom converter at the builder level (applies to all matching fields).</li>
+ *   <li>{@link BasicReadExample} — Read without converters (automatic type mapping).</li>
+ * </ul>
+ *
+ * @see ConverterData
+ * @see org.apache.fesod.sheet.converters.Converter
+ * @see org.apache.fesod.sheet.annotation.format.DateTimeFormat
+ * @see org.apache.fesod.sheet.annotation.format.NumberFormat
  */
 @Slf4j
 public class ConverterReadExample {
@@ -37,7 +78,11 @@ public class ConverterReadExample {
     }
 
     /**
-     * Read with converters.
+     * Reads an Excel file with converters and format annotations applied.
+     *
+     * <p>Uses {@link PageReadListener} for simplicity. The actual conversion happens
+     * transparently during parsing — by the time your listener receives the data,
+     * all fields are already converted according to their annotations.</p>
      */
     public static void converterRead() {
         String fileName = ExampleFileUtil.getExamplePath("demo.xlsx");

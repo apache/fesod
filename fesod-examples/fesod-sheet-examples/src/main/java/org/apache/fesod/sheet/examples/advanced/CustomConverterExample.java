@@ -26,8 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.examples.advanced.converter.CustomStringStringConverter;
+import org.apache.fesod.sheet.examples.advanced.data.CustomConverterData;
 import org.apache.fesod.sheet.examples.util.ExampleFileUtil;
-import org.apache.fesod.sheet.examples.write.data.DemoData;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
 /**
@@ -92,7 +92,7 @@ public class CustomConverterExample {
      * for every string field in the data model.</p>
      */
     public static void customConverterWrite(String fileName) {
-        FesodSheet.write(fileName, DemoData.class)
+        FesodSheet.write(fileName, CustomConverterData.class)
                 .registerConverter(new CustomStringStringConverter())
                 .sheet("CustomConverter")
                 .doWrite(data());
@@ -106,9 +106,9 @@ public class CustomConverterExample {
      * transforming cell values as they are parsed.</p>
      */
     public static void customConverterRead(String fileName) {
-        FesodSheet.read(fileName, DemoData.class, new ReadListener<DemoData>() {
+        FesodSheet.read(fileName, CustomConverterData.class, new ReadListener<CustomConverterData>() {
                     @Override
-                    public void invoke(DemoData data, AnalysisContext context) {
+                    public void invoke(CustomConverterData data, AnalysisContext context) {
                         log.info("Read data with custom converter: {}", data);
                     }
 
@@ -122,10 +122,10 @@ public class CustomConverterExample {
                 .doRead();
     }
 
-    private static List<DemoData> data() {
-        List<DemoData> list = new ArrayList<>();
+    private static List<CustomConverterData> data() {
+        List<CustomConverterData> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            DemoData data = new DemoData();
+            CustomConverterData data = new CustomConverterData();
             data.setString("String" + i);
             data.setDate(new Date());
             data.setDoubleData(0.56);

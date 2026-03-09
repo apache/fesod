@@ -47,6 +47,15 @@
                         <include>**/*Test.java</include>
                         <include>**/*ITCase.java</include>
                     </includes>
+                    <!--
+                        Tests that register global converters (e.g. CustomConverterExampleITCase)
+                        mutate shared static state. Run them in isolated JVM forks to prevent
+                        cross-test contamination. This follows the same pattern used by
+                        Apache Kafka and Apache Flink for tests with static side-effects.
+                        See: https://maven.apache.org/surefire/maven-surefire-plugin/examples/fork-options-and-parallel-execution.html
+                    -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
                 </configuration>
             </plugin>
         </plugins>

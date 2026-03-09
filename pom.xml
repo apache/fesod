@@ -533,10 +533,6 @@
                 <artifactId>spotless-maven-plugin</artifactId>
                 <configuration>
                     <java>
-                        <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/tools/spotless/license-header.txt</file>
-                            <delimiter>package |import |module </delimiter>
-                        </licenseHeader>
                         <palantirJavaFormat>
                             <version>2.72.0</version>
                         </palantirJavaFormat>

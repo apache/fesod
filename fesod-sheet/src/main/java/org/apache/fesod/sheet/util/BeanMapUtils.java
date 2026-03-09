@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod(incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */

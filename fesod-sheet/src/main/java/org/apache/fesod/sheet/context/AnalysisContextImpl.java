@@ -31,6 +31,8 @@ import org.apache.fesod.sheet.read.metadata.holder.ReadSheetHolder;
 import org.apache.fesod.sheet.read.metadata.holder.ReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadSheetHolder;
 import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadWorkbookHolder;
+import org.apache.fesod.sheet.read.metadata.holder.ods.OdsReadSheetHolder;
+import org.apache.fesod.sheet.read.metadata.holder.ods.OdsReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadSheetHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
@@ -79,6 +81,9 @@ public class AnalysisContextImpl implements AnalysisContext {
             case CSV:
                 readWorkbookHolder = new CsvReadWorkbookHolder(readWorkbook);
                 break;
+            case ODS:
+                readWorkbookHolder = new OdsReadWorkbookHolder(readWorkbook);
+                break;
             default:
                 break;
         }
@@ -100,6 +105,9 @@ public class AnalysisContextImpl implements AnalysisContext {
                 break;
             case CSV:
                 readSheetHolder = new CsvReadSheetHolder(readSheet, readWorkbookHolder);
+                break;
+            case ODS:
+                readSheetHolder = new OdsReadSheetHolder(readSheet, readWorkbookHolder);
                 break;
             default:
                 break;

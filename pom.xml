@@ -90,6 +90,7 @@
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.test.skip>true</maven.test.skip>
+        <odfdom.version>0.9.0</odfdom.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -168,9 +169,14 @@
                 <version>${commons-csv.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
+                <groupId>org.odftoolkit</groupId>
+                <artifactId>odfdom-java</artifactId>
+                <version>${odfdom.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-lang3</artifactId>
+              <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>

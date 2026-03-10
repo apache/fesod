@@ -37,7 +37,12 @@ const sidebars = {
         {
             id: "introduce",
             type: "doc",
-        }, {
+        },
+        {
+            id: "download",
+            type: "doc",
+        },
+        {
             type: 'category',
             label: 'quickstart',
             items: [
@@ -54,13 +59,14 @@ const sidebars = {
                     items: [
                         'sheet/read/simple',
                         'sheet/read/sheet',
-                        'sheet/read/num-rows',
-                        'sheet/read/csv',
                         'sheet/read/head',
-                        'sheet/read/extra',
-                        'sheet/read/exception',
                         'sheet/read/pojo',
                         'sheet/read/converter',
+                        'sheet/read/format',
+                        'sheet/read/num-rows',
+                        'sheet/read/csv',
+                        'sheet/read/extra',
+                        'sheet/read/exception',
                         'sheet/read/spring'
                     ],
                 },
@@ -70,13 +76,15 @@ const sidebars = {
                     items: [
                         'sheet/write/simple',
                         'sheet/write/sheet',
+                        'sheet/write/head',
+                        'sheet/write/pojo',
+                        'sheet/write/converter',
+                        'sheet/write/format',
+                        'sheet/write/style',
+                        'sheet/write/merge',
                         'sheet/write/image',
                         'sheet/write/csv',
-                        'sheet/write/head',
                         'sheet/write/extra',
-                        'sheet/write/format',
-                        'sheet/write/pojo',
-                        'sheet/write/style',
                         'sheet/write/spring'
                     ]
                 },
@@ -89,13 +97,22 @@ const sidebars = {
                 },
                 {
                     type: 'category',
+                    label: 'advanced',
+                    items: [
+                        'sheet/advanced/password',
+                        'sheet/advanced/custom-converter',
+                        'sheet/advanced/large-file'
+                    ]
+                },
+                {
+                    type: 'category',
                     label: 'help',
                     items: [
                         'sheet/help/annotation',
                         'sheet/help/core-class',
                         'sheet/help/parameter',
                         'sheet/help/large-data',
-                        "sheet/help/faq"
+                        'sheet/help/faq'
                     ]
                 }
             ]

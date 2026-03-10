@@ -115,6 +115,7 @@ public class CustomMergeStrategy extends AbstractMergeStrategy {
     @Override
     protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
         if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
+            // Note: +1 assumes a single header row. For multi-row headers, use cell.getRowIndex() instead.
             int startRow = relativeRowIndex + 1;
             int endRow = startRow + 1;
             sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));

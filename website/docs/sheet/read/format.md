@@ -54,7 +54,7 @@ public class ConverterData {
 
 | Excel Cell Value | Annotation | Java Field Value |
 |:---|:---|:---|
-| `Hello` | `@ExcelProperty(converter = CustomStringStringConverter.class)` | `"Custom：Hello"` |
+| `Hello` | `@ExcelProperty(converter = CustomStringStringConverter.class)` | `"Custom: Hello"` |
 | `2025-01-01 12:30:00` | `@DateTimeFormat("yyyy-MM-dd HH:mm:ss")` | `"2025-01-01 12:30:00"` |
 | `0.56` | `@NumberFormat("#.##%")` | `"56%"` |
 

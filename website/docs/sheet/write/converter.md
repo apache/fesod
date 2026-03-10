@@ -70,7 +70,7 @@ public class ConverterData {
     @ExcelProperty(value = "String Title", converter = CustomStringStringConverter.class)
     private String string;
 
-    @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
+    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     @ExcelProperty("Date Title")
     private Date date;
 

@@ -49,7 +49,7 @@ public void largeFileWrite() {
             })
             .build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet("Template").build();
-        // Write 100,000 rows in batches of 100
+        // Write data in batches — each data() call returns one batch
         for (int i = 0; i < 1000; i++) {
             excelWriter.write(data(), writeSheet);
         }

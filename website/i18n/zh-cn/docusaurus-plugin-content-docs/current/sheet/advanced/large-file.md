@@ -32,7 +32,7 @@ public void largeFileWrite() {
             })
             .build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet("模板").build();
-        // 分批写入 100,000 行，每批 100 行
+        // 分批写入数据 — 每次 data() 调用返回一个批次
         for (int i = 0; i < 1000; i++) {
             excelWriter.write(data(), writeSheet);
         }

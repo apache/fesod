@@ -26,7 +26,7 @@ This chapter introduces how to read and write password-protected Excel files.
 
 ## Overview
 
-Fesod supports Excel's built-in password encryption for both reading and writing. Use `.password("xxx")` on the builder to encrypt output files or decrypt input files. The encryption uses Excel's native AES encryption for `.xlsx` files, compatible with all Excel versions.
+Fesod supports Excel's built-in password protection for both reading and writing. Use `.password("xxx")` on the builder to encrypt/decrypt files. For `.xlsx` output, Fesod uses Apache POI's encryption (AES-based) which can be memory-intensive for large workbooks. For legacy `.xls` files, password protection behaves as write-protection rather than full content encryption, so behavior and security guarantees differ from `.xlsx`.
 
 ## Writing with Password
 

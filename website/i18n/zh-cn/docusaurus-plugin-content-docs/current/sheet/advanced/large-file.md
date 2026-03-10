@@ -44,7 +44,7 @@ public void largeFileWrite() {
 
 ## 架构
 
-```
+```text
 数据（内存中，分批处理）        Fesod          POI/SXSSF
     │                              │                 │
     ├─ 100 行批次 ───────────────▶ write() ──────▶ 临时 XML（压缩）

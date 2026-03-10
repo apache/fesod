@@ -61,7 +61,7 @@ public void largeFileWrite() {
 
 ## Architecture
 
-```
+```text
 Data (in memory, batched)        Fesod          POI/SXSSF
     │                              │                 │
     ├─ 100 rows batch ───────────▶ write() ──────▶ temp XML (compressed)

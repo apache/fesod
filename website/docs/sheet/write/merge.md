@@ -67,7 +67,7 @@ public void annotationMergeWrite() {
 
 ### Result
 
-```
+```text
 | String Title | Date Title          | Number Title |
 |--------------|---------------------|--------------|
 | String0      | 2025-01-01 00:00:00 | 0.56         |

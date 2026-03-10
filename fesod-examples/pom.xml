@@ -25,13 +25,18 @@
     <parent>
         <groupId>org.apache.fesod</groupId>
         <artifactId>fesod-parent</artifactId>
-        <version>2.0.1-incubating</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>fesod-examples</artifactId>
     <packaging>pom</packaging>
     <name>Fesod Examples</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gpg.skip>true</gpg.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
     <modules>
         <module>fesod-sheet-examples</module>
     </modules>

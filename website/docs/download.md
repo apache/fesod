@@ -44,7 +44,6 @@ For most users, simply add the dependency to your project:
 ## Available Modules
 
 - **fesod-sheet** - Core module for Excel/CSV processing (recommended for most users)
-- **fesod-bom** - Bill of Materials for dependency management
 - **fesod-common** - Common utilities (automatically included with fesod-sheet)
 - **fesod-shaded** - Shaded dependencies to avoid conflicts (automatically included with fesod-sheet)
 

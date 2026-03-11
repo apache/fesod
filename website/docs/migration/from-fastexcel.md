@@ -113,7 +113,7 @@ Update all import statements to use the new Apache Fesod (Incubating) package st
 
 > **Note**: After this phase, `FastExcel.read(...)` and `FastExcelFactory.writerSheet(...)`
 > still compile — they resolve to the `@Deprecated` bridge classes in Fesod.
-> Phase 3 replaces them with the canonical `FesodSheet` class.
+> Step 3 replaces them with the canonical `FesodSheet` class.
 
 **Read API Replacements:**
 

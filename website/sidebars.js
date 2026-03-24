@@ -51,6 +51,12 @@ const sidebars = {
             ]
         }, {
             type: 'category',
+            label: 'fesod-cli',
+            items: [
+                'cli/cli'
+            ]
+        }, {
+            type: 'category',
             label: 'fesod-sheet',
             items: [
                 {

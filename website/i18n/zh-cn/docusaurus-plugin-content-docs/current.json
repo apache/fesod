@@ -7,6 +7,10 @@
     "message": "快速开始",
     "description": "The label for category quickstart in sidebar docs"
   },
+  "sidebar.docs.category.fesod-cli": {
+    "message": "命令行工具",
+    "description": "The label for category fesod-cli in sidebar docs"
+  },
   "sidebar.docs.category.read": {
     "message": "读取",
     "description": "The label for category read in sidebar docs"

@@ -72,5 +72,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

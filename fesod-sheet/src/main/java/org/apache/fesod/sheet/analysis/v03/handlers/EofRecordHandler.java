@@ -17,6 +17,12 @@
  * under the License.
  */
 
+/*
+ * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ *
+ * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
+ */
+
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
 import java.util.LinkedHashMap;

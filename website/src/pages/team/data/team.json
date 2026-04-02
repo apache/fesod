@@ -61,5 +61,12 @@
       "isMentor": false
     }
   ],
-  "committer": []
+  "committer": [
+    {
+      "githubId": "13617900",
+      "gitUrl": "https://github.com/GOODBOY008",
+      "name": "Zhongqiang Gong",
+      "isMentor": false
+    }
+  ]
 }

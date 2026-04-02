@@ -5,9 +5,9 @@ title: 'Commit 格式规范'
 
 所有改进措施均可通过“拉取请求”（PR）来实现。在提交拉取请求之前，请先熟悉以下指南：
 
-### Commit 规范
+## Commit 规范
 
-#### Commit 消息格式
+### Commit 消息格式
 
 请确保提交消息清晰且具有描述性，务必使用**英文**，且不超过 100 个字符。
 
@@ -29,7 +29,7 @@ title: 'Commit 格式规范'
 
 如果需要帮助，请参考 [如何编写 Git 提交消息](http://chris.beams.io/posts/git-commit/)。
 
-#### Commit 内容
+### Commit 内容
 
 一次提交应包含完整且可审查的更改，确保：
 
@@ -43,6 +43,6 @@ git config --get user.name
 git config --get user.email
 ```
 
-### PR 描述信息
+## PR 描述信息
 
 为了帮助审阅者快速了解 PR 的内容和目的，请使用 [PR 模板](https://github.com/apache/fesod/blob/main/.github/pull_request_template.md)。详细的描述将极大提高代码审阅效率。

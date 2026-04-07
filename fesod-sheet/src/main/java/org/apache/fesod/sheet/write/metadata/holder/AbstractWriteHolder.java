@@ -130,6 +130,11 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
     private Boolean orderByIncludeColumn;
 
     /**
+     * Custom converters for this holder
+     */
+    private List<Converter<?>> customConverterList;
+
+    /**
      * Write handler
      */
     private List<WriteHandler> writeHandlerList;
@@ -261,12 +266,22 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
 
         // Set converterMap
         if (parentAbstractWriteHolder == null) {
-            setConverterMap(DefaultConverterLoader.loadDefaultWriteConverter());
+            setConverterMap(new HashMap<>(DefaultConverterLoader.loadDefaultWriteConverter()));
         } else {
             setConverterMap(new HashMap<>(parentAbstractWriteHolder.getConverterMap()));
+            if (CollectionUtils.isNotEmpty(parentAbstractWriteHolder.getCustomConverterList())) {
+                for (Converter<?> converter : parentAbstractWriteHolder.getCustomConverterList()) {
+                    getConverterMap()
+                            .put(
+                                    ConverterKeyBuild.buildKey(
+                                            converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
+                                    converter);
+                }
+            }
         }
         if (writeBasicParameter.getCustomConverterList() != null
                 && !writeBasicParameter.getCustomConverterList().isEmpty()) {
+            this.customConverterList = writeBasicParameter.getCustomConverterList();
             for (Converter<?> converter : writeBasicParameter.getCustomConverterList()) {
                 getConverterMap()
                         .put(

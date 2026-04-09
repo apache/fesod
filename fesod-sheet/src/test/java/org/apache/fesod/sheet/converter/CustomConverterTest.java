@@ -103,7 +103,7 @@ public class CustomConverterTest {
     }
 
     @Test
-    void t06GlobalConverterWriteWithoutAnnotation() throws Exception {
+    void t06GlobalConverterWriteWithoutFieldLevelConverter() throws Exception {
         FesodSheet.write(converterCsvFile14)
                 .registerConverter(new TimestampStringConverter())
                 .sheet()

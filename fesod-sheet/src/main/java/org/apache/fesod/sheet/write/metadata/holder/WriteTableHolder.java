@@ -38,7 +38,7 @@ import org.apache.fesod.sheet.write.metadata.WriteTable;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"parentWriteSheetHolder"})
 public class WriteTableHolder extends AbstractWriteHolder {
     /***
      * poi sheet

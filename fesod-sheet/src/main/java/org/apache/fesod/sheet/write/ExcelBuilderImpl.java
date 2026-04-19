@@ -81,8 +81,6 @@ public class ExcelBuilderImpl implements ExcelBuilder {
                 excelWriteAddExecutor = new ExcelWriteAddExecutor(context);
             }
             excelWriteAddExecutor.add(data);
-            // execute callback after the sheet is written
-            WriteHandlerUtils.afterSheetDispose(context);
         } catch (RuntimeException e) {
             finishOnException();
             throw e;
@@ -106,8 +104,6 @@ public class ExcelBuilderImpl implements ExcelBuilder {
                 excelWriteFillExecutor = new ExcelWriteFillExecutor(context);
             }
             excelWriteFillExecutor.fill(data, fillConfig);
-            // execute callback after the sheet is written
-            WriteHandlerUtils.afterSheetDispose(context);
         } catch (RuntimeException e) {
             finishOnException();
             throw e;
@@ -123,6 +119,9 @@ public class ExcelBuilderImpl implements ExcelBuilder {
 
     @Override
     public void finish(boolean onException) {
+        // executes the callback after the current sheet has been fully written.
+        WriteHandlerUtils.afterSheetDispose(context);
+
         if (context != null) {
             context.finish(onException);
         }

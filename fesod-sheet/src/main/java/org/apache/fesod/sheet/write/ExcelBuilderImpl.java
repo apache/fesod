@@ -119,10 +119,10 @@ public class ExcelBuilderImpl implements ExcelBuilder {
 
     @Override
     public void finish(boolean onException) {
-        // executes the callback after the current sheet has been fully written.
-        WriteHandlerUtils.afterSheetDispose(context);
-
         if (context != null) {
+            // executes the callback after the current sheet has been fully written.
+            WriteHandlerUtils.afterSheetDispose(context);
+
             context.finish(onException);
         }
     }

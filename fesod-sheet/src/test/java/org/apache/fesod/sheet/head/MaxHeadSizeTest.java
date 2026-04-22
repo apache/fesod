@@ -27,50 +27,38 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
-public class MaxHeadSizeTest {
-
-    private static String headFile01;
-    private static String headFile02;
-    private static String headFile03;
-
-    @BeforeAll
-    public static void init() {
-        headFile01 = TestFileUtil.getPath() + "temp/issue220" + File.separator + "test01.xlsx";
-        headFile02 = TestFileUtil.getPath() + "temp/issue220" + File.separator + "test02.xlsx";
-        headFile03 = TestFileUtil.getPath() + "temp/issue220" + File.separator + "test03.xlsx";
-    }
+public class MaxHeadSizeTest extends AbstractExcelTest {
 
     @Test
-    public void t01ReadTest() throws Exception {
-        // issue example
+    public void readIssueExample() {
+        File headFile01 = headFile("test01.xlsx");
         readFileWithMap(headFile01, 6);
         readFileWithPOJO(headFile01);
     }
 
     @Test
-    public void t02ReadTest() throws Exception {
-        // 表头有空列
+    public void readWithEmptyHeadColumns() {
+        File headFile02 = headFile("test02.xlsx");
+        // The header row contains empty columns.
         readFileWithMap(headFile02, 8);
         readFileWithPOJO(headFile02);
     }
 
     @Test
-    public void t03ReadTest() throws Exception {
-        // 表头列数比实际数据行的列少
+    public void readWithFewerHeadColumns() {
+        File headFile03 = headFile("test03.xlsx");
+        // The header row has fewer columns than the actual data rows.
         readFileWithMap(headFile03, 4);
         readFileWithPOJO(headFile03);
     }
 
-    private void readFileWithMap(String file, int expectHeadSize) {
+    private void readFileWithMap(File file, int expectHeadSize) {
         List<Map<Integer, String>> dataList;
         // default
         dataList = FesodSheet.read(file).excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
@@ -80,7 +68,7 @@ public class MaxHeadSizeTest {
         });
 
         // custom listener
-        dataList = FesodSheet.read(file, new MaxHeadReadListener(expectHeadSize))
+        dataList = FesodSheet.read(file, new MaxHeadReadListener())
                 .excelType(ExcelTypeEnum.XLSX)
                 .sheet()
                 .doReadSync();
@@ -90,7 +78,7 @@ public class MaxHeadSizeTest {
         });
     }
 
-    private void readFileWithPOJO(String file) {
+    private void readFileWithPOJO(File file) {
         List<MaxHeadSizeData> dataList = FesodSheet.read(file)
                 .head(MaxHeadSizeData.class)
                 .excelType(ExcelTypeEnum.XLSX)
@@ -99,5 +87,9 @@ public class MaxHeadSizeTest {
         dataList.forEach(d -> {
             log.info(JSON.toJSONString(d, JSONWriter.Feature.WriteMapNullValue));
         });
+    }
+
+    private File headFile(String fileName) {
+        return TestFileUtil.readFile("temp/issue220" + File.separator + fileName);
     }
 }

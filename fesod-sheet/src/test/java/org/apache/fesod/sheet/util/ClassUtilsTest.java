@@ -125,7 +125,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void test_declaredFields_cache_ThreadLocal() throws NoSuchFieldException, IllegalAccessException {
+    void test_declaredFields_cache_ThreadLocal() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);

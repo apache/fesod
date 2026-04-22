@@ -210,7 +210,7 @@ class DateUtilsTest {
         "61.0, 1900-03-01 00:00:00",
         "43831.5, 2020-01-01 12:00:00"
     })
-    void test_getJavaDate_1900(double excelValue, String expectedStr) throws ParseException {
+    void test_getJavaDate_1900(double excelValue, String expectedStr) {
         Date date = DateUtils.getJavaDate(excelValue, false);
 
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_19);

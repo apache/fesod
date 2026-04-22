@@ -189,7 +189,7 @@ class FesodSheetTest {
     }
 
     @Test
-    void testRead_withFile_shouldConfigureFile() throws Exception {
+    void testRead_withFile_shouldConfigureFile() {
         ExcelReaderBuilder builder = FesodSheet.read(tempFile);
         assertNotNull(builder);
         ReadWorkbook workbook = writeWorkbook(builder);

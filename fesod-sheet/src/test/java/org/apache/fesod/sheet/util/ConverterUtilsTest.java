@@ -202,7 +202,7 @@ class ConverterUtilsTest {
         Object result = ConverterUtils.convertToJavaObject(
                 cellData, field, ReadCellData.class, null, null, converterMap, context, 1, 0);
 
-        Assertions.assertTrue(result instanceof ReadCellData);
+        Assertions.assertInstanceOf(ReadCellData.class, result);
         Mockito.verify(stringConverter).convertToJavaData(Mockito.any());
     }
 

@@ -123,7 +123,7 @@ class StyleUtilTest {
     void testBuildCellStyle_withPartialPropertiesSet_shouldOnlyApplyNonNullProperties() {
         Workbook workbook = new HSSFWorkbook();
         CellStyle originStyle = workbook.createCellStyle();
-        originStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 原始值
+        originStyle.setVerticalAlignment(VerticalAlignment.CENTER); // original value
 
         WriteCellStyle writeCellStyle = new WriteCellStyle();
         writeCellStyle.setHorizontalAlignment(HorizontalAlignment.LEFT);

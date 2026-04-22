@@ -47,7 +47,7 @@ class FileTypeUtilsTest {
     }
 
     private byte[] loadImage(String filename) throws IOException {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("images" + File.separator + filename); ) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("images" + File.separator + filename)) {
             Assertions.assertNotNull(is);
 
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();

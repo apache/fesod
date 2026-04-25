@@ -39,7 +39,6 @@ website/pnpm-error.log*
 website/.yarnrc
 website/yarn.lock
 website/package-lock.json
-website/pnpm-lock.yaml
 
 # fuzzing
 **/.cifuzz-corpus/

@@ -2,6 +2,7 @@
   "name": "website",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.21.0",
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",

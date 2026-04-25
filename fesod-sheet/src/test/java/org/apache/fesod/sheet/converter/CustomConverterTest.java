@@ -30,6 +30,7 @@ import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
+import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -42,12 +43,16 @@ public class CustomConverterTest {
     private static File converterCsvFile10;
     private static File converterExcelFile11;
     private static File converterExcelFile12;
+    private static File converterExcelFile13;
+    private static File converterCsvFile14;
 
     @BeforeAll
     static void init() {
         converterCsvFile10 = TestFileUtil.createNewFile("converter10.csv");
         converterExcelFile11 = TestFileUtil.createNewFile("converter11.xls");
         converterExcelFile12 = TestFileUtil.createNewFile("converter12.xlsx");
+        converterExcelFile13 = TestFileUtil.createNewFile("converter13.xlsx");
+        converterCsvFile14 = TestFileUtil.createNewFile("converter14.csv");
     }
 
     @Test
@@ -83,12 +88,42 @@ public class CustomConverterTest {
         writeFile(converterExcelFile12);
     }
 
+    @Test
+    void t05GlobalConverterInSheetHolder() throws Exception {
+        TimestampStringConverter timestampStringConverter = new TimestampStringConverter();
+        ExcelWriter excelWriter = FesodSheet.write(converterExcelFile13)
+                .registerConverter(timestampStringConverter)
+                .build();
+        excelWriter.write(data(), new ExcelWriterSheetBuilder().sheetNo(0).build());
+        WriteSheetHolder sheetHolder = excelWriter.writeContext().writeSheetHolder();
+        Map<ConverterKeyBuild.ConverterKey, Converter<?>> sheetConverterMap = sheetHolder.converterMap();
+        excelWriter.finish();
+        Assertions.assertTrue(sheetConverterMap.containsKey(ConverterKeyBuild.buildKey(
+                timestampStringConverter.supportJavaTypeKey(), timestampStringConverter.supportExcelTypeKey())));
+    }
+
+    @Test
+    void t06GlobalConverterWriteWithoutFieldLevelConverter() throws Exception {
+        FesodSheet.write(converterCsvFile14)
+                .registerConverter(new TimestampStringConverter())
+                .sheet()
+                .doWrite(globalData());
+    }
+
     private void writeFile(File file) throws Exception {
         FesodSheet.write(file)
                 .registerConverter(new TimestampNumberConverter())
                 .registerConverter(new TimestampStringConverter())
                 .sheet()
                 .doWrite(data());
+    }
+
+    private List<GlobalConverterWriteData> globalData() throws Exception {
+        List<GlobalConverterWriteData> list = new ArrayList<>();
+        GlobalConverterWriteData writeData = new GlobalConverterWriteData();
+        writeData.setTimestampData(Timestamp.valueOf("2020-01-01 01:00:00"));
+        list.add(writeData);
+        return list;
     }
 
     private List<CustomConverterWriteData> data() throws Exception {

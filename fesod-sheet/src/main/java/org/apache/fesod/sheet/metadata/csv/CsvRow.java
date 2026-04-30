@@ -140,7 +140,7 @@ public class CsvRow implements Row {
 
     @Override
     public int getPhysicalNumberOfCells() {
-        return getRowNum();
+        return cellList.size();
     }
 
     @Override

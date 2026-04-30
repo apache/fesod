@@ -20,14 +20,21 @@
 package org.apache.fesod.sheet.converter;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.metadata.GlobalConfiguration;
+import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
@@ -45,6 +52,7 @@ public class CustomConverterTest {
     private static File converterExcelFile12;
     private static File converterExcelFile13;
     private static File converterCsvFile14;
+    private static File converterCsvFile15;
 
     @BeforeAll
     static void init() {
@@ -53,6 +61,7 @@ public class CustomConverterTest {
         converterExcelFile12 = TestFileUtil.createNewFile("converter12.xlsx");
         converterExcelFile13 = TestFileUtil.createNewFile("converter13.xlsx");
         converterCsvFile14 = TestFileUtil.createNewFile("converter14.csv");
+        converterCsvFile15 = TestFileUtil.createNewFile("converter15.csv");
     }
 
     @Test
@@ -110,6 +119,23 @@ public class CustomConverterTest {
                 .doWrite(globalData());
     }
 
+    @Test
+    void t07FieldLevelConverterTakesPrecedenceOverRegisteredConverter() throws Exception {
+        FieldLevelConverterWriteData writeData = new FieldLevelConverterWriteData();
+        writeData.setFieldValue("value");
+        writeData.setRegisteredValue("value");
+        List<FieldLevelConverterWriteData> list = new ArrayList<>();
+        list.add(writeData);
+
+        FesodSheet.write(converterCsvFile15, FieldLevelConverterWriteData.class)
+                .registerConverter(new RegisteredStringConverter())
+                .sheet()
+                .doWrite(list);
+
+        String csvContent = new String(Files.readAllBytes(converterCsvFile15.toPath()), StandardCharsets.UTF_8);
+        Assertions.assertTrue(csvContent.contains("field:value,registered:value"));
+    }
+
     private void writeFile(File file) throws Exception {
         FesodSheet.write(file)
                 .registerConverter(new TimestampNumberConverter())
@@ -133,5 +159,65 @@ public class CustomConverterTest {
         writeData.setTimestampNumberData(Timestamp.valueOf("2020-12-01 12:12:12"));
         list.add(writeData);
         return list;
+    }
+
+    public static class FieldLevelConverterWriteData {
+        @ExcelProperty(value = "fieldValue", converter = FieldLevelStringConverter.class)
+        private String fieldValue;
+
+        @ExcelProperty("registeredValue")
+        private String registeredValue;
+
+        public String getFieldValue() {
+            return fieldValue;
+        }
+
+        public void setFieldValue(String fieldValue) {
+            this.fieldValue = fieldValue;
+        }
+
+        public String getRegisteredValue() {
+            return registeredValue;
+        }
+
+        public void setRegisteredValue(String registeredValue) {
+            this.registeredValue = registeredValue;
+        }
+    }
+
+    public static class FieldLevelStringConverter implements Converter<String> {
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return String.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return CellDataTypeEnum.STRING;
+        }
+
+        @Override
+        public WriteCellData<?> convertToExcelData(
+                String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+            return new WriteCellData<>("field:" + value);
+        }
+    }
+
+    public static class RegisteredStringConverter implements Converter<String> {
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return String.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return CellDataTypeEnum.STRING;
+        }
+
+        @Override
+        public WriteCellData<?> convertToExcelData(
+                String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+            return new WriteCellData<>("registered:" + value);
+        }
     }
 }

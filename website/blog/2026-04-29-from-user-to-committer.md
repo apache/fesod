@@ -15,10 +15,9 @@ From starting out as an everyday user to submitting my first bug fix, and eventu
 
 ## My First Encounter with Apache Fesod
 
-As a Java developer, I used to be a heavy user of EasyExcel. It greatly simplified the complexity of handling Excel files in our daily development.
-When it was announced that EasyExcel would no longer be updated, I, like many other developers, felt a deep sense of disappointment. However, a turning point quickly emerged: the original author announced a reboot of the project under the name FastExcel, and shortly after, announced its donation to the Apache Software Foundation. It officially entered the incubator and was renamed **Apache Fesod (Incubating)**.
+In my work as a Java developer, I frequently encountered the need to process complex Excel files. It was while searching for an efficient solution to this challenge that I first discovered FastExcel. It quickly became an essential tool, significantly simplifying the complexity of handling Excel data in our daily development.
 
-At that moment, I felt the project's vitality had been completely reignited. It possesses both the **massive influence** accumulated during the EasyExcel era and the **huge, untapped potential** within the Apache open-source ecosystem. This fascinating blend of an "established powerhouse" finding a "new lease on life" deeply drew me in.
+Later on, some exciting news broke: FastExcel was being donated to the Apache Software Foundation, officially entering the incubator and rebranding as **Apache Fesod (Incubating)**. At that moment, I felt the project's vitality had been elevated to a whole new level. It combined the **massive influence and solid user base** established during the FastExcel days with the **huge, untapped potential** of the Apache open-source ecosystem. Seeing such a powerful tool gain a "new lease on life" on a premier open-source platform deeply drew me in.
 
 From there, I started following the community closely. I went from quietly lurking, to participating in Issue discussions, and finally submitting my very first PR ([#668](https://github.com/apache/fesod/pull/668)).
 

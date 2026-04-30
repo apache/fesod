@@ -15,9 +15,9 @@ tags: [opensource, apache, committer, fesod]
 
 ## 初识 Apache Fesod
 
-作为一名 Java 开发者，我曾经是 EasyExcel 的重度用户。在日常开发中，它极大地简化了我们处理 Excel 文件的复杂度。
-当得知 EasyExcel 宣布不再更新时，我和许多开发者一样，内心觉得十分惋惜。然而，转机很快出现，原作者宣布重启项目并命名为 FastExcel，紧接着更是宣布将其捐赠给 Apache 软件基金会，正式进入孵化器并更名为 **Apache Fesod (Incubating)**。
-那一刻，我感觉这个项目的活力被重新点燃了。它既拥有 EasyExcel 时代积累的**庞大影响力**，又展现出了在 Apache 开源土壤中**未被完全开发的巨大潜力**。这种“老牌强者”焕发“新生机”的奇妙结合深深吸引了我。
+作为一名 Java 开发者，我在工作中经常面临处理复杂 Excel 文件的需求。在寻找高效解决方案的过程中，我接触到了 FastExcel。它极大地简化了我在日常开发中处理 Excel 数据的复杂度。
+后来，一个令人振奋的消息传来：FastExcel 宣布将其捐赠给 Apache 软件基金会，正式进入孵化器并更名为 Apache Fesod (Incubating)。那一刻，我感觉这个项目的活力被提升到了一个全新的高度。
+它既拥有 FastExcel 时代积累的庞大用户基础与影响力，又展现出了在 Apache 开源土壤中未被完全开发的巨大潜力。这种优秀的工具在更大的平台上焕发“新生机”的奇妙结合深深吸引了我。
 
 然后，我便开始关注社区的动态，从默默潜水到在 Issues 里参与大家的讨论，再到提交第一个 PR([#668](https://github.com/apache/fesod/pull/668))。
 

@@ -13,7 +13,7 @@ tags: [opensource, apache, committer, fesod]
 
 <!--truncate-->
 
-## 初识 Apache Fesod
+## 初识 Apache Fesod (Incubating)
 
 作为一名 Java 开发者，我在工作中经常面临处理复杂 Excel 文件的需求。在寻找高效解决方案的过程中，我接触到了 FastExcel。它极大地简化了我在日常开发中处理 Excel 数据的复杂度。
 后来，一个令人振奋的消息传来：FastExcel 宣布将其捐赠给 Apache 软件基金会，正式进入孵化器并更名为 Apache Fesod (Incubating)。那一刻，我感觉这个项目的活力被提升到了一个全新的高度。
@@ -33,7 +33,7 @@ tags: [opensource, apache, committer, fesod]
 
 ## 我的收获
 
-在参与 Apache Fesod 的过程中，我深刻体会到：
+在参与 Apache Fesod (Incubating) 的过程中，我深刻体会到：
 
 - **开源不只是写代码还有协作。** Issue、PR、Review、讨论，每一步都需要清晰沟通与耐心。
 - **小贡献也能产生巨大影响。** 一个 typo 修复、一个示例补充，都可能帮助成千上万的用户。
@@ -41,4 +41,4 @@ tags: [opensource, apache, committer, fesod]
 
 ## 结语
 
-成为 Committer 绝不是终点，而是一个全新的起点。它意味着更多的责任和更高的要求。我很期待与社区一起把 Apache Fesod 建设得更好。
+成为 Committer 绝不是终点，而是一个全新的起点。它意味着更多的责任和更高的要求。我很期待与社区一起把 Apache Fesod (Incubating) 建设得更好。

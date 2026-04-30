@@ -13,7 +13,7 @@ From starting out as an everyday user to submitting my first bug fix, and eventu
 
 <!--truncate-->
 
-## My First Encounter with Apache Fesod
+## My First Encounter with Apache Fesod (Incubating)
 
 In my work as a Java developer, I frequently encountered the need to process complex Excel files. It was while searching for an efficient solution to this challenge that I first discovered FastExcel. It quickly became an essential tool, significantly simplifying the complexity of handling Excel data in our daily development.
 
@@ -33,7 +33,7 @@ After the thrill of having my first PR merged, I stopped limiting myself to isol
 
 ## My Takeaways
 
-Throughout my involvement with Apache Fesod, I've come to deeply realize that:
+Throughout my involvement with Apache Fesod (Incubating), I've come to deeply realize that:
 
 - **Open source is about collaboration, not just writing code.** Every single step—Issues, PRs, Code Reviews, and discussions—requires clear communication and patience.
 - **Small contributions can make a massive impact.** Fixing a simple typo or adding a code snippet can potentially help thousands of users.
@@ -41,4 +41,4 @@ Throughout my involvement with Apache Fesod, I've come to deeply realize that:
 
 ## Looking Ahead
 
-Becoming a Committer is by no means the finish line; rather, it is a brand-new starting point. It comes with greater responsibilities and higher expectations. I am incredibly excited to continue working alongside the community to make Apache Fesod even better.
+Becoming a Committer is by no means the finish line; rather, it is a brand-new starting point. It comes with greater responsibilities and higher expectations. I am incredibly excited to continue working alongside the community to make Apache Fesod (Incubating) even better.

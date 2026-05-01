@@ -248,17 +248,21 @@ class WriteHandlerUtilsTest {
 
     @Test
     void test_afterSheetDispose_execution() {
+        SheetWriteHandlerContext context = Mockito.mock(SheetWriteHandlerContext.class);
+        Mockito.when(context.getWriteContext()).thenReturn(writeContext);
         Mockito.when(abstractWriteHolder.getSheetHandlerExecutionChain()).thenReturn(sheetChain);
 
-        Assertions.assertDoesNotThrow(() -> WriteHandlerUtils.afterSheetDispose(writeContext));
+        Assertions.assertDoesNotThrow(() -> WriteHandlerUtils.afterSheetDispose(context));
         Mockito.verify(sheetChain).afterSheetDispose(ArgumentMatchers.any(SheetWriteHandlerContext.class));
     }
 
     @Test
     void test_afterSheetDispose_chain_null() {
+        SheetWriteHandlerContext context = Mockito.mock(SheetWriteHandlerContext.class);
+        Mockito.when(context.getWriteContext()).thenReturn(writeContext);
         Mockito.when(abstractWriteHolder.getSheetHandlerExecutionChain()).thenReturn(null);
 
-        Assertions.assertDoesNotThrow(() -> WriteHandlerUtils.afterSheetDispose(writeContext));
+        Assertions.assertDoesNotThrow(() -> WriteHandlerUtils.afterSheetDispose(context));
     }
 
     @Test

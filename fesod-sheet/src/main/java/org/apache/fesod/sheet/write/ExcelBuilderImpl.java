@@ -32,7 +32,6 @@ import org.apache.fesod.sheet.enums.WriteTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.fesod.sheet.util.WriteHandlerUtils;
 import org.apache.fesod.sheet.write.executor.ExcelWriteAddExecutor;
 import org.apache.fesod.sheet.write.executor.ExcelWriteFillExecutor;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
@@ -120,9 +119,6 @@ public class ExcelBuilderImpl implements ExcelBuilder {
     @Override
     public void finish(boolean onException) {
         if (context != null) {
-            // executes the callback after the current sheet has been fully written.
-            WriteHandlerUtils.afterSheetDispose(context);
-
             context.finish(onException);
         }
     }

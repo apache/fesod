@@ -29,6 +29,8 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,6 +163,46 @@ public class WriteHandlerTest {
         fillSheetWithMultiFills(fillTemplate03, fill03);
     }
 
+    @Test
+    public void t61MultiSheetWrite07() throws Exception {
+        writeMultiSheet(file07);
+    }
+
+    @Test
+    public void t62MultiSheetWrite03() throws Exception {
+        writeMultiSheet(file03);
+    }
+
+    @Test
+    public void t71MultiSheetTableWrite07() throws Exception {
+        writeTableWithMultiSheetAndWrites(file07);
+    }
+
+    @Test
+    public void t72MultiSheetTableWrite03() throws Exception {
+        writeTableWithMultiSheetAndWrites(file03);
+    }
+
+    @Test
+    public void t81MultiSheetFill07() throws Exception {
+        fillMultiSheet(fillTemplate07, file07);
+    }
+
+    @Test
+    public void t82MultiSheetFill03() throws Exception {
+        fillMultiSheet(fillTemplate03, file03);
+    }
+
+    @Test
+    public void t91MultiSheetWithSheetLevelHandler07() throws Exception {
+        writeMultiSheetWithSheetLevelHandler(file07);
+    }
+
+    @Test
+    public void t92MultiSheetWithSheetLevelHandler03() throws Exception {
+        writeMultiSheetWithSheetLevelHandler(file03);
+    }
+
     private void workbookWrite(File file) {
         WriteHandler writeHandler = new WriteHandler();
         FesodSheet.write(file)
@@ -182,7 +224,22 @@ public class WriteHandlerTest {
     }
 
     private void writeSheetWithMultiWrites(File file) {
-        CountingWriteHandler writeHandler = new CountingWriteHandler(1L, 2L);
+        CountingWriteHandler writeHandler = CountingWriteHandler.builder()
+                .withBeforeCellCreate(1L)
+                .withAfterCellCreate(1L)
+                .withAfterCellDataConverted(2L)
+                .withAfterCellDispose(1L)
+                .withBeforeRowCreate(1L)
+                .withAfterRowCreate(1L)
+                .withAfterRowDispose(1L)
+                .withBeforeSheetCreate(1L)
+                .withAfterSheetCreate(1L)
+                .withAfterSheetDispose(1L)
+                .withAfterSheetDisposeSheetNos(Collections.singletonList(0))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
 
         try (ExcelWriter writer =
                 FesodSheet.write(file).head(WriteHandlerData.class).build()) {
@@ -211,7 +268,22 @@ public class WriteHandlerTest {
     }
 
     private void writeTableWithMultiWrites(File file) {
-        CountingWriteHandler writeHandler = new CountingWriteHandler(2L, 2L);
+        CountingWriteHandler writeHandler = CountingWriteHandler.builder()
+                .withBeforeCellCreate(2L)
+                .withAfterCellCreate(2L)
+                .withAfterCellDataConverted(2L)
+                .withAfterCellDispose(2L)
+                .withBeforeRowCreate(2L)
+                .withAfterRowCreate(2L)
+                .withAfterRowDispose(2L)
+                .withBeforeSheetCreate(1L)
+                .withAfterSheetCreate(1L)
+                .withAfterSheetDispose(1L)
+                .withAfterSheetDisposeSheetNos(Collections.singletonList(0))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
 
         try (ExcelWriter writer =
                 FesodSheet.write(file).head(WriteHandlerData.class).build()) {
@@ -230,8 +302,74 @@ public class WriteHandlerTest {
         writeHandler.afterAll();
     }
 
+    private void writeTableWithMultiSheetAndWrites(File file) {
+        CountingWriteHandler writeHandler = CountingWriteHandler.builder()
+                .withBeforeCellCreate(4L)
+                .withAfterCellCreate(4L)
+                .withAfterCellDataConverted(4L)
+                .withAfterCellDispose(4L)
+                .withBeforeRowCreate(4L)
+                .withAfterRowCreate(4L)
+                .withAfterRowDispose(4L)
+                .withBeforeSheetCreate(2L)
+                .withAfterSheetCreate(2L)
+                .withAfterSheetDispose(2L)
+                .withAfterSheetDisposeSheetNos(Arrays.asList(0, 1))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
+
+        try (ExcelWriter writer = FesodSheet.write(file)
+                .head(WriteHandlerData.class)
+                .registerWriteHandler(writeHandler)
+                .build()) {
+
+            WriteSheet writeSheet1 =
+                    FesodSheet.writerSheet(0).needHead(Boolean.FALSE).build();
+
+            writer.write(
+                    data(),
+                    writeSheet1,
+                    FesodSheet.writerTable(0).needHead(Boolean.TRUE).build());
+            writer.write(
+                    data(),
+                    writeSheet1,
+                    FesodSheet.writerTable(1).needHead(Boolean.TRUE).build());
+
+            WriteSheet writeSheet2 =
+                    FesodSheet.writerSheet(1).needHead(Boolean.FALSE).build();
+
+            writer.write(
+                    data(),
+                    writeSheet2,
+                    FesodSheet.writerTable(0).needHead(Boolean.TRUE).build());
+            writer.write(
+                    data(),
+                    writeSheet2,
+                    FesodSheet.writerTable(1).needHead(Boolean.TRUE).build());
+        }
+
+        writeHandler.afterAll();
+    }
+
     private void fillSheetWithMultiFills(File template, File file) {
-        CountingWriteHandler writeHandler = new CountingWriteHandler(0L, 4L);
+        CountingWriteHandler writeHandler = CountingWriteHandler.builder()
+                .withBeforeCellCreate(0L)
+                .withAfterCellCreate(0L)
+                .withAfterCellDataConverted(4L)
+                .withAfterCellDispose(0L)
+                .withBeforeRowCreate(0L)
+                .withAfterRowCreate(0L)
+                .withAfterRowDispose(0L)
+                .withBeforeSheetCreate(1L)
+                .withAfterSheetCreate(1L)
+                .withAfterSheetDispose(1L)
+                .withAfterSheetDisposeSheetNos(Collections.singletonList(0))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
 
         try (ExcelWriter writer = FesodSheet.write(file).withTemplate(template).build()) {
 
@@ -249,6 +387,140 @@ public class WriteHandlerTest {
         }
 
         writeHandler.afterAll();
+    }
+
+    private void writeMultiSheet(File file) {
+        CountingWriteHandler writeHandler = CountingWriteHandler.builder()
+                .withBeforeCellCreate(2L)
+                .withAfterCellCreate(2L)
+                .withAfterCellDataConverted(2L)
+                .withAfterCellDispose(2L)
+                .withBeforeRowCreate(2L)
+                .withAfterRowCreate(2L)
+                .withAfterRowDispose(2L)
+                .withBeforeSheetCreate(2L)
+                .withAfterSheetCreate(2L)
+                .withAfterSheetDispose(2L)
+                .withAfterSheetDisposeSheetNos(Arrays.asList(0, 1))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
+
+        try (ExcelWriter writer = FesodSheet.write(file)
+                .head(WriteHandlerData.class)
+                .registerWriteHandler(writeHandler)
+                .build()) {
+
+            WriteSheet writeSheet1 =
+                    FesodSheet.writerSheet(0).needHead(Boolean.TRUE).build();
+            writer.write(data(), writeSheet1);
+
+            WriteSheet writeSheet2 =
+                    FesodSheet.writerSheet(1).needHead(Boolean.TRUE).build();
+            writer.write(data(), writeSheet2);
+        }
+
+        writeHandler.afterAll();
+    }
+
+    private void fillMultiSheet(File template, File file) {
+        CountingWriteHandler writeHandler = CountingWriteHandler.builder()
+                .withBeforeCellCreate(0L)
+                .withAfterCellCreate(0L)
+                .withAfterCellDataConverted(8L)
+                .withAfterCellDispose(0L)
+                .withBeforeRowCreate(0L)
+                .withAfterRowCreate(0L)
+                .withAfterRowDispose(0L)
+                .withBeforeSheetCreate(2L)
+                .withAfterSheetCreate(2L)
+                .withAfterSheetDispose(2L)
+                .withAfterSheetDisposeSheetNos(Arrays.asList(0, 1))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
+
+        try (ExcelWriter writer = FesodSheet.write(file)
+                .withTemplate(template)
+                .registerWriteHandler(writeHandler)
+                .build()) {
+
+            WriteSheet writeSheet0 = FesodSheet.writerSheet(0).build();
+            Map<String, String> data1 = new HashMap<>();
+            data1.put("name", "Tom");
+            Map<String, String> data2 = new HashMap<>();
+            data2.put("code", "Code1");
+            writer.fill(data1, writeSheet0);
+            writer.fill(data2, writeSheet0);
+
+            WriteSheet writeSheet1 = FesodSheet.writerSheet(1).build();
+            Map<String, String> data3 = new HashMap<>();
+            data3.put("name", "Jerry");
+            Map<String, String> data4 = new HashMap<>();
+            data4.put("code", "Code2");
+            writer.fill(data3, writeSheet1);
+            writer.fill(data4, writeSheet1);
+        }
+
+        writeHandler.afterAll();
+    }
+
+    private void writeMultiSheetWithSheetLevelHandler(File file) {
+        CountingWriteHandler writeHandler1 = CountingWriteHandler.builder()
+                .withBeforeCellCreate(1L)
+                .withAfterCellCreate(1L)
+                .withAfterCellDataConverted(1L)
+                .withAfterCellDispose(1L)
+                .withBeforeRowCreate(1L)
+                .withAfterRowCreate(1L)
+                .withAfterRowDispose(1L)
+                .withBeforeSheetCreate(1L)
+                .withAfterSheetCreate(1L)
+                .withAfterSheetDispose(1L)
+                .withAfterSheetDisposeSheetNos(Collections.singletonList(0))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                // The data has not been fully written yet
+                .withAfterWorkbookDispose(0L)
+                .build();
+
+        CountingWriteHandler writeHandler2 = CountingWriteHandler.builder()
+                .withBeforeCellCreate(1L)
+                .withAfterCellCreate(1L)
+                .withAfterCellDataConverted(1L)
+                .withAfterCellDispose(1L)
+                .withBeforeRowCreate(1L)
+                .withAfterRowCreate(1L)
+                .withAfterRowDispose(1L)
+                .withBeforeSheetCreate(1L)
+                .withAfterSheetCreate(1L)
+                .withAfterSheetDispose(1L)
+                .withAfterSheetDisposeSheetNos(Collections.singletonList(1))
+                .withBeforeWorkbookCreate(1L)
+                .withAfterWorkbookCreate(1L)
+                .withAfterWorkbookDispose(1L)
+                .build();
+
+        try (ExcelWriter writer =
+                FesodSheet.write(file).head(WriteHandlerData.class).build()) {
+
+            WriteSheet writeSheet1 = FesodSheet.writerSheet(0)
+                    .needHead(Boolean.TRUE)
+                    .registerWriteHandler(writeHandler1)
+                    .build();
+            writer.write(data(), writeSheet1);
+
+            WriteSheet writeSheet2 = FesodSheet.writerSheet(1)
+                    .needHead(Boolean.TRUE)
+                    .registerWriteHandler(writeHandler2)
+                    .build();
+            writer.write(data(), writeSheet2);
+        }
+
+        writeHandler1.afterAll();
+        writeHandler2.afterAll();
     }
 
     private List<WriteHandlerData> data() {

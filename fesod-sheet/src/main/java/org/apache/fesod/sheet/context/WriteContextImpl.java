@@ -28,9 +28,13 @@ package org.apache.fesod.sheet.context;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
@@ -488,6 +492,36 @@ public class WriteContextImpl implements WriteContext {
             return;
         }
         finished = true;
+
+        // executes the callback after all sheets has been fully written.
+        Map<Integer, WriteSheetHolder> writeSheetHolderMap = writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
+        if (MapUtils.isNotEmpty(writeSheetHolderMap)) {
+            if (MapUtils.size(writeSheetHolderMap) == 1) {
+                SheetWriteHandlerContext sheetWriteHandlerContext =
+                        WriteHandlerUtils.createSheetWriteHandlerContext(this);
+                WriteHandlerUtils.afterSheetDispose(sheetWriteHandlerContext);
+            } else {
+                List<Integer> sheetNos = writeSheetHolderMap.keySet().stream()
+                        .filter(Objects::nonNull)
+                        .sorted()
+                        .collect(Collectors.toList());
+
+                for (Integer sheetNo : sheetNos) {
+                    WriteSheetHolder holder = writeSheetHolderMap.get(sheetNo);
+                    if (Objects.nonNull(holder)) {
+                        // switch context
+                        this.writeSheetHolder = holder;
+                        this.writeTableHolder = null;
+                        this.currentWriteHolder = holder;
+
+                        SheetWriteHandlerContext sheetWriteHandlerContext =
+                                WriteHandlerUtils.createSheetWriteHandlerContext(this);
+                        WriteHandlerUtils.afterSheetDispose(sheetWriteHandlerContext);
+                    }
+                }
+            }
+        }
+
         WriteHandlerUtils.afterWorkbookDispose(writeWorkbookHolder.getWorkbookWriteHandlerContext());
         if (writeWorkbookHolder == null) {
             return;

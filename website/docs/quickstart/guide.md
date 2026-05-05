@@ -55,7 +55,7 @@ Apache Fesod(Incubating) uses the following key dependencies:
 
 For detailed update logs, refer
 to [Details of version updates](https://github.com/apache/fesod/releases). You can also find all
-available versions in the [Maven Central Repository](https://mvnrepository.com/artifact/org.apache.fesod/fesod).
+available versions in the [Maven Central Repository](https://mvnrepository.com/artifact/org.apache.fesod/fesod-sheet).
 
 ## Maven
 

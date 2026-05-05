@@ -33,7 +33,7 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 ## 版本更新
 
 您可以在 [版本发布](https://github.com/apache/fesod/releases)
-中查询到具体的版本更新细节。您也可以在 [Maven 中心仓库](https://mvnrepository.com/artifact/org.apache.fesod/fesod)
+中查询到具体的版本更新细节。您也可以在 [Maven 中心仓库](https://mvnrepository.com/artifact/org.apache.fesod/fesod-sheet)
 中查询到所有的版本。
 
 ## Maven

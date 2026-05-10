@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.temp.issue462;
+package org.apache.fesod.sheet.fill;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
  */
 public class EscapedPlaceholderTest {
 
-    private static final String TEMPLATE_PATH = TestFileUtil.getPath() + "temp/issue462" + File.separator;
+    private static final String SUBDIR = "issue462";
 
     @BeforeAll
     public static void createTemplates() throws IOException {
@@ -62,7 +62,7 @@ public class EscapedPlaceholderTest {
     }
 
     private static void createTemplate(String fileName, String content) throws IOException {
-        File templateFile = new File(TEMPLATE_PATH + fileName);
+        File templateFile = TestFileUtil.createNewFile(SUBDIR + File.separator + fileName);
         try (Workbook workbook = new XSSFWorkbook();
                 FileOutputStream fos = new FileOutputStream(templateFile)) {
             Sheet sheet = workbook.createSheet("Sheet1");
@@ -79,25 +79,21 @@ public class EscapedPlaceholderTest {
      */
     @Test
     public void testEscapedSuffixPlaceholder() {
-        String templateFileName = TEMPLATE_PATH + "escaped_suffix.xlsx";
-        String outputFileName = TEMPLATE_PATH + "output_escaped_suffix.xlsx";
+        File template = TestFileUtil.readFile(SUBDIR + File.separator + "escaped_suffix.xlsx");
+        File output = TestFileUtil.createNewFile(SUBDIR + File.separator + "output_escaped_suffix.xlsx");
 
         Map<String, Object> data = new HashMap<>();
         data.put("foo", "replaced_value");
 
         // This should not throw an exception
-        Assertions.assertDoesNotThrow(() -> {
-            FesodSheet.write(new File(outputFileName))
-                    .withTemplate(new File(templateFileName))
-                    .sheet()
-                    .doFill(data);
-        });
+        Assertions.assertDoesNotThrow(() -> FesodSheet.write(output)
+                .withTemplate(template)
+                .sheet()
+                .doFill(data));
 
         // Verify output file exists and can be read
-        List<Object> result = FesodSheet.read(new File(outputFileName))
-                .sheet()
-                .headRowNumber(0)
-                .doReadSync();
+        List<Object> result =
+                FesodSheet.read(output).sheet().headRowNumber(0).doReadSync();
         Assertions.assertFalse(result.isEmpty());
     }
 
@@ -106,25 +102,21 @@ public class EscapedPlaceholderTest {
      */
     @Test
     public void testEscapedPrefixPlaceholder() {
-        String templateFileName = TEMPLATE_PATH + "escaped_prefix.xlsx";
-        String outputFileName = TEMPLATE_PATH + "output_escaped_prefix.xlsx";
+        File template = TestFileUtil.readFile(SUBDIR + File.separator + "escaped_prefix.xlsx");
+        File output = TestFileUtil.createNewFile(SUBDIR + File.separator + "output_escaped_prefix.xlsx");
 
         Map<String, Object> data = new HashMap<>();
         data.put("foo", "replaced_value");
 
         // This should not throw an exception
-        Assertions.assertDoesNotThrow(() -> {
-            FesodSheet.write(new File(outputFileName))
-                    .withTemplate(new File(templateFileName))
-                    .sheet()
-                    .doFill(data);
-        });
+        Assertions.assertDoesNotThrow(() -> FesodSheet.write(output)
+                .withTemplate(template)
+                .sheet()
+                .doFill(data));
 
         // Verify the output
-        List<Object> result = FesodSheet.read(new File(outputFileName))
-                .sheet()
-                .headRowNumber(0)
-                .doReadSync();
+        List<Object> result =
+                FesodSheet.read(output).sheet().headRowNumber(0).doReadSync();
         Assertions.assertFalse(result.isEmpty());
     }
 
@@ -133,22 +125,17 @@ public class EscapedPlaceholderTest {
      */
     @Test
     public void testNormalPlaceholder() {
-        String templateFileName = TEMPLATE_PATH + "normal.xlsx";
-        String outputFileName = TEMPLATE_PATH + "output_normal.xlsx";
+        File template = TestFileUtil.readFile(SUBDIR + File.separator + "normal.xlsx");
+        File output = TestFileUtil.createNewFile(SUBDIR + File.separator + "output_normal.xlsx");
 
         Map<String, Object> data = new HashMap<>();
         data.put("foo", "replaced_value");
 
-        FesodSheet.write(new File(outputFileName))
-                .withTemplate(new File(templateFileName))
-                .sheet()
-                .doFill(data);
+        FesodSheet.write(output).withTemplate(template).sheet().doFill(data);
 
         // Verify the placeholder was replaced
-        List<Object> result = FesodSheet.read(new File(outputFileName))
-                .sheet()
-                .headRowNumber(0)
-                .doReadSync();
+        List<Object> result =
+                FesodSheet.read(output).sheet().headRowNumber(0).doReadSync();
         Assertions.assertFalse(result.isEmpty());
 
         @SuppressWarnings("unchecked")
@@ -161,18 +148,16 @@ public class EscapedPlaceholderTest {
      */
     @Test
     public void testMixedContentWithEscapedPlaceholder() {
-        String templateFileName = TEMPLATE_PATH + "mixed.xlsx";
-        String outputFileName = TEMPLATE_PATH + "output_mixed.xlsx";
+        File template = TestFileUtil.readFile(SUBDIR + File.separator + "mixed.xlsx");
+        File output = TestFileUtil.createNewFile(SUBDIR + File.separator + "output_mixed.xlsx");
 
         Map<String, Object> data = new HashMap<>();
         data.put("foo", "replaced_value");
 
         // This should not throw an exception
-        Assertions.assertDoesNotThrow(() -> {
-            FesodSheet.write(new File(outputFileName))
-                    .withTemplate(new File(templateFileName))
-                    .sheet()
-                    .doFill(data);
-        });
+        Assertions.assertDoesNotThrow(() -> FesodSheet.write(output)
+                .withTemplate(template)
+                .sheet()
+                .doFill(data));
     }
 }

@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +44,11 @@ import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadWorkbookHolder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
+import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
+import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -193,6 +197,28 @@ public class CsvFormatTest {
                 .setQuoteMode(QuoteMode.ALL)
                 .build();
         writeWithCommonCsv(csvFile, csvFormat, dataList(10, STRING_PREFIX));
+    }
+
+    @Test
+    public void testPhysicalNumberOfCells() {
+        csvFile = TestFileUtil.createNewFile(CSV_BASE + "csv-physical-cell-count.csv");
+        List<List<String>> head = Arrays.asList(Arrays.asList("No"), Arrays.asList("Name"), Arrays.asList("Age"));
+        List<List<String>> data = Arrays.asList(Arrays.asList("1", "Jackson", "20"));
+
+        FesodSheet.write(csvFile)
+                .head(head)
+                .registerWriteHandler(new WorkbookWriteHandler() {
+                    @Override
+                    public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
+                        Row row = context.getWriteWorkbookHolder()
+                                .getWorkbook()
+                                .getSheetAt(0)
+                                .getRow(0);
+                        Assertions.assertEquals(3, row.getPhysicalNumberOfCells());
+                    }
+                })
+                .csv()
+                .doWrite(data);
     }
 
     private void doTest(

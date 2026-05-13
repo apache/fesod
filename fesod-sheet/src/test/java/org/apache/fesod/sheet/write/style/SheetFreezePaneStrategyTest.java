@@ -91,7 +91,7 @@ class SheetFreezePaneStrategyTest {
         WriteWorkbookHolder workbookHolder = Mockito.mock(WriteWorkbookHolder.class);
         WriteSheetHolder sheetHolder = Mockito.mock(WriteSheetHolder.class);
         Sheet sheet = Mockito.mock(Sheet.class);
-        org.mockito.Mockito.when(sheetHolder.getSheet()).thenReturn(sheet);
+        Mockito.when(sheetHolder.getSheet()).thenReturn(sheet);
 
         strategy.afterSheetCreate(workbookHolder, sheetHolder);
 
@@ -105,7 +105,7 @@ class SheetFreezePaneStrategyTest {
         WriteWorkbookHolder workbookHolder = Mockito.mock(WriteWorkbookHolder.class);
         WriteSheetHolder sheetHolder = Mockito.mock(WriteSheetHolder.class);
         Sheet sheet = Mockito.mock(Sheet.class);
-        org.mockito.Mockito.when(sheetHolder.getSheet()).thenReturn(sheet);
+        Mockito.when(sheetHolder.getSheet()).thenReturn(sheet);
 
         strategy.afterSheetCreate(workbookHolder, sheetHolder);
 

@@ -78,7 +78,7 @@ class SheetFreezePaneTest {
 
     @Getter
     @Setter
-    @FreezePane(colSplit = 0, rowSplit = 1)
+    @FreezePane(rowSplit = 1)
     static class FreezeFirstRowOnlyData implements FreezePaneModel {
         @ExcelProperty("Str 1")
         private String str1;
@@ -89,7 +89,7 @@ class SheetFreezePaneTest {
 
     @Getter
     @Setter
-    @FreezePane(colSplit = 1, rowSplit = 0)
+    @FreezePane(colSplit = 1)
     static class FreezeFirstColOnlyData implements FreezePaneModel {
         @ExcelProperty("Str 1")
         private String str1;

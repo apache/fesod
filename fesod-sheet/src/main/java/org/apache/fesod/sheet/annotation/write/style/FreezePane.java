@@ -36,12 +36,12 @@ public @interface FreezePane {
     /**
      * Horizontal position of split.
      */
-    int colSplit();
+    int colSplit() default 0;
 
     /**
      * Vertical position of split.
      */
-    int rowSplit();
+    int rowSplit() default 0;
 
     /**
      * Left column visible in right pane. By default, it's equal to colSplit.

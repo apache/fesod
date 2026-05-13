@@ -220,13 +220,22 @@ class SheetFreezePaneTest {
 
     @Test
     void should_applyFreezePane_whenRegisteredViaWriteHandler() throws Exception {
-        runApplyFreezePaneStrategy(file07);
-        runApplyFreezePaneStrategy(file03);
+        runApplyFreezePaneStrategy(file07, false);
+        runApplyFreezePaneStrategy(file03, false);
+        runApplyFreezePaneStrategy(file07, true);
+        runApplyFreezePaneStrategy(file03, true);
     }
 
-    private void runApplyFreezePaneStrategy(File file) throws Exception {
+    private void runApplyFreezePaneStrategy(File file, boolean useSimplify) throws Exception {
+        SheetFreezePaneStrategy strategy;
+        if (useSimplify) {
+            strategy = new SheetFreezePaneStrategy(1, 1);
+        } else {
+            strategy = new SheetFreezePaneStrategy(1, 1, 1, 1);
+        }
+
         FesodSheet.write(file, NoFreezePaneData.class)
-                .registerWriteHandler(new SheetFreezePaneStrategy(1, 1, 1, 1))
+                .registerWriteHandler(strategy)
                 .sheet()
                 .doWrite(buildData(NoFreezePaneData.class, 5));
         assertFreezePane(file, 1, 1, 1, 1);

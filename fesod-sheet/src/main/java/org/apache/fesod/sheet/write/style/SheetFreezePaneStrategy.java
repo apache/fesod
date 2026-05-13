@@ -54,6 +54,10 @@ public class SheetFreezePaneStrategy implements SheetWriteHandler {
         this(property.getColSplit(), property.getRowSplit(), property.getLeftmostColumn(), property.getTopRow());
     }
 
+    public SheetFreezePaneStrategy(int colSplit, int rowSplit) {
+        this(colSplit, rowSplit, colSplit, rowSplit);
+    }
+
     public SheetFreezePaneStrategy(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
         ValidateUtils.isTrue(colSplit >= 0, "colSplit must be >= 0");
         ValidateUtils.isTrue(rowSplit >= 0, "rowSplit must be >= 0");

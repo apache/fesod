@@ -52,6 +52,7 @@ class SheetFreezePaneStrategyTest {
     @Test
     void constructor_acceptsAllZeros() {
         Assertions.assertDoesNotThrow(() -> new SheetFreezePaneStrategy(0, 0, 0, 0));
+        Assertions.assertDoesNotThrow(() -> new SheetFreezePaneStrategy(0, 0));
     }
 
     @Test
@@ -86,7 +87,7 @@ class SheetFreezePaneStrategyTest {
 
     @Test
     void afterSheetCreate_withZeroValues() {
-        SheetFreezePaneStrategy strategy = new SheetFreezePaneStrategy(0, 0, 0, 0);
+        SheetFreezePaneStrategy strategy = new SheetFreezePaneStrategy(0, 0);
 
         WriteWorkbookHolder workbookHolder = Mockito.mock(WriteWorkbookHolder.class);
         WriteSheetHolder sheetHolder = Mockito.mock(WriteSheetHolder.class);

@@ -17,29 +17,26 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.temp.bug;
+package org.apache.fesod.sheet.converters.url;
 
-import lombok.EqualsAndHashCode;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
-import lombok.Setter;
-import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
+ * URL scheme policy for URL image fetching.
  */
 @Getter
-@Setter
-@EqualsAndHashCode
-public class HeadType {
+public enum SchemePolicy {
+    HTTP(Collections.singleton("http")),
+    HTTPS(Collections.singleton("https")),
+    HTTP_OR_HTTPS(new HashSet<>(Arrays.asList("http", "https")));
 
-    /**
-     * 任务id
-     */
-    @ExcelProperty("任务ID")
-    private Integer id;
+    private final Set<String> schemes;
 
-    @ExcelProperty(value = "备注1")
-    private String firstRemark;
-
-    @ExcelProperty(value = "备注2")
-    private String secRemark;
+    SchemePolicy(Set<String> schemes) {
+        this.schemes = Collections.unmodifiableSet(schemes);
+    }
 }

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.temp.data.HeadType;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 
 /**

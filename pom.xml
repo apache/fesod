@@ -35,7 +35,7 @@
 
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-parent</artifactId>
-    <version>2.0.1-incubating</version>
+    <version>2.0.2-incubating</version>
 
     <packaging>pom</packaging>
     <name>fesod-parent</name>
@@ -81,7 +81,7 @@
     </modules>
 
     <properties>
-        <revision>2.0.1-incubating</revision>
+        <revision>2.0.2-incubating</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>

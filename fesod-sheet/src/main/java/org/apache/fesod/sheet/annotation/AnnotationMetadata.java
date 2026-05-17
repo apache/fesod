@@ -17,36 +17,32 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
+package org.apache.fesod.sheet.annotation;
 
-package org.apache.fesod.sheet.annotation.write.style;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
- * Set the width of the table
- *
- *
+ * A wrapper class for resolved annotation instance.
  */
-@Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface ColumnWidth {
+@EqualsAndHashCode
+@Getter
+public class AnnotationMetadata {
 
-    /**
-     * Column width
-     * <p>
-     * -1 means the default column width is used
-     *
-     * @return Column width
-     */
-    int value() default -1;
+    private final AnnotationAttributes attributes;
+    private final List<AliasFor> aliases;
+
+    public AnnotationMetadata(AnnotationAttributes attributes, List<AliasFor> aliases) {
+        this.attributes = attributes;
+        this.aliases = aliases;
+    }
+
+    public void addTo(List<AliasFor> aliases) {
+        aliases.addAll(this.aliases);
+    }
+
+    public void setDistance(int distance) {
+        attributes.setDistance(distance);
+    }
 }

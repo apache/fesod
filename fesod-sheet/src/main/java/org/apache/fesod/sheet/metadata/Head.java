@@ -31,8 +31,10 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.annotation.AnnotationMap;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.metadata.property.ColumnWidthProperty;
+import org.apache.fesod.sheet.metadata.property.ExcelHeadProperty;
 import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.LoopMergeProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
@@ -89,11 +91,17 @@ public class Head {
      */
     private FontProperty headFontProperty;
 
+    /**
+     * Custom class field-level annotation attribute key-value pairs. (Used in conjunction with {@link ExcelHeadProperty#headClazz})
+     */
+    private AnnotationMap annotationMap;
+
     public Head(
             Integer columnIndex,
             Field field,
             String fieldName,
             List<String> headNameList,
+            AnnotationMap annotationMap,
             Boolean forceIndex,
             Boolean forceName) {
         this.columnIndex = columnIndex;
@@ -109,6 +117,7 @@ public class Head {
                 }
             }
         }
+        this.annotationMap = annotationMap;
         this.forceIndex = forceIndex;
         this.forceName = forceName;
     }

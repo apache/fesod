@@ -35,6 +35,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.StringUtils;
+import org.apache.fesod.sheet.annotation.AnnotationMap;
+import org.apache.fesod.sheet.annotation.AnnotationMetadataReader;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.FieldCache;
@@ -61,6 +63,11 @@ public class ExcelHeadProperty {
      * The types of head
      */
     private HeadKindEnum headKind;
+
+    /**
+     * Custom class-level annotation attribute key-value pairs. (Used in conjunction with {@link ExcelHeadProperty#headClazz})
+     */
+    private AnnotationMap headClazzAnnotationMap;
     /**
      * The number of rows in the line with the most rows
      */
@@ -69,6 +76,8 @@ public class ExcelHeadProperty {
      * Configuration header information
      */
     private Map<Integer, Head> headMap;
+
+    private AnnotationMetadataReader metadataReader = new AnnotationMetadataReader();
 
     public ExcelHeadProperty(ConfigurationHolder configurationHolder, Class<?> headClazz, List<List<String>> head) {
         this.headClazz = headClazz;
@@ -83,7 +92,16 @@ public class ExcelHeadProperty {
                         continue;
                     }
                 }
-                headMap.put(headIndex, new Head(headIndex, null, null, head.get(i), Boolean.FALSE, Boolean.TRUE));
+                headMap.put(
+                        headIndex,
+                        new Head(
+                                headIndex,
+                                null,
+                                null,
+                                head.get(i),
+                                AnnotationMap.builder().build(),
+                                Boolean.FALSE,
+                                Boolean.TRUE));
                 headIndex++;
             }
             headKind = HeadKindEnum.STRING;
@@ -121,6 +139,7 @@ public class ExcelHeadProperty {
         if (headClazz == null) {
             return;
         }
+        headClazzAnnotationMap = metadataReader.read(headClazz);
         FieldCache fieldCache = ClassUtils.declaredFields(headClazz, configurationHolder);
 
         for (Map.Entry<Integer, FieldWrapper> entry :
@@ -155,7 +174,15 @@ public class ExcelHeadProperty {
                 Collections.addAll(tmpHeadList, field.getHeads());
             }
         }
-        Head head = new Head(index, field.getField(), field.getFieldName(), tmpHeadList, forceIndex, !notForceName);
+        AnnotationMap fieldAnnotationMap = metadataReader.read(field.getField());
+        Head head = new Head(
+                index,
+                field.getField(),
+                field.getFieldName(),
+                tmpHeadList,
+                fieldAnnotationMap,
+                forceIndex,
+                !notForceName);
         headMap.put(index, head);
     }
 

@@ -61,7 +61,7 @@ class SheetFreezePaneStrategyTest {
     }
 
     @Test
-    void constructor_fromProperty_copiesAllFields() {
+    void constructor_fromProperty_shouldNotThrowException() {
         SheetFreezePaneProperty property = new SheetFreezePaneProperty();
         property.setColSplit(1);
         property.setRowSplit(2);

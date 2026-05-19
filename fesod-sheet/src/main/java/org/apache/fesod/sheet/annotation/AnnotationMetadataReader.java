@@ -31,15 +31,22 @@ public class AnnotationMetadataReader extends HierarchicalAnnotationScanner {
     private final Map<AnnotatedElement, AnnotationMap> elementAnnotation;
 
     public AnnotationMetadataReader() {
+        this(Boolean.TRUE);
+    }
+
+    public AnnotationMetadataReader(Boolean enableMetaMarked) {
         this(
                 new DefaultAnnotationMetadataResolver(),
+                enableMetaMarked,
                 ConcurrentReferenceHashMap.<AnnotatedElement, AnnotationMap>builder()
                         .get());
     }
 
     public AnnotationMetadataReader(
-            AnnotationMetadataResolver resolver, Map<AnnotatedElement, AnnotationMap> elementAnnotation) {
-        super(resolver);
+            AnnotationMetadataResolver resolver,
+            Boolean enableMetaMarked,
+            Map<AnnotatedElement, AnnotationMap> elementAnnotation) {
+        super(resolver, enableMetaMarked);
         this.elementAnnotation = elementAnnotation;
     }
 

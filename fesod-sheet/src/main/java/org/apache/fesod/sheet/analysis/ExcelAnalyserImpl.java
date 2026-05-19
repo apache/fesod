@@ -49,6 +49,7 @@ import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadWorkbookHolder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.util.AnnotatedClassUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
@@ -298,6 +299,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
         NumberDataFormatterUtils.removeThreadLocalCache();
         DateUtils.removeThreadLocalCache();
         ClassUtils.removeThreadLocalCache();
+        AnnotatedClassUtils.removeThreadLocalCache();
     }
 
     /**

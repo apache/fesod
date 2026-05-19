@@ -89,4 +89,9 @@ public class BasicParameter {
      * Automatic strip includes sheet name and content
      */
     private Boolean autoStrip;
+    /**
+     * Whether to enable fully composable annotations support. Only effective when either {@link BasicParameter#head} or
+     * {@link BasicParameter#clazz} is set. Default is false.
+     */
+    private Boolean enableMetaMarked;
 }

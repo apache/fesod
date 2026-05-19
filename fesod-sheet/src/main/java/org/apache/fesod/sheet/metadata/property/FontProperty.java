@@ -29,8 +29,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.common.util.StringUtils;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
+import org.apache.fesod.sheet.enums.BooleanEnum;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.ss.usermodel.Font;
@@ -102,6 +104,56 @@ public class FontProperty {
      */
     private Boolean bold;
 
+    public static FontProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(HeadFontStyle.class)
+                && !attributes.isAnnotationTypeEqual(ContentFontStyle.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "FontProperty only supports HeadFontStyle, ContentFontStyle annotations"
+                            + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+
+        FontProperty fontProperty = new FontProperty();
+        String fontName = attributes.getRequiredAttribute("fontName", String.class);
+        if (StringUtils.isNotBlank(fontName)) {
+            fontProperty.setFontName(fontName);
+        }
+        Short fontHeightInPoints = attributes.getRequiredAttribute("fontHeightInPoints", Short.class);
+        if (fontHeightInPoints >= 0) {
+            fontProperty.setFontHeightInPoints(fontHeightInPoints);
+        }
+        BooleanEnum italic = attributes.getRequiredAttribute("italic", BooleanEnum.class);
+        fontProperty.setItalic(italic.getBooleanValue());
+        BooleanEnum strikeout = attributes.getRequiredAttribute("strikeout", BooleanEnum.class);
+        fontProperty.setStrikeout(strikeout.getBooleanValue());
+        Short color = attributes.getRequiredAttribute("color", Short.class);
+        if (color >= 0) {
+            fontProperty.setColor(color);
+        }
+        Short typeOffset = attributes.getRequiredAttribute("typeOffset", Short.class);
+        if (typeOffset >= 0) {
+            fontProperty.setTypeOffset(typeOffset);
+        }
+        Byte underline = attributes.getRequiredAttribute("underline", Byte.class);
+        if (underline >= 0) {
+            fontProperty.setUnderline(underline);
+        }
+        Integer charset = attributes.getRequiredAttribute("charset", Integer.class);
+        if (charset >= 0) {
+            fontProperty.setCharset(charset);
+        }
+        BooleanEnum bold = attributes.getRequiredAttribute("bold", BooleanEnum.class);
+        fontProperty.setBold(bold.getBooleanValue());
+        return fontProperty;
+    }
+
+    /**
+     * @see FontProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static FontProperty build(HeadFontStyle headFontStyle) {
         if (headFontStyle == null) {
             return null;
@@ -131,6 +183,10 @@ public class FontProperty {
         return styleProperty;
     }
 
+    /**
+     * @see FontProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static FontProperty build(ContentFontStyle contentFontStyle) {
         if (contentFontStyle == null) {
             return null;

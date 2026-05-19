@@ -55,6 +55,10 @@ public class AnnotationAttributes extends LinkedHashMap<String, Object> {
         this.distance = 0;
     }
 
+    public boolean isAnnotationTypeEqual(Class<? extends Annotation> annotationType) {
+        return this.annotationType.equals(annotationType);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getRequiredAttribute(String attrName, Class<T> type) {
         Validate.notBlank(attrName, "attributeName must not be null or blank");

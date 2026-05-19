@@ -34,14 +34,14 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.data.DemoData;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
-import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
-import org.apache.fesod.sheet.util.ClassUtils;
+import org.apache.fesod.sheet.util.AnnotatedClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
@@ -74,9 +74,10 @@ public class CacheDataTest {
 
     @Test
     public void t01ReadAndWrite() throws Exception {
-        Field field = FieldUtils.getField(ClassUtils.class, "FIELD_THREAD_LOCAL", true);
-        ThreadLocal<Map<Class<?>, FieldCache>> fieldThreadLocal =
-                (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(ClassUtils.class.newInstance());
+        Field field = FieldUtils.getField(AnnotatedClassUtils.class, "FIELD_THREAD_LOCAL", true);
+        ThreadLocal<Map<Class<?>, AnnotatedFieldDescriptor>> fieldThreadLocal =
+                (ThreadLocal<Map<Class<?>, AnnotatedFieldDescriptor>>)
+                        field.get(AnnotatedClassUtils.class.newInstance());
         Assertions.assertNull(fieldThreadLocal.get());
         FesodSheet.write(file07, CacheData.class).sheet().doWrite(data());
         FesodSheet.read(file07, CacheData.class, new PageReadListener<DemoData>(dataList -> {

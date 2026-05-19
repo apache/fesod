@@ -28,8 +28,14 @@ package org.apache.fesod.sheet.metadata.property;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
+import org.apache.fesod.sheet.enums.BooleanEnum;
+import org.apache.fesod.sheet.enums.poi.BorderStyleEnum;
+import org.apache.fesod.sheet.enums.poi.FillPatternTypeEnum;
+import org.apache.fesod.sheet.enums.poi.HorizontalAlignmentEnum;
+import org.apache.fesod.sheet.enums.poi.VerticalAlignmentEnum;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.write.metadata.style.WriteFont;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -166,6 +172,90 @@ public class StyleProperty {
      */
     private Boolean shrinkToFit;
 
+    public static StyleProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(HeadStyle.class)
+                && !attributes.isAnnotationTypeEqual(ContentStyle.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "StyleProperty only supports HeadStyle, ContentStyle annotations, but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+
+        StyleProperty styleProperty = new StyleProperty();
+        Short dataFormat = attributes.getRequiredAttribute("dataFormat", Short.class);
+        if (dataFormat >= 0) {
+            DataFormatData dataFormatData = new DataFormatData();
+            dataFormatData.setIndex(dataFormat);
+            styleProperty.setDataFormatData(dataFormatData);
+        }
+        BooleanEnum hidden = attributes.getRequiredAttribute("hidden", BooleanEnum.class);
+        styleProperty.setHidden(hidden.getBooleanValue());
+        BooleanEnum locked = attributes.getRequiredAttribute("locked", BooleanEnum.class);
+        styleProperty.setLocked(locked.getBooleanValue());
+        BooleanEnum quotePrefix = attributes.getRequiredAttribute("quotePrefix", BooleanEnum.class);
+        styleProperty.setQuotePrefix(quotePrefix.getBooleanValue());
+        HorizontalAlignmentEnum horizontalAlignment =
+                attributes.getRequiredAttribute("horizontalAlignment", HorizontalAlignmentEnum.class);
+        styleProperty.setHorizontalAlignment(horizontalAlignment.getPoiHorizontalAlignment());
+        BooleanEnum wrapped = attributes.getRequiredAttribute("wrapped", BooleanEnum.class);
+        styleProperty.setWrapped(wrapped.getBooleanValue());
+        VerticalAlignmentEnum verticalAlignment =
+                attributes.getRequiredAttribute("verticalAlignment", VerticalAlignmentEnum.class);
+        styleProperty.setVerticalAlignment(verticalAlignment.getPoiVerticalAlignmentEnum());
+        Short rotation = attributes.getRequiredAttribute("rotation", Short.class);
+        if (rotation >= 0) {
+            styleProperty.setRotation(rotation);
+        }
+        Short indent = attributes.getRequiredAttribute("indent", Short.class);
+        if (indent >= 0) {
+            styleProperty.setIndent(indent);
+        }
+        BorderStyleEnum borderLeft = attributes.getRequiredAttribute("borderLeft", BorderStyleEnum.class);
+        styleProperty.setBorderLeft(borderLeft.getPoiBorderStyle());
+        BorderStyleEnum borderRight = attributes.getRequiredAttribute("borderRight", BorderStyleEnum.class);
+        styleProperty.setBorderRight(borderRight.getPoiBorderStyle());
+        BorderStyleEnum borderTop = attributes.getRequiredAttribute("borderTop", BorderStyleEnum.class);
+        styleProperty.setBorderTop(borderTop.getPoiBorderStyle());
+        BorderStyleEnum borderBottom = attributes.getRequiredAttribute("borderBottom", BorderStyleEnum.class);
+        styleProperty.setBorderBottom(borderBottom.getPoiBorderStyle());
+        Short leftBorderColor = attributes.getRequiredAttribute("leftBorderColor", Short.class);
+        if (leftBorderColor >= 0) {
+            styleProperty.setLeftBorderColor(leftBorderColor);
+        }
+        Short rightBorderColor = attributes.getRequiredAttribute("rightBorderColor", Short.class);
+        if (rightBorderColor >= 0) {
+            styleProperty.setRightBorderColor(rightBorderColor);
+        }
+        Short topBorderColor = attributes.getRequiredAttribute("topBorderColor", Short.class);
+        if (topBorderColor >= 0) {
+            styleProperty.setTopBorderColor(topBorderColor);
+        }
+        Short bottomBorderColor = attributes.getRequiredAttribute("bottomBorderColor", Short.class);
+        if (bottomBorderColor >= 0) {
+            styleProperty.setBottomBorderColor(bottomBorderColor);
+        }
+        FillPatternTypeEnum fillPatternType =
+                attributes.getRequiredAttribute("fillPatternType", FillPatternTypeEnum.class);
+        styleProperty.setFillPatternType(fillPatternType.getPoiFillPatternType());
+        Short fillBackgroundColor = attributes.getRequiredAttribute("fillBackgroundColor", Short.class);
+        if (fillBackgroundColor >= 0) {
+            styleProperty.setFillBackgroundColor(fillBackgroundColor);
+        }
+        Short fillForegroundColor = attributes.getRequiredAttribute("fillForegroundColor", Short.class);
+        if (fillForegroundColor >= 0) {
+            styleProperty.setFillForegroundColor(fillForegroundColor);
+        }
+        BooleanEnum shrinkToFit = attributes.getRequiredAttribute("shrinkToFit", BooleanEnum.class);
+        styleProperty.setShrinkToFit(shrinkToFit.getBooleanValue());
+        return styleProperty;
+    }
+
+    /**
+     * @see StyleProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static StyleProperty build(HeadStyle headStyle) {
         if (headStyle == null) {
             return null;
@@ -215,6 +305,10 @@ public class StyleProperty {
         return styleProperty;
     }
 
+    /**
+     * @see StyleProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static StyleProperty build(ContentStyle contentStyle) {
         if (contentStyle == null) {
             return null;

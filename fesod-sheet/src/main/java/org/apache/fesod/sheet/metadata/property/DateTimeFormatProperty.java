@@ -29,7 +29,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.common.util.BooleanUtils;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
+import org.apache.fesod.sheet.enums.BooleanEnum;
 
 /**
  * Configuration from annotations
@@ -48,6 +50,26 @@ public class DateTimeFormatProperty {
         this.use1904windowing = use1904windowing;
     }
 
+    public static DateTimeFormatProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(DateTimeFormat.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "DateTimeFormatProperty only support DateTimeFormat annotation" + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+        return new DateTimeFormatProperty(
+                attributes.getRequiredAttribute("value", String.class),
+                BooleanUtils.isTrue(attributes
+                        .getRequiredAttribute("use1904windowing", BooleanEnum.class)
+                        .getBooleanValue()));
+    }
+
+    /**
+     * @see DateTimeFormatProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static DateTimeFormatProperty build(DateTimeFormat dateTimeFormat) {
         if (dateTimeFormat == null) {
             return null;

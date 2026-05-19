@@ -25,16 +25,18 @@
 
 package org.apache.fesod.sheet.metadata;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.AnnotationMap;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.metadata.property.ColumnWidthProperty;
-import org.apache.fesod.sheet.metadata.property.ExcelHeadProperty;
 import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.LoopMergeProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
@@ -55,11 +57,7 @@ public class Head {
     /**
      * It only has values when passed in {@link Sheet#setClazz(Class)} and {@link Table#setClazz(Class)}
      */
-    private Field field;
-    /**
-     * It only has values when passed in {@link Sheet#setClazz(Class)} and {@link Table#setClazz(Class)}
-     */
-    private String fieldName;
+    private AnnotatedFieldDescriptor fieldDescriptor;
     /**
      * Head name
      */
@@ -91,11 +89,6 @@ public class Head {
      */
     private FontProperty headFontProperty;
 
-    /**
-     * Custom class field-level annotation attribute key-value pairs. (Used in conjunction with {@link ExcelHeadProperty#headClazz})
-     */
-    private AnnotationMap annotationMap;
-
     public Head(
             Integer columnIndex,
             Field field,
@@ -104,9 +97,22 @@ public class Head {
             AnnotationMap annotationMap,
             Boolean forceIndex,
             Boolean forceName) {
+        this(
+                columnIndex,
+                new AnnotatedFieldDescriptor(field, fieldName, annotationMap),
+                headNameList,
+                forceIndex,
+                forceName);
+    }
+
+    public Head(
+            Integer columnIndex,
+            AnnotatedFieldDescriptor fieldDescriptor,
+            List<String> headNameList,
+            Boolean forceIndex,
+            Boolean forceName) {
         this.columnIndex = columnIndex;
-        this.field = field;
-        this.fieldName = fieldName;
+        this.fieldDescriptor = fieldDescriptor;
         if (headNameList == null) {
             this.headNameList = new ArrayList<>();
         } else {
@@ -117,8 +123,32 @@ public class Head {
                 }
             }
         }
-        this.annotationMap = annotationMap;
         this.forceIndex = forceIndex;
         this.forceName = forceName;
+    }
+
+    public AnnotationAttributes findAnnotation(Class<? extends Annotation> type) {
+        if (fieldDescriptor != null && fieldDescriptor.hasAnnotation(type)) {
+            return fieldDescriptor.getAnnotation(type);
+        }
+        return null;
+    }
+
+    public boolean hasFieldDescriptor() {
+        return fieldDescriptor != null;
+    }
+
+    public Field getField() {
+        if (fieldDescriptor != null) {
+            return fieldDescriptor.getAnnotatedElement();
+        }
+        return null;
+    }
+
+    public String getFieldName() {
+        if (fieldDescriptor != null) {
+            return fieldDescriptor.getFieldName();
+        }
+        return null;
     }
 }

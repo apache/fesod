@@ -17,50 +17,32 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.metadata;
 
-import java.lang.reflect.Field;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
-import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * filed wrapper
- *
- * @see AnnotatedFieldDescriptor
+ * field cache
  */
-@Deprecated
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-@NoArgsConstructor
-public class FieldWrapper {
+public class CachedFields {
 
     /**
-     * field
+     * A field cache that has been sorted by a class.
+     * It will exclude fields that are not needed.
      */
-    private Field field;
+    private Map<Integer, AnnotatedFieldDescriptor> sortedFieldMap;
 
     /**
-     * The field name matching cglib
+     * Fields using the index attribute
      */
-    private String fieldName;
-
-    /**
-     * The name of the sheet header.
-     *
-     * @see ExcelProperty
-     */
-    private String[] heads;
+    private Map<Integer, AnnotatedFieldDescriptor> indexFieldMap;
 }

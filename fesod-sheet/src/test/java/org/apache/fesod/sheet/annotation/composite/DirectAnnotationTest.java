@@ -23,6 +23,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
+import org.apache.fesod.sheet.annotation.AnnotatedTypeDescriptor;
 import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.AnnotationMap;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
@@ -168,7 +170,7 @@ class DirectAnnotationTest {
 
             Head head = property.getHeadMap().get(0);
             Assertions.assertNotNull(head);
-            Assertions.assertNull(head.getAnnotationMap());
+            Assertions.assertNull(head.getFieldDescriptor().getAnnotationMap());
         }
 
         @Test
@@ -184,7 +186,7 @@ class DirectAnnotationTest {
 
             Head head = property.getHeadMap().get(0);
             Assertions.assertNotNull(head);
-            AnnotationMap fieldAnnotationMap = head.getAnnotationMap();
+            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(fieldAnnotationMap);
             Assertions.assertFalse(fieldAnnotationMap.isEmpty());
             Assertions.assertEquals(1, fieldAnnotationMap.size());
@@ -208,7 +210,7 @@ class DirectAnnotationTest {
 
             Head head = property.getHeadMap().get(0);
             Assertions.assertNotNull(head);
-            AnnotationMap fieldAnnotationMap = head.getAnnotationMap();
+            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(fieldAnnotationMap);
             Assertions.assertFalse(fieldAnnotationMap.isEmpty());
             Assertions.assertEquals(3, fieldAnnotationMap.size());
@@ -234,7 +236,7 @@ class DirectAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getAnnotationMap();
+            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(annotationMap);
             Assertions.assertTrue(annotationMap.hasAnnotation(NumberFormat.class));
 
@@ -255,7 +257,7 @@ class DirectAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getAnnotationMap();
+            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(annotationMap);
             Assertions.assertTrue(annotationMap.hasAnnotation(ContentFontStyle.class));
 
@@ -275,7 +277,7 @@ class DirectAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getAnnotationMap();
+            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(annotationMap);
             Assertions.assertTrue(annotationMap.hasAnnotation(ContentLoopMerge.class));
 
@@ -294,7 +296,7 @@ class DirectAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getAnnotationMap();
+            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(annotationMap);
             Assertions.assertTrue(annotationMap.hasAnnotation(ContentStyle.class));
 
@@ -313,13 +315,90 @@ class DirectAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getAnnotationMap();
+            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(annotationMap);
             Assertions.assertTrue(annotationMap.hasAnnotation(HeadFontStyle.class));
 
             AnnotationAttributes attrs = annotationMap.getAttributes(HeadFontStyle.class);
             Assertions.assertEquals("Calibri", attrs.getRequiredAttribute("fontName", String.class));
             Assertions.assertEquals((short) 10, attrs.getRequiredAttribute("color", Short.class));
+        }
+
+        @Test
+        void shouldPopulateFieldDescriptor_withCorrectFieldNameAndElement_whenFieldAnnotated() {
+            // given - ExcelModelWithFieldProperty has @ExcelProperty("Name") on "name" field
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithFieldProperty.class, null);
+
+            // then
+            Head head = property.getHeadMap().get(0);
+            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
+            Assertions.assertNotNull(fieldDescriptor);
+            Assertions.assertEquals("name", fieldDescriptor.getFieldName());
+            Assertions.assertNotNull(fieldDescriptor.getAnnotatedElement());
+            Assertions.assertEquals(
+                    "name", fieldDescriptor.getAnnotatedElement().getName());
+        }
+
+        @Test
+        void shouldPopulateFieldDescriptor_withCorrectFieldNameAndElement_whenPlainField() {
+            // given - ExcelModelWithPlainField has a plain "name" field without annotations
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithPlainField.class, null);
+
+            // then
+            Head head = property.getHeadMap().get(0);
+            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
+            Assertions.assertNotNull(fieldDescriptor);
+            Assertions.assertEquals("name", fieldDescriptor.getFieldName());
+            Assertions.assertNotNull(fieldDescriptor.getAnnotatedElement());
+            Assertions.assertEquals(
+                    "name", fieldDescriptor.getAnnotatedElement().getName());
+            Assertions.assertEquals(0, fieldDescriptor.getAnnotationCount());
+        }
+
+        @Test
+        void shouldDelegateHasAnnotationAndCount_throughFieldDescriptor() {
+            // given - ExcelModelWithMultipleFieldAnnotations has @ExcelProperty, @DateTimeFormat, @ColumnWidth
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithMultipleFieldAnnotations.class, null);
+
+            // then
+            Head head = property.getHeadMap().get(0);
+            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
+            Assertions.assertNotNull(fieldDescriptor);
+            Assertions.assertEquals(3, fieldDescriptor.getAnnotationCount());
+            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ExcelProperty.class));
+            Assertions.assertTrue(fieldDescriptor.hasAnnotation(DateTimeFormat.class));
+            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ColumnWidth.class));
+            Assertions.assertFalse(fieldDescriptor.hasAnnotation(NumberFormat.class));
+        }
+
+        @Test
+        void shouldDelegateGetAnnotation_throughFieldDescriptor() {
+            // given - ExcelModelWithNumberFormat has @ExcelProperty("Amount") + @NumberFormat("#,##0.00")
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithNumberFormat.class, null);
+
+            // then
+            Head head = property.getHeadMap().get(0);
+            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
+            Assertions.assertNotNull(fieldDescriptor);
+
+            AnnotationAttributes numberAttrs = fieldDescriptor.getAnnotation(NumberFormat.class);
+            Assertions.assertNotNull(numberAttrs);
+            Assertions.assertEquals("#,##0.00", numberAttrs.getRequiredAttribute("value", String.class));
+
+            AnnotationAttributes missingAttrs = fieldDescriptor.getAnnotation(DateTimeFormat.class);
+            Assertions.assertNull(missingAttrs);
         }
     }
 
@@ -410,7 +489,7 @@ class DirectAnnotationTest {
             ExcelHeadProperty property = new ExcelHeadProperty(configurationHolder, null, head);
 
             // then
-            Assertions.assertNull(property.getHeadClazzAnnotationMap());
+            Assertions.assertNull(property.getTypeDescriptor().getAnnotationMap());
         }
 
         @Test
@@ -422,7 +501,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithoutAnnotations.class, null);
 
             // then
-            Assertions.assertNull(property.getHeadClazzAnnotationMap());
+            Assertions.assertNull(property.getTypeDescriptor().getAnnotationMap());
         }
 
         @Test
@@ -434,7 +513,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithClassColumnWidth.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertFalse(classAnnotationMap.isEmpty());
             Assertions.assertEquals(1, classAnnotationMap.size());
@@ -454,7 +533,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithMultipleClassAnnotations.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertFalse(classAnnotationMap.isEmpty());
             Assertions.assertEquals(2, classAnnotationMap.size());
@@ -477,7 +556,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithContentRowHeight.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(ContentRowHeight.class));
 
@@ -494,7 +573,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithHeadRowHeight.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadRowHeight.class));
 
@@ -512,7 +591,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithOnceAbsoluteMerge.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(OnceAbsoluteMerge.class));
 
@@ -521,6 +600,75 @@ class DirectAnnotationTest {
             Assertions.assertEquals(1, attrs.getRequiredAttribute("lastRowIndex", Integer.class));
             Assertions.assertEquals(0, attrs.getRequiredAttribute("firstColumnIndex", Integer.class));
             Assertions.assertEquals(2, attrs.getRequiredAttribute("lastColumnIndex", Integer.class));
+        }
+
+        @Test
+        void shouldSetEmptyTypeDescriptor_whenNoHeadClazzProvided() {
+            // given
+            List<List<String>> head = new ArrayList<>();
+            head.add(Arrays.asList("Name"));
+
+            // when
+            ExcelHeadProperty property = new ExcelHeadProperty(configurationHolder, null, head);
+
+            // then
+            Assertions.assertSame(AnnotatedTypeDescriptor.EMPTY, property.getTypeDescriptor());
+            Assertions.assertNull(property.getTypeDescriptor().getAnnotatedElement());
+            Assertions.assertNull(property.getTypeDescriptor().getAnnotationMap());
+            Assertions.assertEquals(0, property.getTypeDescriptor().getAnnotationCount());
+            Assertions.assertFalse(property.getTypeDescriptor().hasAnnotation(ColumnWidth.class));
+        }
+
+        @Test
+        void shouldPopulateTypeDescriptor_withCorrectAnnotatedElement() {
+            // given - ExcelModelWithClassColumnWidth has @ColumnWidth(20)
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithClassColumnWidth.class, null);
+
+            // then
+            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
+            Assertions.assertNotNull(typeDescriptor);
+            Assertions.assertSame(ExcelModelWithClassColumnWidth.class, typeDescriptor.getAnnotatedElement());
+        }
+
+        @Test
+        void shouldDelegateHasAnnotationAndCount_throughTypeDescriptor() {
+            // given - ExcelModelWithMultipleClassAnnotations has @ColumnWidth(15) and
+            // @HeadStyle(fillForegroundColor=10)
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithMultipleClassAnnotations.class, null);
+
+            // then
+            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
+            Assertions.assertNotNull(typeDescriptor);
+            Assertions.assertEquals(2, typeDescriptor.getAnnotationCount());
+            Assertions.assertTrue(typeDescriptor.hasAnnotation(ColumnWidth.class));
+            Assertions.assertTrue(typeDescriptor.hasAnnotation(HeadStyle.class));
+            Assertions.assertFalse(typeDescriptor.hasAnnotation(ContentRowHeight.class));
+        }
+
+        @Test
+        void shouldDelegateGetAnnotation_throughTypeDescriptor() {
+            // given - ExcelModelWithClassColumnWidth has @ColumnWidth(20)
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithClassColumnWidth.class, null);
+
+            // then
+            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
+            Assertions.assertNotNull(typeDescriptor);
+
+            AnnotationAttributes widthAttrs = typeDescriptor.getAnnotation(ColumnWidth.class);
+            Assertions.assertNotNull(widthAttrs);
+            Assertions.assertEquals(20, widthAttrs.getRequiredAttribute("value", Integer.class));
+
+            AnnotationAttributes missingAttrs = typeDescriptor.getAnnotation(HeadStyle.class);
+            Assertions.assertNull(missingAttrs);
         }
     }
 
@@ -538,7 +686,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedAllAnnotations.class, null);
 
             // then - class-level annotationMap covers 8 annotations
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertEquals(8, classAnnotationMap.size());
 
@@ -593,7 +741,7 @@ class DirectAnnotationTest {
 
             // then - field-level annotationMap covers 4 annotations
             Head head = property.getHeadMap().get(0);
-            AnnotationMap fieldAnnotationMap = head.getAnnotationMap();
+            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(fieldAnnotationMap);
             Assertions.assertEquals(4, fieldAnnotationMap.size());
 
@@ -631,7 +779,7 @@ class DirectAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedClassStyleAndFieldFormat.class, null);
 
             // then - class-level annotationMap
-            AnnotationMap classAnnotationMap = property.getHeadClazzAnnotationMap();
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
             Assertions.assertEquals(2, classAnnotationMap.size());
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(ColumnWidth.class));
@@ -641,7 +789,7 @@ class DirectAnnotationTest {
             Assertions.assertEquals(2, property.getHeadMap().size());
 
             Head amountHead = property.getHeadMap().get(0);
-            AnnotationMap amountMap = amountHead.getAnnotationMap();
+            AnnotationMap amountMap = amountHead.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(amountMap);
             Assertions.assertEquals(2, amountMap.size());
             Assertions.assertTrue(amountMap.hasAnnotation(ExcelProperty.class));
@@ -651,7 +799,7 @@ class DirectAnnotationTest {
                     amountMap.getAttributes(NumberFormat.class).getRequiredAttribute("value", String.class));
 
             Head dateHead = property.getHeadMap().get(1);
-            AnnotationMap dateMap = dateHead.getAnnotationMap();
+            AnnotationMap dateMap = dateHead.getFieldDescriptor().getAnnotationMap();
             Assertions.assertNotNull(dateMap);
             Assertions.assertEquals(2, dateMap.size());
             Assertions.assertTrue(dateMap.hasAnnotation(ExcelProperty.class));
@@ -659,6 +807,37 @@ class DirectAnnotationTest {
             Assertions.assertEquals(
                     "yyyy-MM-dd",
                     dateMap.getAttributes(DateTimeFormat.class).getRequiredAttribute("value", String.class));
+        }
+
+        @Test
+        void shouldPopulateDescriptorProperties_atBothLevels() {
+            // given - class has @ColumnWidth(20) and @HeadStyle(fillForegroundColor=10)
+            //         field 0 "amount" has @ExcelProperty("Amount") + @NumberFormat("#,##0.00")
+            //         field 1 "date" has @ExcelProperty("Date") + @DateTimeFormat("yyyy-MM-dd")
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelMixedClassStyleAndFieldFormat.class, null);
+
+            // then - type descriptor
+            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
+            Assertions.assertNotNull(typeDescriptor);
+            Assertions.assertSame(ExcelModelMixedClassStyleAndFieldFormat.class, typeDescriptor.getAnnotatedElement());
+            Assertions.assertEquals(2, typeDescriptor.getAnnotationCount());
+
+            // then - field descriptors have correct names and elements
+            Head amountHead = property.getHeadMap().get(0);
+            AnnotatedFieldDescriptor amountDescriptor = amountHead.getFieldDescriptor();
+            Assertions.assertEquals("amount", amountDescriptor.getFieldName());
+            Assertions.assertEquals(
+                    "amount", amountDescriptor.getAnnotatedElement().getName());
+            Assertions.assertEquals(2, amountDescriptor.getAnnotationCount());
+
+            Head dateHead = property.getHeadMap().get(1);
+            AnnotatedFieldDescriptor dateDescriptor = dateHead.getFieldDescriptor();
+            Assertions.assertEquals("date", dateDescriptor.getFieldName());
+            Assertions.assertEquals("date", dateDescriptor.getAnnotatedElement().getName());
+            Assertions.assertEquals(2, dateDescriptor.getAnnotationCount());
         }
     }
 }

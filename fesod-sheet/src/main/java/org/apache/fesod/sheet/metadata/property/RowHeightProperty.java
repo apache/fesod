@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 
@@ -40,6 +41,29 @@ public class RowHeightProperty {
         this.height = height;
     }
 
+    public static RowHeightProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(HeadRowHeight.class)
+                && !attributes.isAnnotationTypeEqual(ContentRowHeight.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "RowHeightProperty only supports HeadRowHeight, ContentRowHeight"
+                            + " annotations, but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+
+        Short rowHeight = attributes.getRequiredAttribute("value", Short.class);
+        if (rowHeight < 0) {
+            return null;
+        }
+        return new RowHeightProperty(rowHeight);
+    }
+
+    /**
+     * @see RowHeightProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static RowHeightProperty build(HeadRowHeight headRowHeight) {
         if (headRowHeight == null || headRowHeight.value() < 0) {
             return null;
@@ -47,6 +71,10 @@ public class RowHeightProperty {
         return new RowHeightProperty(headRowHeight.value());
     }
 
+    /**
+     * @see RowHeightProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static RowHeightProperty build(ContentRowHeight contentRowHeight) {
         if (contentRowHeight == null || contentRowHeight.value() < 0) {
             return null;

@@ -77,9 +77,16 @@ public class GlobalConfiguration {
      */
     private Boolean autoStrip;
 
+    /**
+     * Whether to enable fully composable annotations support. Only effective when either {@link BasicParameter#head} or
+     * {@link BasicParameter#clazz} is set. Default is false.
+     */
+    private Boolean enableMetaMarked;
+
     public GlobalConfiguration() {
         this.autoTrim = Boolean.TRUE;
         this.autoStrip = Boolean.FALSE;
+        this.enableMetaMarked = Boolean.FALSE;
         this.use1904windowing = Boolean.FALSE;
         this.locale = Locale.getDefault();
         this.useScientificFormat = Boolean.FALSE;

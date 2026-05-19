@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.List;
 import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,19 @@ class AnnotationMetadataReaderTest {
         int value() default 25;
     }
 
+    /**
+     * Method name ({@code width}) differs from the aliased target attribute ({@code value}),
+     * exercising the {@code customAttribute} path in {@link AliasFor}.
+     */
+    @FesodMarked
+    @ColumnWidth(35)
+    @Target({ElementType.FIELD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface ComposableColumnWidthRenamed {
+        @FesodMarked.AliasFor(annotation = ColumnWidth.class, attribute = "value")
+        int width() default 25;
+    }
+
     // ---- Annotated elements ----
 
     @ColumnWidth(20)
@@ -52,6 +66,9 @@ class AnnotationMetadataReaderTest {
 
     @ComposableColumnWidth(15)
     static String composableField;
+
+    @ComposableColumnWidthRenamed(width = 18)
+    static String renamedAliasField;
 
     static String plainField;
 
@@ -154,6 +171,205 @@ class AnnotationMetadataReaderTest {
 
         // then
         Assertions.assertNull(result);
+    }
+
+    // ---- enableMetaMarked = false tests ----
+
+    @Test
+    void shouldReadInnerAnnotation_whenMetaMarkedDisabled() {
+        // given
+        AnnotationMetadataReader disabledReader = new AnnotationMetadataReader(Boolean.FALSE);
+        Field field = getField("columnWidthField");
+
+        // when
+        AnnotationMap result = disabledReader.read(field);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.hasAnnotation(ColumnWidth.class));
+        AnnotationAttributes attrs = result.getAttributes(ColumnWidth.class);
+        Integer actualValue = Assertions.assertDoesNotThrow(() -> attrs.getRequiredAttribute("value", Integer.class));
+        Assertions.assertEquals(20, actualValue);
+    }
+
+    @Test
+    void shouldNotResolveComposableAnnotation_whenMetaMarkedDisabled() {
+        // given
+        AnnotationMetadataReader disabledReader = new AnnotationMetadataReader(Boolean.FALSE);
+        Field field = getField("composableField");
+
+        // when
+        AnnotationMap result = disabledReader.read(field);
+
+        // then
+        // ComposableColumnWidth is not an inner annotation and meta-marked scanning is disabled,
+        // so neither ComposableColumnWidth nor its meta-annotation ColumnWidth should appear.
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.hasAnnotation(ComposableColumnWidth.class));
+        Assertions.assertFalse(result.hasAnnotation(ColumnWidth.class));
+    }
+
+    @Test
+    void shouldReturnNull_fromUnannotatedField_whenMetaMarkedDisabled() {
+        // given
+        AnnotationMetadataReader disabledReader = new AnnotationMetadataReader(Boolean.FALSE);
+        Field field = getField("plainField");
+
+        // when
+        AnnotationMap result = disabledReader.read(field);
+
+        // then
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    void shouldReturnSameInstance_whenReadTwiceWithMetaMarkedDisabled() {
+        // given
+        AnnotationMetadataReader disabledReader = new AnnotationMetadataReader(Boolean.FALSE);
+        Field field = getField("columnWidthField");
+
+        // when
+        AnnotationMap first = disabledReader.read(field);
+        AnnotationMap second = disabledReader.read(field);
+
+        // then
+        Assertions.assertSame(first, second);
+    }
+
+    @Test
+    void shouldResolveComposableAnnotation_whenMetaMarkedEnabled() {
+        // given
+        AnnotationMetadataReader enabledReader = new AnnotationMetadataReader(Boolean.TRUE);
+        Field field = getField("composableField");
+
+        // when
+        AnnotationMap result = enabledReader.read(field);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.hasAnnotation(ComposableColumnWidth.class));
+        Assertions.assertTrue(result.hasAnnotation(ColumnWidth.class));
+        // AliasFor should synthesize: ComposableColumnWidth.value(15) -> ColumnWidth.value
+        AnnotationAttributes columnWidthAttrs = result.getAttributes(ColumnWidth.class);
+        Integer value =
+                Assertions.assertDoesNotThrow(() -> columnWidthAttrs.getRequiredAttribute("value", Integer.class));
+        Assertions.assertEquals(15, value);
+    }
+
+    // ---- Renamed @AliasFor (customAttribute) tests ----
+
+    @Test
+    void shouldSynthesizeAlias_whenMethodNameDiffersFromTargetAttribute() {
+        // given: @ComposableColumnWidthRenamed uses width() → @AliasFor(attribute="value"),
+        //        so the method name "width" differs from the target attribute "value"
+        Field field = getField("renamedAliasField");
+
+        // when
+        AnnotationMap result = reader.read(field);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.hasAnnotation(ColumnWidth.class));
+        // AliasFor should synthesize: ComposableColumnWidthRenamed.width(18) → ColumnWidth.value(18)
+        AnnotationAttributes attrs = result.getAttributes(ColumnWidth.class);
+        Integer actualValue = Assertions.assertDoesNotThrow(() -> attrs.getRequiredAttribute("value", Integer.class));
+        Assertions.assertEquals(18, actualValue);
+    }
+
+    @Test
+    void shouldContainComposableAnnotation_withRenamedAliasInAnnotationMap() {
+        // given
+        Field field = getField("renamedAliasField");
+
+        // when
+        AnnotationMap result = reader.read(field);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.hasAnnotation(ComposableColumnWidthRenamed.class));
+        AnnotationAttributes attrs = result.getAttributes(ComposableColumnWidthRenamed.class);
+        Integer actualWidth = Assertions.assertDoesNotThrow(() -> attrs.getRequiredAttribute("width", Integer.class));
+        Assertions.assertEquals(18, actualWidth);
+    }
+
+    @Test
+    void shouldResolveRenamedAlias_whenMetaMarkedEnabled() {
+        // given
+        AnnotationMetadataReader enabledReader = new AnnotationMetadataReader(Boolean.TRUE);
+        Field field = getField("renamedAliasField");
+
+        // when
+        AnnotationMap result = enabledReader.read(field);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.hasAnnotation(ComposableColumnWidthRenamed.class));
+        Assertions.assertTrue(result.hasAnnotation(ColumnWidth.class));
+        AnnotationAttributes columnWidthAttrs = result.getAttributes(ColumnWidth.class);
+        Integer value =
+                Assertions.assertDoesNotThrow(() -> columnWidthAttrs.getRequiredAttribute("value", Integer.class));
+        Assertions.assertEquals(18, value);
+    }
+
+    @Test
+    void shouldNotResolveRenamedAlias_whenMetaMarkedDisabled() {
+        // given
+        AnnotationMetadataReader disabledReader = new AnnotationMetadataReader(Boolean.FALSE);
+        Field field = getField("renamedAliasField");
+
+        // when
+        AnnotationMap result = disabledReader.read(field);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.hasAnnotation(ComposableColumnWidthRenamed.class));
+        Assertions.assertFalse(result.hasAnnotation(ColumnWidth.class));
+    }
+
+    @Test
+    void shouldPopulateCustomAttribute_inAliasFor_whenMethodNameDiffersFromTarget() {
+        // given: resolve the annotation directly via DefaultAnnotationMetadataResolver
+        //        to inspect the AliasFor value object
+        DefaultAnnotationMetadataResolver resolver = new DefaultAnnotationMetadataResolver();
+        ComposableColumnWidthRenamed ann =
+                getField("renamedAliasField").getAnnotation(ComposableColumnWidthRenamed.class);
+
+        // when
+        AnnotationMetadata metadata = resolver.resolve(ann);
+
+        // then
+        List<AliasFor> aliases = metadata.getAliases();
+        Assertions.assertEquals(1, aliases.size());
+
+        AliasFor alias = aliases.get(0);
+        Assertions.assertEquals(ComposableColumnWidthRenamed.class, alias.getMarked());
+        Assertions.assertEquals(ColumnWidth.class, alias.getTarget());
+        // customAttribute is the source method name "width" (different from target "value")
+        Assertions.assertEquals("width", alias.getCustomAttribute());
+        // attribute is the target attribute name "value"
+        Assertions.assertEquals("value", alias.getAttribute());
+        Assertions.assertEquals(18, alias.getValue());
+    }
+
+    @Test
+    void shouldSetCustomAttributeEqualToAttribute_whenMethodNameMatchesTarget() {
+        // given: the existing ComposableColumnWidth uses value() → @AliasFor(attribute="value"),
+        //        same-name case, so customAttribute should equal attribute
+        DefaultAnnotationMetadataResolver resolver = new DefaultAnnotationMetadataResolver();
+        ComposableColumnWidth ann = getField("composableField").getAnnotation(ComposableColumnWidth.class);
+
+        // when
+        AnnotationMetadata metadata = resolver.resolve(ann);
+
+        // then
+        List<AliasFor> aliases = metadata.getAliases();
+        Assertions.assertEquals(1, aliases.size());
+
+        AliasFor alias = aliases.get(0);
+        // Same-name case: customAttribute == attribute == "value"
+        Assertions.assertEquals("value", alias.getCustomAttribute());
+        Assertions.assertEquals("value", alias.getAttribute());
+        Assertions.assertEquals(15, alias.getValue());
     }
 
     // ---- Caching tests ----

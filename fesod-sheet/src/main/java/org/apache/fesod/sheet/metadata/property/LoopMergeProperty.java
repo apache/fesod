@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 
 /**
@@ -47,6 +48,24 @@ public class LoopMergeProperty {
         this.columnExtend = columnExtend;
     }
 
+    public static LoopMergeProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(ContentLoopMerge.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "LoopMergeProperty only support ContentLoopMerge annotation" + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+        Integer eachRow = attributes.getRequiredAttribute("eachRow", Integer.class);
+        Integer columnExtend = attributes.getRequiredAttribute("columnExtend", Integer.class);
+        return new LoopMergeProperty(eachRow, columnExtend);
+    }
+
+    /**
+     * @see LoopMergeProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static LoopMergeProperty build(ContentLoopMerge contentLoopMerge) {
         if (contentLoopMerge == null) {
             return null;

@@ -17,40 +17,16 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
-package org.apache.fesod.sheet.metadata;
-
-import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+package org.apache.fesod.sheet.annotation;
 
 /**
- * filed cache
- *
- * @see CachedFields
+ * A class-level annotation descriptor.
  */
-@Deprecated
-@Getter
-@Setter
-@EqualsAndHashCode
-@AllArgsConstructor
-public class FieldCache {
+public class AnnotatedTypeDescriptor extends AbstractAnnotatedElementDescriptor<Class<?>> {
 
-    /**
-     * A field cache that has been sorted by a class.
-     * It will exclude fields that are not needed.
-     */
-    private Map<Integer, FieldWrapper> sortedFieldMap;
+    public static final AnnotatedTypeDescriptor EMPTY = new AnnotatedTypeDescriptor(null, null);
 
-    /**
-     * Fields using the index attribute
-     */
-    private Map<Integer, FieldWrapper> indexFieldMap;
+    public AnnotatedTypeDescriptor(Class<?> annotatedElement, AnnotationMap annotationMap) {
+        super(annotatedElement, annotationMap);
+    }
 }

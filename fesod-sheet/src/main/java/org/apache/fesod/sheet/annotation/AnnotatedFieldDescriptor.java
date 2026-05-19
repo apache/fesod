@@ -17,50 +17,25 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
-package org.apache.fesod.sheet.metadata;
+package org.apache.fesod.sheet.annotation;
 
 import java.lang.reflect.Field;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
-import org.apache.fesod.sheet.annotation.ExcelProperty;
+import org.apache.commons.lang3.Validate;
 
 /**
- * filed wrapper
- *
- * @see AnnotatedFieldDescriptor
+ * A field-level annotation descriptor.
  */
-@Deprecated
-@Getter
-@Setter
-@EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
-public class FieldWrapper {
-
-    /**
-     * field
-     */
-    private Field field;
+public class AnnotatedFieldDescriptor extends AbstractAnnotatedElementDescriptor<Field> {
 
     /**
      * The field name matching cglib
      */
-    private String fieldName;
+    @Getter
+    private final String fieldName;
 
-    /**
-     * The name of the sheet header.
-     *
-     * @see ExcelProperty
-     */
-    private String[] heads;
+    public AnnotatedFieldDescriptor(Field annotatedElement, String fieldName, AnnotationMap annotationMap) {
+        super(Validate.notNull(annotatedElement, "Field must not be null"), annotationMap);
+        this.fieldName = Validate.notBlank(fieldName, "Field name must not be blank");
+    }
 }

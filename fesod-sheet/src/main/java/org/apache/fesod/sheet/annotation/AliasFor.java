@@ -39,6 +39,11 @@ public class AliasFor {
     private final Class<? extends Annotation> target;
 
     /**
+     * The name of the attribute in the source annotation.
+     */
+    private final String customAttribute;
+
+    /**
      * The name of the attribute in the target annotation to be overridden.
      */
     private final String attribute;
@@ -50,8 +55,18 @@ public class AliasFor {
 
     public AliasFor(
             Class<? extends Annotation> marked, Class<? extends Annotation> target, String attribute, Object value) {
+        this(marked, target, attribute, attribute, value);
+    }
+
+    public AliasFor(
+            Class<? extends Annotation> marked,
+            Class<? extends Annotation> target,
+            String customAttribute,
+            String attribute,
+            Object value) {
         this.marked = marked;
         this.target = target;
+        this.customAttribute = customAttribute;
         this.attribute = attribute;
         this.value = value;
     }

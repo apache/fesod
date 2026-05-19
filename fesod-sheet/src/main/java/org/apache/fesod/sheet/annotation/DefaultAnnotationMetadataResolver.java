@@ -162,8 +162,17 @@ public class DefaultAnnotationMetadataResolver implements AnnotationMetadataReso
                                         ann.annotationType().getName()));
                             }
 
-                            aliases.add(new AliasFor(
-                                    ann.annotationType(), aliasFor.annotation(), aliasFor.attribute(), result));
+                            if (method.getName().equals(aliasFor.attribute())) {
+                                aliases.add(new AliasFor(
+                                        ann.annotationType(), aliasFor.annotation(), aliasFor.attribute(), result));
+                            } else {
+                                aliases.add(new AliasFor(
+                                        ann.annotationType(),
+                                        aliasFor.annotation(),
+                                        method.getName(),
+                                        aliasFor.attribute(),
+                                        result));
+                            }
                         }
                         return result;
                     } catch (IllegalAccessException | InvocationTargetException ex) {

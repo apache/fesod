@@ -37,9 +37,11 @@ import org.apache.commons.lang3.ArrayUtils;
 public abstract class HierarchicalAnnotationScanner {
 
     protected final AnnotationMetadataResolver metadataResolver;
+    protected final Boolean enableMetaMarked;
 
-    protected HierarchicalAnnotationScanner(AnnotationMetadataResolver metadataResolver) {
+    protected HierarchicalAnnotationScanner(AnnotationMetadataResolver metadataResolver, Boolean enableMetaMarked) {
         this.metadataResolver = metadataResolver;
+        this.enableMetaMarked = enableMetaMarked;
     }
 
     protected AnnotationMap scan(AnnotatedElement element) {
@@ -76,7 +78,7 @@ public abstract class HierarchicalAnnotationScanner {
                 }
 
                 // Handle composable-annotations (low-level attribute value)
-                if (metadataResolver.isMetaMarked(ann)) {
+                if (isMetaMarkedEnabled() && metadataResolver.isMetaMarked(ann)) {
                     AnnotationMetadata metadata = metadataResolver.resolve(ann);
                     metadata.addTo(aliases);
                     metadata.setDistance(distance);
@@ -101,6 +103,10 @@ public abstract class HierarchicalAnnotationScanner {
         synthesize(annotationMap, aliases);
 
         return annotationMap;
+    }
+
+    private boolean isMetaMarkedEnabled() {
+        return Boolean.TRUE.equals(enableMetaMarked);
     }
 
     /**
@@ -136,7 +142,7 @@ public abstract class HierarchicalAnnotationScanner {
                 continue;
             }
             if ((marked.getDistance() + 1) <= target.getDistance()) {
-                target.put(alias.getAttribute(), marked.get(alias.getAttribute()));
+                target.put(alias.getAttribute(), marked.get(alias.getCustomAttribute()));
             }
         }
     }

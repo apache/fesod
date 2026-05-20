@@ -153,7 +153,7 @@ Define a freeze pane for an Excel sheet. The parameters are as follows:
 
 | Name           | Default Value | Description                                                              |
 |----------------|---------------|--------------------------------------------------------------------------|
-| colSplit       | 0             | Horizontal position of split.                                            |
-| rowSplit       | 0             | Vertical position of split.                                              |
+| colSplit       | 0             | Horizontal position of freeze pane.                                      |
+| rowSplit       | 0             | Vertical position of freeze pane.                                        |
 | leftmostColumn | -1            | Left column visible in right pane. By default, it's equal to `colSplit`. |
 | topRow         | -1            | Top row visible in bottom pane. By default, it's equal to `rowSplit`.    |

@@ -21,9 +21,35 @@ package org.apache.fesod.sheet.annotation.composite;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.annotation.ExcelProperty;
+import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
+import org.apache.fesod.sheet.annotation.format.NumberFormat;
+import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
+import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
+import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
+import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
+import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
+import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
+import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
+import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
+import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,9 +61,28 @@ import org.junit.jupiter.params.provider.MethodSource;
 /**
  * Integration tests: composable annotations produce
  * identical output to their equivalent direct annotations.
- * <p>
- * Strategy: write both composite and direct models, then compare cell-by-cell
- * via {@link WorkbookAsserts}.
+ * <p />
+ * Covered inner annotations:
+ * <ul>
+ *   <li>{@link ExcelProperty}</li>
+ *   <li>{@link DateTimeFormat}</li>
+ *   <li>{@link NumberFormat}</li>
+ *   <li>{@link ColumnWidth}</li>
+ *   <li>{@link ContentFontStyle}</li>
+ *   <li>{@link ContentLoopMerge}</li>
+ *   <li>{@link ContentRowHeight}</li>
+ *   <li>{@link ContentStyle}</li>
+ *   <li>{@link HeadFontStyle}</li>
+ *   <li>{@link HeadRowHeight}</li>
+ *   <li>{@link HeadStyle}</li>
+ *   <li>{@link OnceAbsoluteMerge}</li>
+ * </ul>
+ * Covered test scenarios:
+ * <ul>
+ *   <li>Field-level composable/direct</li>
+ *   <li>Class-level composable/direct</li>
+ *   <li>Mixed-level composable/direct</li>
+ * </ul>
  */
 class IntegrationCompositeAnnotationTest {
 
@@ -72,7 +117,7 @@ class IntegrationCompositeAnnotationTest {
     //  Helper
     // ====================================================================
 
-    private <C, D> void writeAndAssert(
+    private <C, D> void doWrite(
             File compositeFile,
             File directFile,
             Class<C> compositeClass,
@@ -81,17 +126,35 @@ class IntegrationCompositeAnnotationTest {
             List<D> directData)
             throws Exception {
 
-        FesodSheet.write(compositeFile, compositeClass)
-                .enableMetaMarked(true)
-                .sheet(0)
-                .doWrite(compositeData);
+        try {
+            FesodSheet.write(compositeFile, compositeClass)
+                    .enableMetaMarked(true)
+                    .sheet(0)
+                    .doWrite(compositeData);
 
-        FesodSheet.write(directFile, directClass)
-                .enableMetaMarked(false)
-                .sheet(0)
-                .doWrite(directData);
+            FesodSheet.write(directFile, directClass)
+                    .enableMetaMarked(false)
+                    .sheet(0)
+                    .doWrite(directData);
+        } catch (Exception ex) {
+            Assertions.fail("Data write failed.", ex);
+        }
+    }
 
-        WorkbookAsserts.assertWorkbooksMatch(compositeFile, directFile);
+    private void assertHeadNames(Row head, List<String> headNames, String label) {
+        Assertions.assertNotNull(headNames);
+        for (int i = 0; i < headNames.size(); i++) {
+            String actual = head.getCell(i).getStringCellValue();
+            String expected = headNames.get(i);
+            Assertions.assertEquals(
+                    expected, actual, "[" + label + "] The header of column [" + i + "] is unexpected.");
+        }
+    }
+
+    private Date dateOf(int year, int month, int day) {
+        return Date.from(LocalDate.of(year, month, day)
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant());
     }
 
     // ====================================================================
@@ -111,14 +174,39 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldExcelProperty.Direct> directData =
                     IntegrationExcelDatas.FieldExcelProperty.directData();
 
-            // When + Then: both outputs must be identical
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldExcelProperty.Composite.class,
                     IntegrationExcelDatas.FieldExcelProperty.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -130,14 +218,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldDateTimeFormat.Direct> directData =
                     IntegrationExcelDatas.FieldDateTimeFormat.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldDateTimeFormat.Composite.class,
                     IntegrationExcelDatas.FieldDateTimeFormat.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.NUMERIC, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            dateOf(2026, 1, i + 1),
+                            data.getCell(0).getDateCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            "yyyy-MM-dd",
+                            data.getCell(0).getCellStyle().getDataFormatString(),
+                            "[" + label + "] The data format of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -149,14 +266,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldNumberFormat.Direct> directData =
                     IntegrationExcelDatas.FieldNumberFormat.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldNumberFormat.Composite.class,
                     IntegrationExcelDatas.FieldNumberFormat.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.NUMERIC, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            100.0 + i * 10.5,
+                            data.getCell(0).getNumericCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            "#,##0.00",
+                            data.getCell(0).getCellStyle().getDataFormatString(),
+                            "[" + label + "] The data format of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -168,14 +314,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldColumnWidth.Direct> directData =
                     IntegrationExcelDatas.FieldColumnWidth.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldColumnWidth.Composite.class,
                     IntegrationExcelDatas.FieldColumnWidth.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            25 * 256,
+                            sheet.getColumnWidth(0),
+                            "[" + label + "] The column width of column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -187,14 +362,53 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldHeadStyle.Direct> directData =
                     IntegrationExcelDatas.FieldHeadStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldHeadStyle.Composite.class,
                     IntegrationExcelDatas.FieldHeadStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                CellStyle headStyle = headRow.getCell(0).getCellStyle();
+                Assertions.assertEquals(
+                        HorizontalAlignment.CENTER,
+                        headStyle.getAlignment(),
+                        "[" + label + "] The horizontal alignment of head row is unexpected.");
+                Assertions.assertEquals(
+                        42,
+                        headStyle.getFillForegroundColor(),
+                        "[" + label + "] The fill foreground color of head row is unexpected.");
+                Assertions.assertEquals(
+                        FillPatternType.SOLID_FOREGROUND,
+                        headStyle.getFillPattern(),
+                        "[" + label + "] The fill pattern of head row is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -206,14 +420,47 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldHeadFontStyle.Direct> directData =
                     IntegrationExcelDatas.FieldHeadFontStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldHeadFontStyle.Composite.class,
                     IntegrationExcelDatas.FieldHeadFontStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                Font headFont =
+                        workbook.getFontAt(headRow.getCell(0).getCellStyle().getFontIndex());
+                Assertions.assertTrue(headFont.getBold(), "[" + label + "] The bold of head row font is unexpected.");
+                Assertions.assertEquals(
+                        14,
+                        headFont.getFontHeightInPoints(),
+                        "[" + label + "] The font height of head row is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -225,14 +472,48 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldContentStyle.Direct> directData =
                     IntegrationExcelDatas.FieldContentStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldContentStyle.Composite.class,
                     IntegrationExcelDatas.FieldContentStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    CellStyle contentStyle = data.getCell(0).getCellStyle();
+                    Assertions.assertTrue(
+                            contentStyle.getWrapText(),
+                            "[" + label + "] The wrap text of row[" + i + "] is unexpected.");
+                    Assertions.assertEquals(
+                            VerticalAlignment.CENTER,
+                            contentStyle.getVerticalAlignment(),
+                            "[" + label + "] The vertical alignment of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -244,14 +525,49 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldContentFontStyle.Direct> directData =
                     IntegrationExcelDatas.FieldContentFontStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldContentFontStyle.Composite.class,
                     IntegrationExcelDatas.FieldContentFontStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    Font contentFont =
+                            workbook.getFontAt(data.getCell(0).getCellStyle().getFontIndex());
+                    Assertions.assertTrue(
+                            contentFont.getItalic(),
+                            "[" + label + "] The italic of row[" + i + "] font is unexpected.");
+                    Assertions.assertEquals(
+                            "Arial",
+                            contentFont.getFontName(),
+                            "[" + label + "] The font name of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -263,14 +579,56 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.FieldContentLoopMerge.Direct> directData =
                     IntegrationExcelDatas.FieldContentLoopMerge.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.FieldContentLoopMerge.Composite.class,
                     IntegrationExcelDatas.FieldContentLoopMerge.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+
+                // merged regions: every 2 rows merged
+                List<CellRangeAddress> merges = sheet.getMergedRegions();
+                Assertions.assertEquals(
+                        3, merges.size(), "[" + label + "] The number of merged regions is unexpected.");
+                Assertions.assertEquals(
+                        "A2:A3",
+                        merges.get(0).formatAsString(),
+                        "[" + label + "] The first merged region is unexpected.");
+                Assertions.assertEquals(
+                        "A4:A5",
+                        merges.get(1).formatAsString(),
+                        "[" + label + "] The second merged region is unexpected.");
+                Assertions.assertEquals(
+                        "A6:A7",
+                        merges.get(2).formatAsString(),
+                        "[" + label + "] The last merged region is unexpected.");
+            });
         }
 
         @ParameterizedTest
@@ -282,14 +640,39 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForExcelProperty.Direct> directData =
                     IntegrationExcelDatas.AliasForExcelProperty.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForExcelProperty.Composite.class,
                     IntegrationExcelDatas.AliasForExcelProperty.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Custom Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -301,14 +684,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForColumnWidth.Direct> directData =
                     IntegrationExcelDatas.AliasForColumnWidth.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForColumnWidth.Composite.class,
                     IntegrationExcelDatas.AliasForColumnWidth.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            20 * 256,
+                            sheet.getColumnWidth(0),
+                            "[" + label + "] The column width of column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -321,14 +733,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForDateTimeFormat.Direct> directData =
                     IntegrationExcelDatas.AliasForDateTimeFormat.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForDateTimeFormat.Composite.class,
                     IntegrationExcelDatas.AliasForDateTimeFormat.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.NUMERIC, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            dateOf(2026, 1, i + 1),
+                            data.getCell(0).getDateCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            "yyyy/MM/dd",
+                            data.getCell(0).getCellStyle().getDataFormatString(),
+                            "[" + label + "] The data format of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -340,14 +781,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForNumberFormat.Direct> directData =
                     IntegrationExcelDatas.AliasForNumberFormat.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForNumberFormat.Composite.class,
                     IntegrationExcelDatas.AliasForNumberFormat.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.NUMERIC, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            0.5 + i * 0.1,
+                            data.getCell(0).getNumericCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            "0.00%",
+                            data.getCell(0).getCellStyle().getDataFormatString(),
+                            "[" + label + "] The data format of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -359,14 +829,49 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForHeadStyle.Direct> directData =
                     IntegrationExcelDatas.AliasForHeadStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForHeadStyle.Composite.class,
                     IntegrationExcelDatas.AliasForHeadStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                CellStyle headStyle = headRow.getCell(0).getCellStyle();
+                Assertions.assertEquals(
+                        HorizontalAlignment.RIGHT,
+                        headStyle.getAlignment(),
+                        "[" + label + "] The horizontal alignment of head row is unexpected.");
+                Assertions.assertEquals(
+                        13,
+                        headStyle.getFillForegroundColor(),
+                        "[" + label + "] The fill foreground color of head row is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -378,14 +883,48 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForHeadFontStyle.Direct> directData =
                     IntegrationExcelDatas.AliasForHeadFontStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForHeadFontStyle.Composite.class,
                     IntegrationExcelDatas.AliasForHeadFontStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                Font headFont =
+                        workbook.getFontAt(headRow.getCell(0).getCellStyle().getFontIndex());
+                Assertions.assertEquals(
+                        16,
+                        headFont.getFontHeightInPoints(),
+                        "[" + label + "] The font height of head row is unexpected.");
+                Assertions.assertEquals(
+                        10, headFont.getColor(), "[" + label + "] The color of head row font is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -397,14 +936,48 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForContentStyle.Direct> directData =
                     IntegrationExcelDatas.AliasForContentStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForContentStyle.Composite.class,
                     IntegrationExcelDatas.AliasForContentStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    CellStyle contentStyle = data.getCell(0).getCellStyle();
+                    Assertions.assertTrue(
+                            contentStyle.getWrapText(),
+                            "[" + label + "] The wrap text of row[" + i + "] is unexpected.");
+                    Assertions.assertEquals(
+                            VerticalAlignment.CENTER,
+                            contentStyle.getVerticalAlignment(),
+                            "[" + label + "] The vertical alignment of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -417,14 +990,50 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForContentFontStyle.Direct> directData =
                     IntegrationExcelDatas.AliasForContentFontStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForContentFontStyle.Composite.class,
                     IntegrationExcelDatas.AliasForContentFontStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    Font contentFont =
+                            workbook.getFontAt(data.getCell(0).getCellStyle().getFontIndex());
+                    Assertions.assertEquals(
+                            "Courier New",
+                            contentFont.getFontName(),
+                            "[" + label + "] The font name of row[" + i + "] is unexpected.");
+                    Assertions.assertEquals(
+                            18,
+                            contentFont.getFontHeightInPoints(),
+                            "[" + label + "] The font height of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -437,14 +1046,52 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForContentLoopMerge.Direct> directData =
                     IntegrationExcelDatas.AliasForContentLoopMerge.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForContentLoopMerge.Composite.class,
                     IntegrationExcelDatas.AliasForContentLoopMerge.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+
+                // merged regions: every 3 rows merged
+                List<CellRangeAddress> merges = sheet.getMergedRegions();
+                Assertions.assertEquals(
+                        2, merges.size(), "[" + label + "] The number of merged regions is unexpected.");
+                Assertions.assertEquals(
+                        "A2:A4",
+                        merges.get(0).formatAsString(),
+                        "[" + label + "] The first merged region is unexpected.");
+                Assertions.assertEquals(
+                        "A5:A7",
+                        merges.get(1).formatAsString(),
+                        "[" + label + "] The last merged region is unexpected.");
+            });
         }
     }
 
@@ -465,14 +1112,44 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassColumnWidth.Direct> directData =
                     IntegrationExcelDatas.ClassColumnWidth.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassColumnWidth.Composite.class,
                     IntegrationExcelDatas.ClassColumnWidth.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+
+                Assertions.assertEquals(
+                        25 * 256,
+                        sheet.getColumnWidth(0),
+                        "[" + label + "] The column width of column[0] is unexpected.");
+            });
         }
 
         @ParameterizedTest
@@ -484,14 +1161,53 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassHeadStyle.Direct> directData =
                     IntegrationExcelDatas.ClassHeadStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassHeadStyle.Composite.class,
                     IntegrationExcelDatas.ClassHeadStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                CellStyle headStyle = headRow.getCell(0).getCellStyle();
+                Assertions.assertEquals(
+                        HorizontalAlignment.CENTER,
+                        headStyle.getAlignment(),
+                        "[" + label + "] The horizontal alignment of head row is unexpected.");
+                Assertions.assertEquals(
+                        42,
+                        headStyle.getFillForegroundColor(),
+                        "[" + label + "] The fill foreground color of head row is unexpected.");
+                Assertions.assertEquals(
+                        FillPatternType.SOLID_FOREGROUND,
+                        headStyle.getFillPattern(),
+                        "[" + label + "] The fill pattern of head row is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -503,14 +1219,47 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassHeadFontStyle.Direct> directData =
                     IntegrationExcelDatas.ClassHeadFontStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassHeadFontStyle.Composite.class,
                     IntegrationExcelDatas.ClassHeadFontStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                Font headFont =
+                        workbook.getFontAt(headRow.getCell(0).getCellStyle().getFontIndex());
+                Assertions.assertTrue(headFont.getBold(), "[" + label + "] The bold of head row font is unexpected.");
+                Assertions.assertEquals(
+                        14,
+                        headFont.getFontHeightInPoints(),
+                        "[" + label + "] The font height of head row is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -522,14 +1271,48 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassContentStyle.Direct> directData =
                     IntegrationExcelDatas.ClassContentStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassContentStyle.Composite.class,
                     IntegrationExcelDatas.ClassContentStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    CellStyle contentStyle = data.getCell(0).getCellStyle();
+                    Assertions.assertTrue(
+                            contentStyle.getWrapText(),
+                            "[" + label + "] The wrap text of row[" + i + "] is unexpected.");
+                    Assertions.assertEquals(
+                            VerticalAlignment.CENTER,
+                            contentStyle.getVerticalAlignment(),
+                            "[" + label + "] The vertical alignment of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -541,14 +1324,49 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassContentFontStyle.Direct> directData =
                     IntegrationExcelDatas.ClassContentFontStyle.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassContentFontStyle.Composite.class,
                     IntegrationExcelDatas.ClassContentFontStyle.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    Font contentFont =
+                            workbook.getFontAt(data.getCell(0).getCellStyle().getFontIndex());
+                    Assertions.assertTrue(
+                            contentFont.getItalic(),
+                            "[" + label + "] The italic of row[" + i + "] font is unexpected.");
+                    Assertions.assertEquals(
+                            "Arial",
+                            contentFont.getFontName(),
+                            "[" + label + "] The font name of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -560,14 +1378,41 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassHeadRowHeight.Direct> directData =
                     IntegrationExcelDatas.ClassHeadRowHeight.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassHeadRowHeight.Composite.class,
                     IntegrationExcelDatas.ClassHeadRowHeight.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+                Assertions.assertEquals(
+                        40.0f, headRow.getHeightInPoints(), "[" + label + "] The head row height is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -579,14 +1424,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassContentRowHeight.Direct> directData =
                     IntegrationExcelDatas.ClassContentRowHeight.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassContentRowHeight.Composite.class,
                     IntegrationExcelDatas.ClassContentRowHeight.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            30.0f,
+                            data.getHeightInPoints(),
+                            "[" + label + "] The content row height of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -598,14 +1472,51 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.ClassOnceAbsoluteMerge.Direct> directData =
                     IntegrationExcelDatas.ClassOnceAbsoluteMerge.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.ClassOnceAbsoluteMerge.Composite.class,
                     IntegrationExcelDatas.ClassOnceAbsoluteMerge.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(2, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name", "Value"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(2, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(CellType.STRING, data.getCell(1).getCellType());
+                    Assertions.assertEquals(
+                            "Value" + i,
+                            data.getCell(1).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[1] is unexpected.");
+                }
+
+                // merged region
+                List<CellRangeAddress> merges = sheet.getMergedRegions();
+                Assertions.assertEquals(
+                        1, merges.size(), "[" + label + "] The number of merged regions is unexpected.");
+                Assertions.assertEquals(
+                        "A1:B1", merges.get(0).formatAsString(), "[" + label + "] The merged region is unexpected.");
+            });
         }
 
         @ParameterizedTest
@@ -617,14 +1528,41 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForHeadRowHeight.Direct> directData =
                     IntegrationExcelDatas.AliasForHeadRowHeight.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForHeadRowHeight.Composite.class,
                     IntegrationExcelDatas.AliasForHeadRowHeight.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+                Assertions.assertEquals(
+                        50.0f, headRow.getHeightInPoints(), "[" + label + "] The head row height is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -637,14 +1575,43 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForContentRowHeight.Direct> directData =
                     IntegrationExcelDatas.AliasForContentRowHeight.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForContentRowHeight.Composite.class,
                     IntegrationExcelDatas.AliasForContentRowHeight.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(
+                            35.0f,
+                            data.getHeightInPoints(),
+                            "[" + label + "] The content row height of row[" + i + "] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -658,14 +1625,51 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.AliasForOnceAbsoluteMerge.Direct> directData =
                     IntegrationExcelDatas.AliasForOnceAbsoluteMerge.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.AliasForOnceAbsoluteMerge.Composite.class,
                     IntegrationExcelDatas.AliasForOnceAbsoluteMerge.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(2, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name", "Value"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(2, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(CellType.STRING, data.getCell(1).getCellType());
+                    Assertions.assertEquals(
+                            "Value" + i,
+                            data.getCell(1).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[1] is unexpected.");
+                }
+
+                // merged region
+                List<CellRangeAddress> merges = sheet.getMergedRegions();
+                Assertions.assertEquals(
+                        1, merges.size(), "[" + label + "] The number of merged regions is unexpected.");
+                Assertions.assertEquals(
+                        "A1:B2", merges.get(0).formatAsString(), "[" + label + "] The merged region is unexpected.");
+            });
         }
     }
 
@@ -687,14 +1691,83 @@ class IntegrationCompositeAnnotationTest {
                     IntegrationExcelDatas.MixedAll.compositeData();
             List<IntegrationExcelDatas.MixedAll.Direct> directData = IntegrationExcelDatas.MixedAll.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.MixedAll.Composite.class,
                     IntegrationExcelDatas.MixedAll.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(2, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name", "Value"), label);
+                Assertions.assertEquals(
+                        40.0f, headRow.getHeightInPoints(), "[" + label + "] The head row height is unexpected.");
+
+                // head style for column 0
+                CellStyle headStyle0 = headRow.getCell(0).getCellStyle();
+                Assertions.assertEquals(
+                        HorizontalAlignment.CENTER,
+                        headStyle0.getAlignment(),
+                        "[" + label + "] The horizontal alignment of head row column[0] is unexpected.");
+                Assertions.assertEquals(
+                        42,
+                        headStyle0.getFillForegroundColor(),
+                        "[" + label + "] The fill foreground color of head row column[0] is unexpected.");
+                Assertions.assertEquals(
+                        FillPatternType.SOLID_FOREGROUND,
+                        headStyle0.getFillPattern(),
+                        "[" + label + "] The fill pattern of head row column[0] is unexpected.");
+
+                // column width
+                Assertions.assertEquals(
+                        25 * 256,
+                        sheet.getColumnWidth(0),
+                        "[" + label + "] The column width of column[0] is unexpected.");
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(2, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(
+                            30.0f,
+                            data.getHeightInPoints(),
+                            "[" + label + "] The content row height of row[" + i + "] is unexpected.");
+
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+
+                    Assertions.assertEquals(CellType.STRING, data.getCell(1).getCellType());
+                    Assertions.assertEquals(
+                            "Value" + i,
+                            data.getCell(1).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[1] is unexpected.");
+
+                    Font contentFont1 =
+                            workbook.getFontAt(data.getCell(1).getCellStyle().getFontIndex());
+                    Assertions.assertTrue(
+                            contentFont1.getItalic(),
+                            "[" + label + "] The italic of row[" + i + "] column[1] font is unexpected.");
+                    Assertions.assertEquals(
+                            "Arial",
+                            contentFont1.getFontName(),
+                            "[" + label + "] The font name of row[" + i + "] column[1] is unexpected.");
+                }
+            });
         }
 
         @ParameterizedTest
@@ -708,14 +1781,39 @@ class IntegrationCompositeAnnotationTest {
             List<IntegrationExcelDatas.PriorityDirectOverComposite.Direct> directData =
                     IntegrationExcelDatas.PriorityDirectOverComposite.directData();
 
-            // When + Then
-            writeAndAssert(
+            // When
+            doWrite(
                     composite,
                     direct,
                     IntegrationExcelDatas.PriorityDirectOverComposite.Composite.class,
                     IntegrationExcelDatas.PriorityDirectOverComposite.Direct.class,
                     compositeData,
                     directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row: direct annotation "Final Value" overrides composite alias "Value"
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(1, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Final Value"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(1, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                }
+            });
         }
     }
 }

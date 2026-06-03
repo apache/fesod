@@ -70,6 +70,8 @@ import org.apache.fesod.sheet.write.property.ExcelWriteHeadProperty;
 import org.apache.fesod.sheet.write.style.AbstractVerticalCellStyleStrategy;
 import org.apache.fesod.sheet.write.style.column.AbstractHeadColumnWidthStyleStrategy;
 import org.apache.fesod.sheet.write.style.row.SimpleRowHeightStyleStrategy;
+import org.apache.fesod.sheet.write.view.NoopWriteViewMatcher;
+import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 
 /**
  * Write holder configuration
@@ -133,6 +135,11 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
      * Custom converters for this holder
      */
     private List<Converter<?>> customConverterList;
+
+    /**
+     * view-based matcher for sheet writing.
+     */
+    private WriteViewMatcher writeViewMatcher;
 
     /**
      * Write handler
@@ -259,6 +266,16 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
             this.includeColumnIndexes = parentAbstractWriteHolder.getIncludeColumnIndexes();
         } else {
             this.includeColumnIndexes = writeBasicParameter.getIncludeColumnIndexes();
+        }
+
+        if (writeBasicParameter.getWriteViewMatcher() == null) {
+            if (parentAbstractWriteHolder == null) {
+                this.writeViewMatcher = NoopWriteViewMatcher.INSTANCE;
+            } else {
+                this.writeViewMatcher = parentAbstractWriteHolder.getWriteViewMatcher();
+            }
+        } else {
+            this.writeViewMatcher = writeBasicParameter.getWriteViewMatcher();
         }
 
         // Initialization property
@@ -587,5 +604,10 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
     @Override
     public Collection<String> excludeColumnFieldNames() {
         return getExcludeColumnFieldNames();
+    }
+
+    @Override
+    public WriteViewMatcher writeViewMatcher() {
+        return getWriteViewMatcher();
     }
 }

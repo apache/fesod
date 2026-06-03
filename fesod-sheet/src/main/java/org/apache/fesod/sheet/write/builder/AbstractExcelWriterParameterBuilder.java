@@ -26,11 +26,14 @@
 package org.apache.fesod.sheet.write.builder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.AbstractParameterBuilder;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
 import org.apache.fesod.sheet.write.metadata.WriteBasicParameter;
+import org.apache.fesod.sheet.write.view.ClassBasedViewMatcher;
+import org.apache.fesod.sheet.write.view.NameBasedViewMatcher;
 
 /**
  * Build ExcelBuilder
@@ -168,6 +171,28 @@ public abstract class AbstractExcelWriterParameterBuilder<
      */
     public T orderByIncludeColumn(Boolean orderByIncludeColumn) {
         parameter().setOrderByIncludeColumn(orderByIncludeColumn);
+        return self();
+    }
+
+    /**
+     * Only write the fields marked by the following View class identifiers.
+     *
+     * @param types Target View class identifiers
+     * @return this
+     */
+    public T groups(Class<?>... types) {
+        parameter().setWriteViewMatcher(new ClassBasedViewMatcher(Arrays.asList(types)));
+        return self();
+    }
+
+    /**
+     * Only write to the fields marked by the following View string identifiers.
+     *
+     * @param names Target View string identifiers
+     * @return this
+     */
+    public T groups(String... names) {
+        parameter().setWriteViewMatcher(new NameBasedViewMatcher(Arrays.asList(names)));
         return self();
     }
 }

@@ -30,6 +30,7 @@ import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 import org.apache.fesod.sheet.annotation.format.NumberFormat;
+import org.apache.fesod.sheet.annotation.write.ExcelView;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
@@ -42,6 +43,9 @@ import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
+import org.apache.fesod.sheet.write.view.ClassBasedViewMatcher;
+import org.apache.fesod.sheet.write.view.NameBasedViewMatcher;
+import org.apache.fesod.sheet.write.view.NoopWriteViewMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,6 +88,18 @@ class ClassUtilsTest {
         private Integer age;
     }
 
+    interface BasicView {}
+
+    private static class ViewEntity {
+        @ExcelView(asTypes = BasicView.class)
+        @ExcelProperty("Name")
+        private String name;
+
+        @ExcelView(asNames = "BasicView")
+        @ExcelProperty(value = "Age")
+        private Integer age;
+    }
+
     private static class ComplexEntity {
         @ExcelProperty(index = 0)
         private String id;
@@ -114,6 +130,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_cache_memory() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
@@ -127,6 +144,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_cache_ThreadLocal() throws NoSuchFieldException, IllegalAccessException {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
@@ -140,6 +158,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_non_cache() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
@@ -151,6 +170,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_ordering() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
         Map<Integer, FieldWrapper> sortedMap = fieldCache.getSortedFieldMap();
@@ -171,6 +191,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_ignore() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
 
@@ -183,6 +204,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_WriteHolder_exclude() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         Mockito.when(writeHolder.excludeColumnFieldNames()).thenReturn(Collections.singleton("name"));
         Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
@@ -202,6 +224,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_resort() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         Mockito.when(writeHolder.orderByIncludeColumn()).thenReturn(true);
         List<String> include = Arrays.asList("age", "name");
@@ -221,6 +244,7 @@ class ClassUtilsTest {
         Mockito.when(writeHolder.includeColumnFieldNames()).thenReturn(null);
         Mockito.when(writeHolder.includeColumnIndexes()).thenReturn(Arrays.asList(2, 0));
         Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
 
         FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
         Map<Integer, FieldWrapper> sortedMap = fieldCache.getSortedFieldMap();
@@ -232,6 +256,34 @@ class ClassUtilsTest {
 
         Assertions.assertTrue(sortedMap.containsKey(1));
         Assertions.assertEquals("id", sortedMap.get(1).getFieldName());
+    }
+
+    @Test
+    void test_declaredFields_typed_views_write() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher())
+                .thenReturn(new ClassBasedViewMatcher(Collections.singleton(BasicView.class)));
+
+        FieldCache fieldCache = ClassUtils.declaredFields(ViewEntity.class, writeHolder);
+
+        Map<Integer, FieldWrapper> sortedMap = fieldCache.getSortedFieldMap();
+
+        Assertions.assertEquals(1, sortedMap.size());
+        Assertions.assertEquals("name", sortedMap.get(0).getFieldName());
+    }
+
+    @Test
+    void test_declaredFields_named_views_write() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+        Mockito.when(writeHolder.writeViewMatcher())
+                .thenReturn(new NameBasedViewMatcher(Collections.singleton("BasicView")));
+
+        FieldCache fieldCache = ClassUtils.declaredFields(ViewEntity.class, writeHolder);
+
+        Map<Integer, FieldWrapper> sortedMap = fieldCache.getSortedFieldMap();
+
+        Assertions.assertEquals(1, sortedMap.size());
+        Assertions.assertEquals("age", sortedMap.get(0).getFieldName());
     }
 
     @Test

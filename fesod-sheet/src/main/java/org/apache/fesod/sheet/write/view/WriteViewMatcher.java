@@ -29,10 +29,14 @@ import java.lang.reflect.Field;
 public interface WriteViewMatcher {
 
     /**
-     * Returns whether any view constraints are active for the current
-     * Sheet writing operation.
+     * A noop implementation for {@link WriteViewMatcher}
      */
-    boolean hasViews();
+    WriteViewMatcher NOOP = new WriteViewMatcher() {
+        @Override
+        public boolean matches(Field field) {
+            return false;
+        }
+    };
 
     /**
      * Returns whether the given field is included in the active view(s)

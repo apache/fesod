@@ -70,7 +70,6 @@ import org.apache.fesod.sheet.write.property.ExcelWriteHeadProperty;
 import org.apache.fesod.sheet.write.style.AbstractVerticalCellStyleStrategy;
 import org.apache.fesod.sheet.write.style.column.AbstractHeadColumnWidthStyleStrategy;
 import org.apache.fesod.sheet.write.style.row.SimpleRowHeightStyleStrategy;
-import org.apache.fesod.sheet.write.view.NoopWriteViewMatcher;
 import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 
 /**
@@ -270,7 +269,7 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
 
         if (writeBasicParameter.getWriteViewMatcher() == null) {
             if (parentAbstractWriteHolder == null) {
-                this.writeViewMatcher = NoopWriteViewMatcher.INSTANCE;
+                this.writeViewMatcher = WriteViewMatcher.NOOP;
             } else {
                 this.writeViewMatcher = parentAbstractWriteHolder.getWriteViewMatcher();
             }

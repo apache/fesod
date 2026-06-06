@@ -26,8 +26,8 @@
 package org.apache.fesod.sheet.write.builder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.AbstractParameterBuilder;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
@@ -178,10 +178,14 @@ public abstract class AbstractExcelWriterParameterBuilder<
      * Only write the fields marked by the following View class identifiers.
      *
      * @param types Target View class identifiers
+     * @throws IllegalArgumentException if the types is empty
      * @return this
      */
     public T groups(Class<?>... types) {
-        parameter().setWriteViewMatcher(new ClassBasedViewMatcher(Arrays.asList(types)));
+        if (ArrayUtils.isEmpty(types)) {
+            throw new IllegalArgumentException("Types must not be empty");
+        }
+        parameter().setWriteViewMatcher(new ClassBasedViewMatcher(types));
         return self();
     }
 
@@ -189,10 +193,14 @@ public abstract class AbstractExcelWriterParameterBuilder<
      * Only write to the fields marked by the following View string identifiers.
      *
      * @param names Target View string identifiers
+     * @throws IllegalArgumentException if the names is empty
      * @return this
      */
     public T groups(String... names) {
-        parameter().setWriteViewMatcher(new NameBasedViewMatcher(Arrays.asList(names)));
+        if (ArrayUtils.isEmpty(names)) {
+            throw new IllegalArgumentException("Names must not be empty");
+        }
+        parameter().setWriteViewMatcher(new NameBasedViewMatcher(names));
         return self();
     }
 }

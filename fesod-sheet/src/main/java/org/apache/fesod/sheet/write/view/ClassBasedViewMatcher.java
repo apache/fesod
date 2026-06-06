@@ -22,9 +22,9 @@ package org.apache.fesod.sheet.write.view;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.fesod.sheet.annotation.write.ExcelView;
@@ -34,14 +34,19 @@ import org.apache.fesod.sheet.annotation.write.ExcelView;
  * identifiers declared in {@code @ExcelView#asTypes()}.
  */
 @EqualsAndHashCode
-@RequiredArgsConstructor
 public class ClassBasedViewMatcher implements WriteViewMatcher {
 
     private final Collection<Class<?>> expectedGroups;
 
-    @Override
-    public boolean hasViews() {
-        return CollectionUtils.isNotEmpty(expectedGroups);
+    public ClassBasedViewMatcher(Class<?>... expectedGroups) {
+        this(ArrayUtils.isEmpty(expectedGroups) ? Collections.emptyList() : Arrays.asList(expectedGroups));
+    }
+
+    public ClassBasedViewMatcher(Collection<Class<?>> expectedGroups) {
+        if (CollectionUtils.isEmpty(expectedGroups)) {
+            throw new IllegalArgumentException("Type-based view groups must not be empty");
+        }
+        this.expectedGroups = Collections.unmodifiableCollection(expectedGroups);
     }
 
     @Override

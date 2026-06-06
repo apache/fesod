@@ -57,7 +57,7 @@ class WriteSheetViewTests {
     @BeforeEach
     void setUp(@TempDir Path tempDir) {
         write03 = createTmpFile(tempDir, "write03.xls");
-        write07 = createTmpFile(tempDir, "write07.xls");
+        write07 = createTmpFile(tempDir, "write07.xlsx");
         writeCsv = createTmpFile(tempDir, "writeCsv.csv");
     }
 

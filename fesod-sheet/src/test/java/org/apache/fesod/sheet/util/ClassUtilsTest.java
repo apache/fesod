@@ -45,7 +45,7 @@ import org.apache.fesod.sheet.metadata.property.StyleProperty;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
 import org.apache.fesod.sheet.write.view.ClassBasedViewMatcher;
 import org.apache.fesod.sheet.write.view.NameBasedViewMatcher;
-import org.apache.fesod.sheet.write.view.NoopWriteViewMatcher;
+import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,7 +130,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_cache_memory() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
@@ -144,7 +144,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_cache_ThreadLocal() throws NoSuchFieldException, IllegalAccessException {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
@@ -158,7 +158,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_non_cache() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
@@ -170,7 +170,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_ordering() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
         Map<Integer, FieldWrapper> sortedMap = fieldCache.getSortedFieldMap();
@@ -191,7 +191,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_ignore() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
 
@@ -204,7 +204,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_WriteHolder_exclude() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         Mockito.when(writeHolder.excludeColumnFieldNames()).thenReturn(Collections.singleton("name"));
         Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
@@ -224,7 +224,7 @@ class ClassUtilsTest {
     @Test
     void test_declaredFields_resort() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         Mockito.when(writeHolder.orderByIncludeColumn()).thenReturn(true);
         List<String> include = Arrays.asList("age", "name");
@@ -244,7 +244,7 @@ class ClassUtilsTest {
         Mockito.when(writeHolder.includeColumnFieldNames()).thenReturn(null);
         Mockito.when(writeHolder.includeColumnIndexes()).thenReturn(Arrays.asList(2, 0));
         Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
-        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(NoopWriteViewMatcher.INSTANCE);
+        Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 
         FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
         Map<Integer, FieldWrapper> sortedMap = fieldCache.getSortedFieldMap();

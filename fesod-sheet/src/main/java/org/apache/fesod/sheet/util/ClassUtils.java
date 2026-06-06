@@ -349,7 +349,7 @@ public class ClassUtils {
 
         // ignore field by grouping
         WriteViewMatcher writeViewMatcher = writeHolder.writeViewMatcher();
-        boolean hasViews = writeViewMatcher.hasViews();
+        boolean hasViews = (WriteViewMatcher.NOOP != writeViewMatcher);
         // ignore field by include*/exclude*
         boolean needIgnore = !CollectionUtils.isEmpty(writeHolder.excludeColumnFieldNames())
                 || !CollectionUtils.isEmpty(writeHolder.excludeColumnIndexes())

@@ -20,7 +20,6 @@
 package org.apache.fesod.sheet.annotation.write;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -47,13 +46,12 @@ import org.apache.fesod.sheet.write.builder.AbstractExcelWriterParameterBuilder;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 public @interface ExcelView {
 
     /**
      * View or views that annotated element is part of. Views are identified
-     * by classes, and use expected class inheritance relationship: child
-     * views contain all elements parent views have.
+     * by classes, when a view type is selected, fields annotated with that type
+     * or any of subtypes are included.
      */
     Class<?>[] asTypes() default {};
 

@@ -36,6 +36,7 @@ import org.apache.fesod.sheet.simple.SimpleData;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -126,7 +127,9 @@ public class EncryptDataTest {
         }
 
         excelWriterBuilder.sheet().doWrite(data());
+        Assertions.assertNull(Biff8EncryptionKey.getCurrentUserPassword());
         List<EncryptData> dataList = readerBuilder.sheet().doReadSync();
+        Assertions.assertNull(Biff8EncryptionKey.getCurrentUserPassword());
         Assertions.assertEquals(10, dataList.size());
         Assertions.assertNotNull(dataList.get(0).getName());
     }

@@ -107,7 +107,7 @@
         <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
         <logback-classic.version>1.2.13</logback-classic.version>
         <mockserver.version>5.15.0</mockserver.version>
-        <jacoco.version>0.8.14</jacoco.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>

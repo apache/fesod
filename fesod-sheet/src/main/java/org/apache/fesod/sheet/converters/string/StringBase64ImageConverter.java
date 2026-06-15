@@ -41,8 +41,9 @@ public class StringBase64ImageConverter implements Converter<String> {
             String base64, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws IOException {
         String value;
-        if (base64.contains(",")) {
-            value = base64.split(",")[1];
+        int commaIndex = base64.indexOf(",");
+        if (commaIndex != -1) {
+            value = base64.substring(commaIndex + 1);
         } else {
             value = base64;
         }

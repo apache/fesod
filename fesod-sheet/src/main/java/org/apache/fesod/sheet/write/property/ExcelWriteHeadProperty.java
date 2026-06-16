@@ -80,7 +80,7 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
         this.headRowHeightProperty = RowHeightProperty.build(findClazzAnnotation(HeadRowHeight.class));
         this.contentRowHeightProperty = RowHeightProperty.build(findClazzAnnotation(ContentRowHeight.class));
         this.onceAbsoluteMergeProperty = OnceAbsoluteMergeProperty.build(findClazzAnnotation(OnceAbsoluteMerge.class));
-        this.freezePaneProperty = SheetFreezePaneProperty.build(headClazz.getAnnotation(FreezePane.class));
+        this.freezePaneProperty = SheetFreezePaneProperty.build(findClazzAnnotation(FreezePane.class));
 
         AnnotationAttributes parentColumnWidth = findClazzAnnotation(ColumnWidth.class);
         AnnotationAttributes parentHeadStyle = findClazzAnnotation(HeadStyle.class);

@@ -45,6 +45,7 @@ import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
+import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
@@ -88,6 +89,7 @@ public class DefaultAnnotationMetadataResolver implements AnnotationMetadataReso
         innerTmp.add(HeadRowHeight.class);
         innerTmp.add(HeadStyle.class);
         innerTmp.add(OnceAbsoluteMerge.class);
+        innerTmp.add(FreezePane.class);
         INNER_ANNOTATIONS = Collections.unmodifiableSet(innerTmp);
     }
 

@@ -33,6 +33,7 @@ import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
+import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
@@ -306,6 +307,31 @@ public class IntegrationAnnotations {
         int endCol() default -1;
     }
 
+    /**
+     * Aliases {@code colSplit} → {@link FreezePane#colSplit()},
+     *         {@code rowSplit} → {@link FreezePane#rowSplit()},
+     *         {@code leftmostColumn} → {@link FreezePane#leftmostColumn()},
+     *         {@code topRow} → {@link FreezePane#topRow()}.
+     */
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @FesodMarked
+    @FreezePane
+    @Inherited
+    public @interface CompositeFreezePaneAliasFor {
+        @FesodMarked.AliasFor(annotation = FreezePane.class, attribute = "colSplit")
+        int colSplit() default 0;
+
+        @FesodMarked.AliasFor(annotation = FreezePane.class, attribute = "rowSplit")
+        int rowSplit() default 0;
+
+        @FesodMarked.AliasFor(annotation = FreezePane.class, attribute = "leftmostColumn")
+        int leftmostColumn() default -1;
+
+        @FesodMarked.AliasFor(annotation = FreezePane.class, attribute = "topRow")
+        int topRow() default -1;
+    }
+
     // ---- Type-Level Composable Annotations ----
 
     @Target(ElementType.TYPE)
@@ -328,4 +354,11 @@ public class IntegrationAnnotations {
     @OnceAbsoluteMerge(firstRowIndex = 0, lastRowIndex = 0, firstColumnIndex = 0, lastColumnIndex = 1)
     @Inherited
     public @interface CompositeOnceAbsoluteMerge {}
+
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @FesodMarked
+    @FreezePane(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
+    @Inherited
+    public @interface CompositeFreezePane {}
 }

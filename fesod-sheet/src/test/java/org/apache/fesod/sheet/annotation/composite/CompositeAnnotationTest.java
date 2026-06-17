@@ -39,6 +39,7 @@ import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
+import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
@@ -75,6 +76,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  *   <li>{@link HeadRowHeight}</li>
  *   <li>{@link ContentRowHeight}</li>
  *   <li>{@link OnceAbsoluteMerge}</li>
+ *   <li>{@link FreezePane}</li>
  * </ul>
  * <p />
  * Covered test scenarios:
@@ -264,7 +266,7 @@ class CompositeAnnotationTest {
     }
 
     /**
-     * Composable annotation with no methods — groups {@code @HeadStyle} and {@code @HeadFontStyle}
+     * Composable annotation with no methods — groups {@code @HeadStyle}, {@code @HeadFontStyle} and {@code @FreezePane}
      * as a header style preset for class-level use.
      */
     @Target({ElementType.TYPE})
@@ -272,6 +274,7 @@ class CompositeAnnotationTest {
     @FesodMarked
     @HeadStyle(fillForegroundColor = 10)
     @HeadFontStyle(fontName = "Calibri", fontHeightInPoints = 14, bold = BooleanEnum.TRUE)
+    @FreezePane(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
     @Inherited
     public @interface ComposableHeaderStylePreset {}
 
@@ -800,8 +803,9 @@ class CompositeAnnotationTest {
         @Test
         void shouldExpandAllInnerAnnotations_whenHeaderStylePresetNoMethods() {
             // given - ExcelModelWithComposableHeaderStyle has @ComposableHeaderStylePreset
-            //         which groups @HeadStyle(fillForegroundColor=10) and @HeadFontStyle(fontName="Calibri",
-            // fontHeightInPoints=14, bold=TRUE)
+            //         which groups @HeadStyle(fillForegroundColor=10), @HeadFontStyle(fontName="Calibri",
+            //         fontHeightInPoints=14, bold=TRUE) and @FreezePane(colSplit = 1, rowSplit = 1,
+            //         leftmostColumn = 3, topRow = 5)
 
             // when
             ExcelHeadProperty property =
@@ -810,10 +814,11 @@ class CompositeAnnotationTest {
             // then
             AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(3, classAnnotationMap.size());
+            Assertions.assertEquals(4, classAnnotationMap.size());
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableHeaderStylePreset.class));
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadStyle.class));
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadFontStyle.class));
+            Assertions.assertTrue(classAnnotationMap.hasAnnotation(FreezePane.class));
 
             AnnotationAttributes customAttrs = classAnnotationMap.getAttributes(ComposableHeaderStylePreset.class);
             Assertions.assertTrue(customAttrs.isEmpty());
@@ -825,6 +830,12 @@ class CompositeAnnotationTest {
             Assertions.assertEquals("Calibri", fontAttrs.getRequiredAttribute("fontName", String.class));
             Assertions.assertEquals((short) 14, fontAttrs.getRequiredAttribute("fontHeightInPoints", Short.class));
             Assertions.assertEquals(BooleanEnum.TRUE, fontAttrs.getRequiredAttribute("bold", BooleanEnum.class));
+
+            AnnotationAttributes attrs = classAnnotationMap.getAttributes(FreezePane.class);
+            Assertions.assertEquals(1, attrs.getRequiredAttribute("colSplit", Integer.class));
+            Assertions.assertEquals(1, attrs.getRequiredAttribute("rowSplit", Integer.class));
+            Assertions.assertEquals(3, attrs.getRequiredAttribute("leftmostColumn", Integer.class));
+            Assertions.assertEquals(5, attrs.getRequiredAttribute("topRow", Integer.class));
         }
 
         @Test
@@ -1102,7 +1113,7 @@ class CompositeAnnotationTest {
 
         @Test
         void shouldPopulateBothLevels_whenClassHeaderStylePresetAndFieldDateTimeFormat() {
-            // given - class has @ComposableHeaderStylePreset (groups HeadStyle + HeadFontStyle)
+            // given - class has @ComposableHeaderStylePreset (groups HeadStyle + HeadFontStyle + FreezePane)
             //         field has @ComposableDateTimeFormat("yyyy-MM-dd") (aliases DateTimeFormat.value)
 
             // when
@@ -1112,10 +1123,11 @@ class CompositeAnnotationTest {
             // then - class-level annotationMap
             AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(3, classAnnotationMap.size());
+            Assertions.assertEquals(4, classAnnotationMap.size());
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableHeaderStylePreset.class));
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadStyle.class));
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadFontStyle.class));
+            Assertions.assertTrue(classAnnotationMap.hasAnnotation(FreezePane.class));
 
             AnnotationAttributes customTypeAttrs = classAnnotationMap.getAttributes(ComposableHeaderStylePreset.class);
             Assertions.assertTrue(customTypeAttrs.isEmpty());
@@ -1127,6 +1139,12 @@ class CompositeAnnotationTest {
             Assertions.assertEquals("Calibri", fontAttrs.getRequiredAttribute("fontName", String.class));
             Assertions.assertEquals((short) 14, fontAttrs.getRequiredAttribute("fontHeightInPoints", Short.class));
             Assertions.assertEquals(BooleanEnum.TRUE, fontAttrs.getRequiredAttribute("bold", BooleanEnum.class));
+
+            AnnotationAttributes attrs = classAnnotationMap.getAttributes(FreezePane.class);
+            Assertions.assertEquals(1, attrs.getRequiredAttribute("colSplit", Integer.class));
+            Assertions.assertEquals(1, attrs.getRequiredAttribute("rowSplit", Integer.class));
+            Assertions.assertEquals(3, attrs.getRequiredAttribute("leftmostColumn", Integer.class));
+            Assertions.assertEquals(5, attrs.getRequiredAttribute("topRow", Integer.class));
 
             // then - field-level annotationMap
             Head head = property.getHeadMap().get(0);

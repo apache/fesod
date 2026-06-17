@@ -35,6 +35,7 @@ import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
+import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
@@ -71,13 +72,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
  *   <li>{@link HeadRowHeight}</li>
  *   <li>{@link ContentRowHeight}</li>
  *   <li>{@link OnceAbsoluteMerge}</li>
+ *   <li>{@link FreezePane}</li>
  * </ul>
  * <p />
  * Covered test scenarios:
  * <ul>
  *   <li><b>Field-level</b> — null annotationMap, single annotation, multiple annotations per field</li>
  *   <li><b>Class-level</b> — null headClazzAnnotationMap, single annotation, multiple annotations per class</li>
- *   <li><b>Mixed-level</b> — class + field annotations coexisting, all 12 annotations in a single model,
+ *   <li><b>Mixed-level</b> — class + field annotations coexisting, all 13 annotations in a single model,
  *       per-field independence with shared class-level annotations</li>
  * </ul>
  */
@@ -446,9 +448,17 @@ class DirectAnnotationTest {
         private String name;
     }
 
+    @FreezePane(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
+    static class ExcelModelWithFreezePane {
+
+        @ExcelProperty("Name")
+        private String name;
+    }
+
     @HeadRowHeight(30)
     @ContentRowHeight(20)
     @OnceAbsoluteMerge(firstRowIndex = 0, lastRowIndex = 0, firstColumnIndex = 0, lastColumnIndex = 4)
+    @FreezePane(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
     @ColumnWidth(25)
     @HeadStyle(fillForegroundColor = 15)
     @HeadFontStyle(fontName = "Header", fontHeightInPoints = 14, bold = BooleanEnum.TRUE)
@@ -603,6 +613,27 @@ class DirectAnnotationTest {
         }
 
         @Test
+        void shouldPopulateHeadClazzAnnotationMap_withFreezePane_whenClassAnnotated() {
+            // given - ExcelModelWithFreezePane has @FreezePane(colSplit = 1, rowSplit = 1,
+            // leftmostColumn = 3, topRow = 5)
+
+            // when
+            ExcelHeadProperty property =
+                    new ExcelHeadProperty(configurationHolder, ExcelModelWithFreezePane.class, null);
+
+            // then
+            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
+            Assertions.assertNotNull(classAnnotationMap);
+            Assertions.assertTrue(classAnnotationMap.hasAnnotation(FreezePane.class));
+
+            AnnotationAttributes attrs = classAnnotationMap.getAttributes(FreezePane.class);
+            Assertions.assertEquals(1, attrs.getRequiredAttribute("colSplit", Integer.class));
+            Assertions.assertEquals(1, attrs.getRequiredAttribute("rowSplit", Integer.class));
+            Assertions.assertEquals(3, attrs.getRequiredAttribute("leftmostColumn", Integer.class));
+            Assertions.assertEquals(5, attrs.getRequiredAttribute("topRow", Integer.class));
+        }
+
+        @Test
         void shouldSetEmptyTypeDescriptor_whenNoHeadClazzProvided() {
             // given
             List<List<String>> head = new ArrayList<>();
@@ -677,18 +708,18 @@ class DirectAnnotationTest {
 
         @Test
         void shouldPopulateBothLevels_whenAllTwelveAnnotationsUsedAcrossClassAndField() {
-            // given - class-level: HeadRowHeight, ContentRowHeight, OnceAbsoluteMerge, ColumnWidth,
-            //         HeadStyle, HeadFontStyle, ContentStyle, ContentFontStyle
+            // given - class-level: HeadRowHeight, ContentRowHeight, OnceAbsoluteMerge, FreezePane,
+            //         ColumnWidth, HeadStyle, HeadFontStyle, ContentStyle, ContentFontStyle
             //         field-level: ExcelProperty, DateTimeFormat, NumberFormat, ContentLoopMerge
 
             // when
             ExcelHeadProperty property =
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedAllAnnotations.class, null);
 
-            // then - class-level annotationMap covers 8 annotations
+            // then - class-level annotationMap covers 9 annotations
             AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
             Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(8, classAnnotationMap.size());
+            Assertions.assertEquals(9, classAnnotationMap.size());
 
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadRowHeight.class));
             Assertions.assertEquals(
@@ -708,6 +739,13 @@ class DirectAnnotationTest {
             Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("lastRowIndex", Integer.class));
             Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstColumnIndex", Integer.class));
             Assertions.assertEquals(4, mergeAttrs.getRequiredAttribute("lastColumnIndex", Integer.class));
+
+            Assertions.assertTrue(classAnnotationMap.hasAnnotation(FreezePane.class));
+            AnnotationAttributes freezePaneAttrs = classAnnotationMap.getAttributes(FreezePane.class);
+            Assertions.assertEquals(1, freezePaneAttrs.getRequiredAttribute("colSplit", Integer.class));
+            Assertions.assertEquals(1, freezePaneAttrs.getRequiredAttribute("rowSplit", Integer.class));
+            Assertions.assertEquals(3, freezePaneAttrs.getRequiredAttribute("leftmostColumn", Integer.class));
+            Assertions.assertEquals(5, freezePaneAttrs.getRequiredAttribute("topRow", Integer.class));
 
             Assertions.assertTrue(classAnnotationMap.hasAnnotation(ColumnWidth.class));
             Assertions.assertEquals(

@@ -35,6 +35,7 @@ import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
+import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
@@ -727,6 +728,52 @@ public class IntegrationExcelDatas {
         }
     }
 
+    // ---- FreezePane (class-level) ----
+
+    public static class ClassFreezePane {
+        @IntegrationAnnotations.CompositeFreezePane
+        @Data
+        public static class Composite {
+            @IntegrationAnnotations.CompositeExcelProperty
+            private String name;
+
+            @IntegrationAnnotations.CompositeExcelPropertyAliasFor(value = "Value")
+            private String value;
+        }
+
+        @FreezePane(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
+        @Data
+        public static class Direct {
+            @ExcelProperty("Name")
+            private String name;
+
+            @ExcelProperty("Value")
+            private String value;
+        }
+
+        public static List<Composite> compositeData() {
+            return IntStream.range(0, ROW_COUNT)
+                    .mapToObj(i -> {
+                        Composite c = new Composite();
+                        c.setName("Name" + i);
+                        c.setValue("Value" + i);
+                        return c;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        public static List<Direct> directData() {
+            return IntStream.range(0, ROW_COUNT)
+                    .mapToObj(i -> {
+                        Direct d = new Direct();
+                        d.setName("Name" + i);
+                        d.setValue("Value" + i);
+                        return d;
+                    })
+                    .collect(Collectors.toList());
+        }
+    }
+
     // ====================================================================
     //  @AliasFor Models
     // ====================================================================
@@ -1163,6 +1210,52 @@ public class IntegrationExcelDatas {
         }
 
         @OnceAbsoluteMerge(firstRowIndex = 0, lastRowIndex = 1, firstColumnIndex = 0, lastColumnIndex = 1)
+        @Data
+        public static class Direct {
+            @ExcelProperty("Name")
+            private String name;
+
+            @ExcelProperty("Value")
+            private String value;
+        }
+
+        public static List<Composite> compositeData() {
+            return IntStream.range(0, ROW_COUNT)
+                    .mapToObj(i -> {
+                        Composite c = new Composite();
+                        c.setName("Name" + i);
+                        c.setValue("Value" + i);
+                        return c;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        public static List<Direct> directData() {
+            return IntStream.range(0, ROW_COUNT)
+                    .mapToObj(i -> {
+                        Direct d = new Direct();
+                        d.setName("Name" + i);
+                        d.setValue("Value" + i);
+                        return d;
+                    })
+                    .collect(Collectors.toList());
+        }
+    }
+
+    // ---- FreezePane via AliasFor (colSplit/rowSplit/leftmostColumn/topRow → 4 inner attrs) ----
+
+    public static class AliasForFreezePane {
+        @IntegrationAnnotations.CompositeFreezePaneAliasFor(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
+        @Data
+        public static class Composite {
+            @IntegrationAnnotations.CompositeExcelProperty
+            private String name;
+
+            @IntegrationAnnotations.CompositeExcelPropertyAliasFor(value = "Value")
+            private String value;
+        }
+
+        @FreezePane(colSplit = 1, rowSplit = 1, leftmostColumn = 3, topRow = 5)
         @Data
         public static class Direct {
             @ExcelProperty("Name")

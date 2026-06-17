@@ -49,6 +49,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.PaneInformation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -1521,6 +1522,65 @@ class IntegrationCompositeAnnotationTest {
 
         @ParameterizedTest
         @MethodSource(FILE_GROUPS_METHOD)
+        void shouldProduceIdenticalOutput_whenUsingFreezePane(File composite, File direct) throws Exception {
+            // Given: composable @FreezePane(...) on class vs direct equivalent
+            List<IntegrationExcelDatas.ClassFreezePane.Composite> compositeData =
+                    IntegrationExcelDatas.ClassFreezePane.compositeData();
+            List<IntegrationExcelDatas.ClassFreezePane.Direct> directData =
+                    IntegrationExcelDatas.ClassFreezePane.directData();
+
+            // When
+            doWrite(
+                    composite,
+                    direct,
+                    IntegrationExcelDatas.ClassFreezePane.Composite.class,
+                    IntegrationExcelDatas.ClassFreezePane.Direct.class,
+                    compositeData,
+                    directData);
+
+            // Then
+            WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+                Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+                Sheet sheet = workbook.getSheetAt(0);
+                Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+                // head row
+                Row headRow = sheet.getRow(0);
+                Assertions.assertEquals(2, headRow.getPhysicalNumberOfCells());
+                assertHeadNames(headRow, Arrays.asList("Name", "Value"), label);
+
+                // data rows
+                for (int i = 0; i < 5; i++) {
+                    Row data = sheet.getRow(i + 1);
+
+                    Assertions.assertEquals(2, data.getPhysicalNumberOfCells());
+                    Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                    Assertions.assertEquals(
+                            "Name" + i,
+                            data.getCell(0).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                    Assertions.assertEquals(CellType.STRING, data.getCell(1).getCellType());
+                    Assertions.assertEquals(
+                            "Value" + i,
+                            data.getCell(1).getStringCellValue(),
+                            "[" + label + "] The data of row[" + i + "] column[1] is unexpected.");
+                }
+
+                // freeze-pane info
+                PaneInformation pane = sheet.getPaneInformation();
+                Assertions.assertNotNull(pane);
+                Assertions.assertTrue(pane.isFreezePane());
+
+                Assertions.assertEquals(1, pane.getVerticalSplitPosition());
+                Assertions.assertEquals(1, pane.getHorizontalSplitPosition());
+                Assertions.assertEquals(3, pane.getVerticalSplitLeftColumn());
+                Assertions.assertEquals(5, pane.getHorizontalSplitTopRow());
+            });
+        }
+
+        @ParameterizedTest
+        @MethodSource(FILE_GROUPS_METHOD)
         void shouldProduceIdenticalOutput_whenUsingHeadRowHeightAliasFor(File composite, File direct) throws Exception {
             // Given: @AliasFor(height=50) → @HeadRowHeight(50) — renamed attribute
             List<IntegrationExcelDatas.AliasForHeadRowHeight.Composite> compositeData =
@@ -1671,6 +1731,65 @@ class IntegrationCompositeAnnotationTest {
                         "A1:B2", merges.get(0).formatAsString(), "[" + label + "] The merged region is unexpected.");
             });
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource(FILE_GROUPS_METHOD)
+    void shouldProduceIdenticalOutput_whenUsingFreezePaneAliasFor(File composite, File direct) throws Exception {
+        // Given: 4 @AliasFor: colSplit/rowSplit/leftmostColumn/topRow
+        List<IntegrationExcelDatas.AliasForFreezePane.Composite> compositeData =
+                IntegrationExcelDatas.AliasForFreezePane.compositeData();
+        List<IntegrationExcelDatas.AliasForFreezePane.Direct> directData =
+                IntegrationExcelDatas.AliasForFreezePane.directData();
+
+        // When
+        doWrite(
+                composite,
+                direct,
+                IntegrationExcelDatas.AliasForFreezePane.Composite.class,
+                IntegrationExcelDatas.AliasForFreezePane.Direct.class,
+                compositeData,
+                directData);
+
+        // Then
+        WorkbookAsserts.build(composite, "Composite", direct, "Direct").assertMulti((label, workbook) -> {
+            Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+            Sheet sheet = workbook.getSheetAt(0);
+            Assertions.assertEquals(6, sheet.getPhysicalNumberOfRows());
+
+            // head row
+            Row headRow = sheet.getRow(0);
+            Assertions.assertEquals(2, headRow.getPhysicalNumberOfCells());
+            assertHeadNames(headRow, Arrays.asList("Name", "Value"), label);
+
+            // data rows
+            for (int i = 0; i < 5; i++) {
+                Row data = sheet.getRow(i + 1);
+
+                Assertions.assertEquals(2, data.getPhysicalNumberOfCells());
+                Assertions.assertEquals(CellType.STRING, data.getCell(0).getCellType());
+                Assertions.assertEquals(
+                        "Name" + i,
+                        data.getCell(0).getStringCellValue(),
+                        "[" + label + "] The data of row[" + i + "] column[0] is unexpected.");
+                Assertions.assertEquals(CellType.STRING, data.getCell(1).getCellType());
+                Assertions.assertEquals(
+                        "Value" + i,
+                        data.getCell(1).getStringCellValue(),
+                        "[" + label + "] The data of row[" + i + "] column[1] is unexpected.");
+            }
+
+            // freeze-pane info
+            PaneInformation pane = sheet.getPaneInformation();
+            Assertions.assertNotNull(pane);
+            Assertions.assertTrue(pane.isFreezePane());
+
+            Assertions.assertEquals(1, pane.getVerticalSplitPosition());
+            Assertions.assertEquals(1, pane.getHorizontalSplitPosition());
+            Assertions.assertEquals(3, pane.getVerticalSplitLeftColumn());
+            Assertions.assertEquals(5, pane.getHorizontalSplitTopRow());
+        });
     }
 
     // ====================================================================

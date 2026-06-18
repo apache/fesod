@@ -24,12 +24,10 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.math.RoundingMode;
 import lombok.Data;
-import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
-import org.apache.fesod.sheet.annotation.AnnotatedTypeDescriptor;
-import org.apache.fesod.sheet.annotation.AnnotationAttributes;
-import org.apache.fesod.sheet.annotation.AnnotationMap;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.FesodMarked;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
@@ -446,21 +444,15 @@ class CompositeAnnotationTest {
 
             Head head = property.getHeadMap().get(0);
             Assertions.assertNotNull(head);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertFalse(fieldAnnotationMap.isEmpty());
-            Assertions.assertEquals(2, fieldAnnotationMap.size());
 
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ComposableExcelProperty.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ExcelProperty.class));
-
-            String[] expectedValue = {"Custom Name"};
-
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(ComposableExcelProperty.class);
-            Assertions.assertArrayEquals(expectedValue, customAttrs.getRequiredAttribute("value", String[].class));
-
-            AnnotationAttributes targetAttrs = fieldAnnotationMap.getAttributes(ExcelProperty.class);
-            Assertions.assertArrayEquals(expectedValue, targetAttrs.getRequiredAttribute("value", String[].class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Custom Name"})
+                    .hasAnnotation(ExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Custom Name"});
         }
 
         @Test
@@ -477,27 +469,19 @@ class CompositeAnnotationTest {
 
             Head head = property.getHeadMap().get(2);
             Assertions.assertNotNull(head);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertFalse(fieldAnnotationMap.isEmpty());
-            Assertions.assertEquals(2, fieldAnnotationMap.size());
 
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(FullyComposableExcelProperty.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ExcelProperty.class));
-
-            String[] expectedValue = {"Full Name", "Common Config"};
-            int expectedIndex = 2;
-            int expectedOrder = 100;
-
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(FullyComposableExcelProperty.class);
-            Assertions.assertArrayEquals(expectedValue, customAttrs.getRequiredAttribute("value", String[].class));
-            Assertions.assertEquals(expectedIndex, customAttrs.getRequiredAttribute("index", Integer.class));
-            Assertions.assertEquals(expectedOrder, customAttrs.getRequiredAttribute("order", Integer.class));
-
-            AnnotationAttributes targetAttrs = fieldAnnotationMap.getAttributes(ExcelProperty.class);
-            Assertions.assertArrayEquals(expectedValue, targetAttrs.getRequiredAttribute("value", String[].class));
-            Assertions.assertEquals(expectedIndex, targetAttrs.getRequiredAttribute("index", Integer.class));
-            Assertions.assertEquals(expectedOrder, targetAttrs.getRequiredAttribute("order", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(FullyComposableExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Full Name", "Common Config"})
+                    .hasAttributeWithValue("index", 2)
+                    .hasAttributeWithValue("order", 100)
+                    .hasAnnotation(ExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Full Name", "Common Config"})
+                    .hasAttributeWithValue("index", 2)
+                    .hasAttributeWithValue("order", 100);
         }
 
         @Test
@@ -515,21 +499,15 @@ class CompositeAnnotationTest {
 
             Head head = property.getHeadMap().get(0);
             Assertions.assertNotNull(head);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertFalse(fieldAnnotationMap.isEmpty());
-            Assertions.assertEquals(2, fieldAnnotationMap.size());
 
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ExcelProperty.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ComposableExcelPropertyPreset.class));
-
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(ComposableExcelPropertyPreset.class);
-            Assertions.assertNotNull(customAttrs);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes attrs = fieldAnnotationMap.getAttributes(ExcelProperty.class);
-            Assertions.assertArrayEquals(
-                    new String[] {"First Name"}, attrs.getRequiredAttribute("value", String[].class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableExcelPropertyPreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(ExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"First Name"});
         }
 
         @Test
@@ -543,19 +521,16 @@ class CompositeAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(annotationMap);
-            Assertions.assertEquals(2, annotationMap.size());
-            Assertions.assertTrue(annotationMap.hasAnnotation(ComposableNumberFormat.class));
-            Assertions.assertTrue(annotationMap.hasAnnotation(NumberFormat.class));
 
-            AnnotationAttributes customAttrs = annotationMap.getAttributes(ComposableNumberFormat.class);
-            Assertions.assertEquals("#,##0.00", customAttrs.getRequiredAttribute("value", String.class));
-
-            AnnotationAttributes targetAttrs = annotationMap.getAttributes(NumberFormat.class);
-            Assertions.assertEquals("#,##0.00", targetAttrs.getRequiredAttribute("value", String.class));
-            Assertions.assertEquals(
-                    RoundingMode.HALF_UP, targetAttrs.getRequiredAttribute("roundingMode", RoundingMode.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableNumberFormat.class)
+                    .hasAttributeWithValue("value", "#,##0.00")
+                    .hasAnnotation(NumberFormat.class)
+                    .hasAttributeWithValue("value", "#,##0.00")
+                    .hasAttributeWithValue("roundingMode", RoundingMode.HALF_UP);
         }
 
         @Test
@@ -569,25 +544,21 @@ class CompositeAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(annotationMap);
-            Assertions.assertEquals(4, annotationMap.size());
-            Assertions.assertTrue(annotationMap.hasAnnotation(ComposableContentStylePreset.class));
-            Assertions.assertTrue(annotationMap.hasAnnotation(ContentStyle.class));
-            Assertions.assertTrue(annotationMap.hasAnnotation(ContentFontStyle.class));
-            Assertions.assertTrue(annotationMap.hasAnnotation(ExcelProperty.class));
 
-            AnnotationAttributes customAttrs = annotationMap.getAttributes(ComposableContentStylePreset.class);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes styleAttrs = annotationMap.getAttributes(ContentStyle.class);
-            Assertions.assertEquals(BooleanEnum.TRUE, styleAttrs.getRequiredAttribute("wrapped", BooleanEnum.class));
-            Assertions.assertEquals((short) 10, styleAttrs.getRequiredAttribute("fillForegroundColor", Short.class));
-
-            AnnotationAttributes fontAttrs = annotationMap.getAttributes(ContentFontStyle.class);
-            Assertions.assertEquals("Arial", fontAttrs.getRequiredAttribute("fontName", String.class));
-            Assertions.assertEquals((short) 12, fontAttrs.getRequiredAttribute("fontHeightInPoints", Short.class));
-            Assertions.assertEquals(BooleanEnum.TRUE, fontAttrs.getRequiredAttribute("bold", BooleanEnum.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableContentStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(ContentStyle.class)
+                    .hasAttributeWithValue("wrapped", BooleanEnum.TRUE)
+                    .hasAttributeWithValue("fillForegroundColor", (short) 10)
+                    .hasAnnotation(ContentFontStyle.class)
+                    .hasAttributeWithValue("fontName", "Arial")
+                    .hasAttributeWithValue("fontHeightInPoints", (short) 12)
+                    .hasAttributeWithValue("bold", BooleanEnum.TRUE)
+                    .hasAnnotation(ExcelProperty.class);
         }
 
         @Test
@@ -600,21 +571,18 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableDateTimeFormat.class, null);
 
             // then
-            Assertions.assertNotNull(property.getHeadMap());
             Assertions.assertEquals(1, property.getHeadMap().size());
 
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(annotationMap);
-            Assertions.assertEquals(2, annotationMap.size());
-            Assertions.assertTrue(annotationMap.hasAnnotation(ComposableDateTimeFormat.class));
-            Assertions.assertTrue(annotationMap.hasAnnotation(DateTimeFormat.class));
 
-            AnnotationAttributes customAttrs = annotationMap.getAttributes(ComposableDateTimeFormat.class);
-            Assertions.assertEquals("yyyy-MM-dd HH:mm", customAttrs.getRequiredAttribute("value", String.class));
-
-            AnnotationAttributes targetAttrs = annotationMap.getAttributes(DateTimeFormat.class);
-            Assertions.assertEquals("yyyy-MM-dd HH:mm", targetAttrs.getRequiredAttribute("value", String.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableDateTimeFormat.class)
+                    .hasAttributeWithValue("value", "yyyy-MM-dd HH:mm")
+                    .hasAnnotation(DateTimeFormat.class)
+                    .hasAttributeWithValue("value", "yyyy-MM-dd HH:mm");
         }
 
         @Test
@@ -628,23 +596,20 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableContentLoopMerge.class, null);
 
             // then
-            Assertions.assertNotNull(property.getHeadMap());
             Assertions.assertEquals(1, property.getHeadMap().size());
 
             Head head = property.getHeadMap().get(0);
-            AnnotationMap annotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(annotationMap);
-            Assertions.assertEquals(2, annotationMap.size());
-            Assertions.assertTrue(annotationMap.hasAnnotation(ComposableContentLoopMerge.class));
-            Assertions.assertTrue(annotationMap.hasAnnotation(ContentLoopMerge.class));
 
-            AnnotationAttributes customAttrs = annotationMap.getAttributes(ComposableContentLoopMerge.class);
-            Assertions.assertEquals(3, customAttrs.getRequiredAttribute("eachRow", Integer.class));
-            Assertions.assertEquals(2, customAttrs.getRequiredAttribute("columnExtend", Integer.class));
-
-            AnnotationAttributes targetAttrs = annotationMap.getAttributes(ContentLoopMerge.class);
-            Assertions.assertEquals(3, targetAttrs.getRequiredAttribute("eachRow", Integer.class));
-            Assertions.assertEquals(2, targetAttrs.getRequiredAttribute("columnExtend", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableContentLoopMerge.class)
+                    .hasAttributeWithValue("eachRow", 3)
+                    .hasAttributeWithValue("columnExtend", 2)
+                    .hasAnnotation(ContentLoopMerge.class)
+                    .hasAttributeWithValue("eachRow", 3)
+                    .hasAttributeWithValue("columnExtend", 2);
         }
 
         @Test
@@ -658,12 +623,16 @@ class CompositeAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
-            Assertions.assertNotNull(fieldDescriptor);
-            Assertions.assertEquals("name", fieldDescriptor.getFieldName());
-            Assertions.assertNotNull(fieldDescriptor.getAnnotatedElement());
-            Assertions.assertEquals(
-                    "name", fieldDescriptor.getAnnotatedElement().getName());
+            Field element = FieldUtils.getDeclaredField(ExcelModelWithComposableField.class, "name", true);
+
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .isAnnotatedElementEquals(element)
+                    .satisfies(fieldDescriptor -> {
+                        Assertions.assertEquals("name", fieldDescriptor.getFieldName());
+                        Assertions.assertEquals(
+                                "name", fieldDescriptor.getAnnotatedElement().getName());
+                    });
         }
 
         @Test
@@ -677,14 +646,17 @@ class CompositeAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
-            Assertions.assertNotNull(fieldDescriptor);
-            Assertions.assertEquals(4, fieldDescriptor.getAnnotationCount());
-            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ComposableContentStylePreset.class));
-            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ContentStyle.class));
-            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ContentFontStyle.class));
-            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ExcelProperty.class));
-            Assertions.assertFalse(fieldDescriptor.hasAnnotation(ColumnWidth.class));
+
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .hasAnnotationCount(4)
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableContentStylePreset.class)
+                    .hasAnnotation(ContentStyle.class)
+                    .hasAnnotation(ContentFontStyle.class)
+                    .hasAnnotation(ExcelProperty.class)
+                    .and()
+                    .doesNotHaveAnnotation(ColumnWidth.class);
         }
 
         @Test
@@ -698,15 +670,14 @@ class CompositeAnnotationTest {
 
             // then
             Head head = property.getHeadMap().get(0);
-            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
-            Assertions.assertNotNull(fieldDescriptor);
 
-            AnnotationAttributes numberAttrs = fieldDescriptor.getAnnotation(NumberFormat.class);
-            Assertions.assertNotNull(numberAttrs);
-            Assertions.assertEquals("#,##0.00", numberAttrs.getRequiredAttribute("value", String.class));
-
-            AnnotationAttributes missingAttrs = fieldDescriptor.getAnnotation(ColumnWidth.class);
-            Assertions.assertNull(missingAttrs);
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasAnnotation(NumberFormat.class)
+                    .hasAttributeWithValue("value", "#,##0.00")
+                    .and()
+                    .doesNotHaveAnnotation(ColumnWidth.class);
         }
     }
 
@@ -722,18 +693,14 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableClassAnnotation.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertFalse(classAnnotationMap.isEmpty());
-            Assertions.assertEquals(2, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableColumnWidth.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ColumnWidth.class));
-
-            AnnotationAttributes customAttrs = classAnnotationMap.getAttributes(ComposableColumnWidth.class);
-            Assertions.assertEquals(25, customAttrs.getRequiredAttribute("value", Integer.class));
-
-            AnnotationAttributes targetAttrs = classAnnotationMap.getAttributes(ColumnWidth.class);
-            Assertions.assertEquals(25, targetAttrs.getRequiredAttribute("value", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableColumnWidth.class)
+                    .hasAttributeWithValue("value", 25)
+                    .hasAnnotation(ColumnWidth.class)
+                    .hasAttributeWithValue("value", 25);
         }
 
         @Test
@@ -746,24 +713,16 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableGroupAnnotation.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertFalse(classAnnotationMap.isEmpty());
-            Assertions.assertEquals(3, classAnnotationMap.size());
-
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableAnnotationWithCommonStyle.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ColumnWidth.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadStyle.class));
-
-            AnnotationAttributes customAttrs =
-                    classAnnotationMap.getAttributes(ComposableAnnotationWithCommonStyle.class);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes widthAttrs = classAnnotationMap.getAttributes(ColumnWidth.class);
-            Assertions.assertEquals(10, widthAttrs.getRequiredAttribute("value", Integer.class));
-
-            AnnotationAttributes styleAttrs = classAnnotationMap.getAttributes(HeadStyle.class);
-            Assertions.assertEquals((short) 10, styleAttrs.getRequiredAttribute("fillForegroundColor", Short.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(3)
+                    .hasAnnotation(ComposableAnnotationWithCommonStyle.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(ColumnWidth.class)
+                    .hasAttributeWithValue("value", 10)
+                    .hasAnnotation(HeadStyle.class)
+                    .hasAttributeWithValue("fillForegroundColor", (short) 10);
         }
 
         @Test
@@ -776,28 +735,21 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableTableStyle.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(4, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableTableStylePreset.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadRowHeight.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ContentRowHeight.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(OnceAbsoluteMerge.class));
-
-            AnnotationAttributes customAttrs = classAnnotationMap.getAttributes(ComposableTableStylePreset.class);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes headHeightAttrs = classAnnotationMap.getAttributes(HeadRowHeight.class);
-            Assertions.assertEquals((short) 30, headHeightAttrs.getRequiredAttribute("value", Short.class));
-
-            AnnotationAttributes contentHeightAttrs = classAnnotationMap.getAttributes(ContentRowHeight.class);
-            Assertions.assertEquals((short) 20, contentHeightAttrs.getRequiredAttribute("value", Short.class));
-
-            AnnotationAttributes mergeAttrs = classAnnotationMap.getAttributes(OnceAbsoluteMerge.class);
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstRowIndex", Integer.class));
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("lastRowIndex", Integer.class));
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstColumnIndex", Integer.class));
-            Assertions.assertEquals(3, mergeAttrs.getRequiredAttribute("lastColumnIndex", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableTableStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(HeadRowHeight.class)
+                    .hasAttributeWithValue("value", (short) 30)
+                    .hasAnnotation(ContentRowHeight.class)
+                    .hasAttributeWithValue("value", (short) 20)
+                    .hasAnnotation(OnceAbsoluteMerge.class)
+                    .hasAttributeWithValue("firstRowIndex", 0)
+                    .hasAttributeWithValue("lastRowIndex", 0)
+                    .hasAttributeWithValue("firstColumnIndex", 0)
+                    .hasAttributeWithValue("lastColumnIndex", 3);
         }
 
         @Test
@@ -812,30 +764,23 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableHeaderStyle.class, null);
 
             // then
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(4, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableHeaderStylePreset.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadStyle.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadFontStyle.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(FreezePane.class));
-
-            AnnotationAttributes customAttrs = classAnnotationMap.getAttributes(ComposableHeaderStylePreset.class);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes styleAttrs = classAnnotationMap.getAttributes(HeadStyle.class);
-            Assertions.assertEquals((short) 10, styleAttrs.getRequiredAttribute("fillForegroundColor", Short.class));
-
-            AnnotationAttributes fontAttrs = classAnnotationMap.getAttributes(HeadFontStyle.class);
-            Assertions.assertEquals("Calibri", fontAttrs.getRequiredAttribute("fontName", String.class));
-            Assertions.assertEquals((short) 14, fontAttrs.getRequiredAttribute("fontHeightInPoints", Short.class));
-            Assertions.assertEquals(BooleanEnum.TRUE, fontAttrs.getRequiredAttribute("bold", BooleanEnum.class));
-
-            AnnotationAttributes attrs = classAnnotationMap.getAttributes(FreezePane.class);
-            Assertions.assertEquals(1, attrs.getRequiredAttribute("colSplit", Integer.class));
-            Assertions.assertEquals(1, attrs.getRequiredAttribute("rowSplit", Integer.class));
-            Assertions.assertEquals(3, attrs.getRequiredAttribute("leftmostColumn", Integer.class));
-            Assertions.assertEquals(5, attrs.getRequiredAttribute("topRow", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableHeaderStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(HeadStyle.class)
+                    .hasAttributeWithValue("fillForegroundColor", (short) 10)
+                    .hasAnnotation(HeadFontStyle.class)
+                    .hasAttributeWithValue("fontName", "Calibri")
+                    .hasAttributeWithValue("fontHeightInPoints", (short) 14)
+                    .hasAttributeWithValue("bold", BooleanEnum.TRUE)
+                    .hasAnnotation(FreezePane.class)
+                    .hasAttributeWithValue("colSplit", 1)
+                    .hasAttributeWithValue("rowSplit", 1)
+                    .hasAttributeWithValue("leftmostColumn", 3)
+                    .hasAttributeWithValue("topRow", 5);
         }
 
         @Test
@@ -847,9 +792,9 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableClassAnnotation.class, null);
 
             // then
-            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
-            Assertions.assertNotNull(typeDescriptor);
-            Assertions.assertSame(ExcelModelWithComposableClassAnnotation.class, typeDescriptor.getAnnotatedElement());
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .isAnnotatedElementEquals(ExcelModelWithComposableClassAnnotation.class);
         }
 
         @Test
@@ -862,13 +807,15 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableGroupAnnotation.class, null);
 
             // then
-            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
-            Assertions.assertNotNull(typeDescriptor);
-            Assertions.assertEquals(3, typeDescriptor.getAnnotationCount());
-            Assertions.assertTrue(typeDescriptor.hasAnnotation(ComposableAnnotationWithCommonStyle.class));
-            Assertions.assertTrue(typeDescriptor.hasAnnotation(ColumnWidth.class));
-            Assertions.assertTrue(typeDescriptor.hasAnnotation(HeadStyle.class));
-            Assertions.assertFalse(typeDescriptor.hasAnnotation(ContentRowHeight.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .hasAnnotationCount(3)
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableAnnotationWithCommonStyle.class)
+                    .hasAnnotation(ColumnWidth.class)
+                    .hasAnnotation(HeadStyle.class)
+                    .and()
+                    .doesNotHaveAnnotation(ContentRowHeight.class);
         }
 
         @Test
@@ -880,15 +827,13 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelWithComposableClassAnnotation.class, null);
 
             // then
-            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
-            Assertions.assertNotNull(typeDescriptor);
-
-            AnnotationAttributes widthAttrs = typeDescriptor.getAnnotation(ColumnWidth.class);
-            Assertions.assertNotNull(widthAttrs);
-            Assertions.assertEquals(25, widthAttrs.getRequiredAttribute("value", Integer.class));
-
-            AnnotationAttributes missingAttrs = typeDescriptor.getAnnotation(HeadStyle.class);
-            Assertions.assertNull(missingAttrs);
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasAnnotation(ColumnWidth.class)
+                    .hasAttributeWithValue("value", 25)
+                    .and()
+                    .doesNotHaveAnnotation(HeadStyle.class);
         }
     }
 
@@ -905,47 +850,35 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedClassAndFieldComposable.class, null);
 
             // then - class-level annotationMap
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(4, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableTableStylePreset.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadRowHeight.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ContentRowHeight.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(OnceAbsoluteMerge.class));
-
-            AnnotationAttributes customTypeAttrs = classAnnotationMap.getAttributes(ComposableTableStylePreset.class);
-            Assertions.assertTrue(customTypeAttrs.isEmpty());
-
-            AnnotationAttributes headHeightAttrs = classAnnotationMap.getAttributes(HeadRowHeight.class);
-            Assertions.assertEquals((short) 30, headHeightAttrs.getRequiredAttribute("value", Short.class));
-
-            AnnotationAttributes contentHeightAttrs = classAnnotationMap.getAttributes(ContentRowHeight.class);
-            Assertions.assertEquals((short) 20, contentHeightAttrs.getRequiredAttribute("value", Short.class));
-
-            AnnotationAttributes mergeAttrs = classAnnotationMap.getAttributes(OnceAbsoluteMerge.class);
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstRowIndex", Integer.class));
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("lastRowIndex", Integer.class));
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstColumnIndex", Integer.class));
-            Assertions.assertEquals(3, mergeAttrs.getRequiredAttribute("lastColumnIndex", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableTableStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(HeadRowHeight.class)
+                    .hasAttributeWithValue("value", (short) 30)
+                    .hasAnnotation(ContentRowHeight.class)
+                    .hasAttributeWithValue("value", (short) 20)
+                    .hasAnnotation(OnceAbsoluteMerge.class)
+                    .hasAttributeWithValue("firstRowIndex", 0)
+                    .hasAttributeWithValue("lastRowIndex", 0)
+                    .hasAttributeWithValue("firstColumnIndex", 0)
+                    .hasAttributeWithValue("lastColumnIndex", 3);
 
             // then - field-level annotationMap
-            Assertions.assertNotNull(property.getHeadMap());
             Assertions.assertEquals(1, property.getHeadMap().size());
 
             Head head = property.getHeadMap().get(0);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertEquals(2, fieldAnnotationMap.size());
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ComposableExcelProperty.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ExcelProperty.class));
 
-            String[] expectedValue = {"Mixed Name"};
-
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(ComposableExcelProperty.class);
-            Assertions.assertArrayEquals(expectedValue, customAttrs.getRequiredAttribute("value", String[].class));
-
-            AnnotationAttributes targetAttrs = fieldAnnotationMap.getAttributes(ComposableExcelProperty.class);
-            Assertions.assertArrayEquals(expectedValue, targetAttrs.getRequiredAttribute("value", String[].class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Mixed Name"})
+                    .hasAnnotation(ExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Mixed Name"});
         }
 
         @Test
@@ -958,49 +891,36 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedBothNoMethods.class, null);
 
             // then - class-level annotationMap
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(3, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableAnnotationWithCommonStyle.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ColumnWidth.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadStyle.class));
-
-            AnnotationAttributes customTypeAttrs =
-                    classAnnotationMap.getAttributes(ComposableAnnotationWithCommonStyle.class);
-            Assertions.assertTrue(customTypeAttrs.isEmpty());
-
-            AnnotationAttributes widthAttrs = classAnnotationMap.getAttributes(ColumnWidth.class);
-            Assertions.assertEquals(10, widthAttrs.getRequiredAttribute("value", Integer.class));
-
-            AnnotationAttributes styleTypeAttrs = classAnnotationMap.getAttributes(HeadStyle.class);
-            Assertions.assertEquals(
-                    (short) 10, styleTypeAttrs.getRequiredAttribute("fillForegroundColor", Short.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(3)
+                    .hasAnnotation(ComposableAnnotationWithCommonStyle.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(ColumnWidth.class)
+                    .hasAttributeWithValue("value", 10)
+                    .hasAnnotation(HeadStyle.class)
+                    .hasAttributeWithValue("fillForegroundColor", (short) 10);
 
             // then - field-level annotationMap
-            Assertions.assertNotNull(property.getHeadMap());
             Assertions.assertEquals(1, property.getHeadMap().size());
 
             Head head = property.getHeadMap().get(0);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertEquals(4, fieldAnnotationMap.size());
 
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ComposableContentStylePreset.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ContentStyle.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ContentFontStyle.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ExcelProperty.class));
-
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(ComposableContentStylePreset.class);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes styleAttrs = fieldAnnotationMap.getAttributes(ContentStyle.class);
-            Assertions.assertEquals(BooleanEnum.TRUE, styleAttrs.getRequiredAttribute("wrapped", BooleanEnum.class));
-            Assertions.assertEquals((short) 10, styleAttrs.getRequiredAttribute("fillForegroundColor", Short.class));
-
-            AnnotationAttributes fontAttrs = fieldAnnotationMap.getAttributes(ContentFontStyle.class);
-            Assertions.assertEquals("Arial", fontAttrs.getRequiredAttribute("fontName", String.class));
-            Assertions.assertEquals((short) 12, fontAttrs.getRequiredAttribute("fontHeightInPoints", Short.class));
-            Assertions.assertEquals(BooleanEnum.TRUE, fontAttrs.getRequiredAttribute("bold", BooleanEnum.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableContentStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(ContentStyle.class)
+                    .hasAttributeWithValue("wrapped", BooleanEnum.TRUE)
+                    .hasAttributeWithValue("fillForegroundColor", (short) 10)
+                    .hasAnnotation(ContentFontStyle.class)
+                    .hasAttributeWithValue("fontName", "Arial")
+                    .hasAttributeWithValue("fontHeightInPoints", (short) 12)
+                    .hasAttributeWithValue("bold", BooleanEnum.TRUE)
+                    .hasAnnotation(ExcelProperty.class);
         }
 
         @Test
@@ -1013,33 +933,27 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedAliasForBothLevels.class, null);
 
             // then - class-level annotationMap
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(2, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableColumnWidth.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ColumnWidth.class));
-
-            AnnotationAttributes customWidthAttrs = classAnnotationMap.getAttributes(ComposableColumnWidth.class);
-            Assertions.assertEquals(50, customWidthAttrs.getRequiredAttribute("value", Integer.class));
-
-            AnnotationAttributes targetTypeAttrs = classAnnotationMap.getAttributes(ColumnWidth.class);
-            Assertions.assertEquals(50, targetTypeAttrs.getRequiredAttribute("value", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableColumnWidth.class)
+                    .hasAttributeWithValue("value", 50)
+                    .hasAnnotation(ColumnWidth.class)
+                    .hasAttributeWithValue("value", 50);
 
             // then - field-level annotationMap
             Head head = property.getHeadMap().get(0);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertEquals(2, fieldAnnotationMap.size());
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ComposableNumberFormat.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(NumberFormat.class));
 
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(ComposableNumberFormat.class);
-            Assertions.assertEquals("0.00%", customAttrs.getRequiredAttribute("value", String.class));
-
-            AnnotationAttributes targetAttrs = fieldAnnotationMap.getAttributes(NumberFormat.class);
-            Assertions.assertEquals("0.00%", targetAttrs.getRequiredAttribute("value", String.class));
-            Assertions.assertEquals(
-                    RoundingMode.HALF_UP, targetAttrs.getRequiredAttribute("roundingMode", RoundingMode.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableNumberFormat.class)
+                    .hasAttributeWithValue("value", "0.00%")
+                    .hasAnnotation(NumberFormat.class)
+                    .hasAttributeWithValue("value", "0.00%")
+                    .hasAttributeWithValue("roundingMode", RoundingMode.HALF_UP);
         }
 
         @Test
@@ -1053,62 +967,43 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedMultipleFields.class, null);
 
             // then - class-level annotationMap is shared
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(4, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableTableStylePreset.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadRowHeight.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ContentRowHeight.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(OnceAbsoluteMerge.class));
-
-            AnnotationAttributes customAttrs = classAnnotationMap.getAttributes(ComposableTableStylePreset.class);
-            Assertions.assertTrue(customAttrs.isEmpty());
-
-            AnnotationAttributes headHeightAttrs = classAnnotationMap.getAttributes(HeadRowHeight.class);
-            Assertions.assertEquals((short) 30, headHeightAttrs.getRequiredAttribute("value", Short.class));
-
-            AnnotationAttributes contentHeightAttrs = classAnnotationMap.getAttributes(ContentRowHeight.class);
-            Assertions.assertEquals((short) 20, contentHeightAttrs.getRequiredAttribute("value", Short.class));
-
-            AnnotationAttributes mergeAttrs = classAnnotationMap.getAttributes(OnceAbsoluteMerge.class);
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstRowIndex", Integer.class));
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("lastRowIndex", Integer.class));
-            Assertions.assertEquals(0, mergeAttrs.getRequiredAttribute("firstColumnIndex", Integer.class));
-            Assertions.assertEquals(3, mergeAttrs.getRequiredAttribute("lastColumnIndex", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableTableStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(HeadRowHeight.class)
+                    .hasAttributeWithValue("value", (short) 30)
+                    .hasAnnotation(ContentRowHeight.class)
+                    .hasAttributeWithValue("value", (short) 20)
+                    .hasAnnotation(OnceAbsoluteMerge.class)
+                    .hasAttributeWithValue("firstRowIndex", 0)
+                    .hasAttributeWithValue("lastRowIndex", 0)
+                    .hasAttributeWithValue("firstColumnIndex", 0)
+                    .hasAttributeWithValue("lastColumnIndex", 3);
 
             // then - each field has its own independent annotationMap
-            Assertions.assertNotNull(property.getHeadMap());
             Assertions.assertEquals(2, property.getHeadMap().size());
 
             Head nameHead = property.getHeadMap().get(0);
-            AnnotationMap nameAnnotationMap = nameHead.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(nameAnnotationMap);
-            Assertions.assertTrue(nameAnnotationMap.hasAnnotation(ComposableExcelProperty.class));
-            Assertions.assertTrue(nameAnnotationMap.hasAnnotation(ExcelProperty.class));
-
-            String[] expectedValue = {"Name"};
-
-            AnnotationAttributes customField1Attrs = nameAnnotationMap.getAttributes(ComposableExcelProperty.class);
-            Assertions.assertArrayEquals(
-                    expectedValue, customField1Attrs.getRequiredAttribute("value", String[].class));
-
-            AnnotationAttributes targetField1Attrs = nameAnnotationMap.getAttributes(ExcelProperty.class);
-            Assertions.assertArrayEquals(
-                    expectedValue, targetField1Attrs.getRequiredAttribute("value", String[].class));
+            AnnotatedDescriptorAssertions.assertThat(nameHead.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Name"})
+                    .hasAnnotation(ExcelProperty.class)
+                    .hasAttributeWithValue("value", new String[] {"Name"});
 
             Head amountHead = property.getHeadMap().get(1);
-            AnnotationMap amountAnnotationMap = amountHead.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(amountAnnotationMap);
-            Assertions.assertTrue(amountAnnotationMap.hasAnnotation(ComposableNumberFormat.class));
-            Assertions.assertTrue(amountAnnotationMap.hasAnnotation(NumberFormat.class));
-
-            AnnotationAttributes customField2Attrs = amountAnnotationMap.getAttributes(ComposableNumberFormat.class);
-            Assertions.assertEquals("#,##0.00", customField2Attrs.getRequiredAttribute("value", String.class));
-
-            AnnotationAttributes targetField2Attrs = amountAnnotationMap.getAttributes(NumberFormat.class);
-            Assertions.assertEquals("#,##0.00", targetField2Attrs.getRequiredAttribute("value", String.class));
-            Assertions.assertEquals(
-                    RoundingMode.HALF_UP, targetField2Attrs.getRequiredAttribute("roundingMode", RoundingMode.class));
+            AnnotatedDescriptorAssertions.assertThat(amountHead.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableNumberFormat.class)
+                    .hasAttributeWithValue("value", "#,##0.00")
+                    .hasAnnotation(NumberFormat.class)
+                    .hasAttributeWithValue("value", "#,##0.00")
+                    .hasAttributeWithValue("roundingMode", RoundingMode.HALF_UP);
         }
 
         @Test
@@ -1121,44 +1016,35 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedHeaderStyleAndDateFormat.class, null);
 
             // then - class-level annotationMap
-            AnnotationMap classAnnotationMap = property.getTypeDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(classAnnotationMap);
-            Assertions.assertEquals(4, classAnnotationMap.size());
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(ComposableHeaderStylePreset.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadStyle.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(HeadFontStyle.class));
-            Assertions.assertTrue(classAnnotationMap.hasAnnotation(FreezePane.class));
-
-            AnnotationAttributes customTypeAttrs = classAnnotationMap.getAttributes(ComposableHeaderStylePreset.class);
-            Assertions.assertTrue(customTypeAttrs.isEmpty());
-
-            AnnotationAttributes styleAttrs = classAnnotationMap.getAttributes(HeadStyle.class);
-            Assertions.assertEquals((short) 10, styleAttrs.getRequiredAttribute("fillForegroundColor", Short.class));
-
-            AnnotationAttributes fontAttrs = classAnnotationMap.getAttributes(HeadFontStyle.class);
-            Assertions.assertEquals("Calibri", fontAttrs.getRequiredAttribute("fontName", String.class));
-            Assertions.assertEquals((short) 14, fontAttrs.getRequiredAttribute("fontHeightInPoints", Short.class));
-            Assertions.assertEquals(BooleanEnum.TRUE, fontAttrs.getRequiredAttribute("bold", BooleanEnum.class));
-
-            AnnotationAttributes attrs = classAnnotationMap.getAttributes(FreezePane.class);
-            Assertions.assertEquals(1, attrs.getRequiredAttribute("colSplit", Integer.class));
-            Assertions.assertEquals(1, attrs.getRequiredAttribute("rowSplit", Integer.class));
-            Assertions.assertEquals(3, attrs.getRequiredAttribute("leftmostColumn", Integer.class));
-            Assertions.assertEquals(5, attrs.getRequiredAttribute("topRow", Integer.class));
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(4)
+                    .hasAnnotation(ComposableHeaderStylePreset.class)
+                    .hasAttributeSize(0)
+                    .hasAnnotation(HeadStyle.class)
+                    .hasAttributeWithValue("fillForegroundColor", (short) 10)
+                    .hasAnnotation(HeadFontStyle.class)
+                    .hasAttributeWithValue("fontName", "Calibri")
+                    .hasAttributeWithValue("fontHeightInPoints", (short) 14)
+                    .hasAttributeWithValue("bold", BooleanEnum.TRUE)
+                    .hasAnnotation(FreezePane.class)
+                    .hasAttributeWithValue("colSplit", 1)
+                    .hasAttributeWithValue("rowSplit", 1)
+                    .hasAttributeWithValue("leftmostColumn", 3)
+                    .hasAttributeWithValue("topRow", 5);
 
             // then - field-level annotationMap
             Head head = property.getHeadMap().get(0);
-            AnnotationMap fieldAnnotationMap = head.getFieldDescriptor().getAnnotationMap();
-            Assertions.assertNotNull(fieldAnnotationMap);
-            Assertions.assertEquals(2, fieldAnnotationMap.size());
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(ComposableDateTimeFormat.class));
-            Assertions.assertTrue(fieldAnnotationMap.hasAnnotation(DateTimeFormat.class));
 
-            AnnotationAttributes customAttrs = fieldAnnotationMap.getAttributes(ComposableDateTimeFormat.class);
-            Assertions.assertEquals("yyyy-MM-dd", customAttrs.getRequiredAttribute("value", String.class));
-
-            AnnotationAttributes targetAttrs = fieldAnnotationMap.getAttributes(DateTimeFormat.class);
-            Assertions.assertEquals("yyyy-MM-dd", targetAttrs.getRequiredAttribute("value", String.class));
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .extractingAnnotations()
+                    .hasSize(2)
+                    .hasAnnotation(ComposableDateTimeFormat.class)
+                    .hasAttributeWithValue("value", "yyyy-MM-dd")
+                    .hasAnnotation(DateTimeFormat.class)
+                    .hasAttributeWithValue("value", "yyyy-MM-dd");
         }
 
         @Test
@@ -1171,22 +1057,25 @@ class CompositeAnnotationTest {
                     new ExcelHeadProperty(configurationHolder, ExcelModelMixedClassAndFieldComposable.class, null);
 
             // then - type descriptor
-            AnnotatedTypeDescriptor typeDescriptor = property.getTypeDescriptor();
-            Assertions.assertNotNull(typeDescriptor);
-            Assertions.assertSame(ExcelModelMixedClassAndFieldComposable.class, typeDescriptor.getAnnotatedElement());
-            Assertions.assertEquals(4, typeDescriptor.getAnnotationCount());
+            AnnotatedDescriptorAssertions.assertThat(property.getTypeDescriptor())
+                    .isNotNull()
+                    .isAnnotatedElementEquals(ExcelModelMixedClassAndFieldComposable.class)
+                    .hasAnnotationCount(4);
 
             // then - field descriptor
             Head head = property.getHeadMap().get(0);
-            AnnotatedFieldDescriptor fieldDescriptor = head.getFieldDescriptor();
-            Assertions.assertNotNull(fieldDescriptor);
-            Assertions.assertEquals("name", fieldDescriptor.getFieldName());
-            Assertions.assertNotNull(fieldDescriptor.getAnnotatedElement());
-            Assertions.assertEquals(
-                    "name", fieldDescriptor.getAnnotatedElement().getName());
-            Assertions.assertEquals(2, fieldDescriptor.getAnnotationCount());
-            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ComposableExcelProperty.class));
-            Assertions.assertTrue(fieldDescriptor.hasAnnotation(ExcelProperty.class));
+
+            AnnotatedDescriptorAssertions.assertThat(head.getFieldDescriptor())
+                    .isNotNull()
+                    .hasAnnotationCount(2)
+                    .satisfies(fieldDescriptor -> {
+                        Assertions.assertEquals("name", fieldDescriptor.getFieldName());
+                        Assertions.assertEquals(
+                                "name", fieldDescriptor.getAnnotatedElement().getName());
+                    })
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableExcelProperty.class)
+                    .hasAnnotation(ExcelProperty.class);
         }
 
         @Test
@@ -1203,19 +1092,30 @@ class CompositeAnnotationTest {
             Assertions.assertEquals(2, property.getHeadMap().size());
 
             Head nameHead = property.getHeadMap().get(0);
-            AnnotatedFieldDescriptor nameDescriptor = nameHead.getFieldDescriptor();
-            Assertions.assertEquals("name", nameDescriptor.getFieldName());
-            Assertions.assertEquals("name", nameDescriptor.getAnnotatedElement().getName());
-            Assertions.assertTrue(nameDescriptor.hasAnnotation(ComposableExcelProperty.class));
-            Assertions.assertFalse(nameDescriptor.hasAnnotation(ComposableNumberFormat.class));
+            AnnotatedDescriptorAssertions.assertThat(nameHead.getFieldDescriptor())
+                    .isNotNull()
+                    .satisfies(nameDescriptor -> {
+                        Assertions.assertEquals("name", nameDescriptor.getFieldName());
+                        Assertions.assertEquals(
+                                "name", nameDescriptor.getAnnotatedElement().getName());
+                    })
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableExcelProperty.class)
+                    .and()
+                    .doesNotHaveAnnotation(ComposableNumberFormat.class);
 
             Head amountHead = property.getHeadMap().get(1);
-            AnnotatedFieldDescriptor amountDescriptor = amountHead.getFieldDescriptor();
-            Assertions.assertEquals("amount", amountDescriptor.getFieldName());
-            Assertions.assertEquals(
-                    "amount", amountDescriptor.getAnnotatedElement().getName());
-            Assertions.assertTrue(amountDescriptor.hasAnnotation(ComposableNumberFormat.class));
-            Assertions.assertFalse(amountDescriptor.hasAnnotation(ComposableExcelProperty.class));
+            AnnotatedDescriptorAssertions.assertThat(amountHead.getFieldDescriptor())
+                    .isNotNull()
+                    .satisfies(amountDescriptor -> {
+                        Assertions.assertEquals("amount", amountDescriptor.getFieldName());
+                        Assertions.assertEquals(
+                                "amount", amountDescriptor.getAnnotatedElement().getName());
+                    })
+                    .extractingAnnotations()
+                    .hasAnnotation(ComposableNumberFormat.class)
+                    .and()
+                    .doesNotHaveAnnotation(ComposableExcelProperty.class);
         }
     }
 

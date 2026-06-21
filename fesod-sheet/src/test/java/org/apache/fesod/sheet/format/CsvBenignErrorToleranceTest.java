@@ -29,13 +29,17 @@ import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.read.builder.CsvReaderBuilder;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests that truncated/unfinished quoted fields in CSV are treated as benign and
  * end the current sheet gracefully without throwing to the caller.
  */
+@Tag(Tags.ROUND_TRIP)
+@Tag(Tags.FORMAT)
 class CsvBenignErrorToleranceTest extends AbstractExcelTest {
 
     @Test

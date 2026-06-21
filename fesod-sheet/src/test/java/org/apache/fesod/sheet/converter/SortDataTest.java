@@ -32,20 +32,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- *
+ * Tests for column sorting/reordering via @ExcelProperty index.
  */
+@Tag(Tags.ROUND_TRIP)
 public class SortDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file, SortData.class).sheet().doWrite(data());
@@ -73,7 +76,7 @@ public class SortDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWriteNoHead(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file).head(head()).sheet().doWrite(data());

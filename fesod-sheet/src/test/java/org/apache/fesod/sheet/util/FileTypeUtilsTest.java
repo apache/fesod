@@ -24,8 +24,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.fesod.sheet.metadata.data.ImageData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -33,6 +35,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 /**
  * Tests {@link FileTypeUtils}
  */
+@Tag(Tags.UNIT)
 class FileTypeUtilsTest {
 
     private byte[] realJpeg;

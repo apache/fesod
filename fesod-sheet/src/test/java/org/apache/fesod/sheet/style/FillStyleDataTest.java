@@ -29,11 +29,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.metadata.Head;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.assertions.ExcelAssertions;
 import org.apache.fesod.sheet.testkit.assertions.RowAssert;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
@@ -51,16 +54,17 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class FillStyleDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void fill(ExcelFormat format) throws Exception {
         File file = createTempFile("fileStyle", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "style" + format.getExtension());
@@ -293,7 +297,7 @@ public class FillStyleDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void fillStyleHandler(ExcelFormat format) throws Exception {
         File file = createTempFile("fileStyleHandler", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "style" + format.getExtension());

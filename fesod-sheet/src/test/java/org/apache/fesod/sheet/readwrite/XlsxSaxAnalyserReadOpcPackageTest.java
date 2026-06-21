@@ -33,7 +33,9 @@ import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,6 +43,8 @@ import org.junit.jupiter.api.Test;
  * POI's NotOfficeXmlFileException/InvalidFormatException into ExcelCommonException
  * with a message containing "Invalid OOXML/zip format".
  */
+@Tag(Tags.ROUND_TRIP)
+@Tag(Tags.READ)
 public class XlsxSaxAnalyserReadOpcPackageTest extends AbstractExcelTest {
 
     @Test

@@ -35,22 +35,26 @@ import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.event.SyncReadListener;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class SkipDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         readAndWriteImpl(file);

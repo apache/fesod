@@ -29,9 +29,12 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -48,17 +51,18 @@ import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class FillAnnotationDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile("fillAnnotation", format);
         File fileTemplate = TestFileUtil.readFile("fill" + File.separator + "annotation" + format.getExtension());

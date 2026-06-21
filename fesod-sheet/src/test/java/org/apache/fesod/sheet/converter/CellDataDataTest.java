@@ -30,20 +30,23 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.io.File;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- *
+ * Parameterized read/write round-trip tests for CellData typed cells.
  */
+@Tag(Tags.ROUND_TRIP)
 public class CellDataDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file, CellDataWriteData.class).sheet().doWrite(TestDataBuilder.cellDataWriteData());

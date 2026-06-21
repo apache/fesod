@@ -27,11 +27,14 @@ import org.apache.fesod.sheet.converter.ConverterWriteData;
 import org.apache.fesod.sheet.style.FillAnnotationData;
 import org.apache.fesod.sheet.style.FillStyleAnnotatedData;
 import org.apache.fesod.sheet.style.FillStyleData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.UNIT)
 class TestDataBuilderTest {
 
     @Test

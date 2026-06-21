@@ -32,19 +32,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test list-based head write/read for all Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ListHeadDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile("listHead", format);
         FesodSheet.write(file).head(head()).sheet().doWrite(data());

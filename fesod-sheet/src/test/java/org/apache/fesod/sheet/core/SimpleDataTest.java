@@ -32,25 +32,28 @@ import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ApiMode;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test simple read/write for all Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class SimpleDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         List<SimpleData> data = TestDataBuilder.simpleData(10);
         List<SimpleData> result = writeAndRead(format, SimpleData.class, data);
@@ -60,7 +63,7 @@ public class SimpleDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormatsWithApiMode")
+    @ExcelFormatSource(withApiMode = true)
     void readAndWriteWithApiMode(ExcelFormat format, ApiMode mode) throws Exception {
         File file = createTempFile(format);
         List<SimpleData> data = TestDataBuilder.simpleData(10);
@@ -71,7 +74,7 @@ public class SimpleDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void synchronousRead(ExcelFormat format) throws Exception {
         List<SimpleData> data = TestDataBuilder.simpleData(10);
         List<SimpleData> result = RoundTripHelper.writeAndReadSync(createTempFile(format), SimpleData.class, data);

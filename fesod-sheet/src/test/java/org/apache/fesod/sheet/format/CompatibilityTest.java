@@ -35,12 +35,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.cache.Ehcache;
 import org.apache.fesod.sheet.enums.ReadDefaultReturnEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.poi.util.TempFile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -48,7 +50,9 @@ import org.junit.jupiter.api.Test;
  *
  *
  */
+@Tag(Tags.ROUND_TRIP)
 @Slf4j
+@Tag(Tags.FORMAT)
 public class CompatibilityTest extends AbstractExcelTest {
 
     @Test
@@ -128,16 +132,21 @@ public class CompatibilityTest extends AbstractExcelTest {
     @Test
     public void readWithCacheAfterTempDeletion() throws Exception {
         // Temporary files may be deleted if there is no operation for a long time, so they need to be recreated.
-        File stableDir = new File("target/test-cache");
-        stableDir.mkdirs();
-        File file = new File(stableDir, "compatibility-cache.xlsx");
+        File file = new File(tempDir, "compatibility-cache.xlsx");
         FesodSheet.write(file, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(10));
 
         List<Map<Integer, Object>> list =
                 FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         assertEquals(10L, list.size());
 
+        // Save file content before deleting the system temp dir (which also removes @TempDir)
+        byte[] fileContent = java.nio.file.Files.readAllBytes(file.toPath());
+
         FileUtils.delete(new File(System.getProperty(TempFile.JAVA_IO_TMPDIR)));
+
+        // Recreate the file after temp dir deletion to continue the test
+        file.getParentFile().mkdirs();
+        java.nio.file.Files.write(file.toPath(), fileContent);
 
         list = FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         assertEquals(10L, list.size());

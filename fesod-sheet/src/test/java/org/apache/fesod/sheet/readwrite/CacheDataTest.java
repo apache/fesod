@@ -41,16 +41,19 @@ import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class CacheDataTest extends AbstractExcelTest {
 
     @Test

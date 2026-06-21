@@ -111,6 +111,7 @@
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
+        <assertj.version>3.25.3</assertj.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <argLine></argLine>
@@ -157,6 +158,20 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--
+                Centralize the entire JUnit Platform (Jupiter API/engine/params,
+                platform launcher/commons) on a single version. The junit-jupiter
+                dependency below still pins the aggregator for clarity and for the
+                jazzer-junit exclusions, but the BOM governs version alignment of
+                any junit-platform-* artifacts pulled in transitively.
+            -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
@@ -258,6 +273,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
@@ -319,6 +340,11 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -398,6 +424,8 @@
                         <argLine>
                             ${surefire.jvm.args} ${surefire.jdk9plus.args} ${argLine}
                         </argLine>
+                        <groups>${test.groups}</groups>
+                        <excludedGroups>${test.excludedGroups}</excludedGroups>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -602,7 +630,28 @@
                 <jdk>1.8</jdk>
             </activation>
             <properties>
-                <surefireArgLine>-Dfile.encoding=UTF-8</surefireArgLine>
+                <!-- The surefire argLine consumes ${argLine}; the previous
+                     surefireArgLine property was never read, so file.encoding
+                     was effectively dropped on JDK 8. -->
+                <argLine>-Dfile.encoding=UTF-8</argLine>
+            </properties>
+        </profile>
+        <profile>
+            <id>parallel-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <parallel>${surefire.parallel}</parallel>
+                            <threadCount>${surefire.threadCount}</threadCount>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <surefire.parallel>classes</surefire.parallel>
+                <surefire.threadCount>2</surefire.threadCount>
             </properties>
         </profile>
     </profiles>

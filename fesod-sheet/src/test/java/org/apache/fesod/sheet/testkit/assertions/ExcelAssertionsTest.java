@@ -25,10 +25,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+@Tag(Tags.UNIT)
 class ExcelAssertionsTest {
 
     @TempDir

@@ -25,18 +25,22 @@ import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.TitleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.TestFileUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
+@Tag(Tags.ROUND_TRIP)
 public class HiddenSheetsTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void read(ExcelFormat format) {
         File file = TestFileUtil.readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
         read(file, null);
@@ -45,7 +49,7 @@ public class HiddenSheetsTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readAll(ExcelFormat format) {
         File file = TestFileUtil.readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
         readAll(file, null);
@@ -54,7 +58,7 @@ public class HiddenSheetsTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readHiddenList(ExcelFormat format) {
         File file = TestFileUtil.readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
         try (ExcelReader excelReader = FesodSheet.read(file, TitleData.class, new CollectingReadListener<TitleData>())

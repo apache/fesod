@@ -33,19 +33,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- *
+ * Tests for column include/exclude filtering during read and write.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void excludeIndex(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         Set<Integer> excludeColumnIndexes = new HashSet<Integer>();
@@ -64,7 +67,7 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void excludeFieldName(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         Set<String> excludeColumnFieldNames = new HashSet<String>();
@@ -83,7 +86,7 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void includeIndex(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         Set<Integer> includeColumnIndexes = new HashSet<Integer>();
@@ -102,7 +105,7 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void includeFieldName(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         Set<String> includeColumnFieldNames = new HashSet<String>();
@@ -121,7 +124,7 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void includeFieldNameOrderIndex(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         List<Integer> includeColumnIndexes = new ArrayList<>();
@@ -145,7 +148,7 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void includeFieldNameOrder(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         List<String> includeColumnFieldNames = new ArrayList<>();

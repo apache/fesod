@@ -25,17 +25,20 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test for header merge strategy
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class HeaderMergeStrategyTest extends AbstractExcelTest {
 
     @Test

@@ -33,23 +33,26 @@ import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test encrypt read/write for all Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class EncryptDataTest extends AbstractExcelTest {
     private static final String PASSWORD = "123456";
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWriteAllCombinations(ExcelFormat format) throws Exception {
         ExcelTypeEnum excelType = format.toExcelTypeEnum();
 

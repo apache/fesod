@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.testkit.assertions;
 
 import java.io.File;
 import java.io.IOException;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
@@ -61,7 +62,7 @@ public final class ExcelAssertions implements AutoCloseable {
         try {
             Workbook wb = WorkbookFactory.create(file);
             return new ExcelAssertions(wb, file);
-        } catch (IOException e) {
+        } catch (IOException | EncryptedDocumentException e) {
             throw new AssertionError("Failed to open workbook: " + file.getAbsolutePath(), e);
         }
     }

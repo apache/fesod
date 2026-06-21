@@ -25,11 +25,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,6 +39,8 @@ import org.junit.jupiter.api.Test;
  *
  *
  */
+@Tag(Tags.ROUND_TRIP)
+@Tag(Tags.FORMAT)
 @Slf4j
 public class CharsetDataTest extends AbstractExcelTest {
     private static final Charset GBK = Charset.forName("GBK");

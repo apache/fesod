@@ -33,15 +33,19 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.ParameterUtil;
 import org.apache.fesod.sheet.util.SheetUtils;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
+@Tag(Tags.ROUND_TRIP)
 @Slf4j
 public class AutoStripParameterTest extends AbstractExcelTest {
 
@@ -49,7 +53,7 @@ public class AutoStripParameterTest extends AbstractExcelTest {
     private static final String SPACES = " ";
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void testAutoStripSheetName(ExcelFormat format) {
         ExcelTypeEnum excelType = format.toExcelTypeEnum();
         testAutoStripSheetNameInternal(excelType, null, null);
@@ -64,7 +68,7 @@ public class AutoStripParameterTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void testAutoStripContent(ExcelFormat format) {
         ExcelTypeEnum excelType = format.toExcelTypeEnum();
         testAutoStripContentInternal(excelType, null, null);

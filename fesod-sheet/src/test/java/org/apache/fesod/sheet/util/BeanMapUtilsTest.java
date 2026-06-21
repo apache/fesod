@@ -22,12 +22,15 @@ package org.apache.fesod.sheet.util;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link BeanMapUtils}
  */
+@Tag(Tags.UNIT)
 class BeanMapUtilsTest {
 
     @Setter

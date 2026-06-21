@@ -31,20 +31,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class UnCamelDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file, UnCamelData.class).sheet().doWrite(TestDataBuilder.unCamelData(10));
@@ -63,7 +66,7 @@ public class UnCamelDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWriteHeadMap(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file, UnCamelData.class).sheet().doWrite(TestDataBuilder.unCamelData(10));

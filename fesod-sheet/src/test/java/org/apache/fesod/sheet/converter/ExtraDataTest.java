@@ -34,20 +34,24 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CellExtraTypeEnum;
 import org.apache.fesod.sheet.metadata.CellExtra;
 import org.apache.fesod.sheet.read.listener.ReadListener;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.TestFileUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- *
+ * Tests verifying handling of extra (unexpected) columns during read.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ExtraDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void read(ExcelFormat format) {
         File file = TestFileUtil.readFile("extra" + File.separator + "extra" + format.getExtension());
         ExtraDataListener listener = new ExtraDataListener();

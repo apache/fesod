@@ -25,10 +25,13 @@ import java.io.InputStream;
 import lombok.SneakyThrows;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Fuzzes the generic read path with arbitrary bytes to discover parsing issues.
  */
+@Tag(Tags.FUZZ)
 public class ExcelReadFuzzTest {
 
     private static final int MAX_SIZE = 1_000_000; // 1MB guard to avoid OOM / long loops

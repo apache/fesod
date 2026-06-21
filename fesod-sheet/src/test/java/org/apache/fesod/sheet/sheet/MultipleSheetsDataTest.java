@@ -31,21 +31,25 @@ import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.TitleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.TestFileUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class MultipleSheetsDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void read(ExcelFormat format) {
         File file = TestFileUtil.readFile("multiplesheets" + File.separator + "multiplesheets" + format.getExtension());
         CollectingReadListener<TitleData> listener = new CollectingReadListener<>();
@@ -62,7 +66,7 @@ public class MultipleSheetsDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readAll(ExcelFormat format) {
         File file = TestFileUtil.readFile("multiplesheets" + File.separator + "multiplesheets" + format.getExtension());
         FesodSheet.read(file, TitleData.class, new CollectingReadListener<TitleData>())

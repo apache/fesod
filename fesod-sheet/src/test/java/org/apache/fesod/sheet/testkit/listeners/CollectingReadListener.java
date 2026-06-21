@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.testkit.listeners;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 
@@ -64,11 +65,11 @@ public class CollectingReadListener<T> extends AnalysisEventListener<T> {
     /**
      * Returns the first collected row.
      *
-     * @throws AssertionError if no rows have been collected
+     * @throws NoSuchElementException if no rows have been collected
      */
     public T getFirstRow() {
         if (rows.isEmpty()) {
-            throw new AssertionError("Expected at least one row, but CollectingReadListener collected none");
+            throw new NoSuchElementException("Expected at least one row, but CollectingReadListener collected none");
         }
         return rows.get(0);
     }

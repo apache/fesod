@@ -23,9 +23,12 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  * Fluent assertions for a {@link Cell}, including style assertions that absorb
@@ -105,15 +108,19 @@ public class CellAssert {
     public CellAssert hasFillColor(byte[] expectedRgb) {
         byte[] actual;
         if (cell instanceof XSSFCell) {
-            actual = ((XSSFCell) cell)
-                    .getCellStyle()
-                    .getFillForegroundColorColor()
-                    .getRGB();
+            Color color = ((XSSFCell) cell).getCellStyle().getFillForegroundColorColor();
+            if (color == null) {
+                throw new AssertionError(
+                        "Expected fill color " + Arrays.toString(expectedRgb) + " but no fill color was set");
+            }
+            actual = ((XSSFColor) color).getRGB();
         } else {
-            actual = short2byte(((HSSFCell) cell)
-                    .getCellStyle()
-                    .getFillForegroundColorColor()
-                    .getTriplet());
+            HSSFColor color = ((HSSFCell) cell).getCellStyle().getFillForegroundColorColor();
+            if (color == null) {
+                throw new AssertionError(
+                        "Expected fill color " + Arrays.toString(expectedRgb) + " but no fill color was set");
+            }
+            actual = short2byte(color.getTriplet());
         }
         if (!Arrays.equals(expectedRgb, actual)) {
             throw new AssertionError(
@@ -129,13 +136,19 @@ public class CellAssert {
     public CellAssert hasFontColor(byte[] expectedRgb) {
         byte[] actual;
         if (cell instanceof XSSFCell) {
-            actual = ((XSSFCell) cell).getCellStyle().getFont().getXSSFColor().getRGB();
+            XSSFColor color = ((XSSFCell) cell).getCellStyle().getFont().getXSSFColor();
+            if (color == null) {
+                throw new AssertionError(
+                        "Expected font color " + Arrays.toString(expectedRgb) + " but no font color was set");
+            }
+            actual = color.getRGB();
         } else {
-            actual = short2byte(((HSSFCell) cell)
-                    .getCellStyle()
-                    .getFont(workbook)
-                    .getHSSFColor((HSSFWorkbook) workbook)
-                    .getTriplet());
+            HSSFColor color = ((HSSFCell) cell).getCellStyle().getFont(workbook).getHSSFColor((HSSFWorkbook) workbook);
+            if (color == null) {
+                throw new AssertionError(
+                        "Expected font color " + Arrays.toString(expectedRgb) + " but no font color was set");
+            }
+            actual = short2byte(color.getTriplet());
         }
         if (!Arrays.equals(expectedRgb, actual)) {
             throw new AssertionError(

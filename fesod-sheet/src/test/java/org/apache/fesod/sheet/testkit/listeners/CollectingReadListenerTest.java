@@ -23,8 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
+import java.util.NoSuchElementException;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.UNIT)
 class CollectingReadListenerTest {
 
     @Test
@@ -77,10 +81,10 @@ class CollectingReadListenerTest {
     }
 
     @Test
-    void getFirstRowOnEmptyThrowsAssertionError() {
+    void getFirstRowOnEmptyThrowsNoSuchElement() {
         CollectingReadListener<String> listener = new CollectingReadListener<String>();
 
-        AssertionError error = assertThrows(AssertionError.class, () -> listener.getFirstRow());
+        NoSuchElementException error = assertThrows(NoSuchElementException.class, () -> listener.getFirstRow());
         assertTrue(error.getMessage().contains("at least one row"));
     }
 

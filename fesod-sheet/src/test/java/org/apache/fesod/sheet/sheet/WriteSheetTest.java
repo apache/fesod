@@ -28,13 +28,17 @@ import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.ROUND_TRIP)
+@Tag(Tags.WRITE)
 public class WriteSheetTest extends AbstractExcelTest {
 
     @Test

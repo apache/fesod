@@ -33,20 +33,25 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.TestFileUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- *
+ * Tests for date formatting patterns and round-trip date value preservation.
  */
+@Tag(Tags.ROUND_TRIP)
+@Tag(Tags.FORMAT)
 public class DateFormatTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readCn(ExcelFormat format) {
         File file = TestFileUtil.readFile("dataformat" + File.separator + "dataformat" + format.getExtension());
         List<DateFormatData> list = FesodSheet.read(file, DateFormatData.class, null)
@@ -61,7 +66,7 @@ public class DateFormatTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readUs(ExcelFormat format) {
         File file = TestFileUtil.readFile("dataformat" + File.separator + "dataformat" + format.getExtension());
         List<DateFormatData> list = FesodSheet.read(file, DateFormatData.class, null)

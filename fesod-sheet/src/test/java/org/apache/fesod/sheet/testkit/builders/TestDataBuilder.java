@@ -21,16 +21,21 @@ package org.apache.fesod.sheet.testkit.builders;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.fesod.sheet.converter.CellDataWriteData;
 import org.apache.fesod.sheet.converter.ConverterWriteData;
+import org.apache.fesod.sheet.converter.CustomConverterWriteData;
 import org.apache.fesod.sheet.converter.ExcludeOrIncludeData;
 import org.apache.fesod.sheet.converter.SortData;
 import org.apache.fesod.sheet.core.RepetitionData;
 import org.apache.fesod.sheet.core.UnCamelData;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.head.ComplexHeadData;
 import org.apache.fesod.sheet.head.NoHeadData;
+import org.apache.fesod.sheet.metadata.data.FormulaData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.readwrite.CacheData;
 import org.apache.fesod.sheet.sheet.WriteSheetData;
@@ -58,7 +63,7 @@ public final class TestDataBuilder {
      * Creates a list of {@link SimpleData} with names "Name0" through "Name{count-1}".
      */
     public static List<SimpleData> simpleData(int count) {
-        List<SimpleData> list = new ArrayList<SimpleData>();
+        List<SimpleData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             SimpleData d = new SimpleData();
             d.setName("Name" + i);
@@ -71,7 +76,7 @@ public final class TestDataBuilder {
      * Creates a single-element list of {@link ConverterWriteData} with all 14 fields populated.
      */
     public static List<ConverterWriteData> converterWriteData() {
-        List<ConverterWriteData> list = new ArrayList<ConverterWriteData>();
+        List<ConverterWriteData> list = new ArrayList<>();
         ConverterWriteData data = new ConverterWriteData();
         data.setDate(TestUtil.TEST_DATE);
         data.setLocalDate(TestUtil.TEST_LOCAL_DATE);
@@ -95,7 +100,7 @@ public final class TestDataBuilder {
      * Creates a list of {@link SimpleData} with prefixed names like "{prefix}Name0".
      */
     public static List<SimpleData> simpleData(int count, String prefix) {
-        List<SimpleData> list = new ArrayList<SimpleData>();
+        List<SimpleData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             SimpleData d = new SimpleData();
             d.setName(prefix + "Name" + i);
@@ -108,7 +113,7 @@ public final class TestDataBuilder {
      * Creates a list of {@link SimpleData} with name and age fields populated.
      */
     public static List<SimpleData> simpleDataWithAge(int count) {
-        List<SimpleData> list = new ArrayList<SimpleData>();
+        List<SimpleData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             SimpleData d = new SimpleData();
             d.setName("Name" + i);
@@ -122,11 +127,11 @@ public final class TestDataBuilder {
      * Creates a list of {@link SimpleData} with name and date fields populated.
      */
     public static List<SimpleData> simpleDataWithDate(int count) {
-        List<SimpleData> list = new ArrayList<SimpleData>();
+        List<SimpleData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             SimpleData d = new SimpleData();
             d.setName("Name" + i);
-            d.setDate(new java.util.Date());
+            d.setDate(new Date());
             list.add(d);
         }
         return list;
@@ -136,7 +141,7 @@ public final class TestDataBuilder {
      * Creates a list of {@link CacheData} with name ("Name") and age (Long, "Age") fields.
      */
     public static List<CacheData> cacheData(int count) {
-        List<CacheData> list = new ArrayList<CacheData>();
+        List<CacheData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             CacheData d = new CacheData();
             d.setName("Name" + i);
@@ -150,7 +155,7 @@ public final class TestDataBuilder {
      * Creates a list of {@link TitleData} with titles like "{prefix}0".
      */
     public static List<TitleData> titleData(int count, String prefix) {
-        List<TitleData> list = new ArrayList<TitleData>();
+        List<TitleData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             TitleData d = new TitleData();
             d.setTitle(prefix + i);
@@ -303,7 +308,7 @@ public final class TestDataBuilder {
     }
 
     public static List<FillStyleData> fillStyleData(int count) throws Exception {
-        List<FillStyleData> list = new ArrayList<FillStyleData>();
+        List<FillStyleData> list = new ArrayList<>();
         Date date = DateUtils.parseDate("2020-01-01 01:01:01");
         for (int i = 0; i < count; i++) {
             FillStyleData d = new FillStyleData();
@@ -316,7 +321,7 @@ public final class TestDataBuilder {
     }
 
     public static List<FillStyleAnnotatedData> fillStyleAnnotatedData(int count) throws Exception {
-        List<FillStyleAnnotatedData> list = new ArrayList<FillStyleAnnotatedData>();
+        List<FillStyleAnnotatedData> list = new ArrayList<>();
         Date date = DateUtils.parseDate("2020-01-01 01:01:01");
         for (int i = 0; i < count; i++) {
             FillStyleAnnotatedData d = new FillStyleAnnotatedData();
@@ -329,7 +334,7 @@ public final class TestDataBuilder {
     }
 
     public static List<FillAnnotationData> fillAnnotationData(int count, String imagePath) throws Exception {
-        List<FillAnnotationData> list = new ArrayList<FillAnnotationData>();
+        List<FillAnnotationData> list = new ArrayList<>();
         Date date = DateUtils.parseDate("2020-01-01 01:01:01");
         for (int i = 0; i < count; i++) {
             FillAnnotationData d = new FillAnnotationData();
@@ -360,28 +365,23 @@ public final class TestDataBuilder {
             List<Object> data = new ArrayList<>();
             data.add("string1" + i);
             data.add(100 + i);
-            data.add(org.apache.fesod.sheet.util.DateUtils.parseDate("2020-01-01 01:01:01"));
+            data.add(DateUtils.parseDate("2020-01-01 01:01:01"));
             list.add(data);
         }
         return list;
     }
 
-    public static List<org.apache.fesod.sheet.converter.CellDataWriteData> cellDataWriteData() throws Exception {
-        List<org.apache.fesod.sheet.converter.CellDataWriteData> list = new ArrayList<>();
-        org.apache.fesod.sheet.converter.CellDataWriteData cellDataData =
-                new org.apache.fesod.sheet.converter.CellDataWriteData();
-        cellDataData.setDate(new org.apache.fesod.sheet.metadata.data.WriteCellData<>(
-                org.apache.fesod.sheet.util.DateUtils.parseDate("2020-01-01 01:01:01")));
-        org.apache.fesod.sheet.metadata.data.WriteCellData<Integer> integer1 =
-                new org.apache.fesod.sheet.metadata.data.WriteCellData<>();
-        integer1.setType(org.apache.fesod.sheet.enums.CellDataTypeEnum.NUMBER);
-        integer1.setNumberValue(java.math.BigDecimal.valueOf(2L));
+    public static List<CellDataWriteData> cellDataWriteData() throws Exception {
+        List<CellDataWriteData> list = new ArrayList<>();
+        CellDataWriteData cellDataData = new CellDataWriteData();
+        cellDataData.setDate(new WriteCellData<>(DateUtils.parseDate("2020-01-01 01:01:01")));
+        WriteCellData<Integer> integer1 = new WriteCellData<>();
+        integer1.setType(CellDataTypeEnum.NUMBER);
+        integer1.setNumberValue(BigDecimal.valueOf(2L));
         cellDataData.setInteger1(integer1);
         cellDataData.setInteger2(2);
-        org.apache.fesod.sheet.metadata.data.WriteCellData<?> formulaValue =
-                new org.apache.fesod.sheet.metadata.data.WriteCellData<>();
-        org.apache.fesod.sheet.metadata.data.FormulaData formulaData =
-                new org.apache.fesod.sheet.metadata.data.FormulaData();
+        WriteCellData<?> formulaValue = new WriteCellData<>();
+        FormulaData formulaData = new FormulaData();
         formulaValue.setFormulaData(formulaData);
         formulaData.setFormulaValue("B2+C2");
         cellDataData.setFormulaValue(formulaValue);
@@ -389,12 +389,11 @@ public final class TestDataBuilder {
         return list;
     }
 
-    public static List<org.apache.fesod.sheet.converter.CustomConverterWriteData> customConverterWriteData() {
-        List<org.apache.fesod.sheet.converter.CustomConverterWriteData> list = new ArrayList<>();
-        org.apache.fesod.sheet.converter.CustomConverterWriteData writeData =
-                new org.apache.fesod.sheet.converter.CustomConverterWriteData();
-        writeData.setTimestampStringData(java.sql.Timestamp.valueOf("2020-01-01 01:00:00"));
-        writeData.setTimestampNumberData(java.sql.Timestamp.valueOf("2020-12-01 12:12:12"));
+    public static List<CustomConverterWriteData> customConverterWriteData() {
+        List<CustomConverterWriteData> list = new ArrayList<>();
+        CustomConverterWriteData writeData = new CustomConverterWriteData();
+        writeData.setTimestampStringData(Timestamp.valueOf("2020-01-01 01:00:00"));
+        writeData.setTimestampNumberData(Timestamp.valueOf("2020-12-01 12:12:12"));
         list.add(writeData);
         return list;
     }

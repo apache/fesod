@@ -29,13 +29,16 @@ import java.math.BigDecimal;
 import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.converters.floatconverter.FloatNumberConverter;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
- *
+ * Unit tests for individual converter implementations.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ConverterTest extends AbstractExcelTest {
 
     @Test

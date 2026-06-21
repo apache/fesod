@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.style;
 
+import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
@@ -35,25 +36,28 @@ import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test fill operations for all Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class FillDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void simpleFill(ExcelFormat format) throws Exception {
         File file = createTempFile("fill", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "simple" + format.getExtension());
@@ -66,36 +70,32 @@ public class FillDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void complexFill(ExcelFormat format) throws Exception {
-        Assumptions.assumeTrue(format.supportsTemplates());
         File file = createTempFile("fillComplex", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "complex" + format.getExtension());
         complexFillImpl(file, template);
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void horizontalFill(ExcelFormat format) throws Exception {
-        Assumptions.assumeTrue(format.supportsTemplates());
         File file = createTempFile("fillHorizontal", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "horizontal" + format.getExtension());
         horizontalFillImpl(file, template);
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void byNameFill(ExcelFormat format) throws Exception {
-        Assumptions.assumeTrue(format.supportsTemplates());
         File file = createTempFile("byName", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "byName" + format.getExtension());
         byNameFillImpl(file, template);
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void compositeFill(ExcelFormat format) throws Exception {
-        Assumptions.assumeTrue(format.supportsTemplates());
         File file = createTempFile("composite", format);
         File template = TestFileUtil.readFile("fill" + File.separator + "composite" + format.getExtension());
         compositeFillImpl(file, template);

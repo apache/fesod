@@ -27,16 +27,19 @@ import org.apache.fesod.sheet.FastExcel;
 import org.apache.fesod.sheet.metadata.csv.CsvRow;
 import org.apache.fesod.sheet.metadata.csv.CsvSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
-import org.apache.fesod.sheet.util.TestFileUtil;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@Tag(Tags.FORMAT)
 @ExtendWith(MockitoExtension.class)
 public class CsvRowTest {
 
@@ -48,8 +51,11 @@ public class CsvRowTest {
 
     private CsvRow csvRow;
 
-    private static File fileCsvNoModel;
-    private static File fileCsvModel;
+    @TempDir
+    File tempDir;
+
+    private File fileCsvNoModel;
+    private File fileCsvModel;
 
     @BeforeEach
     void setUp() {
@@ -62,8 +68,8 @@ public class CsvRowTest {
         Cell lastCell = csvRow.createCell(2, CellType.STRING);
         lastCell.setCellValue("Age");
 
-        fileCsvNoModel = TestFileUtil.createNewFile("csv-no-model.csv");
-        fileCsvModel = TestFileUtil.createNewFile("csv-model.csv");
+        fileCsvNoModel = new File(tempDir, "csv-no-model.csv");
+        fileCsvModel = new File(tempDir, "csv-model.csv");
     }
 
     @Test

@@ -34,21 +34,25 @@ import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class ExceptionDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(10));
@@ -61,7 +65,7 @@ public class ExceptionDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readAndWriteException(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         FesodSheet.write(file, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(10));
@@ -73,7 +77,7 @@ public class ExceptionDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(FormatScope.BINARY)
     void readAndWriteExcelAnalysisStopSheetException(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         try (ExcelWriter excelWriter = FesodSheet.write(file, SimpleData.class).build()) {

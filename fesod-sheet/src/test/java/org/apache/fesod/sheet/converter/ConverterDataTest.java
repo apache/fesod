@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.converter;
 
+import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
@@ -34,25 +35,27 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.util.TestUtil;
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test converter read/write for all Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ConverterDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         List<ConverterWriteData> data = TestDataBuilder.converterWriteData();
@@ -79,7 +82,7 @@ public class ConverterDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAllConverter(ExcelFormat format) throws Exception {
         String fileName = "converter" + File.separator + "converter"
                 + format.name().toLowerCase().replace("xlsx", "07").replace("xls", "03")
@@ -135,9 +138,8 @@ public class ConverterDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource(requires = IMAGES)
     void writeImage(ExcelFormat format) throws Exception {
-        Assumptions.assumeTrue(format.supportsImages(), "Format does not support images");
         File file = createTempFile(format);
         InputStream inputStream = null;
         try {

@@ -22,45 +22,63 @@ package org.apache.fesod.sheet.testkit.base;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Stream;
-import org.apache.fesod.sheet.testkit.enums.ApiMode;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Base class for modernized test classes. Provides:
  * <ul>
  *   <li>A JUnit 5 {@code @TempDir} for isolated temp files</li>
- *   <li>Static method sources for parameterized tests</li>
  *   <li>Convenience helpers delegating to {@link RoundTripHelper}</li>
  * </ul>
+ *
+ * <h2>Parameterized Test Sources</h2>
+ * <p>This class previously defined static {@code @MethodSource} providers ({@code allFormats()},
+ * {@code binaryFormats()}, {@code allFormatsWithApiMode()}). These have been replaced by the
+ * composed annotation {@link org.apache.fesod.sheet.testkit.params.ExcelFormatSource @ExcelFormatSource},
+ * which is backed by a custom {@link org.junit.jupiter.params.provider.ArgumentsProvider}.
+ *
+ * <h3>Migration Guide</h3>
+ * <pre>{@code
+ * // Before:
+ * @ParameterizedTest
+ * @MethodSource("allFormats")
+ * void readAndWrite(ExcelFormat format) { ... }
+ *
+ * // After:
+ * @ParameterizedTest
+ * @ExcelFormatSource
+ * void readAndWrite(ExcelFormat format) { ... }
+ *
+ * // Before (binary only):
+ * @MethodSource("binaryFormats")
+ *
+ * // After:
+ * @ExcelFormatSource(BINARY)
+ *
+ * // Before (with API mode):
+ * @MethodSource("allFormatsWithApiMode")
+ *
+ * // After:
+ * @ExcelFormatSource(withApiMode = true)
+ *
+ * // Before (capability gating):
+ * @MethodSource("allFormats")
+ * void test(ExcelFormat format) {
+ *     Assumptions.assumeTrue(format.supportsTemplates());
+ * }
+ *
+ * // After:
+ * @ExcelFormatSource(requires = TEMPLATES)
+ * }</pre>
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractExcelTest {
 
     @TempDir
     protected File tempDir;
-
-    // --- Format Providers (static, for @MethodSource) ---
-
-    protected static Stream<ExcelFormat> allFormats() {
-        return Stream.of(ExcelFormat.values());
-    }
-
-    protected static Stream<ExcelFormat> binaryFormats() {
-        return Stream.of(ExcelFormat.XLSX, ExcelFormat.XLS);
-    }
-
-    protected static Stream<Arguments> allFormatsWithApiMode() {
-        Stream.Builder<Arguments> builder = Stream.builder();
-        for (ExcelFormat format : ExcelFormat.values()) {
-            for (ApiMode mode : ApiMode.values()) {
-                builder.add(Arguments.of(format, mode));
-            }
-        }
-        return builder.build();
-    }
 
     // --- Temp File Management ---
 

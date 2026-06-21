@@ -25,27 +25,30 @@
 
 package org.apache.fesod.sheet.template;
 
+import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.TestFileUtil;
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test template write/read for binary Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class TemplateDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("binaryFormats")
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void readAndWrite(ExcelFormat format) throws Exception {
-        Assumptions.assumeTrue(format.supportsTemplates());
         File file = createTempFile("template", format);
         String templateName = "template" + File.separator + "template" + (format == ExcelFormat.XLSX ? "07" : "03")
                 + format.getExtension();

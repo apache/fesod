@@ -34,19 +34,22 @@ import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.ReadDefaultReturnEnum;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  *
  */
+@Tag(Tags.ROUND_TRIP)
 public class NoModelDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         boolean isCsv = (format == ExcelFormat.CSV);
         File file = createTempFile(format);

@@ -29,19 +29,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test complex head write/read for all Excel formats using parameterized tests.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ComplexHeadDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile("complexHead", format);
         FesodSheet.write(file, ComplexHeadData.class).sheet().doWrite(TestDataBuilder.complexHeadData(1));
@@ -55,7 +58,7 @@ public class ComplexHeadDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @MethodSource("allFormats")
+    @ExcelFormatSource
     void readAndWriteAutomaticMergeHead(ExcelFormat format) throws Exception {
         File file = createTempFile("complexHeadAutoMerge", format);
         FesodSheet.write(file, ComplexHeadData.class)

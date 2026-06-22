@@ -85,6 +85,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 
 /**
  * A text extractor for Excel files.
@@ -150,7 +151,12 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
     public List<ReadSheet> sheetList() {
         try {
             if (xlsReadContext.readWorkbookHolder().getActualSheetDataList() == null) {
-                new XlsListSheetListener(xlsReadContext).execute();
+                try {
+                    setCurrentUserPassword();
+                    new XlsListSheetListener(xlsReadContext).execute();
+                } finally {
+                    clearCurrentUserPassword();
+                }
             }
         } catch (ExcelAnalysisStopException e) {
             if (log.isDebugEnabled()) {
@@ -185,6 +191,7 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
         HSSFRequest request = new HSSFRequest();
         request.addListenerForAllRecords(xlsReadWorkbookHolder.getFormatTrackingHSSFListener());
         try {
+            setCurrentUserPassword();
             factory.processWorkbookEvents(request, xlsReadWorkbookHolder.getPoifsFileSystem());
         } catch (OldExcelFormatException e) {
             // POI reports very old BIFF (e.g., BIFF2) formats via OldExcelFormatException. Treat as benign:
@@ -204,10 +211,25 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
             throw e;
         } catch (IOException e) {
             throw new ExcelAnalysisException(e);
+        } finally {
+            clearCurrentUserPassword();
         }
 
         // There are some special xls that do not have the terminator "[EOF]", so an additional
         xlsReadContext.analysisEventProcessor().endSheet(xlsReadContext);
+    }
+
+    private void setCurrentUserPassword() {
+        String password = xlsReadContext.readWorkbookHolder().getPassword();
+        if (password != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+        }
+    }
+
+    private void clearCurrentUserPassword() {
+        if (xlsReadContext.readWorkbookHolder().getPassword() != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 
     protected boolean isOldExcelFormat(Throwable t) {

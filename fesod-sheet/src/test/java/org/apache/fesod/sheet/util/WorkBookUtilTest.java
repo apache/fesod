@@ -228,6 +228,7 @@ class WorkBookUtilTest {
 
         // Verify
         Mockito.verify(writeWorkbookHolder).setWorkbook(Mockito.any(HSSFWorkbook.class));
+        Assertions.assertNull(Biff8EncryptionKey.getCurrentUserPassword());
     }
 
     @Test

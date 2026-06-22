@@ -17,22 +17,26 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.examples.read;
+package org.apache.fesod.sheet.converters.url;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import org.apache.fesod.sheet.examples.ExampleTestBase;
-import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
 
 /**
- * Test for {@link BasicReadExample}.
- *
- * <p>Verifies the basic read example which reads {@code demo.xlsx} using a typed
- * {@code DemoDataListener} to process each row.
+ * URL scheme policy for URL image fetching.
  */
-class BasicReadExampleITCase extends ExampleTestBase {
+@Getter
+public enum SchemePolicy {
+    HTTP(Collections.singleton("http")),
+    HTTPS(Collections.singleton("https")),
+    HTTP_OR_HTTPS(new HashSet<>(Arrays.asList("http", "https")));
 
-    @Test
-    void testBasicRead() {
-        assertDoesNotThrow(BasicReadExample::basicRead);
+    private final Set<String> schemes;
+
+    SchemePolicy(Set<String> schemes) {
+        this.schemes = Collections.unmodifiableSet(schemes);
     }
 }

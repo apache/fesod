@@ -51,6 +51,7 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.metadata.property.LoopMergeProperty;
 import org.apache.fesod.sheet.metadata.property.OnceAbsoluteMergeProperty;
 import org.apache.fesod.sheet.metadata.property.RowHeightProperty;
+import org.apache.fesod.sheet.metadata.property.SheetFreezePaneProperty;
 import org.apache.fesod.sheet.write.handler.CellWriteHandler;
 import org.apache.fesod.sheet.write.handler.DefaultWriteHandlerLoader;
 import org.apache.fesod.sheet.write.handler.RowWriteHandler;
@@ -68,6 +69,7 @@ import org.apache.fesod.sheet.write.metadata.WriteBasicParameter;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.sheet.write.property.ExcelWriteHeadProperty;
 import org.apache.fesod.sheet.write.style.AbstractVerticalCellStyleStrategy;
+import org.apache.fesod.sheet.write.style.SheetFreezePaneStrategy;
 import org.apache.fesod.sheet.write.style.column.AbstractHeadColumnWidthStyleStrategy;
 import org.apache.fesod.sheet.write.style.row.SimpleRowHeightStyleStrategy;
 
@@ -342,6 +344,7 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
         dealStyle(handlerList);
         dealRowHigh(handlerList);
         dealOnceAbsoluteMerge(handlerList);
+        dealSheetFreezePane(handlerList);
     }
 
     private void dealStyle(List<WriteHandler> handlerList) {
@@ -385,6 +388,14 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
             return;
         }
         handlerList.add(new OnceAbsoluteMergeStrategy(onceAbsoluteMergeProperty));
+    }
+
+    private void dealSheetFreezePane(List<WriteHandler> handlerList) {
+        SheetFreezePaneProperty freezePaneProperty = getExcelWriteHeadProperty().getFreezePaneProperty();
+        if (freezePaneProperty == null) {
+            return;
+        }
+        handlerList.add(new SheetFreezePaneStrategy(freezePaneProperty));
     }
 
     private void dealRowHigh(List<WriteHandler> handlerList) {

@@ -150,10 +150,6 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                         poifsFileSystem.close();
                     }
                 }
-                // Set the user password for processing encrypted Excel files
-                if (readWorkbook.getPassword() != null) {
-                    Biff8EncryptionKey.setCurrentUserPassword(readWorkbook.getPassword());
-                }
                 XlsReadContext xlsReadContext = new DefaultXlsReadContext(readWorkbook, ExcelTypeEnum.XLS);
                 xlsReadContext.xlsReadWorkbookHolder().setPoifsFileSystem(poifsFileSystem);
                 analysisContext = xlsReadContext;

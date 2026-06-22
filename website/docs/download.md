@@ -20,67 +20,36 @@ title: 'Download'
 - limitations under the License.
 -->
 
-Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be
-downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
+# Download Apache Fesod (Incubating)
 
-# How to Use Apache Fesod (Incubating)
+Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
 
-## Using Maven Central (Recommended)
+## The Latest Stable Release
 
-For most users, simply add the dependency to your project:
+|     Version      |    Date    | Download                                                                                                                                                                                                                                                                                                                                                                                                  |                                 Release Notes                                  |
+|:----------------:|:----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------:|
+| 2.0.2-incubating | 2026-05-30 | [apache-fesod-2.0.2-incubating-src.tar.gz](https://www.apache.org/dyn/closer.lua/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz ) ([asc](https://downloads.apache.org/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz.sha512)) | [Release Notes](https://github.com/apache/fesod/releases/tag/2.0.2-incubating) |
 
-:::tip
+## All Archived Releases
 
-```xml
-<dependency>
-    <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod-sheet</artifactId>
-    <version>2.0.1-incubating</version>
-</dependency>
-```
+|     Version      |    Date    | Download                                                                                                                                                                                                                                                                                                                                                                                                  |                                 Release Notes                                  |
+|:----------------:|:----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------:|
+| 2.0.1-incubating | 2026-02-11 | [apache-fesod-2.0.1-incubating-src.tar.gz](https://www.apache.org/dyn/closer.lua/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz ) ([asc](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.sha512)) | [Release Notes](https://github.com/apache/fesod/releases/tag/2.0.1-incubating) |
+| 2.0.0-incubating | 2026-01-24 | NA(Not Available)                                                                                                                                                                                                                                                                                                                                                                                         |                               NA(Not Available)                                |
 
-:::
+For older releases, please check the [archive](https://archive.apache.org/dist/incubator/fesod/).
 
-## Available Modules
+For non-Apache releases, please check the [non-apache releases](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/).
 
-- **fesod-sheet** - Core module for Excel/CSV processing (recommended for most users)
-- **fesod-common** - Common utilities (automatically included with fesod-sheet)
-- **fesod-shaded** - Shaded dependencies to avoid conflicts (automatically included with fesod-sheet)
+## Verifying Apache Releases
 
-# Apache Source Releases
+Before use, please refer to this [official guide](https://www.apache.org/info/verification.html) to verify all Apache release versions, including the integrity and authenticity of source code releases.
 
-## The Latest Release
+### Download Verification Files
 
-|     Version      |    Date    |                                                                                                                                                    Source Download                                                                                                                                                    |                                 Release Notes                                  |
-|:----------------:|:----------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------:|
-| 2.0.1-incubating | 2026-02-11 | [Source](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/) ([asc](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.sha512)) | [Release Notes](https://github.com/apache/fesod/releases/tag/2.0.1-incubating) |
-| 2.0.0-incubating | 2026-01-24 |                                                                                                                                                   NA(Not Available)                                                                                                                                                   |                               NA(Not Available)                                |
+Download the [project release KEYS](https://downloads.apache.org/incubator/fesod/KEYS) file containing the public keys used for signing releases.
 
-# Previous Releases (Non-Apache)
-
-## All archived releases
-
-| Version |    Date    |                                                                                                                                                Download                                                                                                                                                |                        Release notes                        |
-|:-------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
-|  1.3.0  | 2025-08-23 | [fastexcel-1.3.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.3.0/fastexcel-1.3.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.3.0/fastexcel-1.3.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.3.0/fastexcel-1.3.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.3.0) |
-
-| Version |    Date    |                                                                                                                                                Download                                                                                                                                                |                        Release notes                        |
-|:-------:|:----------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
-|  1.2.0  | 2025-04-14 | [fastexcel-1.2.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.2.0/fastexcel-1.2.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.2.0/fastexcel-1.2.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.2.0/fastexcel-1.2.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.2.0) |
-|  1.1.0  | 2025-01-14 | [fastexcel-1.1.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.1.0/fastexcel-1.1.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.1.0/fastexcel-1.1.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.1.0/fastexcel-1.1.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.1.0) |
-|  1.0.0  | 2024-12-05 | [fastexcel-1.0.0.jar](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.0.0/fastexcel-1.0.0.jar) ( [asc](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.0.0/fastexcel-1.0.0.jar.asc) \| [sha](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/1.0.0/fastexcel-1.0.0.jar.sha1)) | [notes](https://github.com/apache/fesod/releases/tag/1.0.0) |
-
-# Verifying Apache Releases
-
-All Apache releases must be verified before use. Follow these steps to verify the integrity and authenticity of the
-source release:
-
-## Download Verification Files
-
-Download the [KEYS](https://downloads.apache.org/incubator/fesod/KEYS) file containing the public keys used for signing
-releases.
-
-## Verify Signature
+### Verify Signature
 
 1. Import the KEYS file to your GPG keyring:
 
@@ -92,20 +61,20 @@ releases.
 
 3. Verify the GPG signature:
 
+    ```bash
+    gpg --verify apache-fesod-X.X.X-incubating-src.tar.gz.asc apache-fesod-X.X.X-incubating-src.tar.gz
+    ```
+
+### Verify Checksum
+
+Verify the `SHA-512` checksum:
+
 ```bash
-gpg --verify apache-fesod-2.0.1-incubating-src.tar.gz.asc apache-fesod-2.0.1-incubating-src.tar.gz
-```
-
-## Verify Checksum
-
-Verify the SHA-512 checksum:
-
-```bash
-shasum -a 512 -c apache-fesod-2.0.1-incubating-src.tar.gz.sha512
+shasum -a 512 -c apache-fesod-X.X.X-incubating-src.tar.gz.sha512
 ```
 
 Or on Linux:
 
 ```bash
-sha512sum -c apache-fesod-2.0.1-incubating-src.tar.gz.sha512
+sha512sum -c apache-fesod-X.X.X-incubating-src.tar.gz.sha512
 ```

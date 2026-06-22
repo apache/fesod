@@ -11,6 +11,7 @@ title: '指南'
 
 | 版本               | jdk版本支持范围    | 备注           |
 |------------------|--------------|--------------|
+| 2.0.2-incubating | jdk8 - jdk25 | Apache 孵化器版本 |
 | 2.0.1-incubating | jdk8 - jdk25 | Apache 孵化器版本 |
 | 2.0.0-incubating | jdk8 - jdk25 | NA(无效)       |
 | 1.3.x            | jdk8 - jdk25 | 非 Apache 版本  |
@@ -45,7 +46,7 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>2.0.1-incubating</version>
+    <version>2.0.2-incubating</version>
 </dependency>
 ```
 
@@ -55,6 +56,6 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod-sheet:2.0.1-incubating'
+    implementation 'org.apache.fesod:fesod-sheet:2.0.2-incubating'
 }
 ```

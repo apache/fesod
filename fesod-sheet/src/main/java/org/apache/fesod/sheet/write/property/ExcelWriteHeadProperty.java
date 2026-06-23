@@ -38,6 +38,7 @@ import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
+import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
@@ -53,6 +54,7 @@ import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.LoopMergeProperty;
 import org.apache.fesod.sheet.metadata.property.OnceAbsoluteMergeProperty;
 import org.apache.fesod.sheet.metadata.property.RowHeightProperty;
+import org.apache.fesod.sheet.metadata.property.SheetFreezePaneProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
 
 /**
@@ -67,6 +69,7 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
     private RowHeightProperty headRowHeightProperty;
     private RowHeightProperty contentRowHeightProperty;
     private OnceAbsoluteMergeProperty onceAbsoluteMergeProperty;
+    private SheetFreezePaneProperty freezePaneProperty;
 
     public ExcelWriteHeadProperty(
             ConfigurationHolder configurationHolder, Class<?> headClazz, List<List<String>> head) {
@@ -78,6 +81,7 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
         this.contentRowHeightProperty = RowHeightProperty.build(headClazz.getAnnotation(ContentRowHeight.class));
         this.onceAbsoluteMergeProperty =
                 OnceAbsoluteMergeProperty.build(headClazz.getAnnotation(OnceAbsoluteMerge.class));
+        this.freezePaneProperty = SheetFreezePaneProperty.build(headClazz.getAnnotation(FreezePane.class));
 
         ColumnWidth parentColumnWidth = headClazz.getAnnotation(ColumnWidth.class);
         HeadStyle parentHeadStyle = headClazz.getAnnotation(HeadStyle.class);

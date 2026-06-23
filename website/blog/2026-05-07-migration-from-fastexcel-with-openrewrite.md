@@ -1,6 +1,6 @@
 ---
 title: "Automated Migration from FastExcel 1.3.0 to Apache Fesod (Incubating) with OpenRewrite"
-description: Migrate FastExcel 1.3 to Apache Fesod 2.0.1-incubating
+description: Migrate FastExcel 1.3 to Apache Fesod (Incubating) 2.0.1-incubating
 authors: [bengbengbalabalabeng]
 tags: [migration, fastexcel, fesod]
 ---
@@ -31,7 +31,7 @@ Create a `rewrite.yml` file in your project root:
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.fesod.MigrateFastExcelToFesod
-displayName: Migrate FastExcel 1.3 to Apache Fesod 2.0.1-incubating
+displayName: Migrate FastExcel 1.3 to Apache Fesod (Incubating) 2.0.1-incubating
 recipeList:
 
   # Step 1: Update Dependencies (Maven & Gradle)
@@ -209,6 +209,6 @@ FesodSheet.write(outputStream, BookData.class)
 
 ## References
 
-- Apache Fesod Official Migration Guide: [https://fesod.apache.org/docs/migration/from-fastexcel/](https://fesod.apache.org/docs/migration/from-fastexcel/)
+- Apache Fesod (Incubating) Official Migration Guide: [https://fesod.apache.org/docs/migration/from-fastexcel/](https://fesod.apache.org/docs/migration/from-fastexcel/)
 - OpenRewrite Documentation: [https://docs.openrewrite.org/](https://docs.openrewrite.org/)
 - OpenRewrite Recipe Reference: [https://docs.openrewrite.org/recipes](https://docs.openrewrite.org/recipes)

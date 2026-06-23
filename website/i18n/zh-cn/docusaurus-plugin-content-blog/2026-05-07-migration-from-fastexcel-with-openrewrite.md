@@ -1,6 +1,6 @@
 ---
 title: "使用 OpenRewrite 从 FastExcel 1.3.0 自动迁移到 Apache Fesod (Incubating)"
-description: 将 FastExcel 1.3 迁移至 Apache Fesod 2.0.1-incubating
+description: 将 FastExcel 1.3 迁移至 Apache Fesod (Incubating) 2.0.1-incubating
 authors: [bengbengbalabalabeng]
 tags: [migration, fastexcel, fesod]
 ---
@@ -31,7 +31,7 @@ FastExcel（`cn.idev.excel`）已捐赠给 Apache 软件基金会，孵化为 **
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.apache.fesod.MigrateFastExcelToFesod
-displayName: Migrate FastExcel 1.3 to Apache Fesod 2.0.1-incubating
+displayName: Migrate FastExcel 1.3 to Apache Fesod (Incubating) 2.0.1-incubating
 recipeList:
 
   # 步骤 1：更新依赖 (Maven & Gradle)
@@ -209,6 +209,6 @@ FesodSheet.write(outputStream, BookData.class)
 
 ## 参考
 
-- Apache Fesod 官方迁移指南：[https://fesod.apache.org/docs/migration/from-fastexcel/](https://fesod.apache.org/docs/migration/from-fastexcel/)
+- Apache Fesod (Incubating) 官方迁移指南：[https://fesod.apache.org/docs/migration/from-fastexcel/](https://fesod.apache.org/docs/migration/from-fastexcel/)
 - OpenRewrite 官方文档：[https://docs.openrewrite.org/](https://docs.openrewrite.org/)
 - OpenRewrite Recipe 参考：[https://docs.openrewrite.org/recipes](https://docs.openrewrite.org/recipes)

@@ -191,8 +191,11 @@ public class CsvFormatTest extends AbstractExcelTest {
     }
 
     @Test
-    public void writeWithCommonCsv() {
-        File csvFile = readFile(CSV_BASE + "write-common-csv.csv");
+    public void writeWithCommonCsv() throws Exception {
+        // The file is only a write target (opened via Files.newOutputStream below), so use a temp
+        // file rather than resolving a classpath resource — "write-common-csv.csv" is generated,
+        // not a checked-in fixture.
+        File csvFile = createTempFile("write-common-csv", ExcelFormat.CSV);
         CSVFormat csvFormat = CSVFormat.DEFAULT
                 .builder()
                 .setQuote(CsvConstant.DOUBLE_QUOTE)

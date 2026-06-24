@@ -39,7 +39,6 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -55,8 +54,8 @@ public class BomDataTest extends AbstractExcelTest {
 
     @Test
     public void readCsv() {
-        readCsvImpl(TestFileUtil.readFile("bom" + File.separator + "no_bom.csv"));
-        readCsvImpl(TestFileUtil.readFile("bom" + File.separator + "office_bom.csv"));
+        readCsvImpl(readFile("bom" + File.separator + "no_bom.csv"));
+        readCsvImpl(readFile("bom" + File.separator + "office_bom.csv"));
     }
 
     @Test

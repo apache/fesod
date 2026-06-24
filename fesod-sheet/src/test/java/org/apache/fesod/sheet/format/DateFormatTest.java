@@ -38,7 +38,6 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,7 +52,7 @@ public class DateFormatTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void readCn(ExcelFormat format) {
-        File file = TestFileUtil.readFile("dataformat" + File.separator + "dataformat" + format.getExtension());
+        File file = readFile("dataformat" + File.separator + "dataformat" + format.getExtension());
         List<DateFormatData> list = FesodSheet.read(file, DateFormatData.class, null)
                 .locale(Locale.CHINA)
                 .sheet()
@@ -68,7 +67,7 @@ public class DateFormatTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void readUs(ExcelFormat format) {
-        File file = TestFileUtil.readFile("dataformat" + File.separator + "dataformat" + format.getExtension());
+        File file = readFile("dataformat" + File.separator + "dataformat" + format.getExtension());
         List<DateFormatData> list = FesodSheet.read(file, DateFormatData.class, null)
                 .locale(Locale.US)
                 .sheet()
@@ -81,7 +80,7 @@ public class DateFormatTest extends AbstractExcelTest {
 
     @Test
     void readV2() {
-        File file07V2 = TestFileUtil.readFile("dataformat" + File.separator + "dataformatv2.xlsx");
+        File file07V2 = readFile("dataformat" + File.separator + "dataformatv2.xlsx");
         List<Map<Integer, String>> dataMap =
                 FesodSheet.read(file07V2).headRowNumber(0).doReadAllSync();
         assertEquals("15:00", dataMap.get(0).get(0));

@@ -36,7 +36,6 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFPicture;
 import org.apache.poi.hssf.usermodel.HSSFShape;
@@ -65,7 +64,7 @@ public class FillAnnotationDataTest extends AbstractExcelTest {
     @ExcelFormatSource(FormatScope.BINARY)
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile("fillAnnotation", format);
-        File fileTemplate = TestFileUtil.readFile("fill" + File.separator + "annotation" + format.getExtension());
+        File fileTemplate = readFile("fill" + File.separator + "annotation" + format.getExtension());
         readAndWriteImpl(file, fileTemplate);
     }
 
@@ -76,7 +75,7 @@ public class FillAnnotationDataTest extends AbstractExcelTest {
                 .withTemplate(fileTemplate)
                 .sheet()
                 .doFill(TestDataBuilder.fillAnnotationData(
-                        5, TestFileUtil.getPath() + "converter" + File.separator + "img.jpg"));
+                        5, readFile("converter" + File.separator + "img.jpg").getAbsolutePath()));
 
         try (Workbook workbook = WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);

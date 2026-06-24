@@ -36,7 +36,6 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.sheet.write.metadata.style.WriteFont;
@@ -65,7 +64,7 @@ public class FillStyleAnnotatedTest extends AbstractExcelTest {
     @ExcelFormatSource(FormatScope.BINARY)
     void fill(ExcelFormat format) throws Exception {
         File file = createTempFile("FillStyleAnnotated", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "style" + format.getExtension());
+        File template = readFile("fill" + File.separator + "style" + format.getExtension());
         fill(file, template);
         if (format == ExcelFormat.XLSX) {
             try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(file))) {

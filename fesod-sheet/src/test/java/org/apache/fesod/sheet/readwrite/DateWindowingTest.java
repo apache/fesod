@@ -28,7 +28,6 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -103,6 +102,6 @@ public class DateWindowingTest extends AbstractExcelTest {
     }
 
     private File fixtureFile(String fileName) {
-        return TestFileUtil.readFile("datewindowing/" + fileName);
+        return readFile("datewindowing/" + fileName);
     }
 }

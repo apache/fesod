@@ -21,6 +21,11 @@ package org.apache.fesod.sheet.testkit.base;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
@@ -88,6 +93,47 @@ public abstract class AbstractExcelTest {
 
     protected File createTempFile(String prefix, ExcelFormat format) throws IOException {
         return format.createTempFile(prefix, tempDir);
+    }
+
+    // --- Resource File Access ---
+
+    /**
+     * Materializes a classpath resource into a real {@link File} under {@link #tempDir} and returns it.
+     *
+     * <p>This replaces the legacy {@code TestFileUtil.readFile()}, which derived a path from
+     * {@code getResource("/").getPath()}. That approach is unreliable: the returned string is
+     * {@linkplain java.net.URLDecode URL-encoded}, so any project path containing a space (common on
+     * macOS, e.g. {@code /Users/John Doe/...}) yields {@code /Users/John%20Doe/...}, which does not
+     * resolve to an existing OS file and causes {@link java.io.FileNotFoundException}. It also breaks
+     * entirely when the resources live inside a packaged JAR.
+     *
+     * <p>Reading the resource as a stream and copying it to the per-test temp directory is robust in
+     * all of those cases. The {@code resourcePath} may use either {@code /} or
+     * {@link File#separator File.separator}; segments are normalized to {@code /} for the classpath
+     * lookup.
+     *
+     * @param resourcePath classpath-relative resource location (e.g. {@code "template/template07.xlsx"})
+     * @return a real {@link File} backed by a copy of the resource
+     * @throws UncheckedIOException if the resource is missing or cannot be copied
+     */
+    protected File readFile(String resourcePath) {
+        String normalized = resourcePath.replace(File.separatorChar, '/');
+        Path target = tempDir.toPath().resolve(normalized.replace('/', File.separatorChar));
+        try {
+            Files.createDirectories(target.getParent());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to create directories for " + target, e);
+        }
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(normalized)) {
+            if (in == null) {
+                throw new UncheckedIOException(
+                        new java.io.FileNotFoundException("classpath resource not found: " + normalized));
+            }
+            Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to copy resource " + normalized + " to " + target, e);
+        }
+        return target.toFile();
     }
 
     // --- Convenience Helpers (delegate to RoundTripHelper) ---

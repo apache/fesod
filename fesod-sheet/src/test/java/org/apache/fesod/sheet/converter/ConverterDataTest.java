@@ -43,7 +43,6 @@ import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.util.TestUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,7 +86,7 @@ public class ConverterDataTest extends AbstractExcelTest {
         String fileName = "converter" + File.separator + "converter"
                 + format.name().toLowerCase().replace("xlsx", "07").replace("xls", "03")
                 + format.getExtension();
-        List<ReadAllConverterData> list = FesodSheet.read(TestFileUtil.readFile(fileName))
+        List<ReadAllConverterData> list = FesodSheet.read(readFile(fileName))
                 .head(ReadAllConverterData.class)
                 .sheet()
                 .doReadSync();
@@ -146,7 +145,8 @@ public class ConverterDataTest extends AbstractExcelTest {
             List<ImageData> list = new ArrayList<>();
             ImageData imageData = new ImageData();
             list.add(imageData);
-            String imagePath = TestFileUtil.getPath() + "converter" + File.separator + "img.jpg";
+            String imagePath =
+                    readFile("converter" + File.separator + "img.jpg").getAbsolutePath();
             imageData.setByteArray(FileUtils.readFileToByteArray(new File(imagePath)));
             imageData.setFile(new File(imagePath));
             imageData.setString(imagePath);

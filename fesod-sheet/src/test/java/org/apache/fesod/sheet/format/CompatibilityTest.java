@@ -40,7 +40,6 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -165,7 +164,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     }
 
     private File compatibilityFile(String fileName) {
-        return TestFileUtil.readFile("compatibility/" + fileName);
+        return readFile("compatibility/" + fileName);
     }
 
     private <T> List<Map<Integer, T>> readCompatibilityFile(String fileName) {

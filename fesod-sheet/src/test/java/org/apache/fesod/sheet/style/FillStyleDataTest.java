@@ -38,7 +38,6 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.sheet.write.metadata.style.WriteFont;
@@ -67,7 +66,7 @@ public class FillStyleDataTest extends AbstractExcelTest {
     @ExcelFormatSource(FormatScope.BINARY)
     void fill(ExcelFormat format) throws Exception {
         File file = createTempFile("fileStyle", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "style" + format.getExtension());
+        File template = readFile("fill" + File.separator + "style" + format.getExtension());
         fill(file, template);
         try (ExcelAssertions workbook = ExcelAssertions.assertThat(file)) {
             if (format == ExcelFormat.XLSX) {
@@ -300,7 +299,7 @@ public class FillStyleDataTest extends AbstractExcelTest {
     @ExcelFormatSource(FormatScope.BINARY)
     void fillStyleHandler(ExcelFormat format) throws Exception {
         File file = createTempFile("fileStyleHandler", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "style" + format.getExtension());
+        File template = readFile("fill" + File.separator + "style" + format.getExtension());
         fillStyleHandler(file, template);
         if (format == ExcelFormat.XLSX) {
             try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(file))) {

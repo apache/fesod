@@ -29,7 +29,6 @@ import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -94,6 +93,6 @@ public class MaxHeadSizeTest extends AbstractExcelTest {
     }
 
     private File headFile(String fileName) {
-        return TestFileUtil.readFile("temp/issue220" + File.separator + fileName);
+        return readFile("temp/issue220" + File.separator + fileName);
     }
 }

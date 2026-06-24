@@ -34,7 +34,6 @@ import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
@@ -57,7 +56,7 @@ public class LargeDataTest extends AbstractExcelTest {
     public void read() {
         long start = System.currentTimeMillis();
         LargeDataListener listener = new LargeDataListener();
-        FesodSheet.read(TestFileUtil.getPath() + "large" + File.separator + "large07.xlsx", LargeData.class, listener)
+        FesodSheet.read(readFile("large" + File.separator + "large07.xlsx"), LargeData.class, listener)
                 .headRowNumber(2)
                 .sheet()
                 .doRead();
@@ -68,7 +67,7 @@ public class LargeDataTest extends AbstractExcelTest {
     @Test
     public void fill() {
         File fileFill07 = new File(tempDir, "largefill07.xlsx");
-        File template07 = TestFileUtil.readFile("large" + File.separator + "fill.xlsx");
+        File template07 = readFile("large" + File.separator + "fill.xlsx");
         try (ExcelWriter excelWriter =
                 FesodSheet.write(fileFill07).withTemplate(template07).build()) {
             WriteSheet writeSheet = FesodSheet.writerSheet().build();

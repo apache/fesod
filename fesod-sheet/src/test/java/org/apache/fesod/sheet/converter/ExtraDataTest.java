@@ -39,7 +39,6 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,7 +52,7 @@ public class ExtraDataTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void read(ExcelFormat format) {
-        File file = TestFileUtil.readFile("extra" + File.separator + "extra" + format.getExtension());
+        File file = readFile("extra" + File.separator + "extra" + format.getExtension());
         ExtraDataListener listener = new ExtraDataListener();
         FesodSheet.read(file, ExtraData.class, listener)
                 .extraRead(CellExtraTypeEnum.COMMENT)
@@ -96,7 +95,7 @@ public class ExtraDataTest extends AbstractExcelTest {
 
     @Test
     void readExtraRelationships() {
-        File extraRelationships = TestFileUtil.readFile("extra" + File.separator + "extraRelationships.xlsx");
+        File extraRelationships = readFile("extra" + File.separator + "extraRelationships.xlsx");
         FesodSheet.read(extraRelationships, ExtraData.class, new ReadListener() {
                     @Override
                     public void invoke(Object data, AnalysisContext context) {}

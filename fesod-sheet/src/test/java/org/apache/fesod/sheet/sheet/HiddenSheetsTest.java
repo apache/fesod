@@ -32,7 +32,6 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.TitleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -42,7 +41,7 @@ public class HiddenSheetsTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void read(ExcelFormat format) {
-        File file = TestFileUtil.readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
+        File file = readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
         read(file, null);
         read(file, Boolean.FALSE);
         read(file, Boolean.TRUE);
@@ -51,7 +50,7 @@ public class HiddenSheetsTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void readAll(ExcelFormat format) {
-        File file = TestFileUtil.readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
+        File file = readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
         readAll(file, null);
         readAll(file, Boolean.FALSE);
         readAll(file, Boolean.TRUE);
@@ -60,7 +59,7 @@ public class HiddenSheetsTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void readHiddenList(ExcelFormat format) {
-        File file = TestFileUtil.readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
+        File file = readFile("hiddensheets" + File.separator + "hiddensheets" + format.getExtension());
         try (ExcelReader excelReader = FesodSheet.read(file, TitleData.class, new CollectingReadListener<TitleData>())
                 .build()) {
             List<ReadSheet> allSheetList = excelReader.excelExecutor().sheetList();

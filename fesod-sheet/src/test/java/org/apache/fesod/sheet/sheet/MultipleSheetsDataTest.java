@@ -38,7 +38,6 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.TitleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -51,7 +50,7 @@ public class MultipleSheetsDataTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void read(ExcelFormat format) {
-        File file = TestFileUtil.readFile("multiplesheets" + File.separator + "multiplesheets" + format.getExtension());
+        File file = readFile("multiplesheets" + File.separator + "multiplesheets" + format.getExtension());
         CollectingReadListener<TitleData> listener = new CollectingReadListener<>();
         try (ExcelReader excelReader =
                 FesodSheet.read(file, TitleData.class, listener).build()) {
@@ -68,7 +67,7 @@ public class MultipleSheetsDataTest extends AbstractExcelTest {
     @ParameterizedTest
     @ExcelFormatSource(FormatScope.BINARY)
     void readAll(ExcelFormat format) {
-        File file = TestFileUtil.readFile("multiplesheets" + File.separator + "multiplesheets" + format.getExtension());
+        File file = readFile("multiplesheets" + File.separator + "multiplesheets" + format.getExtension());
         FesodSheet.read(file, TitleData.class, new CollectingReadListener<TitleData>())
                 .doReadAll();
     }

@@ -46,7 +46,6 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
@@ -75,7 +74,7 @@ public class CsvFormatTest extends AbstractExcelTest {
     @Test
     public void testSimple() throws Exception {
 
-        File csvFile = TestFileUtil.readFile(CSV_BASE + "simple.csv");
+        File csvFile = readFile(CSV_BASE + "simple.csv");
         doTest(false, csvFile, null, null, null, null, null);
 
         csvFile = createTempFile(ExcelFormat.CSV);
@@ -103,7 +102,7 @@ public class CsvFormatTest extends AbstractExcelTest {
 
     @Test
     public void testQuote() throws Exception {
-        File csvFile = TestFileUtil.readFile(CSV_BASE + "simple-quote.csv");
+        File csvFile = readFile(CSV_BASE + "simple-quote.csv");
         doTest(false, csvFile, null, '"', null, null, null);
 
         csvFile = createTempFile(ExcelFormat.CSV);
@@ -193,7 +192,7 @@ public class CsvFormatTest extends AbstractExcelTest {
 
     @Test
     public void writeWithCommonCsv() {
-        File csvFile = TestFileUtil.readFile(CSV_BASE + "write-common-csv.csv");
+        File csvFile = readFile(CSV_BASE + "write-common-csv.csv");
         CSVFormat csvFormat = CSVFormat.DEFAULT
                 .builder()
                 .setQuote(CsvConstant.DOUBLE_QUOTE)

@@ -42,7 +42,6 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
@@ -60,7 +59,7 @@ public class FillDataTest extends AbstractExcelTest {
     @ExcelFormatSource
     void simpleFill(ExcelFormat format) throws Exception {
         File file = createTempFile("fill", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "simple" + format.getExtension());
+        File template = readFile("fill" + File.separator + "simple" + format.getExtension());
         if (format == ExcelFormat.CSV) {
             ExcelGenerateException ex = assertThrows(ExcelGenerateException.class, () -> fill(file, template));
             assertEquals("csv cannot use template.", ex.getMessage());
@@ -73,7 +72,7 @@ public class FillDataTest extends AbstractExcelTest {
     @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void complexFill(ExcelFormat format) throws Exception {
         File file = createTempFile("fillComplex", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "complex" + format.getExtension());
+        File template = readFile("fill" + File.separator + "complex" + format.getExtension());
         complexFillImpl(file, template);
     }
 
@@ -81,7 +80,7 @@ public class FillDataTest extends AbstractExcelTest {
     @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void horizontalFill(ExcelFormat format) throws Exception {
         File file = createTempFile("fillHorizontal", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "horizontal" + format.getExtension());
+        File template = readFile("fill" + File.separator + "horizontal" + format.getExtension());
         horizontalFillImpl(file, template);
     }
 
@@ -89,7 +88,7 @@ public class FillDataTest extends AbstractExcelTest {
     @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void byNameFill(ExcelFormat format) throws Exception {
         File file = createTempFile("byName", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "byName" + format.getExtension());
+        File template = readFile("fill" + File.separator + "byName" + format.getExtension());
         byNameFillImpl(file, template);
     }
 
@@ -97,7 +96,7 @@ public class FillDataTest extends AbstractExcelTest {
     @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
     void compositeFill(ExcelFormat format) throws Exception {
         File file = createTempFile("composite", format);
-        File template = TestFileUtil.readFile("fill" + File.separator + "composite" + format.getExtension());
+        File template = readFile("fill" + File.separator + "composite" + format.getExtension());
         compositeFillImpl(file, template);
     }
 

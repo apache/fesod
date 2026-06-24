@@ -40,7 +40,6 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -86,8 +85,7 @@ public class SimpleDataTest extends AbstractExcelTest {
 
     @Test
     void sheetNameRead07() {
-        List<Map<Integer, Object>> list = FesodSheet.read(
-                        TestFileUtil.readFile("simple" + File.separator + "simple07.xlsx"))
+        List<Map<Integer, Object>> list = FesodSheet.read(readFile("simple" + File.separator + "simple07.xlsx"))
                 .sheet("simple")
                 .doReadSync();
         Assertions.assertEquals(1, list.size());
@@ -95,8 +93,7 @@ public class SimpleDataTest extends AbstractExcelTest {
 
     @Test
     void sheetNoRead07() {
-        List<Map<Integer, Object>> list = FesodSheet.read(
-                        TestFileUtil.readFile("simple" + File.separator + "simple07.xlsx"))
+        List<Map<Integer, Object>> list = FesodSheet.read(readFile("simple" + File.separator + "simple07.xlsx"))
                 .sheet(1)
                 .doReadSync();
         Assertions.assertEquals(1, list.size());

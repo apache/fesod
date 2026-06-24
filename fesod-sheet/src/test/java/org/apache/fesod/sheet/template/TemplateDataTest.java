@@ -36,7 +36,6 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -52,7 +51,7 @@ public class TemplateDataTest extends AbstractExcelTest {
         File file = createTempFile("template", format);
         String templateName = "template" + File.separator + "template" + (format == ExcelFormat.XLSX ? "07" : "03")
                 + format.getExtension();
-        File template = TestFileUtil.readFile(templateName);
+        File template = readFile(templateName);
         FesodSheet.write(file, TemplateData.class)
                 .withTemplate(template)
                 .sheet()

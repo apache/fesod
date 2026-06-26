@@ -27,14 +27,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fesod.sheet.converters.string.StringPathnameImageConverter;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Tests {@link StringPathnameImageConverter}.
  */
+@Tag(Tags.UNIT)
 class StringPathnameImageConverterTest {
 
     @TempDir

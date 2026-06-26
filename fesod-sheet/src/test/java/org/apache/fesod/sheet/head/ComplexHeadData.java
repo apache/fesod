@@ -37,18 +37,18 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class ComplexHeadData {
-    @ExcelProperty({"顶格", "顶格", "两格"})
+    @ExcelProperty({"Region", "Region", "Merged"})
     private String string0;
 
-    @ExcelProperty({"顶格", "顶格", "两格"})
+    @ExcelProperty({"Region", "Region", "Merged"})
     private String string1;
 
-    @ExcelProperty({"顶格", "四联", "四联"})
+    @ExcelProperty({"Region", "Group", "Group"})
     private String string2;
 
-    @ExcelProperty({"顶格", "四联", "四联"})
+    @ExcelProperty({"Region", "Group", "Group"})
     private String string3;
 
-    @ExcelProperty({"顶格"})
+    @ExcelProperty({"Region"})
     private String string4;
 }

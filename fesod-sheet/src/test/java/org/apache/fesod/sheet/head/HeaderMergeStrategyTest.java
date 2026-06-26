@@ -25,49 +25,34 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
-import org.apache.fesod.sheet.util.TestFileUtil;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Test for header merge strategy
  *
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class HeaderMergeStrategyTest {
-
-    private static File fileNone;
-    private static File fileHorizontalOnly;
-    private static File fileVerticalOnly;
-    private static File fileFullRectangle;
-    private static File fileAuto;
-
-    @BeforeAll
-    public static void init() {
-        fileNone = TestFileUtil.createNewFile("headerMergeStrategyNone.xlsx");
-        fileHorizontalOnly = TestFileUtil.createNewFile("headerMergeStrategyHorizontalOnly.xlsx");
-        fileVerticalOnly = TestFileUtil.createNewFile("headerMergeStrategyVerticalOnly.xlsx");
-        fileFullRectangle = TestFileUtil.createNewFile("headerMergeStrategyFullRectangle.xlsx");
-        fileAuto = TestFileUtil.createNewFile("headerMergeStrategyAuto.xlsx");
-    }
+@Tag(Tags.ROUND_TRIP)
+public class HeaderMergeStrategyTest extends AbstractExcelTest {
 
     @Test
-    public void testNoneStrategy() {
+    public void testNoneStrategy() throws Exception {
+        File file = createTempFile("headerMergeNone", ExcelFormat.XLSX);
         List<List<String>> head = createTestHead();
-        FesodSheet.write(fileNone)
+        FesodSheet.write(file)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.NONE)
                 .sheet()
                 .doWrite(createTestData());
 
         // Verify no merged regions
-        try (org.apache.poi.ss.usermodel.Workbook workbook =
-                org.apache.poi.ss.usermodel.WorkbookFactory.create(fileNone)) {
+        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             Assertions.assertEquals(
                     0, sheet.getNumMergedRegions(), "NONE strategy should not create any merged regions");
@@ -77,17 +62,17 @@ public class HeaderMergeStrategyTest {
     }
 
     @Test
-    public void testHorizontalOnlyStrategy() {
+    public void testHorizontalOnlyStrategy() throws Exception {
+        File file = createTempFile("headerMergeHoriz", ExcelFormat.XLSX);
         List<List<String>> head = createTestHead();
-        FesodSheet.write(fileHorizontalOnly)
+        FesodSheet.write(file)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.HORIZONTAL_ONLY)
                 .sheet()
                 .doWrite(createTestData());
 
         // Verify only horizontal merges exist
-        try (org.apache.poi.ss.usermodel.Workbook workbook =
-                org.apache.poi.ss.usermodel.WorkbookFactory.create(fileHorizontalOnly)) {
+        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             int mergedRegionCount = sheet.getNumMergedRegions();
 
@@ -105,17 +90,17 @@ public class HeaderMergeStrategyTest {
     }
 
     @Test
-    public void testVerticalOnlyStrategy() {
+    public void testVerticalOnlyStrategy() throws Exception {
+        File file = createTempFile("headerMergeVert", ExcelFormat.XLSX);
         List<List<String>> head = createTestHead();
-        FesodSheet.write(fileVerticalOnly)
+        FesodSheet.write(file)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.VERTICAL_ONLY)
                 .sheet()
                 .doWrite(createTestData());
 
         // Verify only vertical merges exist
-        try (org.apache.poi.ss.usermodel.Workbook workbook =
-                org.apache.poi.ss.usermodel.WorkbookFactory.create(fileVerticalOnly)) {
+        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             int mergedRegionCount = sheet.getNumMergedRegions();
 
@@ -133,17 +118,17 @@ public class HeaderMergeStrategyTest {
     }
 
     @Test
-    public void testFullRectangleStrategy() {
+    public void testFullRectangleStrategy() throws Exception {
+        File file = createTempFile("headerMergeRect", ExcelFormat.XLSX);
         List<List<String>> head = createTestHead();
-        FesodSheet.write(fileFullRectangle)
+        FesodSheet.write(file)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
                 .sheet()
                 .doWrite(createTestData());
 
         // Verify all merged regions form valid rectangles
-        try (org.apache.poi.ss.usermodel.Workbook workbook =
-                org.apache.poi.ss.usermodel.WorkbookFactory.create(fileFullRectangle)) {
+        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             int mergedRegionCount = sheet.getNumMergedRegions();
 
@@ -162,17 +147,17 @@ public class HeaderMergeStrategyTest {
     }
 
     @Test
-    public void testAutoStrategy() {
+    public void testAutoStrategy() throws Exception {
+        File file = createTempFile("headerMergeAuto", ExcelFormat.XLSX);
         List<List<String>> head = createTestHead();
-        FesodSheet.write(fileAuto)
+        FesodSheet.write(file)
                 .head(head)
                 .headerMergeStrategy(HeaderMergeStrategy.AUTO)
                 .sheet()
                 .doWrite(createTestData());
 
         // AUTO strategy should work similar to the old behavior
-        try (org.apache.poi.ss.usermodel.Workbook workbook =
-                org.apache.poi.ss.usermodel.WorkbookFactory.create(fileAuto)) {
+        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             // Just verify that the file was created successfully
             Assertions.assertNotNull(sheet, "Sheet should be created");

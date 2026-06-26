@@ -31,8 +31,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -41,6 +43,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 /**
  * Tests {@link DateUtils}
  */
+@Tag(Tags.UNIT)
 class DateUtilsTest {
 
     @AfterEach
@@ -210,7 +213,7 @@ class DateUtilsTest {
         "61.0, 1900-03-01 00:00:00",
         "43831.5, 2020-01-01 12:00:00"
     })
-    void test_getJavaDate_1900(double excelValue, String expectedStr) throws ParseException {
+    void test_getJavaDate_1900(double excelValue, String expectedStr) {
         Date date = DateUtils.getJavaDate(excelValue, false);
 
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_19);

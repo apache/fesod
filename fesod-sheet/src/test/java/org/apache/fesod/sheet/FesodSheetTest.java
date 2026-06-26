@@ -32,18 +32,21 @@ import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.builder.ExcelWriterTableBuilder;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FesodSheet Unit Tests")
 class FesodSheetTest {
@@ -189,7 +192,7 @@ class FesodSheetTest {
     }
 
     @Test
-    void testRead_withFile_shouldConfigureFile() throws Exception {
+    void testRead_withFile_shouldConfigureFile() {
         ExcelReaderBuilder builder = FesodSheet.read(tempFile);
         assertNotNull(builder);
         ReadWorkbook workbook = writeWorkbook(builder);

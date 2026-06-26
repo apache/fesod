@@ -29,6 +29,7 @@ import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
@@ -43,6 +44,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -54,6 +56,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 /**
  * Tests {@link WorkBookUtil}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class WorkBookUtilTest {
 

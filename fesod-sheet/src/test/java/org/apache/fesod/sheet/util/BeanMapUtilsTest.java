@@ -19,34 +19,25 @@
 
 package org.apache.fesod.sheet.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link BeanMapUtils}
  */
+@Tag(Tags.UNIT)
 class BeanMapUtilsTest {
 
+    @Setter
+    @Getter
     public static class TestUser {
         private String name;
         private int age;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
     }
 
     @Test

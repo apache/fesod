@@ -169,7 +169,13 @@ public class WriteCellData<T> extends CellData<T> {
             throw new IllegalArgumentException("DateValue can not be null");
         }
         setType(CellDataTypeEnum.DATE);
-        this.dateValue = LocalDateTime.ofInstant(dateValue.toInstant(), ZoneId.systemDefault());
+        if (dateValue instanceof java.sql.Date) {
+            this.dateValue = ((java.sql.Date) dateValue).toLocalDate().atStartOfDay();
+        } else if (dateValue instanceof java.sql.Time) {
+            this.dateValue = ((java.sql.Time) dateValue).toLocalTime().atDate(java.time.LocalDate.of(1970, 1, 1));
+        } else {
+            this.dateValue = LocalDateTime.ofInstant(dateValue.toInstant(), ZoneId.systemDefault());
+        }
     }
 
     /**

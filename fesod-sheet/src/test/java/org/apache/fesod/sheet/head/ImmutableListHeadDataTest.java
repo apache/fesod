@@ -19,61 +19,47 @@
 
 package org.apache.fesod.sheet.head;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.apache.fesod.sheet.FastExcel;
+import java.util.Map;
+import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class ImmutableListHeadDataTest {
+/**
+ * Test immutable list head write/read for all Excel formats using parameterized tests.
+ */
+@Tag(Tags.ROUND_TRIP)
+public class ImmutableListHeadDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-    private static File fileCsv;
-
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("listHead07.xlsx");
-        file03 = TestFileUtil.createNewFile("listHead03.xls");
-        fileCsv = TestFileUtil.createNewFile("listHeadCsv.csv");
-    }
-
-    @Test
-    public void t01ReadAndWrite07() throws Exception {
-        readAndWrite(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() throws Exception {
-        readAndWrite(file03);
-    }
-
-    @Test
-    public void t03ReadAndWriteCsv() throws Exception {
-        readAndWrite(fileCsv);
-    }
-
-    private void readAndWrite(File file) throws Exception {
-        FastExcel.write(file)
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile("listHead", format);
+        FesodSheet.write(file)
                 .head(head())
                 .registerWriteHandler(new ImmutableListHeadDataWriteHandler())
                 .sheet()
                 .doWrite(data());
 
-        FastExcel.read(file)
-                .head(head())
-                .registerReadListener(new ImmutableListHeadDataListener())
-                .sheet()
-                .doRead();
+        List<Map<Integer, String>> list =
+                FesodSheet.read(file).head(head()).sheet().doReadSync();
+        assertEquals(1, list.size());
+        Map<Integer, String> row = list.get(0);
+        assertEquals("stringData", row.get(0));
+        assertEquals("1", row.get(1));
+        assertEquals("2025-10-31 01:01:01", row.get(2));
+        assertEquals("extraData", row.get(3));
     }
 
     private List<List<String>> head() {

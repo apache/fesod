@@ -34,14 +34,17 @@ import org.apache.fesod.sheet.converters.url.UrlImageConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageFetchPolicy;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link UrlImageConverter}.
  */
+@Tag(Tags.UNIT)
 class UrlImageConverterTest {
 
     private static final byte[] PNG_BYTES =

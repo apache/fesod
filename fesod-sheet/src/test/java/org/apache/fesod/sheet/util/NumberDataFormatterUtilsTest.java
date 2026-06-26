@@ -24,8 +24,10 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.format.DataFormatter;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -35,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Tests {@link NumberDataFormatterUtils}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class NumberDataFormatterUtilsTest {
 

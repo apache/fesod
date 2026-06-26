@@ -34,8 +34,10 @@ import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.read.metadata.holder.ReadRowHolder;
 import org.apache.fesod.sheet.read.metadata.holder.ReadSheetHolder;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -45,6 +47,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Tests {@link ConverterUtils}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class ConverterUtilsTest {
 
@@ -202,7 +205,7 @@ class ConverterUtilsTest {
         Object result = ConverterUtils.convertToJavaObject(
                 cellData, field, ReadCellData.class, null, null, converterMap, context, 1, 0);
 
-        Assertions.assertTrue(result instanceof ReadCellData);
+        Assertions.assertInstanceOf(ReadCellData.class, result);
         Mockito.verify(stringConverter).convertToJavaData(Mockito.any());
     }
 

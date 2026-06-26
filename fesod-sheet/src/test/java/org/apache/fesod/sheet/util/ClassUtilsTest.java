@@ -42,6 +42,7 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
 import org.apache.fesod.sheet.write.view.ClassBasedViewMatcher;
 import org.apache.fesod.sheet.write.view.NameBasedViewMatcher;
@@ -49,6 +50,7 @@ import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -58,6 +60,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Tests {@link ClassUtils}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class ClassUtilsTest {
 
@@ -142,7 +145,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void test_declaredFields_cache_ThreadLocal() throws NoSuchFieldException, IllegalAccessException {
+    void test_declaredFields_cache_ThreadLocal() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
         Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
 

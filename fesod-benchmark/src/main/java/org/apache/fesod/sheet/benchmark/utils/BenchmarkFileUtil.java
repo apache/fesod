@@ -21,12 +21,11 @@ package org.apache.fesod.sheet.benchmark.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.UUID;
 import org.apache.fesod.sheet.benchmark.core.BenchmarkConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +63,11 @@ public class BenchmarkFileUtil {
         createTestDataDirectory();
 
         String fileName = String.format(
-                "temp_%s_%s_%s_%d.%s",
+                "temp_%s_%s_%s_%s.%s",
                 benchmarkName,
                 size.getLabel(),
                 format.name().toLowerCase(),
-                System.currentTimeMillis(),
+                UUID.randomUUID().toString().substring(0, 8),
                 format.getExtension());
         return TEST_DATA_DIR + File.separator + fileName;
     }
@@ -135,24 +134,12 @@ public class BenchmarkFileUtil {
     }
 
     /**
-     * Read a string from a file
+     * Read a string from a file using UTF-8 encoding
      * @param path the path to the file
      * @return the content of the file as a string
      * @throws IOException if an I/O error occurs
      */
     public static String readString(Path path) throws IOException {
-        return new String(Files.readAllBytes(path));
-    }
-
-    /**
-     * Create a list with the specified elements
-     * @param elements the elements to include in the list
-     * @return a list containing the specified elements
-     */
-    @SafeVarargs
-    public static <T> List<T> listOf(T... elements) {
-        List<T> list = new ArrayList<>(elements.length);
-        list.addAll(Arrays.asList(elements));
-        return list;
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 }

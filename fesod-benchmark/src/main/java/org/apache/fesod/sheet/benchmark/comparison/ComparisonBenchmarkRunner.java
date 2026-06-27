@@ -28,13 +28,13 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
- * Enhanced comparison benchmark runner with file-based result collection
- * to solve JMH fork=0 static variable sharing issues
+ * Comparison benchmark runner with file-based result collection.
+ * Runs Fesod vs Apache POI comparison benchmarks and exports results as JSON.
  */
 public class ComparisonBenchmarkRunner {
 
     public static void main(String[] args) throws RunnerException {
-        System.out.println("Starting Enhanced FastExcel vs Apache POI Comparison Benchmark...");
+        System.out.println("Starting Fesod vs Apache POI Comparison Benchmark...");
 
         // Generate unique session ID for this benchmark run
         String sessionId = UUID.randomUUID().toString().substring(0, 8) + "_" + System.currentTimeMillis();
@@ -53,13 +53,14 @@ public class ComparisonBenchmarkRunner {
         // Configure benchmark options with session ID as system property
         Options opt = new OptionsBuilder()
                 .include(FastExcelVsPoiBenchmark.class.getSimpleName())
-                .param("datasetSize", "SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE")
+                .param("datasetSize", "SMALL", "MEDIUM", "LARGE")
                 .param("fileFormat", "XLSX")
                 .forks(1)
-                .warmupIterations(2)
+                .warmupIterations(3)
                 .measurementIterations(5)
                 .jvmArgs(
-                        "-Xmx6g",
+                        "-Xms2g",
+                        "-Xmx2g",
                         "-XX:+UseG1GC",
                         "-Dbenchmark.session.id=" + sessionId,
                         "-Dbenchmark.result.dir=" + resultDirPath)

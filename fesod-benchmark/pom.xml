@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.apache.fesod</groupId>
         <artifactId>fesod-parent</artifactId>
-        <version>1.3.0</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -43,7 +43,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod</artifactId>
+            <artifactId>fesod-sheet</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -151,42 +151,75 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>run-benchmarks</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <classpathScope>test</classpathScope>
-                            <executable>java</executable>
-                            <commandlineArgs>-classpath %classpath org.openjdk.jmh.Main .*</commandlineArgs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <!-- Full benchmark run: mvn verify -Pbenchmark -Dbenchmark.pattern=.*FastExcel.* -->
         <profile>
             <id>benchmark</id>
+            <properties>
+                <benchmark.pattern>.*</benchmark.pattern>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <configuration>
-                            <classpathScope>test</classpathScope>
-                            <executable>java</executable>
-                            <commandlineArgs>-classpath %classpath org.openjdk.jmh.Main ${benchmark.pattern}</commandlineArgs>
-                        </configuration>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>run-benchmarks</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>org.openjdk.jmh.Main</mainClass>
+                                    <arguments>
+                                        <argument>${benchmark.pattern}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Quick smoke test profile for CI: minimal iterations, no warmup -->
+        <!-- Usage: mvn verify -Pbenchmark-test -->
+        <profile>
+            <id>benchmark-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>run-benchmark-smoke-test</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>org.openjdk.jmh.Main</mainClass>
+                                    <arguments>
+                                        <argument>-f</argument>
+                                        <argument>1</argument>
+                                        <argument>-i</argument>
+                                        <argument>1</argument>
+                                        <argument>-wi</argument>
+                                        <argument>0</argument>
+                                        <argument>-p</argument>
+                                        <argument>datasetSize=SMALL</argument>
+                                        <argument>-p</argument>
+                                        <argument>fileFormat=XLSX</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

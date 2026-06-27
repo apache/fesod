@@ -57,7 +57,7 @@ public class ReadBenchmark extends AbstractBenchmark {
     // Test files for different sizes and formats
     private String xlsxSmallFile;
     private String xlsxMediumFile;
-    private String xlsEXTRA_LARGEFile;
+    private String xlsxLargeFile;
     private String xlsxExtraLargeFile;
 
     private String csvSmallFile;
@@ -65,22 +65,12 @@ public class ReadBenchmark extends AbstractBenchmark {
     private String csvLargeFile;
     private String csvExtraLargeFile;
 
-    // Listeners for different testing scenarios
-    private CountingReadListener countingListener;
-    private CollectingReadListener collectingListener;
-    private ProcessingReadListener processingListener;
-
     @Override
     protected void setupBenchmark() throws Exception {
         logger.info("Setting up read benchmark test files...");
 
         // Generate test files for all sizes and formats
         generateTestFiles();
-
-        // Initialize listeners
-        countingListener = new CountingReadListener();
-        collectingListener = new CollectingReadListener();
-        processingListener = new ProcessingReadListener();
 
         logger.info("Read benchmark setup completed");
     }
@@ -92,14 +82,6 @@ public class ReadBenchmark extends AbstractBenchmark {
         logger.info("Read benchmark cleanup completed");
     }
 
-    @Override
-    protected void setupIteration0() throws Exception {
-        // Reset listeners for each iteration
-        countingListener.reset();
-        collectingListener.reset();
-        processingListener.reset();
-    }
-
     private void generateTestFiles() {
         DataGenerator generator = new DataGenerator();
 
@@ -108,7 +90,7 @@ public class ReadBenchmark extends AbstractBenchmark {
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.SMALL, generator);
         xlsxMediumFile = generateAndWriteTestFile(
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.MEDIUM, generator);
-        xlsEXTRA_LARGEFile = generateAndWriteTestFile(
+        xlsxLargeFile = generateAndWriteTestFile(
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.LARGE, generator);
         xlsxExtraLargeFile = generateAndWriteTestFile(
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.EXTRA_LARGE, generator);
@@ -150,163 +132,152 @@ public class ReadBenchmark extends AbstractBenchmark {
     // XLSX Read Benchmarks - Different sizes
     @Benchmark
     public void readXlsxSmall(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsxSmallFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxSmallFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
     public void readXlsxMedium(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsxMediumFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxMediumFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
-    public void readXlsEXTRA_LARGE(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+    public void readXlsxLarge(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
     public void readXlsxExtraLarge(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsxExtraLargeFile, BenchmarkData.class, countingListener)
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxExtraLargeFile, BenchmarkData.class, listener)
                 .sheet()
                 .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        consumeData(listener.getCount(), blackhole);
     }
 
     // CSV Read Benchmarks - Different sizes
     @Benchmark
     public void readCsvSmall(Blackhole blackhole) throws Exception {
-        EasyExcel.read(csvSmallFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(csvSmallFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
     public void readCsvMedium(Blackhole blackhole) throws Exception {
-        EasyExcel.read(csvMediumFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(csvMediumFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
     public void readCsvLarge(Blackhole blackhole) throws Exception {
-        EasyExcel.read(csvLargeFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(csvLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
     public void readCsvExtraLarge(Blackhole blackhole) throws Exception {
-        EasyExcel.read(csvExtraLargeFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(csvExtraLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     // Stream reading benchmarks
     @Benchmark
-    public void readXlsEXTRA_LARGEWithStreaming(Blackhole blackhole) throws Exception {
-        try (FileInputStream fis = new FileInputStream(xlsEXTRA_LARGEFile)) {
-            EasyExcel.read(fis, BenchmarkData.class, countingListener).sheet().doRead();
-            consumeData(countingListener.getCount(), blackhole);
+    public void readXlsxLargeWithStreaming(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
+        try (FileInputStream fis = new FileInputStream(xlsxLargeFile)) {
+            EasyExcel.read(fis, BenchmarkData.class, listener).sheet().doRead();
+            consumeData(listener.getCount(), blackhole);
         }
     }
 
     @Benchmark
     public void readCsvLargeWithStreaming(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
         try (FileInputStream fis = new FileInputStream(csvLargeFile)) {
-            EasyExcel.read(fis, BenchmarkData.class, countingListener).sheet().doRead();
-            consumeData(countingListener.getCount(), blackhole);
+            EasyExcel.read(fis, BenchmarkData.class, listener).sheet().doRead();
+            consumeData(listener.getCount(), blackhole);
         }
     }
 
     // Different listener types benchmarks
     @Benchmark
-    public void readXlsEXTRA_LARGECountingOnly(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, countingListener)
-                .sheet()
-                .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+    public void readXlsxLargeCountingOnly(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
-    public void readXlsEXTRA_LARGECollecting(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, collectingListener)
-                .sheet()
-                .doRead();
-        consumeData(collectingListener.getData().size(), blackhole);
+    public void readXlsxLargeCollecting(Blackhole blackhole) throws Exception {
+        CollectingReadListener listener = new CollectingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getData().size(), blackhole);
     }
 
     @Benchmark
-    public void readXlsEXTRA_LARGEProcessing(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, processingListener)
-                .sheet()
-                .doRead();
-        consumeData(processingListener.getProcessedCount(), blackhole);
+    public void readXlsxLargeProcessing(Blackhole blackhole) throws Exception {
+        ProcessingReadListener listener = new ProcessingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getProcessedCount(), blackhole);
     }
 
     // Head configuration benchmarks
     @Benchmark
-    public void readXlsEXTRA_LARGEWithHeadRowNumber(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, countingListener)
+    public void readXlsxLargeWithHeadRowNumber(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener)
                 .headRowNumber(1)
                 .sheet()
                 .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        consumeData(listener.getCount(), blackhole);
     }
 
     @Benchmark
-    public void readXlsEXTRA_LARGESkipRows(Blackhole blackhole) throws Exception {
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, countingListener)
+    public void readXlsxLargeSkipRows(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener)
                 .headRowNumber(2) // Skip first row
                 .sheet()
                 .doRead();
-        consumeData(countingListener.getCount(), blackhole);
+        consumeData(listener.getCount(), blackhole);
     }
 
     // Multiple sheets reading (using same file)
     @Benchmark
     public void readXlsxMultipleSheets(Blackhole blackhole) throws Exception {
+        CountingReadListener listener = new CountingReadListener();
+        // Read the same sheet 3 times to simulate multi-sheet processing
         for (int i = 0; i < 3; i++) {
-            EasyExcel.read(xlsxMediumFile, BenchmarkData.class, countingListener)
+            EasyExcel.read(xlsxMediumFile, BenchmarkData.class, listener)
                     .sheet(0) // Always read first sheet since our test files have only one
                     .doRead();
         }
-        consumeData(countingListener.getCount(), blackhole);
+        consumeData(listener.getCount(), blackhole);
     }
 
     // Memory efficient reading with limited collections
     @Benchmark
-    public void readXlsEXTRA_LARGEMemoryEfficient(Blackhole blackhole) throws Exception {
-        LimitedCollectingReadListener limitedListener = new LimitedCollectingReadListener(1000);
-        EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, limitedListener)
-                .sheet()
-                .doRead();
-        consumeData(limitedListener.getData().size(), blackhole);
+    public void readXlsxLargeMemoryEfficient(Blackhole blackhole) throws Exception {
+        LimitedCollectingReadListener listener = new LimitedCollectingReadListener(1000);
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getData().size(), blackhole);
     }
 
     // Error handling benchmark
     @Benchmark
     public void readXlsxWithErrorHandling(Blackhole blackhole) throws Exception {
-        ErrorHandlingReadListener errorListener = new ErrorHandlingReadListener();
-        try {
-            EasyExcel.read(xlsEXTRA_LARGEFile, BenchmarkData.class, errorListener)
-                    .sheet()
-                    .doRead();
-        } catch (Exception e) {
-            // Expected for some error scenarios
-        }
-        consumeData(errorListener.getProcessedCount(), blackhole);
+        ErrorHandlingReadListener listener = new ErrorHandlingReadListener();
+        EasyExcel.read(xlsxLargeFile, BenchmarkData.class, listener).sheet().doRead();
+        consumeData(listener.getProcessedCount(), blackhole);
     }
 
     // Read Listeners
@@ -359,14 +330,11 @@ public class ReadBenchmark extends AbstractBenchmark {
 
         @Override
         public void invoke(BenchmarkData data, AnalysisContext context) {
-            // Simulate some processing
-            if (data.getStringData() != null && data.getStringData().length() > 0) {
+            // Simulate some processing on every row
+            if (data.getStringData() != null && !data.getStringData().isEmpty()) {
                 String processed = data.getStringData().toUpperCase();
-                // Simulate validation
-                if (data.getIntValue() != null && data.getIntValue() > 0) {
-                    processedCount.incrementAndGet();
-                }
             }
+            processedCount.incrementAndGet();
         }
 
         @Override

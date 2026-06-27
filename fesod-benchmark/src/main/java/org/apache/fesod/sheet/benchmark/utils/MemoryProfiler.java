@@ -24,6 +24,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -240,7 +241,7 @@ public class MemoryProfiler {
     }
 
     /**
-     * Get detailed memory statistics
+     * Get detailed memory statistics using a single pass over snapshot data
      */
     public MemoryStatistics getDetailedStatistics() {
         List<Long> snapshots;
@@ -252,20 +253,32 @@ public class MemoryProfiler {
             return new MemoryStatistics(0, 0, 0, 0, 0);
         }
 
-        long min = snapshots.stream().mapToLong(Long::longValue).min().orElse(0);
-        long max = snapshots.stream().mapToLong(Long::longValue).max().orElse(0);
-        double avg = snapshots.stream().mapToLong(Long::longValue).average().orElse(0);
+        // Single-pass calculation for min, max, sum, sum-of-squares
+        long min = Long.MAX_VALUE;
+        long max = Long.MIN_VALUE;
+        long sum = 0;
+        int count = snapshots.size();
 
-        // Calculate standard deviation
-        double variance = snapshots.stream()
-                .mapToDouble(value -> Math.pow(value - avg, 2))
-                .average()
-                .orElse(0);
-        double stdDev = Math.sqrt(variance);
+        for (Long value : snapshots) {
+            long v = value;
+            if (v < min) min = v;
+            if (v > max) max = v;
+            sum += v;
+        }
+
+        double avg = (double) sum / count;
+
+        // Second pass for variance (needed for accurate stddev)
+        double varianceSum = 0;
+        for (Long value : snapshots) {
+            double diff = value - avg;
+            varianceSum += diff * diff;
+        }
+        double stdDev = Math.sqrt(varianceSum / count);
 
         // Calculate 95th percentile
-        snapshots.sort(Long::compareTo);
-        int p95Index = (int) Math.ceil(0.95 * snapshots.size()) - 1;
+        Collections.sort(snapshots);
+        int p95Index = (int) Math.ceil(0.95 * count) - 1;
         long p95 = snapshots.get(Math.max(0, p95Index));
 
         return new MemoryStatistics(min, max, (long) avg, (long) stdDev, p95);

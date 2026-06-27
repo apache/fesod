@@ -133,7 +133,7 @@ public class WriteBenchmark extends AbstractBenchmark {
     }
 
     @Benchmark
-    public void writeXlsEXTRA_LARGE(Blackhole blackhole) throws Exception {
+    public void writeXlsxLarge(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.LARGE, "WriteBenchmark");
 
@@ -204,7 +204,7 @@ public class WriteBenchmark extends AbstractBenchmark {
 
     // Streaming write benchmarks using ExcelWriter
     @Benchmark
-    public void writeXlsEXTRA_LARGEStreaming(Blackhole blackhole) throws Exception {
+    public void writeXlsxLargeStreaming(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX,
                 BenchmarkConfiguration.DatasetSize.LARGE,
@@ -366,7 +366,7 @@ public class WriteBenchmark extends AbstractBenchmark {
 
     // Write with different data characteristics
     @Benchmark
-    public void writeXlsEXTRA_LARGEStrings(Blackhole blackhole) throws Exception {
+    public void writeXlsxLargeStrings(Blackhole blackhole) throws Exception {
         String filePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX,
                 BenchmarkConfiguration.DatasetSize.MEDIUM,
@@ -416,22 +416,20 @@ public class WriteBenchmark extends AbstractBenchmark {
         consumeData(fileSize, blackhole);
     }
 
-    // Concurrent writing simulation
+    // Sequential writing of multiple files
     @Benchmark
-    public void writeXlsxConcurrentSimulation(Blackhole blackhole) throws Exception {
-        // Simulate concurrent writing by writing multiple files
+    public void writeXlsxMultipleFiles(Blackhole blackhole) throws Exception {
+        // Write multiple files sequentially
         String[] filePaths = new String[3];
-        List<List<BenchmarkData>> dataSets = BenchmarkFileUtil.listOf(smallData, mediumData, smallData);
+        List<BenchmarkData>[] dataSets = new List[] {smallData, mediumData, smallData};
 
         for (int i = 0; i < 3; i++) {
             filePaths[i] = BenchmarkFileUtil.getTempFilePath(
                     BenchmarkConfiguration.FileFormat.XLSX,
                     BenchmarkConfiguration.DatasetSize.SMALL,
-                    "ConcurrentWriteBenchmark_" + i);
+                    "MultiFileWriteBenchmark_" + i);
 
-            EasyExcel.write(filePaths[i], BenchmarkData.class)
-                    .sheet("ConcurrentData" + i)
-                    .doWrite(dataSets.get(i));
+            EasyExcel.write(filePaths[i], BenchmarkData.class).sheet("Data" + i).doWrite(dataSets[i]);
         }
 
         long totalSize = 0;

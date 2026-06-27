@@ -75,8 +75,7 @@ public class BenchmarkConfiguration {
     public enum OperationType {
         READ,
         WRITE,
-        FILL,
-        CONVERT
+        FILL
     }
 
     // Default benchmark configuration
@@ -84,7 +83,6 @@ public class BenchmarkConfiguration {
     public static final int DEFAULT_MEASUREMENT_ITERATIONS = 5;
     public static final int DEFAULT_FORK_COUNT = 1;
     public static final String DEFAULT_OUTPUT_DIR = "target/benchmark-results";
-    public static final String DEFAULT_BASELINE_DIR = "src/test/resources/baselines";
 
     // Memory monitoring configuration
     public static final boolean ENABLE_MEMORY_PROFILING = true;

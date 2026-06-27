@@ -22,7 +22,6 @@ package org.apache.fesod.sheet.benchmark.operations;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +77,6 @@ public class FillBenchmark extends AbstractBenchmark {
     private Map<String, Object> complexMap;
 
     // Fill configurations
-    private FillConfig simpleFillConfig;
-    private FillConfig complexFillConfig;
-    private FillConfig horizontalFillConfig;
     private FillConfig verticalConfig;
     private FillConfig horizontalConfig;
     private FillConfig forceNewRowConfig;
@@ -170,22 +166,20 @@ public class FillBenchmark extends AbstractBenchmark {
         String templatePath = BenchmarkFileUtil.getTempFilePath(
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.SMALL, "SimpleTemplate");
 
-        // Create a simple template with placeholders
-        List<Map<String, Object>> templateData = Arrays.asList(
-                new HashMap<String, Object>() {
-                    {
-                        put("name", "Simple Fill Test");
-                        put("date", "2023-01-01");
-                        put("version", "1.0");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("description", "This is a simple fill test");
-                        put("author", "Test Author");
-                        put("status", "Active");
-                    }
-                });
+        // Create a simple template with placeholder rows
+        Map<String, Object> row1 = new HashMap<>();
+        row1.put("name", "Simple Fill Test");
+        row1.put("date", "2023-01-01");
+        row1.put("version", "1.0");
+
+        Map<String, Object> row2 = new HashMap<>();
+        row2.put("description", "This is a simple fill test");
+        row2.put("author", "Test Author");
+        row2.put("status", "Active");
+
+        List<Map<String, Object>> templateData = new ArrayList<>();
+        templateData.add(row1);
+        templateData.add(row2);
 
         try {
             // Write template structure
@@ -203,63 +197,55 @@ public class FillBenchmark extends AbstractBenchmark {
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.MEDIUM, "ComplexTemplate");
 
         // Create a more complex template with data list placeholders
-        List<Map<String, Object>> templateData = Arrays.asList(
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "{reportTitle}");
-                        put("B", "");
-                        put("C", "");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "Generated on: {generatedDate}");
-                        put("B", "Time: {generatedTime}");
-                        put("C", "");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "Total Records: {totalRecords}");
-                        put("B", "Avg Time: {avgProcessingTime}ms");
-                        put("C", "Max Memory: {maxMemoryUsage}");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "");
-                        put("B", "");
-                        put("C", "");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "Summary: {summary}");
-                        put("B", "");
-                        put("C", "");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "");
-                        put("B", "");
-                        put("C", "");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "ID");
-                        put("B", "String Data");
-                        put("C", "Value");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "{.id}");
-                        put("B", "{.stringData}");
-                        put("C", "{.intValue}");
-                    }
-                });
+        List<Map<String, Object>> templateData = new ArrayList<>();
+
+        Map<String, Object> row1 = new HashMap<>();
+        row1.put("A", "{reportTitle}");
+        row1.put("B", "");
+        row1.put("C", "");
+        templateData.add(row1);
+
+        Map<String, Object> row2 = new HashMap<>();
+        row2.put("A", "Generated on: {generatedDate}");
+        row2.put("B", "Time: {generatedTime}");
+        row2.put("C", "");
+        templateData.add(row2);
+
+        Map<String, Object> row3 = new HashMap<>();
+        row3.put("A", "Total Records: {totalRecords}");
+        row3.put("B", "Avg Time: {avgProcessingTime}ms");
+        row3.put("C", "Max Memory: {maxMemoryUsage}");
+        templateData.add(row3);
+
+        Map<String, Object> row4 = new HashMap<>();
+        row4.put("A", "");
+        row4.put("B", "");
+        row4.put("C", "");
+        templateData.add(row4);
+
+        Map<String, Object> row5 = new HashMap<>();
+        row5.put("A", "Summary: {summary}");
+        row5.put("B", "");
+        row5.put("C", "");
+        templateData.add(row5);
+
+        Map<String, Object> row6 = new HashMap<>();
+        row6.put("A", "");
+        row6.put("B", "");
+        row6.put("C", "");
+        templateData.add(row6);
+
+        Map<String, Object> row7 = new HashMap<>();
+        row7.put("A", "ID");
+        row7.put("B", "String Data");
+        row7.put("C", "Value");
+        templateData.add(row7);
+
+        Map<String, Object> row8 = new HashMap<>();
+        row8.put("A", "{.id}");
+        row8.put("B", "{.stringData}");
+        row8.put("C", "{.intValue}");
+        templateData.add(row8);
 
         try {
             EasyExcel.write(templatePath).sheet("ComplexTemplate").doWrite(templateData);
@@ -278,21 +264,19 @@ public class FillBenchmark extends AbstractBenchmark {
                 "HorizontalTemplate");
 
         // Create horizontal fill template
-        List<Map<String, Object>> templateData = Arrays.asList(
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "Horizontal Fill Demo");
-                        put("B", "");
-                        put("C", "");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "{.id}");
-                        put("B", "{.stringData}");
-                        put("C", "{.intValue}");
-                    }
-                });
+        Map<String, Object> row1 = new HashMap<>();
+        row1.put("A", "Horizontal Fill Demo");
+        row1.put("B", "");
+        row1.put("C", "");
+
+        Map<String, Object> row2 = new HashMap<>();
+        row2.put("A", "{.id}");
+        row2.put("B", "{.stringData}");
+        row2.put("C", "{.intValue}");
+
+        List<Map<String, Object>> templateData = new ArrayList<>();
+        templateData.add(row1);
+        templateData.add(row2);
 
         try {
             EasyExcel.write(templatePath).sheet("HorizontalTemplate").doWrite(templateData);
@@ -309,21 +293,19 @@ public class FillBenchmark extends AbstractBenchmark {
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.MEDIUM, "VerticalTemplate");
 
         // Create vertical fill template
-        List<Map<String, Object>> templateData = Arrays.asList(
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "Dynamic Fill Test");
-                        put("B", "Status");
-                        put("C", "Priority");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("A", "{.id}");
-                        put("B", "{.status}");
-                        put("C", "{.priority}");
-                    }
-                });
+        Map<String, Object> row1 = new HashMap<>();
+        row1.put("A", "Dynamic Fill Test");
+        row1.put("B", "Status");
+        row1.put("C", "Priority");
+
+        Map<String, Object> row2 = new HashMap<>();
+        row2.put("A", "{.id}");
+        row2.put("B", "{.status}");
+        row2.put("C", "{.priority}");
+
+        List<Map<String, Object>> templateData = new ArrayList<>();
+        templateData.add(row1);
+        templateData.add(row2);
 
         try {
             EasyExcel.write(templatePath).sheet("VerticalTemplate").doWrite(templateData);
@@ -340,21 +322,19 @@ public class FillBenchmark extends AbstractBenchmark {
                 BenchmarkConfiguration.FileFormat.XLSX, BenchmarkConfiguration.DatasetSize.LARGE, "MultiListTemplate");
 
         // Create multi-list template
-        List<Map<String, Object>> templateData = Arrays.asList(
-                new HashMap<String, Object>() {
-                    {
-                        put("Report", "Performance Report");
-                        put("Date", "{date}");
-                        put("Version", "{version}");
-                    }
-                },
-                new HashMap<String, Object>() {
-                    {
-                        put("Metric", "Value");
-                        put("Status", "Threshold");
-                        put("Notes", "Comments");
-                    }
-                });
+        Map<String, Object> row1 = new HashMap<>();
+        row1.put("Report", "Performance Report");
+        row1.put("Date", "{date}");
+        row1.put("Version", "{version}");
+
+        Map<String, Object> row2 = new HashMap<>();
+        row2.put("Metric", "Value");
+        row2.put("Status", "Threshold");
+        row2.put("Notes", "Comments");
+
+        List<Map<String, Object>> templateData = new ArrayList<>();
+        templateData.add(row1);
+        templateData.add(row2);
 
         try {
             EasyExcel.write(templatePath).sheet("MultiListTemplate").doWrite(templateData);
@@ -593,11 +573,6 @@ public class FillBenchmark extends AbstractBenchmark {
                 if (batch.size() >= batchSize) {
                     excelWriter.fill(batch, verticalConfig, writeSheet);
                     batch.clear();
-
-                    // Periodic GC to test memory efficiency
-                    if (batch.size() % (batchSize * 10) == 0) {
-                        forceGC();
-                    }
                 }
             }
 

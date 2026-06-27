@@ -151,24 +151,13 @@ public abstract class AbstractBenchmark {
     private void logMemoryUsage() {
         if (memoryProfiler != null) {
             MemoryProfiler.MemorySnapshot snapshot = memoryProfiler.getSnapshot();
-            logger.debug(
+            logger.info(
                     "Memory usage - Max: {} MB, Avg: {} MB, Allocated: {} MB, GC Count: {}, GC Time: {} ms",
                     snapshot.getMaxUsedMemoryMB(),
                     snapshot.getAvgUsedMemoryMB(),
                     snapshot.getAllocatedMemoryMB(),
                     snapshot.getGcCount(),
                     snapshot.getGcTime());
-            System.out.println("Memory usage - Max: "
-                    + snapshot.getMaxUsedMemoryMB()
-                    + " MB, Avg: "
-                    + snapshot.getAvgUsedMemoryMB()
-                    + " MB, Allocated: "
-                    + snapshot.getAllocatedMemoryMB()
-                    + " MB, GC Count: "
-                    + snapshot.getGcCount()
-                    + ", GC Time: "
-                    + snapshot.getGcTime()
-                    + " ms");
         }
     }
 
@@ -203,25 +192,10 @@ public abstract class AbstractBenchmark {
     }
 
     /**
-     * Force garbage collection and wait for it to complete
-     */
-    protected void forceGC() {
-        System.gc();
-        System.runFinalization();
-        try {
-            Thread.sleep(100); // Give GC time to complete
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
      * Consume data to prevent JVM optimizations
      */
     protected void consumeData(Object data, Blackhole blackhole) {
-        if (blackhole != null) {
-            blackhole.consume(data);
-        }
+        blackhole.consume(data);
     }
 
     /**

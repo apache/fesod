@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import org.apache.fesod.sheet.benchmark.core.BenchmarkConfiguration;
 import org.apache.fesod.sheet.benchmark.data.BenchmarkData;
 import org.slf4j.Logger;
@@ -96,7 +95,7 @@ public class DataGenerator {
     private final Random random;
 
     public DataGenerator() {
-        this.random = ThreadLocalRandom.current();
+        this(42L); // Fixed seed for reproducible benchmark results
     }
 
     public DataGenerator(long seed) {
@@ -243,8 +242,8 @@ public class DataGenerator {
         LocalDate now = LocalDate.now();
         LocalDate fiveYearsAgo = now.minusYears(5);
         long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(fiveYearsAgo, now);
-        long randomDays = random.nextLong() % daysBetween;
-        return fiveYearsAgo.plusDays(Math.abs(randomDays));
+        long randomDays = Math.floorMod(random.nextLong(), daysBetween);
+        return fiveYearsAgo.plusDays(randomDays);
     }
 
     /**
@@ -254,8 +253,8 @@ public class DataGenerator {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneYearAgo = now.minusYears(1);
         long secondsBetween = java.time.temporal.ChronoUnit.SECONDS.between(oneYearAgo, now);
-        long randomSeconds = random.nextLong() % secondsBetween;
-        return oneYearAgo.plusSeconds(Math.abs(randomSeconds));
+        long randomSeconds = Math.floorMod(random.nextLong(), secondsBetween);
+        return oneYearAgo.plusSeconds(randomSeconds);
     }
 
     /**
@@ -409,7 +408,7 @@ public class DataGenerator {
     }
 
     // Static convenience methods for backward compatibility
-    private static final DataGenerator defaultGenerator = new DataGenerator();
+    private static final DataGenerator defaultGenerator = new DataGenerator(42L);
 
     /**
      * Generate test data list using default generator
@@ -430,12 +429,5 @@ public class DataGenerator {
      */
     public static List<BenchmarkData> generateTestData(BenchmarkConfiguration.DatasetSize size) {
         return defaultGenerator.generateData(size);
-    }
-
-    /**
-     * Alias for BenchmarkData to maintain compatibility
-     */
-    public static class TestData extends BenchmarkData {
-        // This class exists for backward compatibility
     }
 }

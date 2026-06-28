@@ -25,96 +25,49 @@
 
 package org.apache.fesod.sheet.head;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.util.TestFileUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
- *
+ * Test complex head write/read for all Excel formats using parameterized tests.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class ComplexHeadDataTest {
+@Tag(Tags.ROUND_TRIP)
+public class ComplexHeadDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-    private static File fileCsv;
-    private static File file07AutomaticMergeHead;
-    private static File file03AutomaticMergeHead;
-    private static File fileCsvAutomaticMergeHead;
-
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("complexHead07.xlsx");
-        file03 = TestFileUtil.createNewFile("complexHead03.xls");
-        fileCsv = TestFileUtil.createNewFile("complexHeadCsv.csv");
-        file07AutomaticMergeHead = TestFileUtil.createNewFile("complexHeadAutomaticMergeHead07.xlsx");
-        file03AutomaticMergeHead = TestFileUtil.createNewFile("complexHeadAutomaticMergeHead03.xls");
-        fileCsvAutomaticMergeHead = TestFileUtil.createNewFile("complexHeadAutomaticMergeHeadCsv.csv");
-    }
-
-    @Test
-    public void t01ReadAndWrite07() {
-        readAndWrite(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() {
-        readAndWrite(file03);
-    }
-
-    @Test
-    public void t03ReadAndWriteCsv() {
-        readAndWrite(fileCsv);
-    }
-
-    private void readAndWrite(File file) {
-        FesodSheet.write(file, ComplexHeadData.class).sheet().doWrite(data());
-        FesodSheet.read(file, ComplexHeadData.class, new ComplexDataListener())
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile("complexHead", format);
+        FesodSheet.write(file, ComplexHeadData.class).sheet().doWrite(TestDataBuilder.complexHeadData(1));
+        List<ComplexHeadData> result = FesodSheet.read(file)
+                .head(ComplexHeadData.class)
                 .xlsxSAXParserFactoryName("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl")
                 .sheet()
-                .doRead();
+                .doReadSync();
+        assertEquals(1, result.size());
+        assertEquals("String4", result.get(0).getString4());
     }
 
-    @Test
-    public void t11ReadAndWriteAutomaticMergeHead07() {
-        readAndWriteAutomaticMergeHead(file07AutomaticMergeHead);
-    }
-
-    @Test
-    public void t12ReadAndWriteAutomaticMergeHead03() {
-        readAndWriteAutomaticMergeHead(file03AutomaticMergeHead);
-    }
-
-    @Test
-    public void t13ReadAndWriteAutomaticMergeHeadCsv() {
-        readAndWriteAutomaticMergeHead(fileCsvAutomaticMergeHead);
-    }
-
-    private void readAndWriteAutomaticMergeHead(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAndWriteAutomaticMergeHead(ExcelFormat format) throws Exception {
+        File file = createTempFile("complexHeadAutoMerge", format);
         FesodSheet.write(file, ComplexHeadData.class)
                 .automaticMergeHead(Boolean.FALSE)
                 .sheet()
-                .doWrite(data());
-        FesodSheet.read(file, ComplexHeadData.class, new ComplexDataListener())
-                .sheet()
-                .doRead();
-    }
-
-    private List<ComplexHeadData> data() {
-        List<ComplexHeadData> list = new ArrayList<ComplexHeadData>();
-        ComplexHeadData data = new ComplexHeadData();
-        data.setString0("字符串0");
-        data.setString1("字符串1");
-        data.setString2("字符串2");
-        data.setString3("字符串3");
-        data.setString4("字符串4");
-        list.add(data);
-        return list;
+                .doWrite(TestDataBuilder.complexHeadData(1));
+        List<ComplexHeadData> result =
+                FesodSheet.read(file).head(ComplexHeadData.class).sheet().doReadSync();
+        assertEquals(1, result.size());
+        assertEquals("String4", result.get(0).getString4());
     }
 }

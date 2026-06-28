@@ -25,8 +25,8 @@
 
 package org.apache.fesod.sheet.style;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
@@ -35,8 +35,13 @@ import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
-import org.apache.fesod.sheet.util.StyleTestUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.assertions.ExcelAssertions;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 import org.apache.fesod.sheet.write.merge.OnceAbsoluteMergeStrategy;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
@@ -46,55 +51,31 @@ import org.apache.fesod.sheet.write.style.HorizontalCellStyleStrategy;
 import org.apache.fesod.sheet.write.style.column.SimpleColumnWidthStyleStrategy;
 import org.apache.fesod.sheet.write.style.row.SimpleRowHeightStyleStrategy;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
- *
+ * Test style write/read for binary Excel formats using parameterized tests.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class StyleDataTest {
+@Tag(Tags.ROUND_TRIP)
+public class StyleDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-    private static File fileVerticalCellStyleStrategy07;
-    private static File fileVerticalCellStyleStrategy207;
-    private static File fileLoopMergeStrategy;
-
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("style07.xlsx");
-        file03 = TestFileUtil.createNewFile("style03.xls");
-        fileVerticalCellStyleStrategy07 = TestFileUtil.createNewFile("verticalCellStyle.xlsx");
-        fileVerticalCellStyleStrategy207 = TestFileUtil.createNewFile("verticalCellStyle2.xlsx");
-        fileLoopMergeStrategy = TestFileUtil.createNewFile("loopMergeStrategy.xlsx");
+    @ParameterizedTest
+    @ExcelFormatSource(FormatScope.BINARY)
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile("style", format);
+        readAndWriteImpl(file);
     }
 
     @Test
-    public void t01ReadAndWrite07() throws Exception {
-        readAndWrite(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() throws Exception {
-        readAndWrite(file03);
-    }
-
-    @Test
-    public void t03AbstractVerticalCellStyleStrategy() {
+    void abstractVerticalCellStyleStrategy() throws Exception {
+        File file = createTempFile("verticalCellStyle", ExcelFormat.XLSX);
         AbstractVerticalCellStyleStrategy verticalCellStyleStrategy = new AbstractVerticalCellStyleStrategy() {
             @Override
             protected WriteCellStyle headCellStyle(Head head) {
@@ -149,14 +130,15 @@ public class StyleDataTest {
                 return writeCellStyle;
             }
         };
-        FesodSheet.write(fileVerticalCellStyleStrategy07, StyleData.class)
+        FesodSheet.write(file, StyleData.class)
                 .registerWriteHandler(verticalCellStyleStrategy)
                 .sheet()
-                .doWrite(data());
+                .doWrite(TestDataBuilder.styleData(2));
     }
 
     @Test
-    public void t04AbstractVerticalCellStyleStrategy02() {
+    void abstractVerticalCellStyleStrategy02() throws Exception {
+        File file = createTempFile("verticalCellStyle2", ExcelFormat.XLSX);
         final StyleProperty styleProperty = StyleProperty.build(StyleData.class.getAnnotation(HeadStyle.class));
         final FontProperty fontProperty = FontProperty.build(StyleData.class.getAnnotation(HeadFontStyle.class));
         AbstractVerticalCellStyleStrategy verticalCellStyleStrategy = new AbstractVerticalCellStyleStrategy() {
@@ -191,21 +173,22 @@ public class StyleDataTest {
                 return writeCellStyle;
             }
         };
-        FesodSheet.write(fileVerticalCellStyleStrategy207, StyleData.class)
+        FesodSheet.write(file, StyleData.class)
                 .registerWriteHandler(verticalCellStyleStrategy)
                 .sheet()
-                .doWrite(data());
+                .doWrite(TestDataBuilder.styleData(2));
     }
 
     @Test
-    public void t05LoopMergeStrategy() {
-        FesodSheet.write(fileLoopMergeStrategy, StyleData.class)
+    void loopMergeStrategy() throws Exception {
+        File file = createTempFile("loopMergeStrategy", ExcelFormat.XLSX);
+        FesodSheet.write(file, StyleData.class)
                 .sheet()
                 .registerWriteHandler(new LoopMergeStrategy(2, 1))
-                .doWrite(data10());
+                .doWrite(TestDataBuilder.styleData(10));
     }
 
-    private void readAndWrite(File file) throws Exception {
+    private void readAndWriteImpl(File file) {
         SimpleColumnWidthStyleStrategy simpleColumnWidthStyleStrategy = new SimpleColumnWidthStyleStrategy(50);
         SimpleRowHeightStyleStrategy simpleRowHeightStyleStrategy =
                 new SimpleRowHeightStyleStrategy((short) 40, (short) 50);
@@ -233,58 +216,41 @@ public class StyleDataTest {
                 .registerWriteHandler(horizontalCellStyleStrategy)
                 .registerWriteHandler(onceAbsoluteMergeStrategy)
                 .sheet()
-                .doWrite(data());
-        FesodSheet.read(file, StyleData.class, new StyleDataListener()).sheet().doRead();
+                .doWrite(TestDataBuilder.styleData(2));
 
-        Workbook workbook = WorkbookFactory.create(file);
-        Sheet sheet = workbook.getSheetAt(0);
-        Assertions.assertEquals(50 * 256, sheet.getColumnWidth(0), 0);
+        List<StyleData> result =
+                FesodSheet.read(file).head(StyleData.class).sheet().doReadSync();
+        assertEquals(2, result.size());
+        assertEquals("String0", result.get(0).getString());
+        assertEquals("String1", result.get(1).getString());
 
-        Row row0 = sheet.getRow(0);
-        Assertions.assertEquals(800, row0.getHeight(), 0);
-        Cell cell00 = row0.getCell(0);
-        Assertions.assertArrayEquals(new byte[] {-1, -1, 0}, StyleTestUtils.getFillForegroundColor(cell00));
-        Assertions.assertArrayEquals(new byte[] {-128, -128, 0}, StyleTestUtils.getFontColor(cell00, workbook));
-        Assertions.assertEquals(20, StyleTestUtils.getFontHeightInPoints(cell00, workbook));
-
-        Cell cell01 = row0.getCell(1);
-        Assertions.assertArrayEquals(new byte[] {-1, -1, 0}, StyleTestUtils.getFillForegroundColor(cell01));
-        Assertions.assertArrayEquals(new byte[] {-128, -128, 0}, StyleTestUtils.getFontColor(cell01, workbook));
-        Assertions.assertEquals(20, StyleTestUtils.getFontHeightInPoints(cell01, workbook));
-
-        Row row1 = sheet.getRow(1);
-        Assertions.assertEquals(1000, row1.getHeight(), 0);
-        Cell cell10 = row1.getCell(0);
-        Assertions.assertArrayEquals(new byte[] {0, -128, -128}, StyleTestUtils.getFillForegroundColor(cell10));
-        Assertions.assertArrayEquals(new byte[] {0, 51, 102}, StyleTestUtils.getFontColor(cell10, workbook));
-        Assertions.assertEquals(30, StyleTestUtils.getFontHeightInPoints(cell10, workbook));
-        Cell cell11 = row1.getCell(1);
-        Assertions.assertArrayEquals(new byte[] {0, -128, -128}, StyleTestUtils.getFillForegroundColor(cell11));
-        Assertions.assertArrayEquals(new byte[] {0, 51, 102}, StyleTestUtils.getFontColor(cell11, workbook));
-        Assertions.assertEquals(30, StyleTestUtils.getFontHeightInPoints(cell11, workbook));
-    }
-
-    private List<StyleData> data() {
-        List<StyleData> list = new ArrayList<StyleData>();
-        StyleData data = new StyleData();
-        data.setString("字符串0");
-        data.setString1("字符串01");
-        StyleData data1 = new StyleData();
-        data1.setString("字符串1");
-        data1.setString1("字符串11");
-        list.add(data);
-        list.add(data1);
-        return list;
-    }
-
-    private List<StyleData> data10() {
-        List<StyleData> list = new ArrayList<StyleData>();
-        for (int i = 0; i < 10; i++) {
-            StyleData data = new StyleData();
-            data.setString("字符串0");
-            data.setString1("字符串01");
-            list.add(data);
+        try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
+            ea.sheet(0)
+                    .hasColumnWidth(0, 50 * 256)
+                    .row(0)
+                    .hasHeight((short) 800)
+                    .cell(0)
+                    .hasFillColor(new byte[] {-1, -1, 0})
+                    .hasFontColor(new byte[] {-128, -128, 0})
+                    .hasFontSize((short) 20)
+                    .and()
+                    .cell(1)
+                    .hasFillColor(new byte[] {-1, -1, 0})
+                    .hasFontColor(new byte[] {-128, -128, 0})
+                    .hasFontSize((short) 20)
+                    .and()
+                    .and()
+                    .row(1)
+                    .hasHeight((short) 1000)
+                    .cell(0)
+                    .hasFillColor(new byte[] {0, -128, -128})
+                    .hasFontColor(new byte[] {0, 51, 102})
+                    .hasFontSize((short) 30)
+                    .and()
+                    .cell(1)
+                    .hasFillColor(new byte[] {0, -128, -128})
+                    .hasFontColor(new byte[] {0, 51, 102})
+                    .hasFontSize((short) 30);
         }
-        return list;
     }
 }

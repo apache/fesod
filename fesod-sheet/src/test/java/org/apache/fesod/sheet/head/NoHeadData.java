@@ -37,6 +37,6 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class NoHeadData {
-    @ExcelProperty("字符串")
+    @ExcelProperty("String")
     private String string;
 }

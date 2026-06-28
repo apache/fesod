@@ -25,66 +25,49 @@
 
 package org.apache.fesod.sheet.head;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
- *
+ * Test list-based head write/read for all Excel formats using parameterized tests.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class ListHeadDataTest {
+@Tag(Tags.ROUND_TRIP)
+public class ListHeadDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-    private static File fileCsv;
-
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("listHead07.xlsx");
-        file03 = TestFileUtil.createNewFile("listHead03.xls");
-        fileCsv = TestFileUtil.createNewFile("listHeadCsv.csv");
-    }
-
-    @Test
-    public void t01ReadAndWrite07() throws Exception {
-        readAndWrite(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() throws Exception {
-        readAndWrite(file03);
-    }
-
-    @Test
-    public void t03ReadAndWriteCsv() throws Exception {
-        readAndWrite(fileCsv);
-    }
-
-    private void readAndWrite(File file) throws Exception {
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile("listHead", format);
         FesodSheet.write(file).head(head()).sheet().doWrite(data());
-        FesodSheet.read(file)
-                .registerReadListener(new ListHeadDataListener())
-                .sheet()
-                .doRead();
+        List<Map<Integer, String>> list = FesodSheet.read(file).sheet().doReadSync();
+        assertEquals(1, list.size());
+        Map<Integer, String> row = list.get(0);
+        assertEquals("String0", row.get(0));
+        assertEquals("1", row.get(1));
+        assertEquals("2020-01-01 01:01:01", row.get(2));
+        assertEquals("ExtraData", row.get(3));
     }
 
     private List<List<String>> head() {
         List<List<String>> list = new ArrayList<List<String>>();
         List<String> head0 = new ArrayList<String>();
-        head0.add("字符串");
+        head0.add("String");
         List<String> head1 = new ArrayList<String>();
-        head1.add("数字");
+        head1.add("Number");
         List<String> head2 = new ArrayList<String>();
-        head2.add("日期");
+        head2.add("Date");
         list.add(head0);
         list.add(head1);
         list.add(head2);
@@ -94,10 +77,10 @@ public class ListHeadDataTest {
     private List<List<Object>> data() throws ParseException {
         List<List<Object>> list = new ArrayList<List<Object>>();
         List<Object> data0 = new ArrayList<Object>();
-        data0.add("字符串0");
+        data0.add("String0");
         data0.add(1);
         data0.add(DateUtils.parseDate("2020-01-01 01:01:01"));
-        data0.add("额外数据");
+        data0.add("ExtraData");
         list.add(data0);
         return list;
     }

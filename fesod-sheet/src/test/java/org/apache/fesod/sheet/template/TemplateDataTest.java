@@ -25,73 +25,44 @@
 
 package org.apache.fesod.sheet.template;
 
+import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.util.TestFileUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
- *
+ * Test template write/read for binary Excel formats using parameterized tests.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class TemplateDataTest {
+@Tag(Tags.ROUND_TRIP)
+public class TemplateDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("template07.xlsx");
-        file03 = TestFileUtil.createNewFile("template03.xls");
-    }
-
-    @Test
-    public void t01ReadAndWrite07() {
-        readAndWrite07(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() {
-        readAndWrite03(file03);
-    }
-
-    private void readAndWrite07(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile("template", format);
+        String templateName = "template" + File.separator + "template" + (format == ExcelFormat.XLSX ? "07" : "03")
+                + format.getExtension();
+        File template = readFile(templateName);
         FesodSheet.write(file, TemplateData.class)
-                .withTemplate(TestFileUtil.readFile("template" + File.separator + "template07.xlsx"))
+                .withTemplate(template)
                 .sheet()
-                .doWrite(data());
-        FesodSheet.read(file, TemplateData.class, new TemplateDataListener())
+                .doWrite(TestDataBuilder.templateData(2));
+        List<TemplateData> result = FesodSheet.read(file)
+                .head(TemplateData.class)
                 .headRowNumber(3)
                 .sheet()
-                .doRead();
-    }
-
-    private void readAndWrite03(File file) {
-        FesodSheet.write(file, TemplateData.class)
-                .withTemplate(TestFileUtil.readFile("template" + File.separator + "template03.xls"))
-                .sheet()
-                .doWrite(data());
-        FesodSheet.read(file, TemplateData.class, new TemplateDataListener())
-                .headRowNumber(3)
-                .sheet()
-                .doRead();
-    }
-
-    private List<TemplateData> data() {
-        List<TemplateData> list = new ArrayList<TemplateData>();
-        TemplateData data = new TemplateData();
-        data.setString0("字符串0");
-        data.setString1("字符串01");
-        TemplateData data1 = new TemplateData();
-        data1.setString0("字符串1");
-        data1.setString1("字符串11");
-        list.add(data);
-        list.add(data1);
-        return list;
+                .doReadSync();
+        assertEquals(2, result.size());
+        assertEquals("String0", result.get(0).getString0());
+        assertEquals("String1", result.get(1).getString0());
     }
 }

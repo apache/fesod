@@ -24,11 +24,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.UNIT)
 class DimensionWorkbookWriteHandlerTest {
 
     @Test

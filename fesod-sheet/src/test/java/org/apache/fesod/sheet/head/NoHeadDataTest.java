@@ -25,61 +25,35 @@
 
 package org.apache.fesod.sheet.head;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.util.TestFileUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
- *
+ * Test no-head write/read for all Excel formats using parameterized tests.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class NoHeadDataTest {
+@Tag(Tags.ROUND_TRIP)
+public class NoHeadDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-    private static File fileCsv;
-
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("noHead07.xlsx");
-        file03 = TestFileUtil.createNewFile("noHead03.xls");
-        fileCsv = TestFileUtil.createNewFile("noHeadCsv.csv");
-    }
-
-    @Test
-    public void t01ReadAndWrite07() {
-        readAndWrite(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() {
-        readAndWrite(file03);
-    }
-
-    @Test
-    public void t03ReadAndWriteCsv() {
-        readAndWrite(fileCsv);
-    }
-
-    private void readAndWrite(File file) {
-        FesodSheet.write(file, NoHeadData.class).needHead(Boolean.FALSE).sheet().doWrite(data());
-        FesodSheet.read(file, NoHeadData.class, new NoHeadDataListener())
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile("noHead", format);
+        FesodSheet.write(file, NoHeadData.class).needHead(Boolean.FALSE).sheet().doWrite(TestDataBuilder.noHeadData(1));
+        List<NoHeadData> result = FesodSheet.read(file)
+                .head(NoHeadData.class)
                 .headRowNumber(0)
                 .sheet()
-                .doRead();
-    }
-
-    private List<NoHeadData> data() {
-        List<NoHeadData> list = new ArrayList<NoHeadData>();
-        NoHeadData data = new NoHeadData();
-        data.setString("字符串0");
-        list.add(data);
-        return list;
+                .doReadSync();
+        assertEquals(1, result.size());
+        assertEquals("String0", result.get(0).getString());
     }
 }

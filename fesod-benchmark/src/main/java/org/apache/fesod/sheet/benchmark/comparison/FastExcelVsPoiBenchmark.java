@@ -19,8 +19,6 @@
 
 package org.apache.fesod.sheet.benchmark.comparison;
 
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -86,10 +84,6 @@ import org.openjdk.jmh.infra.Blackhole;
         jvmArgs = {"-Xms2g", "-Xmx2g"})
 public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
-    // Session ID for file-based result collection
-    private static String sessionId;
-    private static File resultOutputDir;
-
     @Param({"SMALL", "MEDIUM", "LARGE"})
     private String datasetSize;
 
@@ -98,25 +92,10 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
 
     private File testFile;
     private List<BenchmarkData> testDataList;
-    private List<ComparisonResult> localResults = new ArrayList<>();
 
     @Setup(Level.Trial)
     public void setupTrial() throws Exception {
         super.setupTrial();
-
-        // Initialize session ID and result directory (only once per trial)
-        if (sessionId == null) {
-            sessionId = System.getProperty("benchmark.session.id", String.valueOf(System.currentTimeMillis()));
-
-            String resultDirPath = System.getProperty("benchmark.result.dir", "target/benchmark-results");
-            resultOutputDir = new File(resultDirPath, sessionId);
-            if (!resultOutputDir.exists()) {
-                resultOutputDir.mkdirs();
-            }
-
-            System.out.printf("Benchmark session ID: %s%n", sessionId);
-            System.out.printf("Result output directory: %s%n", resultOutputDir.getAbsolutePath());
-        }
 
         // Configure Apache POI to handle large files
         IOUtils.setByteArrayMaxOverride(1024 * 1024 * 1024); // 1GB
@@ -150,9 +129,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
         if (testFile != null && testFile.exists()) {
             testFile.delete();
         }
-
-        // Write collected results to individual files for this trial
-        writeResultsToFiles();
 
         super.tearDownTrial();
     }
@@ -433,47 +409,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
     // ============================================================================
 
     /**
-     * Write local results to individual files for cross-fork communication
-     */
-    private void writeResultsToFiles() {
-        if (resultOutputDir == null || localResults.isEmpty()) {
-            return;
-        }
-
-        try {
-            for (int i = 0; i < localResults.size(); i++) {
-                ComparisonResult result = localResults.get(i);
-                String fileName = String.format(
-                        "result_%s_%s_%s_%s_%d.json",
-                        result.library.replace(" ", "_"), result.operation, datasetSize, fileFormat, i);
-                File resultFile = new File(resultOutputDir, fileName);
-
-                writeResultAsJson(result, resultFile);
-            }
-
-            System.out.printf("Wrote %d results to %s%n", localResults.size(), resultOutputDir.getAbsolutePath());
-        } catch (Exception e) {
-            System.err.println("Error writing results to files: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Write a single result as JSON to file
-     */
-    private void writeResultAsJson(ComparisonResult result, File file) throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("library", result.library);
-        jsonObject.put("operation", result.operation);
-        jsonObject.put("datasetSize", result.datasetSize);
-        jsonObject.put("fileFormat", result.fileFormat);
-        jsonObject.put("processedRows", result.processedRows);
-
-        try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
-            writer.write(jsonObject.toJSONString(JSONWriter.Feature.PrettyFormat));
-        }
-    }
-
-    /**
      * Create appropriate workbook based on file format
      */
     private Workbook createWorkbook() {
@@ -488,34 +423,6 @@ public class FastExcelVsPoiBenchmark extends AbstractBenchmark {
             EasyExcel.write(testFile, BenchmarkData.class).sheet("TestData").doWrite(testDataList);
         } catch (Exception e) {
             throw new RuntimeException("Failed to write test file", e);
-        }
-    }
-
-    /**
-     * Result class for comparison benchmarks - stores metadata about the benchmark run.
-     * Actual timing is handled by JMH.
-     */
-    public static class ComparisonResult {
-        public final String library;
-        public final String operation;
-        public final String datasetSize;
-        public final String fileFormat;
-        public final long processedRows;
-
-        public ComparisonResult(
-                String library, String operation, String datasetSize, String fileFormat, long processedRows) {
-            this.library = library;
-            this.operation = operation;
-            this.datasetSize = datasetSize;
-            this.fileFormat = fileFormat;
-            this.processedRows = processedRows;
-        }
-
-        @Override
-        public String toString() {
-            return String.format(
-                    "%s-%s{dataset=%s, format=%s, rows=%d}",
-                    library, operation, datasetSize, fileFormat, processedRows);
         }
     }
 }

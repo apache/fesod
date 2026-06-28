@@ -51,7 +51,9 @@ import org.openjdk.jmh.infra.Blackhole;
 @State(Scope.Benchmark)
 @Warmup(iterations = 3, time = 2)
 @Measurement(iterations = 5, time = 3)
-@Fork(1)
+@Fork(
+        value = 1,
+        jvmArgs = {"-Xms2g", "-Xmx2g"})
 public class ReadBenchmark extends AbstractBenchmark {
 
     // Test files for different sizes and formats
@@ -330,10 +332,6 @@ public class ReadBenchmark extends AbstractBenchmark {
 
         @Override
         public void invoke(BenchmarkData data, AnalysisContext context) {
-            // Simulate some processing on every row
-            if (data.getStringData() != null && !data.getStringData().isEmpty()) {
-                String processed = data.getStringData().toUpperCase();
-            }
             processedCount.incrementAndGet();
         }
 

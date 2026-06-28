@@ -216,6 +216,7 @@
                                         <argument>datasetSize=SMALL</argument>
                                         <argument>-p</argument>
                                         <argument>fileFormat=XLSX</argument>
+                                        <argument>.*</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

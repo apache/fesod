@@ -51,7 +51,9 @@ import org.openjdk.jmh.infra.Blackhole;
 @State(Scope.Benchmark)
 @Warmup(iterations = 3, time = 2)
 @Measurement(iterations = 5, time = 3)
-@Fork(1)
+@Fork(
+        value = 1,
+        jvmArgs = {"-Xms2g", "-Xmx2g"})
 public class WriteBenchmark extends AbstractBenchmark {
 
     // Test data for different sizes

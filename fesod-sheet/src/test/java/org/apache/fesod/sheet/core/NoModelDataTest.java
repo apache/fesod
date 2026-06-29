@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,6 +38,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -58,26 +58,26 @@ public class NoModelDataTest extends AbstractExcelTest {
         FesodSheet.write(file).sheet().doWrite(TestDataBuilder.noModelData(10));
         List<Map<Integer, String>> result =
                 FesodSheet.read(file).headRowNumber(0).sheet().doReadSync();
-        assertEquals(10, result.size());
+        Assertions.assertEquals(10, result.size());
         Map<Integer, String> data10 = result.get(9);
-        assertEquals("string19", data10.get(0));
-        assertEquals("109", data10.get(1));
-        assertEquals("2020-01-01 01:01:01", data10.get(2));
+        Assertions.assertEquals("string19", data10.get(0));
+        Assertions.assertEquals("109", data10.get(1));
+        Assertions.assertEquals("2020-01-01 01:01:01", data10.get(2));
 
         List<Map<Integer, Object>> actualDataList = FesodSheet.read(file)
                 .headRowNumber(0)
                 .readDefaultReturn(ReadDefaultReturnEnum.ACTUAL_DATA)
                 .sheet()
                 .doReadSync();
-        assertEquals(10, actualDataList.size());
+        Assertions.assertEquals(10, actualDataList.size());
         Map<Integer, Object> actualData10 = actualDataList.get(9);
-        assertEquals("string19", actualData10.get(0));
+        Assertions.assertEquals("string19", actualData10.get(0));
         if (isCsv) {
-            assertEquals("109", actualData10.get(1));
-            assertEquals("2020-01-01 01:01:01", actualData10.get(2));
+            Assertions.assertEquals("109", actualData10.get(1));
+            Assertions.assertEquals("2020-01-01 01:01:01", actualData10.get(2));
         } else {
-            assertEquals(0, new BigDecimal("109").compareTo((BigDecimal) actualData10.get(1)));
-            assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), actualData10.get(2));
+            Assertions.assertEquals(0, new BigDecimal("109").compareTo((BigDecimal) actualData10.get(1)));
+            Assertions.assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1, 1), actualData10.get(2));
         }
 
         List<Map<Integer, ReadCellData<?>>> readCellDataList = FesodSheet.read(file)
@@ -85,25 +85,25 @@ public class NoModelDataTest extends AbstractExcelTest {
                 .readDefaultReturn(ReadDefaultReturnEnum.READ_CELL_DATA)
                 .sheet()
                 .doReadSync();
-        assertEquals(10, readCellDataList.size());
+        Assertions.assertEquals(10, readCellDataList.size());
         Map<Integer, ReadCellData<?>> readCellData10 = readCellDataList.get(9);
-        assertEquals("string19", readCellData10.get(0).getData());
+        Assertions.assertEquals("string19", readCellData10.get(0).getData());
         if (isCsv) {
-            assertEquals("109", readCellData10.get(1).getData());
-            assertEquals("2020-01-01 01:01:01", readCellData10.get(2).getData());
+            Assertions.assertEquals("109", readCellData10.get(1).getData());
+            Assertions.assertEquals("2020-01-01 01:01:01", readCellData10.get(2).getData());
         } else {
-            assertEquals(0, new BigDecimal("109").compareTo((BigDecimal)
+            Assertions.assertEquals(0, new BigDecimal("109").compareTo((BigDecimal)
                             readCellData10.get(1).getData()));
-            assertEquals(
+            Assertions.assertEquals(
                     LocalDateTime.of(2020, 1, 1, 1, 1, 1), readCellData10.get(2).getData());
         }
 
         FesodSheet.write(fileRepeat).sheet().doWrite(result);
         result = FesodSheet.read(fileRepeat).headRowNumber(0).sheet().doReadSync();
-        assertEquals(10, result.size());
+        Assertions.assertEquals(10, result.size());
         data10 = result.get(9);
-        assertEquals("string19", data10.get(0));
-        assertEquals("109", data10.get(1));
-        assertEquals("2020-01-01 01:01:01", data10.get(2));
+        Assertions.assertEquals("string19", data10.get(0));
+        Assertions.assertEquals("109", data10.get(1));
+        Assertions.assertEquals("2020-01-01 01:01:01", data10.get(2));
     }
 }

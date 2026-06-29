@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.style;
 
-import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.apache.fesod.sheet.testkit.assertions.ExcelAssertions;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatCapability;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,7 +65,7 @@ public class AnnotationDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @ExcelFormatSource(value = FormatScope.BINARY, requires = STYLES)
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.STYLES)
     void writeStyle(ExcelFormat format) throws Exception {
         File file = createTempFile("annotationStyle", format);
         FesodSheet.write().file(file).head(AnnotationStyleData.class).sheet().doWrite(dataStyle());

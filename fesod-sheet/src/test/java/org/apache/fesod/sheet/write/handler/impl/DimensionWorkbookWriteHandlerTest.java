@@ -19,17 +19,16 @@
 
 package org.apache.fesod.sheet.write.handler.impl;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 @Tag(Tags.UNIT)
 class DimensionWorkbookWriteHandlerTest {
@@ -38,16 +37,16 @@ class DimensionWorkbookWriteHandlerTest {
     void afterWorkbookDispose_shouldNotThrowNPE_whenMapContainsNullValue() {
         // Given
         DimensionWorkbookWriteHandler handler = new DimensionWorkbookWriteHandler();
-        WriteWorkbookHolder writeWorkbookHolder = mock(WriteWorkbookHolder.class);
-        SXSSFWorkbook workbook = mock(SXSSFWorkbook.class);
+        WriteWorkbookHolder writeWorkbookHolder = Mockito.mock(WriteWorkbookHolder.class);
+        SXSSFWorkbook workbook = Mockito.mock(SXSSFWorkbook.class);
 
         Map<Integer, WriteSheetHolder> sheetHolderMap = new HashMap<>();
         sheetHolderMap.put(0, null); // null entry that caused NPE
 
-        when(writeWorkbookHolder.getWorkbook()).thenReturn(workbook);
-        when(writeWorkbookHolder.getHasBeenInitializedSheetIndexMap()).thenReturn(sheetHolderMap);
+        Mockito.when(writeWorkbookHolder.getWorkbook()).thenReturn(workbook);
+        Mockito.when(writeWorkbookHolder.getHasBeenInitializedSheetIndexMap()).thenReturn(sheetHolderMap);
 
         // When & Then
-        assertDoesNotThrow(() -> handler.afterWorkbookDispose(writeWorkbookHolder));
+        Assertions.assertDoesNotThrow(() -> handler.afterWorkbookDispose(writeWorkbookHolder));
     }
 }

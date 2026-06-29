@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -41,6 +39,7 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -102,7 +101,7 @@ public class EncryptDataTest extends AbstractExcelTest {
 
         excelWriterBuilder.sheet().doWrite(TestDataBuilder.simpleData(10));
         List<SimpleData> dataList = readerBuilder.sheet().doReadSync();
-        assertEquals(10, dataList.size());
-        assertNotNull(dataList.get(0).getName());
+        Assertions.assertEquals(10, dataList.size());
+        Assertions.assertNotNull(dataList.get(0).getName());
     }
 }

@@ -19,9 +19,6 @@
 
 package org.apache.fesod.sheet.testkit.builders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 import org.apache.fesod.sheet.converter.ConverterWriteData;
 import org.apache.fesod.sheet.style.FillAnnotationData;
@@ -31,6 +28,7 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.TestUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -40,86 +38,89 @@ class TestDataBuilderTest {
     @Test
     void simpleDataCountAccuracy() {
         List<SimpleData> data = TestDataBuilder.simpleData(10);
-        assertEquals(10, data.size());
+        Assertions.assertEquals(10, data.size());
         for (SimpleData d : data) {
-            assertNotNull(d);
-            assertNotNull(d.getName());
+            Assertions.assertNotNull(d);
+            Assertions.assertNotNull(d.getName());
         }
     }
 
     @Test
     void simpleDataFieldValues() {
         List<SimpleData> data = TestDataBuilder.simpleData(3);
-        assertEquals("Name0", data.get(0).getName());
-        assertEquals("Name1", data.get(1).getName());
-        assertEquals("Name2", data.get(2).getName());
+        Assertions.assertEquals("Name0", data.get(0).getName());
+        Assertions.assertEquals("Name1", data.get(1).getName());
+        Assertions.assertEquals("Name2", data.get(2).getName());
     }
 
     @Test
     void simpleDataSingleElement() {
         List<SimpleData> data = TestDataBuilder.simpleData(1);
-        assertEquals(1, data.size());
-        assertEquals("Name0", data.get(0).getName());
+        Assertions.assertEquals(1, data.size());
+        Assertions.assertEquals("Name0", data.get(0).getName());
     }
 
     @Test
     void converterWriteDataNotEmpty() {
         List<ConverterWriteData> data = TestDataBuilder.converterWriteData();
-        assertFalse(data.isEmpty());
-        assertEquals(1, data.size());
+        Assertions.assertFalse(data.isEmpty());
+        Assertions.assertEquals(1, data.size());
     }
 
     @Test
     void converterWriteDataFieldValues() {
         ConverterWriteData data = TestDataBuilder.converterWriteData().get(0);
-        assertEquals(TestUtil.TEST_DATE, data.getDate());
-        assertEquals(TestUtil.TEST_LOCAL_DATE, data.getLocalDate());
-        assertEquals(TestUtil.TEST_LOCAL_DATE_TIME, data.getLocalDateTime());
-        assertEquals(Boolean.TRUE, data.getBooleanData());
-        assertEquals(1, data.getBigDecimal().intValue());
-        assertEquals(1, data.getBigInteger().intValue());
-        assertEquals(1L, data.getLongData());
-        assertEquals(1, (int) data.getIntegerData());
-        assertEquals((short) 1, (short) data.getShortData());
-        assertEquals((byte) 1, (byte) data.getByteData());
-        assertEquals(1.0, data.getDoubleData(), 0.0);
-        assertEquals((float) 1.0, data.getFloatData(), 0.0);
-        assertEquals("test", data.getString());
-        assertEquals("custom", data.getCellData().getStringValue());
+        Assertions.assertEquals(TestUtil.TEST_DATE, data.getDate());
+        Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE, data.getLocalDate());
+        Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE_TIME, data.getLocalDateTime());
+        Assertions.assertEquals(Boolean.TRUE, data.getBooleanData());
+        Assertions.assertEquals(1, data.getBigDecimal().intValue());
+        Assertions.assertEquals(1, data.getBigInteger().intValue());
+        Assertions.assertEquals(1L, data.getLongData());
+        Assertions.assertEquals(1, (int) data.getIntegerData());
+        Assertions.assertEquals((short) 1, (short) data.getShortData());
+        Assertions.assertEquals((byte) 1, (byte) data.getByteData());
+        Assertions.assertEquals(1.0, data.getDoubleData(), 0.0);
+        Assertions.assertEquals((float) 1.0, data.getFloatData(), 0.0);
+        Assertions.assertEquals("test", data.getString());
+        Assertions.assertEquals("custom", data.getCellData().getStringValue());
     }
 
     @Test
     void fillStyleDataMatchesLegacyFixtures() throws Exception {
         List<FillStyleData> data = TestDataBuilder.fillStyleData(10);
-        assertEquals(10, data.size());
-        assertEquals("Zhang San", data.get(0).getName());
-        assertEquals(5.2, data.get(0).getNumber(), 0.0);
-        assertEquals("2020-01-01 01:01:01", DateUtils.format(data.get(0).getDate(), "yyyy-MM-dd HH:mm:ss"));
-        assertEquals(null, data.get(5).getName());
+        Assertions.assertEquals(10, data.size());
+        Assertions.assertEquals("Zhang San", data.get(0).getName());
+        Assertions.assertEquals(5.2, data.get(0).getNumber(), 0.0);
+        Assertions.assertEquals(
+                "2020-01-01 01:01:01", DateUtils.format(data.get(0).getDate(), "yyyy-MM-dd HH:mm:ss"));
+        Assertions.assertEquals(null, data.get(5).getName());
     }
 
     @Test
     void fillStyleAnnotatedDataMatchesLegacyFixtures() throws Exception {
         List<FillStyleAnnotatedData> data = TestDataBuilder.fillStyleAnnotatedData(10);
-        assertEquals(10, data.size());
-        assertEquals("Zhang San", data.get(0).getName());
-        assertEquals(5.2, data.get(0).getNumber(), 0.0);
-        assertEquals(null, data.get(5).getName());
+        Assertions.assertEquals(10, data.size());
+        Assertions.assertEquals("Zhang San", data.get(0).getName());
+        Assertions.assertEquals(5.2, data.get(0).getNumber(), 0.0);
+        Assertions.assertEquals(null, data.get(5).getName());
     }
 
     @Test
     void fillAnnotationDataMatchesLegacyFixtures() throws Exception {
         List<FillAnnotationData> data = TestDataBuilder.fillAnnotationData(5, "image-path");
-        assertEquals(5, data.size());
-        assertEquals(99.99, data.get(0).getNumber(), 0.0);
-        assertEquals("string1", data.get(0).getString1());
-        assertEquals("string2", data.get(0).getString2());
-        assertEquals("image-path", data.get(0).getImage());
+        Assertions.assertEquals(5, data.size());
+        Assertions.assertEquals(99.99, data.get(0).getNumber(), 0.0);
+        Assertions.assertEquals("string1", data.get(0).getString1());
+        Assertions.assertEquals("string2", data.get(0).getString2());
+        Assertions.assertEquals("image-path", data.get(0).getImage());
     }
 
     @Test
     void titleDataMatchesExpectedPrefixPattern() {
-        assertEquals("sheet-0", TestDataBuilder.titleData(2, "sheet-").get(0).getTitle());
-        assertEquals("sheet-1", TestDataBuilder.titleData(2, "sheet-").get(1).getTitle());
+        Assertions.assertEquals(
+                "sheet-0", TestDataBuilder.titleData(2, "sheet-").get(0).getTitle());
+        Assertions.assertEquals(
+                "sheet-1", TestDataBuilder.titleData(2, "sheet-").get(1).getTitle());
     }
 }

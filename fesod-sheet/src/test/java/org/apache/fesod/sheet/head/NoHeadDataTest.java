@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.head;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
@@ -34,6 +33,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -53,7 +53,7 @@ public class NoHeadDataTest extends AbstractExcelTest {
                 .headRowNumber(0)
                 .sheet()
                 .doReadSync();
-        assertEquals(1, result.size());
-        assertEquals("String0", result.get(0).getString());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("String0", result.get(0).getString());
     }
 }

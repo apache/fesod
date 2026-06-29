@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.head;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -52,12 +52,12 @@ public class ListHeadDataTest extends AbstractExcelTest {
         File file = createTempFile("listHead", format);
         FesodSheet.write(file).head(head()).sheet().doWrite(data());
         List<Map<Integer, String>> list = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, list.size());
+        Assertions.assertEquals(1, list.size());
         Map<Integer, String> row = list.get(0);
-        assertEquals("String0", row.get(0));
-        assertEquals("1", row.get(1));
-        assertEquals("2020-01-01 01:01:01", row.get(2));
-        assertEquals("ExtraData", row.get(3));
+        Assertions.assertEquals("String0", row.get(0));
+        Assertions.assertEquals("1", row.get(1));
+        Assertions.assertEquals("2020-01-01 01:01:01", row.get(2));
+        Assertions.assertEquals("ExtraData", row.get(3));
     }
 
     private List<List<String>> head() {

@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +37,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -54,25 +54,25 @@ public class SortDataTest extends AbstractExcelTest {
         FesodSheet.write(file, SortData.class).sheet().doWrite(data());
 
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals("column1", record.get(0));
-        assertEquals("column2", record.get(1));
-        assertEquals("column3", record.get(2));
-        assertEquals("column4", record.get(3));
-        assertEquals("column5", record.get(4));
-        assertEquals("column6", record.get(5));
+        Assertions.assertEquals("column1", record.get(0));
+        Assertions.assertEquals("column2", record.get(1));
+        Assertions.assertEquals("column3", record.get(2));
+        Assertions.assertEquals("column4", record.get(3));
+        Assertions.assertEquals("column5", record.get(4));
+        Assertions.assertEquals("column6", record.get(5));
 
         CollectingReadListener<SortData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, SortData.class, listener).sheet().doRead();
-        assertEquals(1, listener.getRowCount());
+        Assertions.assertEquals(1, listener.getRowCount());
         SortData sortData = listener.getFirstRow();
-        assertEquals("column1", sortData.getColumn1());
-        assertEquals("column2", sortData.getColumn2());
-        assertEquals("column3", sortData.getColumn3());
-        assertEquals("column4", sortData.getColumn4());
-        assertEquals("column5", sortData.getColumn5());
-        assertEquals("column6", sortData.getColumn6());
+        Assertions.assertEquals("column1", sortData.getColumn1());
+        Assertions.assertEquals("column2", sortData.getColumn2());
+        Assertions.assertEquals("column3", sortData.getColumn3());
+        Assertions.assertEquals("column4", sortData.getColumn4());
+        Assertions.assertEquals("column5", sortData.getColumn5());
+        Assertions.assertEquals("column6", sortData.getColumn6());
     }
 
     @ParameterizedTest
@@ -82,25 +82,25 @@ public class SortDataTest extends AbstractExcelTest {
         FesodSheet.write(file).head(head()).sheet().doWrite(data());
 
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals("column1", record.get(0));
-        assertEquals("column2", record.get(1));
-        assertEquals("column3", record.get(2));
-        assertEquals("column4", record.get(3));
-        assertEquals("column5", record.get(4));
-        assertEquals("column6", record.get(5));
+        Assertions.assertEquals("column1", record.get(0));
+        Assertions.assertEquals("column2", record.get(1));
+        Assertions.assertEquals("column3", record.get(2));
+        Assertions.assertEquals("column4", record.get(3));
+        Assertions.assertEquals("column5", record.get(4));
+        Assertions.assertEquals("column6", record.get(5));
 
         CollectingReadListener<SortData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, SortData.class, listener).sheet().doRead();
-        assertEquals(1, listener.getRowCount());
+        Assertions.assertEquals(1, listener.getRowCount());
         SortData sortData = listener.getFirstRow();
-        assertEquals("column1", sortData.getColumn1());
-        assertEquals("column2", sortData.getColumn2());
-        assertEquals("column3", sortData.getColumn3());
-        assertEquals("column4", sortData.getColumn4());
-        assertEquals("column5", sortData.getColumn5());
-        assertEquals("column6", sortData.getColumn6());
+        Assertions.assertEquals("column1", sortData.getColumn1());
+        Assertions.assertEquals("column2", sortData.getColumn2());
+        Assertions.assertEquals("column3", sortData.getColumn3());
+        Assertions.assertEquals("column4", sortData.getColumn4());
+        Assertions.assertEquals("column5", sortData.getColumn5());
+        Assertions.assertEquals("column6", sortData.getColumn6());
     }
 
     private List<List<String>> head() {

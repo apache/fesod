@@ -19,8 +19,6 @@
 
 package org.apache.fesod.sheet.core;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +30,7 @@ import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -143,7 +142,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data1.add(new Parent1());
         FesodSheet.write(file1.toString(), Parent1.class).sheet().doWrite(data1);
         List<String> header1 = readHeader.apply(file1);
-        assertTrue(header1.contains("parent1Field"), "Parent1 should contain parent1Field");
+        Assertions.assertTrue(header1.contains("parent1Field"), "Parent1 should contain parent1Field");
 
         // Child1: should NOT contain parent1Field
         Path file2 = tempDir.resolve("child1.xlsx");
@@ -151,7 +150,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data2.add(new Child1());
         FesodSheet.write(file2.toString(), Child1.class).sheet().doWrite(data2);
         List<String> header2 = readHeader.apply(file2);
-        assertFalse(header2.contains("parent1Field"), "Child1 should NOT contain parent1Field");
+        Assertions.assertFalse(header2.contains("parent1Field"), "Child1 should NOT contain parent1Field");
 
         // Parent2: should NOT contain field
         Path file3 = tempDir.resolve("parent2.xlsx");
@@ -159,7 +158,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data3.add(new Parent2());
         FesodSheet.write(file3.toString(), Parent2.class).sheet().doWrite(data3);
         List<String> header3 = readHeader.apply(file3);
-        assertFalse(header3.contains("field"), "Parent2 should NOT contain field");
+        Assertions.assertFalse(header3.contains("field"), "Parent2 should NOT contain field");
 
         // Child2: should NOT contain field
         Path file4 = tempDir.resolve("child2.xlsx");
@@ -167,7 +166,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data4.add(new Child2());
         FesodSheet.write(file4.toString(), Child2.class).sheet().doWrite(data4);
         List<String> header4 = readHeader.apply(file4);
-        assertFalse(header4.contains("field"), "Child2 should NOT contain field");
+        Assertions.assertFalse(header4.contains("field"), "Child2 should NOT contain field");
 
         // Parent3: should contain parent3Field
         Path file5 = tempDir.resolve("parent3.xlsx");
@@ -175,7 +174,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data5.add(new Parent3());
         FesodSheet.write(file5.toString(), Parent3.class).sheet().doWrite(data5);
         List<String> header5 = readHeader.apply(file5);
-        assertTrue(header5.contains("parent3Field"), "Parent3 should contain parent3Field");
+        Assertions.assertTrue(header5.contains("parent3Field"), "Parent3 should contain parent3Field");
 
         // Child3: should contain child3Field
         Path file6 = tempDir.resolve("child3.xlsx");
@@ -183,7 +182,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data6.add(new Child3());
         FesodSheet.write(file6.toString(), Child3.class).sheet().doWrite(data6);
         List<String> header6 = readHeader.apply(file6);
-        assertTrue(header6.contains("child3Field"), "Child3 should contain child3Field");
+        Assertions.assertTrue(header6.contains("child3Field"), "Child3 should contain child3Field");
 
         // Parent4: should NOT contain field
         Path file7 = tempDir.resolve("parent4.xlsx");
@@ -191,7 +190,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data7.add(new Parent4());
         FesodSheet.write(file7.toString(), Parent4.class).sheet().doWrite(data7);
         List<String> header7 = readHeader.apply(file7);
-        assertFalse(header7.contains("field"), "Parent4 should NOT contain field");
+        Assertions.assertFalse(header7.contains("field"), "Parent4 should NOT contain field");
 
         // Child4: should contain child4Field
         Path file8 = tempDir.resolve("child4.xlsx");
@@ -199,7 +198,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data8.add(new Child4());
         FesodSheet.write(file8.toString(), Child4.class).sheet().doWrite(data8);
         List<String> header8 = readHeader.apply(file8);
-        assertTrue(header8.contains("child4Field"), "Child4 should contain child4Field");
+        Assertions.assertTrue(header8.contains("child4Field"), "Child4 should contain child4Field");
 
         // Parent5: should contain parent5Field
         Path file9 = tempDir.resolve("parent5.xlsx");
@@ -207,7 +206,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data9.add(new Parent5());
         FesodSheet.write(file9.toString(), Parent5.class).sheet().doWrite(data9);
         List<String> header9 = readHeader.apply(file9);
-        assertTrue(header9.contains("parent5Field"), "Parent5 should contain parent5Field");
+        Assertions.assertTrue(header9.contains("parent5Field"), "Parent5 should contain parent5Field");
 
         // Child5: should contain field
         Path file10 = tempDir.resolve("child5.xlsx");
@@ -215,7 +214,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data10.add(new Child5());
         FesodSheet.write(file10.toString(), Child5.class).sheet().doWrite(data10);
         List<String> header10 = readHeader.apply(file10);
-        assertTrue(header10.contains("field"), "Child5 should contain field");
+        Assertions.assertTrue(header10.contains("field"), "Child5 should contain field");
 
         // Parent6: should NOT contain field
         Path file11 = tempDir.resolve("parent6.xlsx");
@@ -223,7 +222,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data11.add(new Parent6());
         FesodSheet.write(file11.toString(), Parent6.class).sheet().doWrite(data11);
         List<String> header11 = readHeader.apply(file11);
-        assertFalse(header11.contains("field"), "Parent6 should NOT contain field");
+        Assertions.assertFalse(header11.contains("field"), "Parent6 should NOT contain field");
 
         // Child6: should contain field
         Path file12 = tempDir.resolve("child6.xlsx");
@@ -231,7 +230,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
         data12.add(new Child6());
         FesodSheet.write(file12.toString(), Child6.class).sheet().doWrite(data12);
         List<String> header12 = readHeader.apply(file12);
-        assertTrue(header12.contains("field"), "Child6 should contain field");
+        Assertions.assertTrue(header12.contains("field"), "Child6 should contain field");
     }
 
     private static Function<Path, List<String>> extractExcelHeader() {

@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.style;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
@@ -56,6 +55,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -220,9 +220,9 @@ public class StyleDataTest extends AbstractExcelTest {
 
         List<StyleData> result =
                 FesodSheet.read(file).head(StyleData.class).sheet().doReadSync();
-        assertEquals(2, result.size());
-        assertEquals("String0", result.get(0).getString());
-        assertEquals("String1", result.get(1).getString());
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("String0", result.get(0).getString());
+        Assertions.assertEquals("String1", result.get(1).getString());
 
         try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
             ea.sheet(0)

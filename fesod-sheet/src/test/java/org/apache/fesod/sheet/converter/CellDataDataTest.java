@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import java.io.File;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
@@ -36,6 +34,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -54,16 +53,17 @@ public class CellDataDataTest extends AbstractExcelTest {
         CollectingReadListener<CellDataReadData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, CellDataReadData.class, listener).sheet().doRead();
 
-        assertEquals(1, listener.getRowCount());
+        Assertions.assertEquals(1, listener.getRowCount());
         CellDataReadData row = listener.getFirstRow();
 
-        assertEquals("2020年01月01日", row.getDate().getData());
-        assertEquals(2L, (long) row.getInteger1().getData());
-        assertEquals(2L, (long) row.getInteger2());
+        Assertions.assertEquals("2020年01月01日", row.getDate().getData());
+        Assertions.assertEquals(2L, (long) row.getInteger1().getData());
+        Assertions.assertEquals(2L, (long) row.getInteger2());
         if (format.toExcelTypeEnum() != ExcelTypeEnum.CSV) {
-            assertEquals("B2+C2", row.getFormulaValue().getFormulaData().getFormulaValue());
+            Assertions.assertEquals(
+                    "B2+C2", row.getFormulaValue().getFormulaData().getFormulaValue());
         } else {
-            assertNull(row.getFormulaValue().getData());
+            Assertions.assertNull(row.getFormulaValue().getData());
         }
     }
 }

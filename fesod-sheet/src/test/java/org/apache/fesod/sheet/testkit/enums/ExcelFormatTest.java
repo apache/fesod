@@ -19,14 +19,11 @@
 
 package org.apache.fesod.sheet.testkit.enums;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -43,35 +40,35 @@ class ExcelFormatTest {
 
     @Test
     void xlsxCapabilities() {
-        assertTrue(ExcelFormat.XLSX.supportsTemplates());
-        assertTrue(ExcelFormat.XLSX.supportsImages());
-        assertTrue(ExcelFormat.XLSX.supportsEncryption());
-        assertTrue(ExcelFormat.XLSX.supportsStyles());
+        Assertions.assertTrue(ExcelFormat.XLSX.supportsTemplates());
+        Assertions.assertTrue(ExcelFormat.XLSX.supportsImages());
+        Assertions.assertTrue(ExcelFormat.XLSX.supportsEncryption());
+        Assertions.assertTrue(ExcelFormat.XLSX.supportsStyles());
     }
 
     @Test
     void xlsCapabilities() {
-        assertTrue(ExcelFormat.XLS.supportsTemplates());
-        assertTrue(ExcelFormat.XLS.supportsImages());
-        assertFalse(ExcelFormat.XLS.supportsEncryption());
-        assertTrue(ExcelFormat.XLS.supportsStyles());
+        Assertions.assertTrue(ExcelFormat.XLS.supportsTemplates());
+        Assertions.assertTrue(ExcelFormat.XLS.supportsImages());
+        Assertions.assertFalse(ExcelFormat.XLS.supportsEncryption());
+        Assertions.assertTrue(ExcelFormat.XLS.supportsStyles());
     }
 
     @Test
     void csvCapabilities() {
-        assertFalse(ExcelFormat.CSV.supportsTemplates());
-        assertFalse(ExcelFormat.CSV.supportsImages());
-        assertFalse(ExcelFormat.CSV.supportsEncryption());
-        assertFalse(ExcelFormat.CSV.supportsStyles());
+        Assertions.assertFalse(ExcelFormat.CSV.supportsTemplates());
+        Assertions.assertFalse(ExcelFormat.CSV.supportsImages());
+        Assertions.assertFalse(ExcelFormat.CSV.supportsEncryption());
+        Assertions.assertFalse(ExcelFormat.CSV.supportsStyles());
     }
 
     // --- Extension tests ---
 
     @Test
     void extensions() {
-        assertEquals(".xlsx", ExcelFormat.XLSX.getExtension());
-        assertEquals(".xls", ExcelFormat.XLS.getExtension());
-        assertEquals(".csv", ExcelFormat.CSV.getExtension());
+        Assertions.assertEquals(".xlsx", ExcelFormat.XLSX.getExtension());
+        Assertions.assertEquals(".xls", ExcelFormat.XLS.getExtension());
+        Assertions.assertEquals(".csv", ExcelFormat.CSV.getExtension());
     }
 
     // --- Enum round-trip: toExcelTypeEnum / fromExcelTypeEnum ---
@@ -81,14 +78,14 @@ class ExcelFormatTest {
     void enumRoundTrip(ExcelFormat format) {
         ExcelTypeEnum type = format.toExcelTypeEnum();
         ExcelFormat roundTripped = ExcelFormat.fromExcelTypeEnum(type);
-        assertEquals(format, roundTripped);
+        Assertions.assertEquals(format, roundTripped);
     }
 
     @Test
     void toExcelTypeEnumMapping() {
-        assertEquals(ExcelTypeEnum.XLSX, ExcelFormat.XLSX.toExcelTypeEnum());
-        assertEquals(ExcelTypeEnum.XLS, ExcelFormat.XLS.toExcelTypeEnum());
-        assertEquals(ExcelTypeEnum.CSV, ExcelFormat.CSV.toExcelTypeEnum());
+        Assertions.assertEquals(ExcelTypeEnum.XLSX, ExcelFormat.XLSX.toExcelTypeEnum());
+        Assertions.assertEquals(ExcelTypeEnum.XLS, ExcelFormat.XLS.toExcelTypeEnum());
+        Assertions.assertEquals(ExcelTypeEnum.CSV, ExcelFormat.CSV.toExcelTypeEnum());
     }
 
     // --- Temp file tests ---
@@ -97,10 +94,10 @@ class ExcelFormatTest {
     @EnumSource(ExcelFormat.class)
     void createTempFileHasCorrectExtension(ExcelFormat format) throws IOException {
         File file = format.createTempFile("test", tempDir);
-        assertTrue(
+        Assertions.assertTrue(
                 file.getName().endsWith(format.getExtension()),
                 "Expected file name to end with " + format.getExtension() + ", got: " + file.getName());
-        assertEquals(tempDir, file.getParentFile());
+        Assertions.assertEquals(tempDir, file.getParentFile());
     }
 
     @ParameterizedTest
@@ -108,10 +105,10 @@ class ExcelFormatTest {
     void createTempFileInSystemTempDir(ExcelFormat format) throws IOException {
         File file = format.createTempFile("test");
         try {
-            assertTrue(
+            Assertions.assertTrue(
                     file.getName().endsWith(format.getExtension()),
                     "Expected file name to end with " + format.getExtension() + ", got: " + file.getName());
-            assertTrue(file.exists());
+            Assertions.assertTrue(file.exists());
         } finally {
             file.delete();
         }
@@ -121,6 +118,6 @@ class ExcelFormatTest {
 
     @Test
     void fromExcelTypeEnumWithNull() {
-        assertThrows(IllegalArgumentException.class, () -> ExcelFormat.fromExcelTypeEnum(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ExcelFormat.fromExcelTypeEnum(null));
     }
 }

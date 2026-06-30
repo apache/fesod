@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.format;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.alibaba.fastjson2.JSON;
 import java.io.File;
 import java.math.BigDecimal;
@@ -41,6 +40,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.poi.util.TempFile;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -57,9 +57,9 @@ public class CompatibilityTest extends AbstractExcelTest {
     @Test
     public void readXlsWithSpecialCharacters() {
         List<Map<Integer, Object>> list = readCompatibilityFile("t01.xls");
-        assertEquals(2, list.size());
+        Assertions.assertEquals(2, list.size());
         Map<Integer, Object> row1 = list.get(1);
-        assertEquals("Q235(碳钢)", row1.get(0));
+        Assertions.assertEquals("Q235(碳钢)", row1.get(0));
     }
 
     @Test
@@ -67,9 +67,9 @@ public class CompatibilityTest extends AbstractExcelTest {
         // Exist in `sharedStrings.xml` `x:t` start tag, need to be compatible
         List<Map<Integer, Object>> list = readCompatibilityFile("t02.xlsx", 0);
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals(3, list.size());
+        Assertions.assertEquals(3, list.size());
         Map<Integer, Object> row2 = list.get(2);
-        assertEquals("1，2-戊二醇", row2.get(2));
+        Assertions.assertEquals("1，2-戊二醇", row2.get(2));
     }
 
     @Test
@@ -77,9 +77,9 @@ public class CompatibilityTest extends AbstractExcelTest {
         // In the presence of the first line of a lot of null columns, ignore null columns
         List<Map<Integer, Object>> list = readCompatibilityFile("t03.xlsx");
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals(1, list.size());
+        Assertions.assertEquals(1, list.size());
         Map<Integer, Object> row0 = list.get(0);
-        assertEquals(12, row0.size());
+        Assertions.assertEquals(12, row0.size());
     }
 
     @Test
@@ -87,9 +87,9 @@ public class CompatibilityTest extends AbstractExcelTest {
         // Exist in `sheet1.xml` `ns2:t` start tag, need to be compatible
         List<Map<Integer, Object>> list = readCompatibilityFile("t04.xlsx");
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals(56, list.size());
+        Assertions.assertEquals(56, list.size());
         Map<Integer, Object> row0 = list.get(0);
-        assertEquals("QQSJK28F152A012242S0081", row0.get(5));
+        Assertions.assertEquals("QQSJK28F152A012242S0081", row0.get(5));
     }
 
     @Test
@@ -97,11 +97,11 @@ public class CompatibilityTest extends AbstractExcelTest {
         // Excel read date needs to be rounded
         List<Map<Integer, String>> list = readCompatibilityFile("t05.xlsx");
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals("2023-01-01 00:00:00", list.get(0).get(0));
-        assertEquals("2023-01-01 00:00:00", list.get(1).get(0));
-        assertEquals("2023-01-01 00:00:00", list.get(2).get(0));
-        assertEquals("2023-01-01 00:00:01", list.get(3).get(0));
-        assertEquals("2023-01-01 00:00:01", list.get(4).get(0));
+        Assertions.assertEquals("2023-01-01 00:00:00", list.get(0).get(0));
+        Assertions.assertEquals("2023-01-01 00:00:00", list.get(1).get(0));
+        Assertions.assertEquals("2023-01-01 00:00:00", list.get(2).get(0));
+        Assertions.assertEquals("2023-01-01 00:00:01", list.get(3).get(0));
+        Assertions.assertEquals("2023-01-01 00:00:01", list.get(4).get(0));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class CompatibilityTest extends AbstractExcelTest {
         // Keep error precision digital format
         List<Map<Integer, String>> list = readCompatibilityFile("t06.xlsx", 0);
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals("2087.03", list.get(0).get(2));
+        Assertions.assertEquals("2087.03", list.get(0).get(2));
     }
 
     @Test
@@ -120,12 +120,12 @@ public class CompatibilityTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals(0, new BigDecimal("24.1998124").compareTo((BigDecimal)
+        Assertions.assertEquals(0, new BigDecimal("24.1998124").compareTo((BigDecimal)
                         list.get(0).get(11)));
 
         list = readCompatibilityFile("t07.xlsx");
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals("24.20", list.get(0).get(11));
+        Assertions.assertEquals("24.20", list.get(0).get(11));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class CompatibilityTest extends AbstractExcelTest {
 
         List<Map<Integer, Object>> list =
                 FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
-        assertEquals(10L, list.size());
+        Assertions.assertEquals(10L, list.size());
 
         // Save file content before deleting the system temp dir (which also removes @TempDir)
         byte[] fileContent = java.nio.file.Files.readAllBytes(file.toPath());
@@ -148,7 +148,7 @@ public class CompatibilityTest extends AbstractExcelTest {
         java.nio.file.Files.write(file.toPath(), fileContent);
 
         list = FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
-        assertEquals(10L, list.size());
+        Assertions.assertEquals(10L, list.size());
     }
 
     @Test
@@ -158,9 +158,9 @@ public class CompatibilityTest extends AbstractExcelTest {
         List<Map<Integer, Object>> list =
                 FesodSheet.read(file).headRowNumber(0).sheet().doReadSync();
         log.info("data:{}", JSON.toJSONString(list));
-        assertEquals(1, list.size());
+        Assertions.assertEquals(1, list.size());
 
-        assertEquals("SH_x000D_Z002", list.get(0).get(0));
+        Assertions.assertEquals("SH_x000D_Z002", list.get(0).get(0));
     }
 
     private File compatibilityFile(String fileName) {

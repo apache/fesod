@@ -19,8 +19,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +33,7 @@ import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -54,8 +53,10 @@ public class XlsxSaxAnalyserReadOpcPackageTest extends AbstractExcelTest {
         rw.setMandatoryUseInputStream(true);
         XlsxReadContext ctx = new DefaultXlsxReadContext(rw, ExcelTypeEnum.XLSX);
 
-        ExcelCommonException ex = assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
-        assertTrue(ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
+        ExcelCommonException ex =
+                Assertions.assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
+        Assertions.assertTrue(
+                ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
     }
 
     @Test
@@ -67,8 +68,10 @@ public class XlsxSaxAnalyserReadOpcPackageTest extends AbstractExcelTest {
             rw.setFile(tmp);
             XlsxReadContext ctx = new DefaultXlsxReadContext(rw, ExcelTypeEnum.XLSX);
 
-            ExcelCommonException ex = assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
-            assertTrue(ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
+            ExcelCommonException ex =
+                    Assertions.assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
+            Assertions.assertTrue(
+                    ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
         } finally {
             try {
                 Files.deleteIfExists(tmp.toPath());
@@ -84,8 +87,10 @@ public class XlsxSaxAnalyserReadOpcPackageTest extends AbstractExcelTest {
         XlsxReadContext ctx = new DefaultXlsxReadContext(rw, ExcelTypeEnum.XLSX);
         ByteArrayInputStream decrypted = new ByteArrayInputStream("still-not-xlsx".getBytes(StandardCharsets.UTF_8));
 
-        ExcelCommonException ex = assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, decrypted));
-        assertTrue(ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
+        ExcelCommonException ex =
+                Assertions.assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, decrypted));
+        Assertions.assertTrue(
+                ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
     }
 
     @Test
@@ -99,8 +104,10 @@ public class XlsxSaxAnalyserReadOpcPackageTest extends AbstractExcelTest {
             ReadWorkbook rw = new ReadWorkbook();
             rw.setFile(tmp);
             XlsxReadContext ctx = new DefaultXlsxReadContext(rw, ExcelTypeEnum.XLSX);
-            ExcelCommonException ex = assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
-            assertTrue(ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
+            ExcelCommonException ex =
+                    Assertions.assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
+            Assertions.assertTrue(
+                    ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
         } finally {
             try {
                 Files.deleteIfExists(tmp.toPath());
@@ -117,7 +124,9 @@ public class XlsxSaxAnalyserReadOpcPackageTest extends AbstractExcelTest {
         rw.setMandatoryUseInputStream(false);
         XlsxReadContext ctx = new DefaultXlsxReadContext(rw, ExcelTypeEnum.XLSX);
 
-        ExcelCommonException ex = assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
-        assertTrue(ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
+        ExcelCommonException ex =
+                Assertions.assertThrows(ExcelCommonException.class, () -> new XlsxSaxAnalyser(ctx, null));
+        Assertions.assertTrue(
+                ex.getMessage() != null && ex.getMessage().toLowerCase().contains("invalid ooxml/zip format"));
     }
 }

@@ -25,9 +25,6 @@
 
 package org.apache.fesod.sheet.style;
 
-import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +38,13 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatCapability;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -61,15 +60,16 @@ public class FillDataTest extends AbstractExcelTest {
         File file = createTempFile("fill", format);
         File template = readFile("fill" + File.separator + "simple" + format.getExtension());
         if (format == ExcelFormat.CSV) {
-            ExcelGenerateException ex = assertThrows(ExcelGenerateException.class, () -> fill(file, template));
-            assertEquals("csv cannot use template.", ex.getMessage());
+            ExcelGenerateException ex =
+                    Assertions.assertThrows(ExcelGenerateException.class, () -> fill(file, template));
+            Assertions.assertEquals("csv cannot use template.", ex.getMessage());
         } else {
             fill(file, template);
         }
     }
 
     @ParameterizedTest
-    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
     void complexFill(ExcelFormat format) throws Exception {
         File file = createTempFile("fillComplex", format);
         File template = readFile("fill" + File.separator + "complex" + format.getExtension());
@@ -77,7 +77,7 @@ public class FillDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
     void horizontalFill(ExcelFormat format) throws Exception {
         File file = createTempFile("fillHorizontal", format);
         File template = readFile("fill" + File.separator + "horizontal" + format.getExtension());
@@ -85,7 +85,7 @@ public class FillDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
     void byNameFill(ExcelFormat format) throws Exception {
         File file = createTempFile("byName", format);
         File template = readFile("fill" + File.separator + "byName" + format.getExtension());
@@ -93,7 +93,7 @@ public class FillDataTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
     void compositeFill(ExcelFormat format) throws Exception {
         File file = createTempFile("composite", format);
         File template = readFile("fill" + File.separator + "composite" + format.getExtension());
@@ -136,11 +136,11 @@ public class FillDataTest extends AbstractExcelTest {
                 .headRowNumber(0)
                 .doReadSync();
         Map<String, String> map0 = (Map<String, String>) list.get(0);
-        assertEquals("Zhang San", map0.get(21));
+        Assertions.assertEquals("Zhang San", map0.get(21));
         Map<String, String> map27 = (Map<String, String>) list.get(27);
-        assertEquals("Zhang San", map27.get(0));
+        Assertions.assertEquals("Zhang San", map27.get(0));
         Map<String, String> map29 = (Map<String, String>) list.get(29);
-        assertEquals("Zhang San", map29.get(3));
+        Assertions.assertEquals("Zhang San", map29.get(3));
     }
 
     @SuppressWarnings("unchecked")
@@ -160,9 +160,9 @@ public class FillDataTest extends AbstractExcelTest {
         }
 
         List<Object> list = FesodSheet.read(file).sheet().headRowNumber(0).doReadSync();
-        assertEquals(5L, list.size());
+        Assertions.assertEquals(5L, list.size());
         Map<String, String> map0 = (Map<String, String>) list.get(0);
-        assertEquals("Zhang San", map0.get(2));
+        Assertions.assertEquals("Zhang San", map0.get(2));
     }
 
     @SuppressWarnings("unchecked")
@@ -182,9 +182,9 @@ public class FillDataTest extends AbstractExcelTest {
             excelWriter.fill(map, writeSheet);
         }
         List<Object> list = FesodSheet.read(file).sheet().headRowNumber(3).doReadSync();
-        assertEquals(21L, list.size());
+        Assertions.assertEquals(21L, list.size());
         Map<String, String> map19 = (Map<String, String>) list.get(19);
-        assertEquals("Zhang San", map19.get(0));
+        Assertions.assertEquals("Zhang San", map19.get(0));
     }
 
     private void fill(File file, File template) {

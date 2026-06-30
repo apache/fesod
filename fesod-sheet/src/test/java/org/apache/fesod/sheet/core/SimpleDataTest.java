@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +55,8 @@ public class SimpleDataTest extends AbstractExcelTest {
         List<SimpleData> data = TestDataBuilder.simpleData(10);
         List<SimpleData> result = writeAndRead(format, SimpleData.class, data);
 
-        assertEquals(10, result.size());
-        assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals(10, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
     }
 
     @ParameterizedTest
@@ -68,8 +66,8 @@ public class SimpleDataTest extends AbstractExcelTest {
         List<SimpleData> data = TestDataBuilder.simpleData(10);
         List<SimpleData> result = RoundTripHelper.writeAndRead(file, format, mode, SimpleData.class, data);
 
-        assertEquals(10, result.size());
-        assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals(10, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
     }
 
     @ParameterizedTest
@@ -78,9 +76,9 @@ public class SimpleDataTest extends AbstractExcelTest {
         List<SimpleData> data = TestDataBuilder.simpleData(10);
         List<SimpleData> result = RoundTripHelper.writeAndReadSync(createTempFile(format), SimpleData.class, data);
 
-        assertEquals(10, result.size());
-        assertInstanceOf(SimpleData.class, result.get(0));
-        assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals(10, result.size());
+        Assertions.assertInstanceOf(SimpleData.class, result.get(0));
+        Assertions.assertEquals("Name0", result.get(0).getName());
     }
 
     @Test

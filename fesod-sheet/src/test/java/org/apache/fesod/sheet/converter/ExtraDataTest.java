@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
@@ -39,6 +37,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,28 +64,28 @@ public class ExtraDataTest extends AbstractExcelTest {
         for (CellExtra extra : extras) {
             switch (extra.getType()) {
                 case COMMENT:
-                    assertEquals("批注的内容", extra.getText());
-                    assertEquals(4, (int) extra.getRowIndex());
-                    assertEquals(0, (int) extra.getColumnIndex());
+                    Assertions.assertEquals("批注的内容", extra.getText());
+                    Assertions.assertEquals(4, (int) extra.getRowIndex());
+                    Assertions.assertEquals(0, (int) extra.getColumnIndex());
                     break;
                 case HYPERLINK:
                     if ("Sheet1!A1".equals(extra.getText())) {
-                        assertEquals(1, (int) extra.getRowIndex());
-                        assertEquals(0, (int) extra.getColumnIndex());
+                        Assertions.assertEquals(1, (int) extra.getRowIndex());
+                        Assertions.assertEquals(0, (int) extra.getColumnIndex());
                     } else if ("Sheet2!A1".equals(extra.getText())) {
-                        assertEquals(2, (int) extra.getFirstRowIndex());
-                        assertEquals(0, (int) extra.getFirstColumnIndex());
-                        assertEquals(3, (int) extra.getLastRowIndex());
-                        assertEquals(1, (int) extra.getLastColumnIndex());
+                        Assertions.assertEquals(2, (int) extra.getFirstRowIndex());
+                        Assertions.assertEquals(0, (int) extra.getFirstColumnIndex());
+                        Assertions.assertEquals(3, (int) extra.getLastRowIndex());
+                        Assertions.assertEquals(1, (int) extra.getLastColumnIndex());
                     } else {
-                        fail("Unknown hyperlink!");
+                        Assertions.fail("Unknown hyperlink!");
                     }
                     break;
                 case MERGE:
-                    assertEquals(5, (int) extra.getFirstRowIndex());
-                    assertEquals(0, (int) extra.getFirstColumnIndex());
-                    assertEquals(6, (int) extra.getLastRowIndex());
-                    assertEquals(1, (int) extra.getLastColumnIndex());
+                    Assertions.assertEquals(5, (int) extra.getFirstRowIndex());
+                    Assertions.assertEquals(0, (int) extra.getFirstColumnIndex());
+                    Assertions.assertEquals(6, (int) extra.getLastRowIndex());
+                    Assertions.assertEquals(1, (int) extra.getLastColumnIndex());
                     break;
                 default:
             }
@@ -108,13 +107,13 @@ public class ExtraDataTest extends AbstractExcelTest {
                         switch (extra.getType()) {
                             case HYPERLINK:
                                 if ("222222222".equals(extra.getText())) {
-                                    assertEquals(1, (int) extra.getRowIndex());
-                                    assertEquals(0, (int) extra.getColumnIndex());
+                                    Assertions.assertEquals(1, (int) extra.getRowIndex());
+                                    Assertions.assertEquals(0, (int) extra.getColumnIndex());
                                 } else if ("333333333333".equals(extra.getText())) {
-                                    assertEquals(1, (int) extra.getRowIndex());
-                                    assertEquals(1, (int) extra.getColumnIndex());
+                                    Assertions.assertEquals(1, (int) extra.getRowIndex());
+                                    Assertions.assertEquals(1, (int) extra.getColumnIndex());
                                 } else {
-                                    fail("Unknown hyperlink!");
+                                    Assertions.fail("Unknown hyperlink!");
                                 }
                                 break;
                             default:

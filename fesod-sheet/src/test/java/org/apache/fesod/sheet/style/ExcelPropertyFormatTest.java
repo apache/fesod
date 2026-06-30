@@ -19,9 +19,6 @@
 
 package org.apache.fesod.sheet.style;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -42,6 +39,7 @@ import org.apache.fesod.sheet.read.listener.ReadListener;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -73,8 +71,10 @@ public class ExcelPropertyFormatTest {
         try (FileInputStream fis = new FileInputStream(fileName);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row dataRow = workbook.getSheetAt(0).getRow(1);
-            assertEquals("yyyy-MMM-dd", dataRow.getCell(0).getCellStyle().getDataFormatString());
-            assertEquals("yyyy-MMM-dd", dataRow.getCell(1).getCellStyle().getDataFormatString());
+            Assertions.assertEquals(
+                    "yyyy-MMM-dd", dataRow.getCell(0).getCellStyle().getDataFormatString());
+            Assertions.assertEquals(
+                    "yyyy-MMM-dd", dataRow.getCell(1).getCellStyle().getDataFormatString());
         }
     }
 
@@ -104,9 +104,10 @@ public class ExcelPropertyFormatTest {
         try (FileInputStream fis = new FileInputStream(fileName);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row dataRow = workbook.getSheetAt(0).getRow(1);
-            assertEquals(
+            Assertions.assertEquals(
                     "yyyy年MM月dd日HH时mm分ss秒", dataRow.getCell(0).getCellStyle().getDataFormatString());
-            assertEquals("yyyy年MM月dd日", dataRow.getCell(1).getCellStyle().getDataFormatString());
+            Assertions.assertEquals(
+                    "yyyy年MM月dd日", dataRow.getCell(1).getCellStyle().getDataFormatString());
         }
     }
 
@@ -139,9 +140,10 @@ public class ExcelPropertyFormatTest {
         try (FileInputStream fis = new FileInputStream(file);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row row = workbook.getSheetAt(0).getRow(1);
-            assertEquals("yyyy/MM/dd", row.getCell(0).getCellStyle().getDataFormatString());
-            assertEquals("dd-MM-yyyy", row.getCell(1).getCellStyle().getDataFormatString());
-            assertEquals("yyyy-MM-dd HH:mm", row.getCell(2).getCellStyle().getDataFormatString());
+            Assertions.assertEquals("yyyy/MM/dd", row.getCell(0).getCellStyle().getDataFormatString());
+            Assertions.assertEquals("dd-MM-yyyy", row.getCell(1).getCellStyle().getDataFormatString());
+            Assertions.assertEquals(
+                    "yyyy-MM-dd HH:mm", row.getCell(2).getCellStyle().getDataFormatString());
         }
     }
 
@@ -196,8 +198,8 @@ public class ExcelPropertyFormatTest {
         try (FileInputStream fis = new FileInputStream(file);
                 XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             Row row = workbook.getSheetAt(0).getRow(1);
-            assertNotNull(row, "expect row existing");
-            assertTrue(
+            Assertions.assertNotNull(row, "expect row existing");
+            Assertions.assertTrue(
                     StringUtils.isBlank(row.getCell(0).getStringCellValue()),
                     "Empty date field should write as blank cell");
         }

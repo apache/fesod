@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,6 +37,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -59,11 +59,11 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
                 .sheet()
                 .doWrite(data());
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals(2, record.size());
-        assertEquals("column2", record.get(0));
-        assertEquals("column3", record.get(1));
+        Assertions.assertEquals(2, record.size());
+        Assertions.assertEquals("column2", record.get(0));
+        Assertions.assertEquals("column3", record.get(1));
     }
 
     @ParameterizedTest
@@ -79,10 +79,10 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
                 .sheet()
                 .doWrite(data());
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals(1, record.size());
-        assertEquals("column2", record.get(0));
+        Assertions.assertEquals(1, record.size());
+        Assertions.assertEquals("column2", record.get(0));
     }
 
     @ParameterizedTest
@@ -97,11 +97,11 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
                 .sheet()
                 .doWrite(data());
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals(2, record.size());
-        assertEquals("column2", record.get(0));
-        assertEquals("column3", record.get(1));
+        Assertions.assertEquals(2, record.size());
+        Assertions.assertEquals("column2", record.get(0));
+        Assertions.assertEquals("column3", record.get(1));
     }
 
     @ParameterizedTest
@@ -116,11 +116,11 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
                 .includeColumnFieldNames(includeColumnFieldNames)
                 .doWrite(data());
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals(2, record.size());
-        assertEquals("column2", record.get(0));
-        assertEquals("column3", record.get(1));
+        Assertions.assertEquals(2, record.size());
+        Assertions.assertEquals("column2", record.get(0));
+        Assertions.assertEquals("column3", record.get(1));
     }
 
     @ParameterizedTest
@@ -138,13 +138,13 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
                 .sheet()
                 .doWrite(data());
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals(4, record.size());
-        assertEquals("column4", record.get(0));
-        assertEquals("column2", record.get(1));
-        assertEquals("column3", record.get(2));
-        assertEquals("column1", record.get(3));
+        Assertions.assertEquals(4, record.size());
+        Assertions.assertEquals("column4", record.get(0));
+        Assertions.assertEquals("column2", record.get(1));
+        Assertions.assertEquals("column3", record.get(2));
+        Assertions.assertEquals("column1", record.get(3));
     }
 
     @ParameterizedTest
@@ -161,12 +161,12 @@ public class ExcludeOrIncludeDataTest extends AbstractExcelTest {
                 .sheet()
                 .doWrite(data());
         List<Map<Integer, String>> dataMap = FesodSheet.read(file).sheet().doReadSync();
-        assertEquals(1, dataMap.size());
+        Assertions.assertEquals(1, dataMap.size());
         Map<Integer, String> record = dataMap.get(0);
-        assertEquals(3, record.size());
-        assertEquals("column4", record.get(0));
-        assertEquals("column2", record.get(1));
-        assertEquals("column3", record.get(2));
+        Assertions.assertEquals(3, record.size());
+        Assertions.assertEquals("column4", record.get(0));
+        Assertions.assertEquals("column2", record.get(1));
+        Assertions.assertEquals("column3", record.get(2));
     }
 
     private List<ExcludeOrIncludeData> data() {

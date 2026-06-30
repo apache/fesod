@@ -19,9 +19,6 @@
 
 package org.apache.fesod.sheet.testkit.helpers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +27,7 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.enums.ApiMode;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,9 +57,9 @@ class RoundTripHelperTest {
 
         List<SimpleData> result = RoundTripHelper.writeAndRead(file, SimpleData.class, data);
 
-        assertEquals(10, result.size());
-        assertEquals("Name0", result.get(0).getName());
-        assertEquals("Name9", result.get(9).getName());
+        Assertions.assertEquals(10, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals("Name9", result.get(9).getName());
     }
 
     @ParameterizedTest
@@ -72,9 +70,9 @@ class RoundTripHelperTest {
 
         List<SimpleData> result = RoundTripHelper.writeAndReadViaStream(file, format, SimpleData.class, data);
 
-        assertEquals(5, result.size());
-        assertEquals("Name0", result.get(0).getName());
-        assertEquals("Name4", result.get(4).getName());
+        Assertions.assertEquals(5, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals("Name4", result.get(4).getName());
     }
 
     @ParameterizedTest
@@ -85,8 +83,8 @@ class RoundTripHelperTest {
 
         List<SimpleData> result = RoundTripHelper.writeAndReadSync(file, SimpleData.class, data);
 
-        assertEquals(3, result.size());
-        assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
     }
 
     @ParameterizedTest
@@ -97,8 +95,8 @@ class RoundTripHelperTest {
 
         List<SimpleData> result = RoundTripHelper.writeAndRead(file, format, ApiMode.FILE, SimpleData.class, data);
 
-        assertEquals(7, result.size());
-        assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals(7, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
     }
 
     @ParameterizedTest
@@ -109,8 +107,8 @@ class RoundTripHelperTest {
 
         List<SimpleData> result = RoundTripHelper.writeAndRead(file, format, ApiMode.STREAM, SimpleData.class, data);
 
-        assertEquals(7, result.size());
-        assertEquals("Name0", result.get(0).getName());
+        Assertions.assertEquals(7, result.size());
+        Assertions.assertEquals("Name0", result.get(0).getName());
     }
 
     @ParameterizedTest
@@ -124,9 +122,10 @@ class RoundTripHelperTest {
         File fileB = format.createTempFile("rth-fb", tempDir);
         List<SimpleData> streamResult = RoundTripHelper.writeAndReadViaStream(fileB, format, SimpleData.class, data);
 
-        assertEquals(fileResult.size(), streamResult.size());
+        Assertions.assertEquals(fileResult.size(), streamResult.size());
         for (int i = 0; i < fileResult.size(); i++) {
-            assertEquals(fileResult.get(i).getName(), streamResult.get(i).getName());
+            Assertions.assertEquals(
+                    fileResult.get(i).getName(), streamResult.get(i).getName());
         }
     }
 
@@ -139,8 +138,8 @@ class RoundTripHelperTest {
         RoundTripHelper.write(file, SimpleData.class, data);
         List<SimpleData> result = RoundTripHelper.read(file, SimpleData.class);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(4, result.size());
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(4, result.size());
     }
 }

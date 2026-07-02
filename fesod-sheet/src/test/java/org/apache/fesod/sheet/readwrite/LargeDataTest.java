@@ -1,0 +1,184 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ *
+ * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
+ */
+
+package org.apache.fesod.sheet.readwrite;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.fesod.sheet.ExcelWriter;
+import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+/**
+ *
+ */
+@Tag(Tags.ROUND_TRIP)
+@Slf4j
+public class LargeDataTest extends AbstractExcelTest {
+
+    private int i = 0;
+
+    @Test
+    public void read() {
+        long start = System.currentTimeMillis();
+        LargeDataListener listener = new LargeDataListener();
+        FesodSheet.read(readFile("large" + File.separator + "large07.xlsx"), LargeData.class, listener)
+                .headRowNumber(2)
+                .sheet()
+                .doRead();
+        log.info("Large data total time spent:{}", System.currentTimeMillis() - start);
+        Assertions.assertEquals(464509, listener.getCount());
+    }
+
+    @Test
+    public void fill() {
+        File fileFill07 = new File(tempDir, "largefill07.xlsx");
+        File template07 = readFile("large" + File.separator + "fill.xlsx");
+        try (ExcelWriter excelWriter =
+                FesodSheet.write(fileFill07).withTemplate(template07).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
+            for (int j = 0; j < 5000; j++) {
+                excelWriter.fill(data(), writeSheet);
+                log.info("{} fill success.", j);
+            }
+        }
+    }
+
+    @Test
+    public void readAndWriteCsv() {
+        File fileCsv = new File(tempDir, "largefileCsv.csv");
+        // write
+        long start = System.currentTimeMillis();
+        try (ExcelWriter excelWriter = FesodSheet.write(fileCsv).build()) {
+            WriteSheet writeSheet = FesodSheet.writerSheet().build();
+            for (int j = 0; j < 5000; j++) {
+                excelWriter.write(data(), writeSheet);
+                log.info("{} write success.", j);
+            }
+        }
+        log.info("CSV large data total time spent:{}", System.currentTimeMillis() - start);
+
+        //  read
+        start = System.currentTimeMillis();
+        LargeDataListener csvListener = new LargeDataListener();
+        FesodSheet.read(fileCsv, LargeData.class, csvListener).sheet().doRead();
+        log.info("CSV large data total time spent:{}", System.currentTimeMillis() - start);
+        Assertions.assertEquals(499999, csvListener.getCount());
+    }
+
+    @Test
+    public void write() throws Exception {
+        File fileWriteTemp07 = new File(tempDir, "fileWriteTemp07.xlsx");
+        File fileWrite07 = new File(tempDir, "fileWrite07.xlsx");
+        File fileWritePoi07 = new File(tempDir, "fileWritePoi07.xlsx");
+        ExcelWriter excelWriter =
+                FesodSheet.write(fileWriteTemp07, LargeData.class).build();
+        WriteSheet writeSheet = FesodSheet.writerSheet().build();
+        for (int j = 0; j < 2; j++) {
+            excelWriter.write(data(), writeSheet);
+        }
+        excelWriter.finish();
+
+        long start = System.currentTimeMillis();
+        excelWriter = FesodSheet.write(fileWrite07, LargeData.class).build();
+        writeSheet = FesodSheet.writerSheet().build();
+        for (int j = 0; j < 5000; j++) {
+            excelWriter.write(data(), writeSheet);
+            log.info("{} write success.", j);
+        }
+        excelWriter.finish();
+        long cost = System.currentTimeMillis() - start;
+        log.info("write cost:{}", cost);
+        start = System.currentTimeMillis();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fileWritePoi07)) {
+            SXSSFWorkbook workbook = new SXSSFWorkbook();
+            SXSSFSheet sheet = workbook.createSheet("sheet1");
+            for (int i = 0; i < 100 * 5000; i++) {
+                SXSSFRow row = sheet.createRow(i);
+                for (int j = 0; j < 25; j++) {
+                    SXSSFCell cell = row.createCell(j);
+                    cell.setCellValue("str-" + j + "-" + i);
+                }
+                if (i % 5000 == 0) {
+                    log.info("{} write success.", i);
+                }
+            }
+            workbook.write(fileOutputStream);
+            workbook.dispose();
+            workbook.close();
+        }
+        long costPoi = System.currentTimeMillis() - start;
+        log.info("poi write cost:{}", System.currentTimeMillis() - start);
+        log.info("{} vs {}", cost, costPoi);
+        Assertions.assertTrue(costPoi * 2 > cost);
+    }
+
+    private List<LargeData> data() {
+        List<LargeData> list = new ArrayList<>();
+        int size = i + 100;
+        for (; i < size; i++) {
+            LargeData largeData = new LargeData();
+            list.add(largeData);
+            largeData.setStr1("str1-" + i);
+            largeData.setStr2("str2-" + i);
+            largeData.setStr3("str3-" + i);
+            largeData.setStr4("str4-" + i);
+            largeData.setStr5("str5-" + i);
+            largeData.setStr6("str6-" + i);
+            largeData.setStr7("str7-" + i);
+            largeData.setStr8("str8-" + i);
+            largeData.setStr9("str9-" + i);
+            largeData.setStr10("str10-" + i);
+            largeData.setStr11("str11-" + i);
+            largeData.setStr12("str12-" + i);
+            largeData.setStr13("str13-" + i);
+            largeData.setStr14("str14-" + i);
+            largeData.setStr15("str15-" + i);
+            largeData.setStr16("str16-" + i);
+            largeData.setStr17("str17-" + i);
+            largeData.setStr18("str18-" + i);
+            largeData.setStr19("str19-" + i);
+            largeData.setStr20("str20-" + i);
+            largeData.setStr21("str21-" + i);
+            largeData.setStr22("str22-" + i);
+            largeData.setStr23("str23-" + i);
+            largeData.setStr24("str24-" + i);
+            largeData.setStr25("str25-" + i);
+        }
+        return list;
+    }
+}

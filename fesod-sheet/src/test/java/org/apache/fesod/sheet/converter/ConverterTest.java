@@ -29,19 +29,20 @@ import java.math.BigDecimal;
 import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.converters.floatconverter.FloatNumberConverter;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 /**
- *
+ * Unit tests for individual converter implementations.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class ConverterTest {
+@Tag(Tags.ROUND_TRIP)
+public class ConverterTest extends AbstractExcelTest {
 
     @Test
-    public void t01FloatNumberConverter() {
+    public void floatNumberConverter() {
         FloatNumberConverter floatNumberConverter = new FloatNumberConverter();
         WriteConverterContext<Float> context = new WriteConverterContext<>();
         context.setValue(95.62F);

@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
@@ -28,6 +27,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -98,7 +98,7 @@ public class DateWindowingTest extends AbstractExcelTest {
                     .head(SimpleData.class)
                     .doReadAllSync();
         }
-        assertEquals(expectedActualUse1904windowing, listener.getActualUse1904windowing());
+        Assertions.assertEquals(expectedActualUse1904windowing, listener.getActualUse1904windowing());
     }
 
     private File fixtureFile(String fileName) {

@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.template;
 
-import static org.apache.fesod.sheet.testkit.params.FormatCapability.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
@@ -35,7 +33,9 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatCapability;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -46,7 +46,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 public class TemplateDataTest extends AbstractExcelTest {
 
     @ParameterizedTest
-    @ExcelFormatSource(value = FormatScope.BINARY, requires = TEMPLATES)
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
     void readAndWrite(ExcelFormat format) throws Exception {
         File file = createTempFile("template", format);
         String templateName = "template" + File.separator + "template" + (format == ExcelFormat.XLSX ? "07" : "03")
@@ -61,8 +61,8 @@ public class TemplateDataTest extends AbstractExcelTest {
                 .headRowNumber(3)
                 .sheet()
                 .doReadSync();
-        assertEquals(2, result.size());
-        assertEquals("String0", result.get(0).getString0());
-        assertEquals("String1", result.get(1).getString0());
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("String0", result.get(0).getString0());
+        Assertions.assertEquals("String1", result.get(1).getString0());
     }
 }

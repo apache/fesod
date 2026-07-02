@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.converters.string;
 
 import java.io.File;
@@ -34,12 +28,10 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.FileUtils;
 
 /**
- * String and image converter
- *
- * @see StringPathnameImageConverter
+ * Pathname and image converter.
  */
-@Deprecated
-public class StringImageConverter implements Converter<String> {
+public class StringPathnameImageConverter implements Converter<String> {
+
     @Override
     public Class<?> supportJavaTypeKey() {
         return String.class;
@@ -47,8 +39,8 @@ public class StringImageConverter implements Converter<String> {
 
     @Override
     public WriteCellData<?> convertToExcelData(
-            String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
+            String pathname, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws IOException {
-        return new WriteCellData<>(FileUtils.readFileToByteArray(new File(value)));
+        return new WriteCellData<>(FileUtils.readFileToByteArray(new File(pathname)));
     }
 }

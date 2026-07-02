@@ -17,29 +17,20 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.converters.string;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.FileUtils;
 
 /**
- * String and image converter
- *
- * @see StringPathnameImageConverter
+ * Base64 and image converter (support base64 with prefix).
  */
-@Deprecated
-public class StringImageConverter implements Converter<String> {
+public class StringBase64ImageConverter implements Converter<String> {
+
     @Override
     public Class<?> supportJavaTypeKey() {
         return String.class;
@@ -47,8 +38,16 @@ public class StringImageConverter implements Converter<String> {
 
     @Override
     public WriteCellData<?> convertToExcelData(
-            String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
+            String base64, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws IOException {
-        return new WriteCellData<>(FileUtils.readFileToByteArray(new File(value)));
+        String value;
+        int commaIndex = base64.indexOf(",");
+        if (commaIndex != -1) {
+            value = base64.substring(commaIndex + 1);
+        } else {
+            value = base64;
+        }
+
+        return new WriteCellData<>(Base64.getDecoder().decode(value));
     }
 }

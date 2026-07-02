@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.format;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +36,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,9 +57,9 @@ public class DateFormatTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         for (DateFormatData data : list) {
-            assertTrue(Objects.equals(data.getDateStringCn(), data.getDate())
+            Assertions.assertTrue(Objects.equals(data.getDateStringCn(), data.getDate())
                     || Objects.equals(data.getDateStringCn2(), data.getDate()));
-            assertEquals(data.getNumberStringCn(), data.getNumber());
+            Assertions.assertEquals(data.getNumberStringCn(), data.getNumber());
         }
     }
 
@@ -73,8 +72,8 @@ public class DateFormatTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         for (DateFormatData data : list) {
-            assertEquals(data.getDateStringUs(), data.getDate());
-            assertEquals(data.getNumberStringUs(), data.getNumber());
+            Assertions.assertEquals(data.getDateStringUs(), data.getDate());
+            Assertions.assertEquals(data.getNumberStringUs(), data.getNumber());
         }
     }
 
@@ -83,12 +82,12 @@ public class DateFormatTest extends AbstractExcelTest {
         File file07V2 = readFile("dataformat" + File.separator + "dataformatv2.xlsx");
         List<Map<Integer, String>> dataMap =
                 FesodSheet.read(file07V2).headRowNumber(0).doReadAllSync();
-        assertEquals("15:00", dataMap.get(0).get(0));
-        assertEquals("2023-1-01 00:00:00", dataMap.get(1).get(0));
-        assertEquals("2023-1-01 00:00:00", dataMap.get(2).get(0));
-        assertEquals("2023-1-01 00:00:01", dataMap.get(3).get(0));
-        assertEquals("2023-1-01 00:00:00", dataMap.get(4).get(0));
-        assertEquals("2023-1-01 00:00:00", dataMap.get(5).get(0));
-        assertEquals("2023-1-01 00:00:01", dataMap.get(6).get(0));
+        Assertions.assertEquals("15:00", dataMap.get(0).get(0));
+        Assertions.assertEquals("2023-1-01 00:00:00", dataMap.get(1).get(0));
+        Assertions.assertEquals("2023-1-01 00:00:00", dataMap.get(2).get(0));
+        Assertions.assertEquals("2023-1-01 00:00:01", dataMap.get(3).get(0));
+        Assertions.assertEquals("2023-1-01 00:00:00", dataMap.get(4).get(0));
+        Assertions.assertEquals("2023-1-01 00:00:00", dataMap.get(5).get(0));
+        Assertions.assertEquals("2023-1-01 00:00:01", dataMap.get(6).get(0));
     }
 }

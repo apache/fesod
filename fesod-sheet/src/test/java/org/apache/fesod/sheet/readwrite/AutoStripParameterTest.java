@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.alibaba.fastjson2.JSON;
 import java.io.File;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.ParameterUtil;
 import org.apache.fesod.sheet.util.SheetUtils;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -117,18 +117,18 @@ public class AutoStripParameterTest extends AbstractExcelTest {
                     @Override
                     public void doAfterAllAnalysed(AnalysisContext context) {
                         // global configuration match
-                        assertEquals(
+                        Assertions.assertEquals(
                                 autoTrim == null ? Boolean.TRUE : autoTrim,
                                 ParameterUtil.getAutoTrimFlag(
                                         context.readSheetHolder().getReadSheet(), context));
-                        assertEquals(
+                        Assertions.assertEquals(
                                 autoStrip == null ? Boolean.FALSE : autoStrip,
                                 ParameterUtil.getAutoStripFlag(
                                         context.readSheetHolder().getReadSheet(), context));
 
                         // sheet name match
                         ReadSheet readSheet = context.readSheetHolder().getReadSheet();
-                        assertEquals(readSheet, SheetUtils.match(readSheet, context));
+                        Assertions.assertEquals(readSheet, SheetUtils.match(readSheet, context));
                     }
                 })
                 .autoTrim(autoTrim)
@@ -176,18 +176,20 @@ public class AutoStripParameterTest extends AbstractExcelTest {
                 .doReadSync();
 
         log.info("Read records: {}", JSON.toJSONString(dataList));
-        assertEquals(2, dataList.size());
+        Assertions.assertEquals(2, dataList.size());
         if (Boolean.TRUE.equals(autoStrip)) {
-            assertEquals(StringUtils.strip(testContentSpaces), dataList.get(0).getName());
-            assertEquals(
+            Assertions.assertEquals(
+                    StringUtils.strip(testContentSpaces), dataList.get(0).getName());
+            Assertions.assertEquals(
                     StringUtils.strip(testContentFullWidthSpaces),
                     dataList.get(1).getName());
         } else if (autoTrim == null || autoTrim) {
-            assertEquals(testContentSpaces.trim(), dataList.get(0).getName());
-            assertEquals(testContentFullWidthSpaces.trim(), dataList.get(1).getName());
+            Assertions.assertEquals(testContentSpaces.trim(), dataList.get(0).getName());
+            Assertions.assertEquals(
+                    testContentFullWidthSpaces.trim(), dataList.get(1).getName());
         } else {
-            assertEquals(testContentSpaces, dataList.get(0).getName());
-            assertEquals(testContentFullWidthSpaces, dataList.get(1).getName());
+            Assertions.assertEquals(testContentSpaces, dataList.get(0).getName());
+            Assertions.assertEquals(testContentFullWidthSpaces, dataList.get(1).getName());
         }
     }
 }

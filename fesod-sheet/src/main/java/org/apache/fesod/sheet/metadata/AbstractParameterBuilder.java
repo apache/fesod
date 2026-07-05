@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
@@ -40,13 +41,26 @@ import org.apache.fesod.sheet.enums.CacheLocationEnum;
  */
 public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilder, C extends BasicParameter> {
     /**
-     * You can only choose one of the {@link #head(List)} and {@link #head(Class)}
+     * You can only choose one of the ({@link #head(List)} or {@link #head(Consumer)}) and {@link #head(Class)}
      *
+     * @see #head(Consumer)
      * @param head
      * @return
      */
     public T head(List<List<String>> head) {
         parameter().setHead(toMutableListIfNecessary(head));
+        return self();
+    }
+
+    /**
+     * You can only choose one of the ({@link #head(List)} or {@link #head(Consumer)}) and {@link #head(Class)}
+     *
+     * @see #head(List)
+     * @param headBuilderConsumer
+     * @return
+     */
+    public T head(Consumer<HeadBuilder> headBuilderConsumer) {
+        parameter().setHead(DefaultHeadBuilder.define(headBuilderConsumer));
         return self();
     }
 
@@ -68,7 +82,7 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * You can only choose one of the {@link #head(List)} and {@link #head(Class)}
+     * You can only choose one of the ({@link #head(List)} or {@link #head(Consumer)}) and {@link #head(Class)}
      *
      * @param clazz
      * @return

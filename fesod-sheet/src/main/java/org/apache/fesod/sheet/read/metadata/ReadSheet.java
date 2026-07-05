@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.read.metadata;
 
 import lombok.EqualsAndHashCode;
+import java.util.List;
 
 /**
  * Read sheet
@@ -53,6 +54,11 @@ public class ReadSheet extends ReadBasicParameter {
      * The number of rows to read, the default is all, start with 0.
      */
     public Integer numRows;
+
+    /**
+     * Specific columns to read (0-based indexes)
+     */
+    private java.util.List<Integer> includeColumnIndexes;
 
     public ReadSheet() {}
 
@@ -111,6 +117,14 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetVeryHidden = sheetVeryHidden;
     }
 
+    public List<Integer> getIncludeColumnIndexes() {
+        return this.includeColumnIndexes;
+    }
+
+    public void setIncludeColumnIndexes(java.util.List<Integer> includeColumnIndexes) {
+        this.includeColumnIndexes = columnIndexes;
+    }
+
     public void copyBasicParameter(ReadSheet other) {
         if (other == null) {
             return;
@@ -126,6 +140,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());
+        this.setIncludeColumnIndexes(other.getIncludeColumnIndexes());
     }
 
     @Override

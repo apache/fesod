@@ -330,4 +330,17 @@ public class FesodSheet {
                 .sheetNameIfNotNull(sheetName)
                 .numRowsIfNotNull(numRows);
     }
+
+    /**
+     * Build excel the 'readSheet' targeting specific column indexes.
+     *
+     * @param sheetNo       Index of sheet, 0 base.
+     * @param columnIndexes Specific columns to read (e.g., [0, 2] for Column A and C).
+     * @return Excel sheet reader builder.
+     */
+    public static ExcelReaderSheetBuilder readSheet(Integer sheetNo, java.util.List<Integer> columnIndexes) {
+        return new ExcelReaderSheetBuilder()
+                .sheetNoIfNotNull(sheetNo)
+                .includeColumnIndexes(columnIndexes);
+    }
 }

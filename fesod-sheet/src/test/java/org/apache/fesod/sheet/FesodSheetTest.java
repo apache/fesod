@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Arrays;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
@@ -246,5 +248,21 @@ class FesodSheetTest {
     void testReadSheet_withAllParams_shouldReturnBuilder() {
         ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0, "DataSheet", 100);
         Assertions.assertNotNull(builder);
+    }
+
+    @Test
+    void testReadSheet_withColumnIndexes_shouldConfigureAll() {
+
+        List<Integer> targetColumns = Arrays.asList(0, 2);
+
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet(1, targetColumns);
+
+        Assertions.assertNotNull(builder, "Builder should not be null");
+
+        ReadSheet configuredSheet = builder.build();
+        Assertions.assertNotNull(configuredSheet, "The internal ReadSheet should be created");
+
+        Assertions.assertEquals(1, configuredSheet.getSheetNo());
+        Assertions.assertEquals(targetColumns, configuredSheet.getIncludeColumnIndexes());
     }
 }

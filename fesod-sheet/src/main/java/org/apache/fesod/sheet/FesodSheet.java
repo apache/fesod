@@ -338,9 +338,12 @@ public class FesodSheet {
      * @param columnIndexes Specific columns to read (e.g., [0, 2] for Column A and C).
      * @return Excel sheet reader builder.
      */
-    public static ExcelReaderSheetBuilder readSheet(Integer sheetNo, java.util.List<Integer> columnIndexes) {
+    public static ExcelReaderSheetBuilder readSheetWithColumns(
+            Integer sheetNo, String sheetName, Integer numRows, List<Integer> columnIndexes) {
         return new ExcelReaderSheetBuilder()
                 .sheetNoIfNotNull(sheetNo)
+                .sheetNameIfNotNull(sheetName)
+                .numRowsIfNotNull(numRows)
                 .includeColumnIndexes(columnIndexes);
     }
 }

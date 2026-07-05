@@ -25,8 +25,8 @@
 
 package org.apache.fesod.sheet.read.metadata;
 
-import lombok.EqualsAndHashCode;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 
 /**
  * Read sheet
@@ -121,8 +121,8 @@ public class ReadSheet extends ReadBasicParameter {
         return this.includeColumnIndexes;
     }
 
-    public void setIncludeColumnIndexes(java.util.List<Integer> includeColumnIndexes) {
-        this.includeColumnIndexes = columnIndexes;
+    public void setIncludeColumnIndexes(List<Integer> includeColumnIndexes) {
+        this.includeColumnIndexes = includeColumnIndexes;
     }
 
     public void copyBasicParameter(ReadSheet other) {

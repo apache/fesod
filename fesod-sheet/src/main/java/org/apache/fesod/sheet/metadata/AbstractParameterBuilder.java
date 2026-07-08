@@ -40,12 +40,17 @@ import org.apache.fesod.sheet.enums.CacheLocationEnum;
  *
  */
 public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilder, C extends BasicParameter> {
+
     /**
-     * You can only choose one of the ({@link #head(List)} or {@link #head(Consumer)}) and {@link #head(Class)}
+     * Configure sheet headers dynamically using a raw {@code List<List<String>>}.
      *
+     * <p>
+     * <strong>Note:</strong> Use of this method is mutually exclusive with {@link #head(Class)}.
+     * </p>
+     *
+     * @param head the raw header data list
      * @see #head(Consumer)
-     * @param head
-     * @return
+     * @return this builder
      */
     public T head(List<List<String>> head) {
         parameter().setHead(toMutableListIfNecessary(head));
@@ -53,11 +58,15 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * You can only choose one of the ({@link #head(List)} or {@link #head(Consumer)}) and {@link #head(Class)}
+     * Configure sheet headers dynamically using a {@code HeadBuilder} consumer.
      *
+     * <p>
+     * <strong>Note:</strong> Use of this method is mutually exclusive with {@link #head(Class)}.
+     * </p>
+     *
+     * @param headBuilderConsumer the consumer to configure the headers
      * @see #head(List)
-     * @param headBuilderConsumer
-     * @return
+     * @return this builder
      */
     public T head(Consumer<HeadBuilder> headBuilderConsumer) {
         parameter().setHead(DefaultHeadBuilder.define(headBuilderConsumer));
@@ -82,10 +91,15 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * You can only choose one of the ({@link #head(List)} or {@link #head(Consumer)}) and {@link #head(Class)}
+     * Configure sheet headers using a Java model.
      *
-     * @param clazz
-     * @return
+     * <p>
+     * <strong>Note:</strong> Use of this method is mutually exclusive with
+     * {@link #head(List)} and {@link #head(Consumer)}.
+     * </p>
+     *
+     * @param clazz the Java model class
+     * @return this builder
      */
     public T head(Class<?> clazz) {
         parameter().setClazz(clazz);

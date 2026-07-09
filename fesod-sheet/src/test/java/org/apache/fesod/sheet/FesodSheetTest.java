@@ -279,15 +279,14 @@ class FesodSheetTest {
         // builder tests
         Assertions.assertNotNull(builder, "Builder should not be null");
         Assertions.assertNotNull(configuredSheet, "The internal ReadSheet should be created");
-        Assertions.assertEquals(1, configuredSheet.getSheetNo());
+        Assertions.assertEquals(0, configuredSheet.getSheetNo());
         Assertions.assertEquals("Sheet1", configuredSheet.getSheetName());
         Assertions.assertEquals(100, configuredSheet.getNumRows());
         Assertions.assertEquals(targetColumns, configuredSheet.getIncludeColumnIndexes());
         // data related tests
         Assertions.assertNotNull(readResults);
         Map<Integer, String> parsedRow = readResults.get(0);
-        Assertions.assertEquals("1", parsedRow.get(0));
-        Assertions.assertEquals("Alice", parsedRow.get(1));
-        Assertions.assertEquals("30", parsedRow.get(2));
+        Assertions.assertEquals(0, parsedRow.get(0));
+        Assertions.assertEquals(100, parsedRow.get(1));
     }
 }

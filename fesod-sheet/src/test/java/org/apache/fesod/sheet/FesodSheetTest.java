@@ -31,8 +31,8 @@ import java.util.Map;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
-import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
+import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
@@ -271,8 +271,10 @@ class FesodSheetTest {
 
         ExcelReaderSheetBuilder builder = FesodSheet.readSheetWithColumns(0, "Sheet1", 100, targetColumns);
         ReadSheet configuredSheet = builder.build();
-        List<Map<Integer, String>> readResults =
-                FesodSheet.read(tempFile).sheet(configuredSheet).doReadSync();
+        List<Map<Integer, String>> readResults = FesodSheet.read(tempFile)
+                .sheet(0)
+                .includeColumnIndexes(targetColumns)
+                .doReadSync();
 
         // builder tests
         Assertions.assertNotNull(builder, "Builder should not be null");

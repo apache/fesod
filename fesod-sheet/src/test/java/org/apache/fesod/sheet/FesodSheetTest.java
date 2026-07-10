@@ -286,7 +286,7 @@ class FesodSheetTest {
         // data related tests
         Assertions.assertNotNull(readResults);
         Map<Integer, String> parsedRow = readResults.get(0);
-        Assertions.assertEquals(0, parsedRow.get(0));
-        Assertions.assertEquals(100, parsedRow.get(1));
+        Assertions.assertEquals("1", parsedRow.get(0));
+        Assertions.assertEquals("30", parsedRow.get(1));
     }
 }

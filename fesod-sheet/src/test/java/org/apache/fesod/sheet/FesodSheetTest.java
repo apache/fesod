@@ -256,7 +256,7 @@ class FesodSheetTest {
     @Test
     void testReadSheet_withColumnIndexes_shouldConfigureAll() {
 
-        java.util.List<java.util.List<String>> head = new java.util.ArrayList<>();
+        List<List<String>> head = new ArrayList<>();
         head.add(new ArrayList<>(Arrays.asList("ID")));
         head.add(new ArrayList<>(Arrays.asList("Name")));
         head.add(new ArrayList<>(Arrays.asList("Age")));
@@ -287,6 +287,6 @@ class FesodSheetTest {
         Assertions.assertNotNull(readResults);
         Map<Integer, String> parsedRow = readResults.get(0);
         Assertions.assertEquals("1", parsedRow.get(0));
-        Assertions.assertEquals("30", parsedRow.get(1));
+        Assertions.assertEquals("Alice", parsedRow.get(1));
     }
 }

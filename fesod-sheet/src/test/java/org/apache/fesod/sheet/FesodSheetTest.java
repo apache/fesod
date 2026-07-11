@@ -282,11 +282,12 @@ class FesodSheetTest {
         Assertions.assertEquals(0, configuredSheet.getSheetNo());
         Assertions.assertEquals("Sheet1", configuredSheet.getSheetName());
         Assertions.assertEquals(100, configuredSheet.getNumRows());
-        Assertions.assertEquals(targetColumns, configuredSheet.getIncludeColumnIndexes());
+        Assertions.assertEquals(targetColumns, configuredSheet.getColumnIndexes());
         // data related tests
         Assertions.assertNotNull(readResults);
         Map<Integer, String> parsedRow = readResults.get(0);
+        Assertions.assertEquals(2, parsedRow.size());
         Assertions.assertEquals("1", parsedRow.get(0));
-        Assertions.assertEquals("Alice", parsedRow.get(1));
+        Assertions.assertEquals("30", parsedRow.get(1));
     }
 }

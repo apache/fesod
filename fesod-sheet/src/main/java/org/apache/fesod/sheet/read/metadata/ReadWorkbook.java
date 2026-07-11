@@ -145,6 +145,11 @@ public class ReadWorkbook extends ReadBasicParameter {
     private Integer numRows;
 
     /**
+     * The number of columns to read, the default is all, start with 0.
+     */
+    private Integer numColumns;
+
+    /**
      * Ignore hidden sheet.
      */
     private Boolean ignoreHiddenSheet;

@@ -58,7 +58,7 @@ public class ReadSheet extends ReadBasicParameter {
     /**
      * Specific columns to read (0-based indexes)
      */
-    private java.util.List<Integer> includeColumnIndexes;
+    private List<Integer> columnIndexes;
 
     public ReadSheet() {}
 
@@ -75,6 +75,13 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetNo = sheetNo;
         this.sheetName = sheetName;
         this.numRows = numRows;
+    }
+
+    public ReadSheet(Integer sheetNo, String sheetName, Integer numRows, Integer numCols) {
+        this.sheetNo = sheetNo;
+        this.sheetName = sheetName;
+        this.numRows = numRows;
+        this.columnIndexes = columnIndexes;
     }
 
     public Integer getSheetNo() {
@@ -117,12 +124,12 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetVeryHidden = sheetVeryHidden;
     }
 
-    public List<Integer> getIncludeColumnIndexes() {
-        return this.includeColumnIndexes;
+    public List<Integer> getColumnIndexes() {
+        return this.columnIndexes;
     }
 
-    public void setIncludeColumnIndexes(List<Integer> includeColumnIndexes) {
-        this.includeColumnIndexes = includeColumnIndexes;
+    public void setColumnIndexes(List<Integer> columnIndexes) {
+        this.columnIndexes = columnIndexes;
     }
 
     public void copyBasicParameter(ReadSheet other) {
@@ -140,7 +147,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());
-        this.setIncludeColumnIndexes(other.getIncludeColumnIndexes());
+        this.setColumnIndexes(other.getColumnIndexes());
     }
 
     @Override

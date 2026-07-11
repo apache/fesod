@@ -119,13 +119,13 @@ public class ExcelReaderSheetBuilder extends AbstractExcelReaderParameterBuilder
      * @return
      */
     public ExcelReaderSheetBuilder includeColumnIndexes(List<Integer> columnIndexes) {
-        readSheet.setIncludeColumnIndexes(columnIndexes);
+        readSheet.setColumnIndexes(columnIndexes);
         return this;
     }
 
     public ExcelReaderSheetBuilder includeColumnIndexesIfNotNull(List<Integer> columnIndexes) {
         if (Objects.nonNull(columnIndexes)) {
-            readSheet.setIncludeColumnIndexes(columnIndexes);
+            readSheet.setColumnIndexes(columnIndexes);
         }
         return this;
     }

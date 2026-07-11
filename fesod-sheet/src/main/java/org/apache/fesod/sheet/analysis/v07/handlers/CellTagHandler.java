@@ -134,6 +134,26 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         tempCellData.checkEmpty();
         tempCellData.setRowIndex(xlsxReadSheetHolder.getRowIndex());
         tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
-        xlsxReadSheetHolder.getCellMap().put(xlsxReadSheetHolder.getColumnIndex(), tempCellData);
+        java.util.List<Integer> includeColumnIndexes = null;
+        if (xlsxReadContext.readSheetHolder() != null
+                && xlsxReadContext.readSheetHolder().getReadSheet() != null) {
+            includeColumnIndexes =
+                    xlsxReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+        }
+
+        if (includeColumnIndexes == null) {
+            // Default behavior: Keep raw Excel column index
+            xlsxReadSheetHolder.getCellMap().put(xlsxReadSheetHolder.getColumnIndex(), tempCellData);
+        } else {
+            int targetIndex = includeColumnIndexes.indexOf(xlsxReadSheetHolder.getColumnIndex());
+            if (targetIndex != -1) {
+                // If it's a target column, rewrite the cell's internal index and pack it sequentially!
+                tempCellData.setColumnIndex(targetIndex);
+                xlsxReadSheetHolder.getCellMap().put(targetIndex, tempCellData);
+            }
+            // If targetIndex is -1, it's skipped entirely, leaving your map size at exactly 2
+        }
+        // --- FILTER & REMAP LOGIC END ---
+        // xlsxReadSheetHolder.getCellMap().put(xlsxReadSheetHolder.getColumnIndex(), tempCellData);
     }
 }

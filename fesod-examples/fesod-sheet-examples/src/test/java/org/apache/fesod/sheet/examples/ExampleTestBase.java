@@ -88,6 +88,41 @@ public abstract class ExampleTestBase {
     }
 
     /**
+     * Assert that the given file is a valid Excel workbook with at least the specified number of
+     * columns, scanning for the first non-empty row to determine the column count.
+     *
+     * @param file the Excel file to validate
+     * @param minColumns the minimum number of columns expected
+     */
+    protected static void assertValidExcelFileColumns(File file, int minColumns) {
+        int totalColumns = 0;
+        assertValidExcelFile(file);
+
+        try (FileInputStream fis = new FileInputStream(file);
+                Workbook workbook = WorkbookFactory.create(fis)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // find which row is not empty
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+
+                if (row != null && row.getPhysicalNumberOfCells() > 0) {
+                    totalColumns = row.getLastCellNum();
+                    break;
+                }
+            }
+
+            assertTrue(
+                    totalColumns >= minColumns,
+                    "Expected at least " + minColumns + " columns, but found " + totalColumns
+                            + " total columns in the first data row of: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            fail("Failed to read workbook for column count verification: " + e.getMessage());
+        }
+    }
+
+    /**
      * Generate a temp output file path within the given directory.
      *
      * @param tempDir the temporary directory (typically from {@code @TempDir})

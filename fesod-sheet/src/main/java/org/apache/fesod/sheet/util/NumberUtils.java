@@ -28,7 +28,11 @@ package org.apache.fesod.sheet.util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
@@ -39,6 +43,15 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
  *
  */
 public class NumberUtils {
+    /**
+     * Is a cache of {@link DecimalFormat}, keyed by the default FORMAT locale and pattern. {@link DecimalFormat} is not
+     * thread-safe, so the cache is thread-local, like {@code DateUtils.DATE_FORMAT_THREAD_LOCAL}. The locale is part of
+     * the key (and used to build the symbols) because {@link DecimalFormat} snapshots the locale symbols at
+     * construction time; keying on the pattern alone would keep formatting with a stale locale after the default
+     * changes.
+     */
+    private static final ThreadLocal<Map<String, DecimalFormat>> DECIMAL_FORMAT_THREAD_LOCAL = new ThreadLocal<>();
+
     private NumberUtils() {}
 
     /**
@@ -60,9 +73,7 @@ public class NumberUtils {
         }
         String format = contentProperty.getNumberFormatProperty().getFormat();
         RoundingMode roundingMode = contentProperty.getNumberFormatProperty().getRoundingMode();
-        DecimalFormat decimalFormat = new DecimalFormat(format);
-        decimalFormat.setRoundingMode(roundingMode);
-        return decimalFormat.format(num);
+        return getCacheDecimalFormat(format, roundingMode).format(num);
     }
 
     /**
@@ -212,9 +223,29 @@ public class NumberUtils {
     private static Number parse(String string, ExcelContentProperty contentProperty) throws ParseException {
         String format = contentProperty.getNumberFormatProperty().getFormat();
         RoundingMode roundingMode = contentProperty.getNumberFormatProperty().getRoundingMode();
-        DecimalFormat decimalFormat = new DecimalFormat(format);
-        decimalFormat.setRoundingMode(roundingMode);
+        DecimalFormat decimalFormat = getCacheDecimalFormat(format, roundingMode);
         decimalFormat.setParseBigDecimal(true);
         return decimalFormat.parse(string);
+    }
+
+    private static DecimalFormat getCacheDecimalFormat(String format, RoundingMode roundingMode) {
+        Locale locale = Locale.getDefault(Locale.Category.FORMAT);
+        String key = locale.toString() + '\n' + format;
+        Map<String, DecimalFormat> decimalFormatMap = DECIMAL_FORMAT_THREAD_LOCAL.get();
+        if (decimalFormatMap == null) {
+            decimalFormatMap = new HashMap<>();
+            DECIMAL_FORMAT_THREAD_LOCAL.set(decimalFormatMap);
+        }
+        DecimalFormat decimalFormat = decimalFormatMap.get(key);
+        if (decimalFormat == null) {
+            decimalFormat = new DecimalFormat(format, DecimalFormatSymbols.getInstance(locale));
+            decimalFormatMap.put(key, decimalFormat);
+        }
+        decimalFormat.setRoundingMode(roundingMode);
+        return decimalFormat;
+    }
+
+    public static void removeThreadLocalCache() {
+        DECIMAL_FORMAT_THREAD_LOCAL.remove();
     }
 }

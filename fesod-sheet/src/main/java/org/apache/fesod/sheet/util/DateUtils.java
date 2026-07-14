@@ -57,6 +57,13 @@ public class DateUtils {
      * Is a cache of dates
      */
     private static final ThreadLocal<Map<String, SimpleDateFormat>> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<>();
+    /**
+     * Is a cache of {@link DateTimeFormatter}, keyed by the resolved locale and pattern. Thread-local (rather than a
+     * shared static map) so it is bounded by thread lifetime and cleared by {@link #removeThreadLocalCache()}, matching
+     * {@link #DATE_FORMAT_THREAD_LOCAL}.
+     */
+    private static final ThreadLocal<Map<String, DateTimeFormatter>> DATE_TIME_FORMATTER_THREAD_LOCAL =
+            new ThreadLocal<>();
 
     /**
      * The following patterns are used in {@link #isADateFormat(Short, String)}
@@ -126,11 +133,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        if (local == null) {
-            return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return LocalDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -145,11 +148,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        if (local == null) {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return LocalDate.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -238,11 +237,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = defaultDateFormat;
         }
-        if (local == null) {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return date.format(getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -270,11 +265,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = defaultLocalDateFormat;
         }
-        if (local == null) {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return date.format(getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -302,6 +293,25 @@ public class DateUtils {
         LocalDateTime localDateTime =
                 DateUtil.getLocalDateTime(date.doubleValue(), BooleanUtils.isTrue(use1904windowing), true);
         return format(localDateTime, dateFormat);
+    }
+
+    private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
+        // Resolve null to the default FORMAT locale (matching DateTimeFormatter.ofPattern(String)) so the resolved
+        // locale can be part of the cache key. Keying on the raw argument would let null collide with Locale.ROOT
+        // (both stringify to ""), returning a formatter built for the wrong locale.
+        Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
+        String key = actualLocale.toString() + '\n' + dateFormat;
+        Map<String, DateTimeFormatter> formatterMap = DATE_TIME_FORMATTER_THREAD_LOCAL.get();
+        if (formatterMap == null) {
+            formatterMap = new HashMap<>();
+            DATE_TIME_FORMATTER_THREAD_LOCAL.set(formatterMap);
+        }
+        DateTimeFormatter formatter = formatterMap.get(key);
+        if (formatter == null) {
+            formatter = DateTimeFormatter.ofPattern(dateFormat, actualLocale);
+            formatterMap.put(key, formatter);
+        }
+        return formatter;
     }
 
     private static DateFormat getCacheDateFormat(String dateFormat) {
@@ -573,5 +583,6 @@ public class DateUtils {
     public static void removeThreadLocalCache() {
         DATE_THREAD_LOCAL.remove();
         DATE_FORMAT_THREAD_LOCAL.remove();
+        DATE_TIME_FORMATTER_THREAD_LOCAL.remove();
     }
 }

@@ -19,17 +19,27 @@
 
 package org.apache.fesod.sheet.util;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.Locale;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,6 +56,11 @@ class NumberUtilsTest {
 
     @Mock
     private NumberFormatProperty numberFormatProperty;
+
+    @AfterEach
+    void tearDown() {
+        NumberUtils.removeThreadLocalCache();
+    }
 
     @Test
     void test_format_noFormat_BigDecimal() {
@@ -75,6 +90,30 @@ class NumberUtilsTest {
         String result = NumberUtils.format(123.451, contentProperty);
 
         Assertions.assertEquals("123.46", result);
+    }
+
+    @Test
+    void test_formatCache_tracksDefaultFormatLocaleChanges() {
+        Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
+        try {
+            String format = "#,##0.00";
+            ExcelContentProperty property = new ExcelContentProperty();
+            property.setNumberFormatProperty(new NumberFormatProperty(format, RoundingMode.HALF_UP));
+
+            Locale.setDefault(Locale.Category.FORMAT, Locale.FRANCE);
+            String franceResult = NumberUtils.format(1234.5, property);
+            Locale.setDefault(Locale.Category.FORMAT, Locale.US);
+            String usResult = NumberUtils.format(1234.5, property);
+
+            Assertions.assertEquals(
+                    new DecimalFormat(format, DecimalFormatSymbols.getInstance(Locale.FRANCE)).format(1234.5),
+                    franceResult);
+            Assertions.assertEquals(
+                    new DecimalFormat(format, DecimalFormatSymbols.getInstance(Locale.US)).format(1234.5), usResult);
+            Assertions.assertNotEquals(franceResult, usResult);
+        } finally {
+            Locale.setDefault(Locale.Category.FORMAT, originalLocale);
+        }
     }
 
     @Test
@@ -269,5 +308,42 @@ class NumberUtilsTest {
         Assertions.assertThrows(ParseException.class, () -> {
             NumberUtils.parseInteger("not_a_number", contentProperty);
         });
+    }
+
+    @Test
+    void test_removeThreadLocalCache() throws NoSuchFieldException, IllegalAccessException {
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setNumberFormatProperty(new NumberFormatProperty("#,##0.00", RoundingMode.HALF_UP));
+        NumberUtils.format(1234.5, property);
+
+        Field field = NumberUtils.class.getDeclaredField("DECIMAL_FORMAT_THREAD_LOCAL");
+        field.setAccessible(true);
+        ThreadLocal<?> threadLocal = (ThreadLocal<?>) field.get(null);
+        Assertions.assertNotNull(threadLocal.get());
+
+        NumberUtils.removeThreadLocalCache();
+
+        Assertions.assertNull(threadLocal.get());
+    }
+
+    @Test
+    void test_readAndWriteFinishRemoveThreadLocalCache(@TempDir Path tempDir)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = NumberUtils.class.getDeclaredField("DECIMAL_FORMAT_THREAD_LOCAL");
+        field.setAccessible(true);
+        ThreadLocal<?> threadLocal = (ThreadLocal<?>) field.get(null);
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setNumberFormatProperty(new NumberFormatProperty("#,##0.00", RoundingMode.HALF_UP));
+        File file = tempDir.resolve("thread-local-cache.xlsx").toFile();
+
+        NumberUtils.format(1234.5, property);
+        Assertions.assertNotNull(threadLocal.get());
+        FesodSheet.write(file).sheet().doWrite(Collections.singletonList(Collections.singletonList("value")));
+        Assertions.assertNull(threadLocal.get());
+
+        NumberUtils.format(1234.5, property);
+        Assertions.assertNotNull(threadLocal.get());
+        FesodSheet.read(file).sheet().doReadSync();
+        Assertions.assertNull(threadLocal.get());
     }
 }

@@ -45,6 +45,7 @@ import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
+import org.apache.fesod.sheet.util.NumberUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
@@ -561,6 +562,7 @@ public class WriteContextImpl implements WriteContext {
      */
     private void removeThreadLocalCache() {
         NumberDataFormatterUtils.removeThreadLocalCache();
+        NumberUtils.removeThreadLocalCache();
         DateUtils.removeThreadLocalCache();
         ClassUtils.removeThreadLocalCache();
     }

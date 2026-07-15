@@ -36,6 +36,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -195,6 +197,7 @@ class DateUtilsTest {
     }
 
     @Test
+    @ResourceLock(Resources.LOCALE)
     void test_dateTimeFormatterCache_distinguishesRootFromDefaultLocale() {
         Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
         try {
@@ -214,6 +217,7 @@ class DateUtilsTest {
     }
 
     @Test
+    @ResourceLock(Resources.LOCALE)
     void test_dateTimeFormatterCache_tracksDefaultFormatLocaleChanges() {
         Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
         try {
@@ -231,6 +235,36 @@ class DateUtilsTest {
         } finally {
             Locale.setDefault(Locale.Category.FORMAT, originalLocale);
         }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_dateTimeFormatterCache_isBounded() throws NoSuchFieldException, IllegalAccessException {
+        int localeCap = readIntConstant("MAX_LOCALE_CACHE_SIZE");
+        int formatCap = readIntConstant("MAX_FORMAT_CACHE_SIZE");
+        LocalDate date = LocalDate.of(2026, 7, 13);
+
+        for (int i = 0; i <= formatCap; i++) {
+            DateUtils.format(date, "yyyy-MM-dd'" + i + "'", Locale.US);
+        }
+
+        Field field = DateUtils.class.getDeclaredField("DATE_TIME_FORMATTER_THREAD_LOCAL");
+        field.setAccessible(true);
+        ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>> threadLocal =
+                (ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>>) field.get(null);
+        Map<Locale, Map<String, DateTimeFormatter>> localeCache = threadLocal.get();
+        Assertions.assertEquals(formatCap, localeCache.get(Locale.US).size());
+
+        for (int i = 0; i < localeCap + 2; i++) {
+            DateUtils.format(date, "yyyy-MM-dd", new Locale("en", "X" + i));
+        }
+        Assertions.assertEquals(localeCap, localeCache.size());
+    }
+
+    private static int readIntConstant(String name) throws NoSuchFieldException, IllegalAccessException {
+        Field field = DateUtils.class.getDeclaredField(name);
+        field.setAccessible(true);
+        return field.getInt(null);
     }
 
     @Test

@@ -49,6 +49,11 @@ import org.apache.poi.util.LocaleUtil;
  * Date utils
  */
 public class DateUtils {
+
+    private static final int MAX_LOCALE_CACHE_SIZE = 8;
+
+    private static final int MAX_FORMAT_CACHE_SIZE = 64;
+
     /**
      * Is a cache of dates
      */
@@ -57,12 +62,12 @@ public class DateUtils {
      * Is a cache of dates
      */
     private static final ThreadLocal<Map<String, SimpleDateFormat>> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<>();
+
     /**
-     * Is a cache of {@link DateTimeFormatter}, keyed by the resolved locale and pattern. Thread-local (rather than a
-     * shared static map) so it is bounded by thread lifetime and cleared by {@link #removeThreadLocalCache()}, matching
-     * {@link #DATE_FORMAT_THREAD_LOCAL}.
+     * Bounded cache of {@link DateTimeFormatter}, nested by resolved locale then pattern. Both levels evict FIFO, and
+     * the whole cache is cleared by {@link #removeThreadLocalCache()}.
      */
-    private static final ThreadLocal<Map<String, DateTimeFormatter>> DATE_TIME_FORMATTER_THREAD_LOCAL =
+    private static final ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>> DATE_TIME_FORMATTER_THREAD_LOCAL =
             new ThreadLocal<>();
 
     /**
@@ -296,20 +301,21 @@ public class DateUtils {
     }
 
     private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
-        // Resolve null to the default FORMAT locale (matching DateTimeFormatter.ofPattern(String)) so the resolved
-        // locale can be part of the cache key. Keying on the raw argument would let null collide with Locale.ROOT
-        // (both stringify to ""), returning a formatter built for the wrong locale.
         Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
-        String key = actualLocale.toString() + '\n' + dateFormat;
-        Map<String, DateTimeFormatter> formatterMap = DATE_TIME_FORMATTER_THREAD_LOCAL.get();
-        if (formatterMap == null) {
-            formatterMap = new HashMap<>();
-            DATE_TIME_FORMATTER_THREAD_LOCAL.set(formatterMap);
+        Map<Locale, Map<String, DateTimeFormatter>> localeCache = DATE_TIME_FORMATTER_THREAD_LOCAL.get();
+        if (localeCache == null) {
+            localeCache = MapUtils.newBoundedMap(MAX_LOCALE_CACHE_SIZE);
+            DATE_TIME_FORMATTER_THREAD_LOCAL.set(localeCache);
         }
-        DateTimeFormatter formatter = formatterMap.get(key);
+        Map<String, DateTimeFormatter> formatCache = localeCache.get(actualLocale);
+        if (formatCache == null) {
+            formatCache = MapUtils.newBoundedMap(MAX_FORMAT_CACHE_SIZE);
+            localeCache.put(actualLocale, formatCache);
+        }
+        DateTimeFormatter formatter = formatCache.get(dateFormat);
         if (formatter == null) {
             formatter = DateTimeFormatter.ofPattern(dateFormat, actualLocale);
-            formatterMap.put(key, formatter);
+            formatCache.put(dateFormat, formatter);
         }
         return formatter;
     }

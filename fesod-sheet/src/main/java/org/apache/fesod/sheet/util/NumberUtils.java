@@ -30,9 +30,9 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
@@ -43,14 +43,17 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
  *
  */
 public class NumberUtils {
+
+    private static final int MAX_LOCALE_CACHE_SIZE = 4;
+
+    private static final int MAX_FORMAT_CACHE_SIZE = 64;
+
     /**
-     * Is a cache of {@link DecimalFormat}, keyed by the default FORMAT locale and pattern. {@link DecimalFormat} is not
-     * thread-safe, so the cache is thread-local, like {@code DateUtils.DATE_FORMAT_THREAD_LOCAL}. The locale is part of
-     * the key (and used to build the symbols) because {@link DecimalFormat} snapshots the locale symbols at
-     * construction time; keying on the pattern alone would keep formatting with a stale locale after the default
-     * changes.
+     * Bounded cache of {@link DecimalFormat}, nested by default FORMAT locale then pattern. {@link DecimalFormat} is
+     * not thread-safe, so it is thread-local; both levels evict FIFO to keep long-lived threads bounded.
      */
-    private static final ThreadLocal<Map<String, DecimalFormat>> DECIMAL_FORMAT_THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Map<Locale, Map<String, DecimalFormat>>> DECIMAL_FORMAT_THREAD_LOCAL =
+            new ThreadLocal<>();
 
     private NumberUtils() {}
 
@@ -230,18 +233,24 @@ public class NumberUtils {
 
     private static DecimalFormat getCacheDecimalFormat(String format, RoundingMode roundingMode) {
         Locale locale = Locale.getDefault(Locale.Category.FORMAT);
-        String key = locale.toString() + '\n' + format;
-        Map<String, DecimalFormat> decimalFormatMap = DECIMAL_FORMAT_THREAD_LOCAL.get();
-        if (decimalFormatMap == null) {
-            decimalFormatMap = new HashMap<>();
-            DECIMAL_FORMAT_THREAD_LOCAL.set(decimalFormatMap);
+        Map<Locale, Map<String, DecimalFormat>> localeCache = DECIMAL_FORMAT_THREAD_LOCAL.get();
+        if (localeCache == null) {
+            localeCache = MapUtils.newBoundedMap(MAX_LOCALE_CACHE_SIZE);
+            DECIMAL_FORMAT_THREAD_LOCAL.set(localeCache);
         }
-        DecimalFormat decimalFormat = decimalFormatMap.get(key);
+        Map<String, DecimalFormat> formatCache = localeCache.get(locale);
+        if (formatCache == null) {
+            formatCache = MapUtils.newBoundedMap(MAX_FORMAT_CACHE_SIZE);
+            localeCache.put(locale, formatCache);
+        }
+        DecimalFormat decimalFormat = formatCache.get(format);
         if (decimalFormat == null) {
             decimalFormat = new DecimalFormat(format, DecimalFormatSymbols.getInstance(locale));
-            decimalFormatMap.put(key, decimalFormat);
+            formatCache.put(format, decimalFormat);
         }
-        decimalFormat.setRoundingMode(roundingMode);
+        if (decimalFormat.getRoundingMode() != roundingMode) {
+            decimalFormat.setRoundingMode(roundingMode);
+        }
         return decimalFormat;
     }
 

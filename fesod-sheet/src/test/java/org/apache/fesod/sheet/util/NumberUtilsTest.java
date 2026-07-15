@@ -29,6 +29,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
@@ -40,6 +41,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -93,6 +96,7 @@ class NumberUtilsTest {
     }
 
     @Test
+    @ResourceLock(Resources.LOCALE)
     void test_formatCache_tracksDefaultFormatLocaleChanges() {
         Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
         try {
@@ -114,6 +118,46 @@ class NumberUtilsTest {
         } finally {
             Locale.setDefault(Locale.Category.FORMAT, originalLocale);
         }
+    }
+
+    @Test
+    @ResourceLock(Resources.LOCALE)
+    @SuppressWarnings("unchecked")
+    void test_formatCache_isBounded() throws NoSuchFieldException, IllegalAccessException {
+        int localeCap = readIntConstant("MAX_LOCALE_CACHE_SIZE");
+        int formatCap = readIntConstant("MAX_FORMAT_CACHE_SIZE");
+        Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
+        try {
+            Locale.setDefault(Locale.Category.FORMAT, Locale.US);
+            ExcelContentProperty property = new ExcelContentProperty();
+            StringBuilder format = new StringBuilder("0.");
+            for (int i = 0; i <= formatCap; i++) {
+                format.append('0');
+                property.setNumberFormatProperty(new NumberFormatProperty(format.toString(), RoundingMode.HALF_UP));
+                NumberUtils.format(1234.5, property);
+            }
+
+            Field field = NumberUtils.class.getDeclaredField("DECIMAL_FORMAT_THREAD_LOCAL");
+            field.setAccessible(true);
+            ThreadLocal<Map<Locale, Map<String, DecimalFormat>>> threadLocal =
+                    (ThreadLocal<Map<Locale, Map<String, DecimalFormat>>>) field.get(null);
+            Map<Locale, Map<String, DecimalFormat>> localeCache = threadLocal.get();
+            Assertions.assertEquals(formatCap, localeCache.get(Locale.US).size());
+
+            for (int i = 0; i < localeCap + 2; i++) {
+                Locale.setDefault(Locale.Category.FORMAT, new Locale("en", "X" + i));
+                NumberUtils.format(1234.5, property);
+            }
+            Assertions.assertEquals(localeCap, localeCache.size());
+        } finally {
+            Locale.setDefault(Locale.Category.FORMAT, originalLocale);
+        }
+    }
+
+    private static int readIntConstant(String name) throws NoSuchFieldException, IllegalAccessException {
+        Field field = NumberUtils.class.getDeclaredField(name);
+        field.setAccessible(true);
+        return field.getInt(null);
     }
 
     @Test

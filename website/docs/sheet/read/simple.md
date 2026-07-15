@@ -246,3 +246,34 @@ public void synchronousReadToMapList() {
     }
 }
 ```
+## Reading Specific Columns (Column Filtering)
+
+By default, Fesod reads all columns from a sheet. If you only want to process specific columns, you can use `.includeColumnIndexes(List<Integer>)`. This selects specific columns out of the entire sheet column set
+
+### Reading Specific Columns to Map List (Synchronous)
+
+When reading without a POJO template, the filtered columns are packed sequentially into the resulting `Map<Integer, String>`. The first targeted column is mapped to key `0`, the second to key `1`, and so on.
+
+```java
+@Test
+public void readSpecificColumnsToMapList() {
+    String fileName = "path/to/demo.xlsx";
+    
+    // We only want to read Column A (Index 0) and Column C (Index 2)
+    List<Integer> targetColumns = Arrays.asList(0, 2);
+
+    List<Map<Integer, String>> list = FesodSheet.read(fileName)
+            .sheet()
+            .includeColumnIndexes(targetColumns)
+            .doReadSync();
+
+    for (Map<Integer, String> data : list) {
+        // Column Index 0 is mapped to key 0
+        String id = data.get(0); 
+        // Column Index 2 is mapped sequentially to key 1
+        String age = data.get(1); 
+        
+        log.info("ID: {}, Age: {}", id, age);
+    }
+}
+

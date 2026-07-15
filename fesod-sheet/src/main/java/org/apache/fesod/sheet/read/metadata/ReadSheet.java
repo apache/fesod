@@ -77,11 +77,11 @@ public class ReadSheet extends ReadBasicParameter {
         this.numRows = numRows;
     }
 
-    public ReadSheet(Integer sheetNo, String sheetName, Integer numRows, Integer numCols) {
+    public ReadSheet(Integer sheetNo, String sheetName, Integer numRows, List<Integer> numCols) {
         this.sheetNo = sheetNo;
         this.sheetName = sheetName;
         this.numRows = numRows;
-        this.columnIndexes = columnIndexes;
+        this.columnIndexes = numCols;
     }
 
     public Integer getSheetNo() {

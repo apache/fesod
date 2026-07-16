@@ -20,10 +20,13 @@
 package org.apache.fesod.sheet.format;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.metadata.csv.CsvCell;
 import org.apache.fesod.sheet.metadata.csv.CsvRow;
 import org.apache.fesod.sheet.metadata.csv.CsvSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
@@ -118,6 +121,47 @@ public class CsvRowTest {
                 .registerWriteHandler(new AssertCsvHeadDataWriteHandler(head(), data()))
                 .csv()
                 .doWrite(modelData());
+    }
+
+    /**
+     * Verifies that {@link CsvCell} handles {@link java.sql.Date} the same way as
+     * {@link org.apache.fesod.sheet.metadata.data.WriteCellData}: the date is extracted
+     * via {@code toLocalDate().atStartOfDay()}, stripping any time component that may
+     * exist in the underlying milliseconds (common when JDBC drivers create
+     * {@code java.sql.Date} from a {@code java.util.Date} with time info).
+     */
+    @Test
+    void testCsvCellSqlDateConversion() {
+        // Create a java.sql.Date from a java.util.Date that has a time component
+        java.util.Date utilDate = new java.util.Date(2023 - 1900, Calendar.JUNE, 15, 23, 30, 0);
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+        Cell cell = csvRow.createCell(0, CellType.NUMERIC);
+        cell.setCellValue(sqlDate);
+
+        LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
+        // java.sql.Date is date-only: time component must be stripped to midnight
+        Assertions.assertEquals(LocalDateTime.of(2023, 6, 15, 0, 0, 0), dateValue);
+    }
+
+    /**
+     * Verifies that {@link CsvCell} handles {@link java.sql.Time} the same way as
+     * {@link org.apache.fesod.sheet.metadata.data.WriteCellData}: the time is extracted
+     * via {@code toLocalTime().atDate(LocalDate.of(1970, 1, 1))}, stripping any date
+     * component that may exist in the underlying milliseconds.
+     */
+    @Test
+    void testCsvCellSqlTimeConversion() {
+        // Create a java.sql.Time from a java.util.Date that has a date component
+        java.util.Date utilDate = new java.util.Date(2023 - 1900, Calendar.JUNE, 15, 12, 30, 45);
+        java.sql.Time sqlTime = new java.sql.Time(utilDate.getTime());
+
+        Cell cell = csvRow.createCell(0, CellType.NUMERIC);
+        cell.setCellValue(sqlTime);
+
+        LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
+        // java.sql.Time is time-only: date component must be normalized to 1970-01-01
+        Assertions.assertEquals(LocalDateTime.of(1970, 1, 1, 12, 30, 45), dateValue);
     }
 
     private static List<SimpleCsvData> modelData() {

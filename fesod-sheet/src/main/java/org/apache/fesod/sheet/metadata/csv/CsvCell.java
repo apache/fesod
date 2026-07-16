@@ -164,7 +164,13 @@ public class CsvCell extends CellBase {
         if (value == null) {
             return;
         }
-        this.dateValue = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
+        if (value instanceof java.sql.Date) {
+            this.dateValue = ((java.sql.Date) value).toLocalDate().atStartOfDay();
+        } else if (value instanceof java.sql.Time) {
+            this.dateValue = ((java.sql.Time) value).toLocalTime().atDate(java.time.LocalDate.of(1970, 1, 1));
+        } else {
+            this.dateValue = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
+        }
         this.cellType = CellType.NUMERIC;
         this.numericCellType = NumericCellTypeEnum.DATE;
     }

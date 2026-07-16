@@ -20,6 +20,9 @@
 package org.apache.fesod.sheet.format;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,6 +165,46 @@ public class CsvRowTest {
         LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
         // java.sql.Time is time-only: date component must be normalized to 1970-01-01
         Assertions.assertEquals(LocalDateTime.of(1970, 1, 1, 12, 30, 45), dateValue);
+    }
+
+    /**
+     * Real-file integration test: writes a physical CSV file containing
+     * {@code java.sql.Date} and {@code java.sql.Time} values via the
+     * {@link CsvCell} API, then reads the file back to verify the output.
+     * <p>
+     * Without the fix, {@code CsvCell.setCellValueImpl(Date)} calls
+     * {@code value.toInstant()} which throws {@code UnsupportedOperationException}
+     * on Java 9+ for {@code java.sql.Date}/{@code java.sql.Time}.
+     */
+    @Test
+    void csvWrite_withSqlDateAndTime_producesCorrectFile() throws Exception {
+        File csvFile = new File(tempDir, "sql-date-test.csv");
+
+        try (FileWriter writer = new FileWriter(csvFile)) {
+            CsvWorkbook workbook = new CsvWorkbook(
+                    writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+            CsvRow row = (CsvRow) sheet.createRow(0);
+
+            // java.sql.Date — without fix: UnsupportedOperationException
+            Cell dateCell = row.createCell(0, CellType.NUMERIC);
+            dateCell.setCellValue(java.sql.Date.valueOf("2024-01-15"));
+
+            // java.sql.Time — without fix: UnsupportedOperationException
+            Cell timeCell = row.createCell(1, CellType.NUMERIC);
+            timeCell.setCellValue(java.sql.Time.valueOf("12:30:45"));
+
+            sheet.close();
+        }
+
+        // Read file back and verify date/time strings
+        List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
+        Assertions.assertEquals(1, lines.size());
+        String line = lines.get(0);
+        Assertions.assertTrue(line.contains("2024-01-15"),
+                "CSV should contain date 2024-01-15, got: " + line);
+        Assertions.assertTrue(line.contains("12:30:45"),
+                "CSV should contain time 12:30:45, got: " + line);
     }
 
     private static List<SimpleCsvData> modelData() {

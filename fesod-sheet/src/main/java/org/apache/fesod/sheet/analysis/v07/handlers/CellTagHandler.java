@@ -84,18 +84,17 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         ReadCellData<?> tempCellData = xlsxReadSheetHolder.getTempCellData();
         int targetColumnIndex = 0;
 
-        List<Integer> includeColumnIndexes = null;
-        includeColumnIndexes = xlsxReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+        List<Integer> includeColumnIndexes =
+                xlsxReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
 
         if (includeColumnIndexes == null) {
             targetColumnIndex = xlsxReadSheetHolder.getColumnIndex();
-            // xlsxReadSheetHolder.getCellMap().put(xlsxReadSheetHolder.getColumnIndex(), tempCellData);
+            tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
         } else {
             targetColumnIndex = includeColumnIndexes.indexOf(xlsxReadSheetHolder.getColumnIndex());
             if (targetColumnIndex != -1) {
                 // If it's a target column, rewrite the cell's internal index and pack it sequentially
                 tempCellData.setColumnIndex(targetColumnIndex);
-                // xlsxReadSheetHolder.getCellMap().put(targetIndex, tempCellData);
             } else {
                 return;
             }
@@ -152,7 +151,6 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         }
         tempCellData.checkEmpty();
         tempCellData.setRowIndex(xlsxReadSheetHolder.getRowIndex());
-        tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
         xlsxReadSheetHolder.getCellMap().put(targetColumnIndex, tempCellData);
     }
 }

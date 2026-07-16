@@ -28,7 +28,6 @@ package org.apache.fesod.sheet.read.metadata;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.SAXParserFactory;
 import lombok.EqualsAndHashCode;
@@ -144,11 +143,6 @@ public class ReadWorkbook extends ReadBasicParameter {
      * The number of rows to read, the default is all, start with 0.
      */
     private Integer numRows;
-
-    /**
-     * The indexes of columns to read, the default is all, start with 0.
-     */
-    private List<Integer> numColumns;
 
     /**
      * Ignore hidden sheet.

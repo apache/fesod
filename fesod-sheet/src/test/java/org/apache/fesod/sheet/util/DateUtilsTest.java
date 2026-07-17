@@ -36,6 +36,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -192,6 +194,77 @@ class DateUtilsTest {
 
         String defaultFormatResult2 = DateUtils.format(ld, "");
         Assertions.assertEquals("2026-10-01", defaultFormatResult2);
+    }
+
+    @Test
+    @ResourceLock(Resources.LOCALE)
+    void test_dateTimeFormatterCache_distinguishesRootFromDefaultLocale() {
+        Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
+        try {
+            Locale.setDefault(Locale.Category.FORMAT, Locale.FRANCE);
+            LocalDate date = LocalDate.of(2026, 7, 13);
+            String format = "MMMM";
+
+            String rootResult = DateUtils.format(date, format, Locale.ROOT);
+            String defaultResult = DateUtils.format(date, format, null);
+
+            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.ROOT)), rootResult);
+            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.FRANCE)), defaultResult);
+            Assertions.assertNotEquals(rootResult, defaultResult);
+        } finally {
+            Locale.setDefault(Locale.Category.FORMAT, originalLocale);
+        }
+    }
+
+    @Test
+    @ResourceLock(Resources.LOCALE)
+    void test_dateTimeFormatterCache_tracksDefaultFormatLocaleChanges() {
+        Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
+        try {
+            LocalDate date = LocalDate.of(2026, 7, 13);
+            String format = "MMMM";
+
+            Locale.setDefault(Locale.Category.FORMAT, Locale.FRANCE);
+            String franceResult = DateUtils.format(date, format, null);
+            Locale.setDefault(Locale.Category.FORMAT, Locale.US);
+            String usResult = DateUtils.format(date, format, null);
+
+            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.FRANCE)), franceResult);
+            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.US)), usResult);
+            Assertions.assertNotEquals(franceResult, usResult);
+        } finally {
+            Locale.setDefault(Locale.Category.FORMAT, originalLocale);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_dateTimeFormatterCache_isBounded() throws NoSuchFieldException, IllegalAccessException {
+        int localeCap = readIntConstant("MAX_LOCALE_CACHE_SIZE");
+        int formatCap = readIntConstant("MAX_FORMAT_CACHE_SIZE");
+        LocalDate date = LocalDate.of(2026, 7, 13);
+
+        for (int i = 0; i <= formatCap; i++) {
+            DateUtils.format(date, "yyyy-MM-dd'" + i + "'", Locale.US);
+        }
+
+        Field field = DateUtils.class.getDeclaredField("DATE_TIME_FORMATTER_THREAD_LOCAL");
+        field.setAccessible(true);
+        ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>> threadLocal =
+                (ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>>) field.get(null);
+        Map<Locale, Map<String, DateTimeFormatter>> localeCache = threadLocal.get();
+        Assertions.assertEquals(formatCap, localeCache.get(Locale.US).size());
+
+        for (int i = 0; i < localeCap + 2; i++) {
+            DateUtils.format(date, "yyyy-MM-dd", new Locale("en", "X" + i));
+        }
+        Assertions.assertEquals(localeCap, localeCache.size());
+    }
+
+    private static int readIntConstant(String name) throws NoSuchFieldException, IllegalAccessException {
+        Field field = DateUtils.class.getDeclaredField(name);
+        field.setAccessible(true);
+        return field.getInt(null);
     }
 
     @Test
@@ -355,19 +428,24 @@ class DateUtilsTest {
     @Test
     void test_removeThreadLocalCache() throws NoSuchFieldException, IllegalAccessException {
         DateUtils.format(new Date(), "yyyy-MM-dd");
+        DateUtils.format(LocalDate.of(2026, 7, 13), "MMMM", Locale.US);
         DateUtils.isADateFormat((short) 100, "yyyy-MM-dd");
 
         Field f1 = DateUtils.class.getDeclaredField("DATE_THREAD_LOCAL");
         Field f2 = DateUtils.class.getDeclaredField("DATE_FORMAT_THREAD_LOCAL");
+        Field f3 = DateUtils.class.getDeclaredField("DATE_TIME_FORMATTER_THREAD_LOCAL");
         f1.setAccessible(true);
         f2.setAccessible(true);
+        f3.setAccessible(true);
 
         Assertions.assertNotNull(((ThreadLocal<?>) f1.get(null)).get());
         Assertions.assertNotNull(((ThreadLocal<?>) f2.get(null)).get());
+        Assertions.assertNotNull(((ThreadLocal<?>) f3.get(null)).get());
 
         DateUtils.removeThreadLocalCache();
 
         Assertions.assertNull(((ThreadLocal<?>) f1.get(null)).get());
         Assertions.assertNull(((ThreadLocal<?>) f2.get(null)).get());
+        Assertions.assertNull(((ThreadLocal<?>) f3.get(null)).get());
     }
 }

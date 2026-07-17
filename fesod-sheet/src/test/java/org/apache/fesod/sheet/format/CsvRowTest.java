@@ -181,8 +181,7 @@ public class CsvRowTest {
         File csvFile = new File(tempDir, "sql-date-test.csv");
 
         try (FileWriter writer = new FileWriter(csvFile)) {
-            CsvWorkbook workbook = new CsvWorkbook(
-                    writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);
 
@@ -201,10 +200,8 @@ public class CsvRowTest {
         List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
         Assertions.assertEquals(1, lines.size());
         String line = lines.get(0);
-        Assertions.assertTrue(line.contains("2024-01-15"),
-                "CSV should contain date 2024-01-15, got: " + line);
-        Assertions.assertTrue(line.contains("12:30:45"),
-                "CSV should contain time 12:30:45, got: " + line);
+        Assertions.assertTrue(line.contains("2024-01-15"), "CSV should contain date 2024-01-15, got: " + line);
+        Assertions.assertTrue(line.contains("12:30:45"), "CSV should contain time 12:30:45, got: " + line);
     }
 
     private static List<SimpleCsvData> modelData() {

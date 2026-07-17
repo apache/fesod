@@ -89,13 +89,11 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
 
         if (includeColumnIndexes == null) {
             targetColumnIndex = xlsxReadSheetHolder.getColumnIndex();
-            tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
         } else {
+            // if it's a target column, rewrite the cell's internal index
             targetColumnIndex = includeColumnIndexes.indexOf(xlsxReadSheetHolder.getColumnIndex());
-            if (targetColumnIndex != -1) {
-                // If it's a target column, rewrite the cell's internal index and pack it sequentially
-                tempCellData.setColumnIndex(targetColumnIndex);
-            } else {
+            if (targetColumnIndex < 0) {
+
                 return;
             }
         }
@@ -151,6 +149,7 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         }
         tempCellData.checkEmpty();
         tempCellData.setRowIndex(xlsxReadSheetHolder.getRowIndex());
+        tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
         xlsxReadSheetHolder.getCellMap().put(targetColumnIndex, tempCellData);
     }
 }

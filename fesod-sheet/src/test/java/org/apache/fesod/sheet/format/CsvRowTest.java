@@ -20,7 +20,6 @@
 package org.apache.fesod.sheet.format;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
@@ -136,8 +135,10 @@ public class CsvRowTest {
     @Test
     void testCsvCellSqlDateConversion() {
         // Create a java.sql.Date from a java.util.Date that has a time component
-        java.util.Date utilDate = new java.util.Date(2023 - 1900, Calendar.JUNE, 15, 23, 30, 0);
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2023, Calendar.JUNE, 15, 23, 30, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        java.sql.Date sqlDate = new java.sql.Date(cal.getTimeInMillis());
 
         Cell cell = csvRow.createCell(0, CellType.NUMERIC);
         cell.setCellValue(sqlDate);
@@ -156,8 +157,10 @@ public class CsvRowTest {
     @Test
     void testCsvCellSqlTimeConversion() {
         // Create a java.sql.Time from a java.util.Date that has a date component
-        java.util.Date utilDate = new java.util.Date(2023 - 1900, Calendar.JUNE, 15, 12, 30, 45);
-        java.sql.Time sqlTime = new java.sql.Time(utilDate.getTime());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2023, Calendar.JUNE, 15, 12, 30, 45);
+        cal.set(Calendar.MILLISECOND, 0);
+        java.sql.Time sqlTime = new java.sql.Time(cal.getTimeInMillis());
 
         Cell cell = csvRow.createCell(0, CellType.NUMERIC);
         cell.setCellValue(sqlTime);
@@ -180,7 +183,7 @@ public class CsvRowTest {
     void csvWrite_withSqlDateAndTime_producesCorrectFile() throws Exception {
         File csvFile = new File(tempDir, "sql-date-test.csv");
 
-        try (FileWriter writer = new FileWriter(csvFile)) {
+        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);

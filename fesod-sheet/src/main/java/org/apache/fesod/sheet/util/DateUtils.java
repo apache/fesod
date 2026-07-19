@@ -49,6 +49,11 @@ import org.apache.poi.util.LocaleUtil;
  * Date utils
  */
 public class DateUtils {
+
+    private static final int MAX_LOCALE_CACHE_SIZE = 8;
+
+    private static final int MAX_FORMAT_CACHE_SIZE = 64;
+
     /**
      * Is a cache of dates
      */
@@ -57,6 +62,13 @@ public class DateUtils {
      * Is a cache of dates
      */
     private static final ThreadLocal<Map<String, SimpleDateFormat>> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<>();
+
+    /**
+     * Bounded cache of {@link DateTimeFormatter}, nested by resolved locale then pattern. Both levels evict FIFO, and
+     * the whole cache is cleared by {@link #removeThreadLocalCache()}.
+     */
+    private static final ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>> DATE_TIME_FORMATTER_THREAD_LOCAL =
+            new ThreadLocal<>();
 
     /**
      * The following patterns are used in {@link #isADateFormat(Short, String)}
@@ -126,11 +138,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        if (local == null) {
-            return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return LocalDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -145,11 +153,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        if (local == null) {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return LocalDate.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -238,11 +242,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = defaultDateFormat;
         }
-        if (local == null) {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return date.format(getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -270,11 +270,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = defaultLocalDateFormat;
         }
-        if (local == null) {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            return date.format(DateTimeFormatter.ofPattern(dateFormat, local));
-        }
+        return date.format(getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**
@@ -302,6 +298,26 @@ public class DateUtils {
         LocalDateTime localDateTime =
                 DateUtil.getLocalDateTime(date.doubleValue(), BooleanUtils.isTrue(use1904windowing), true);
         return format(localDateTime, dateFormat);
+    }
+
+    private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
+        Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
+        Map<Locale, Map<String, DateTimeFormatter>> localeCache = DATE_TIME_FORMATTER_THREAD_LOCAL.get();
+        if (localeCache == null) {
+            localeCache = MapUtils.newBoundedMap(MAX_LOCALE_CACHE_SIZE);
+            DATE_TIME_FORMATTER_THREAD_LOCAL.set(localeCache);
+        }
+        Map<String, DateTimeFormatter> formatCache = localeCache.get(actualLocale);
+        if (formatCache == null) {
+            formatCache = MapUtils.newBoundedMap(MAX_FORMAT_CACHE_SIZE);
+            localeCache.put(actualLocale, formatCache);
+        }
+        DateTimeFormatter formatter = formatCache.get(dateFormat);
+        if (formatter == null) {
+            formatter = DateTimeFormatter.ofPattern(dateFormat, actualLocale);
+            formatCache.put(dateFormat, formatter);
+        }
+        return formatter;
     }
 
     private static DateFormat getCacheDateFormat(String dateFormat) {
@@ -573,5 +589,6 @@ public class DateUtils {
     public static void removeThreadLocalCache() {
         DATE_THREAD_LOCAL.remove();
         DATE_FORMAT_THREAD_LOCAL.remove();
+        DATE_TIME_FORMATTER_THREAD_LOCAL.remove();
     }
 }

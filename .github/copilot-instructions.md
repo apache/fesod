@@ -4,7 +4,7 @@
 
 Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLSX/CSV) without OOM, derived from Alibaba EasyExcel. It uses Apache POI under the hood with streaming SAX-based reading. The project is an Apache incubator project and must follow ASF conventions.
 
-- **Language**: Java 8+ (source/target = 1.8; CI builds/tests on JDK 8–25)
+- **Language**: Java 8+ (source/target = 1.8; CI builds on JDK 8, 11, 17, 21, 25 — JDK 17+ is recommended for local development)
 - **Build**: Maven 3.6.3 via `./mvnw` wrapper (project docs require 3.9+, but wrapper currently pins 3.6.3; both work)
 - **CI matrix**: JDK 8, 11, 17, 21, 25
 
@@ -33,16 +33,16 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 ## Code Style & Conventions
 
 - **Formatter**: Palantir Java Format (enforced by Spotless, no checkstyle)
-- **Imports**: Static imports first (`#|` pattern), then regular; no unused imports
+- **Imports**: Static imports first, then regular imports; no unused imports (enforced by Spotless `importOrder` with `\#|` separator)
 - **Indent**: 4 spaces
-- **License header**: ASF Apache 2.0 header required on all `.java`, `.xml`, `.yml`, `.toml` files (see `tools/spotless/license-header.txt`)
+- **License header**: ASF Apache 2.0 header required on all `.java`, `.xml`, `.yml`, `.toml` files. Header template at `tools/spotless/license-header.txt`; enforced by the Hawkeye workflow (`.github/workflows/license-check.yml`), not Spotless
 - **Lombok**: Allowed; config in `lombok.config` (`toString.callSuper = CALL`, `equalsAndHashCode.callSuper = CALL`)
 - **Commits**: English, format `type: description` (types: `fix`, `feat`, `refactor`, `test`, `docs`, `chore`, `style`, `dependency`)
 
 ## Module Structure
 
 ```
-fesod-parent/          # Root POM, dependency & plugin management
+(root)                 # Root POM (artifactId: fesod-parent), dependency & plugin management
 ├── fesod-common/      # Zero-dependency utilities (org.apache.fesod.common.util)
 ├── fesod-shaded/      # Relocated Spring ASM/cglib (org.apache.fesod.shaded)
 ├── fesod-bom/         # BOM for downstream consumers
@@ -65,7 +65,7 @@ fesod-parent/          # Root POM, dependency & plugin management
 
 ## Testing Conventions
 
-- **JUnit 5** with `@TestInstance(PER_CLASS)`, `@DisplayName(ReplaceUnderscores)`
+- **JUnit 5** with `PER_CLASS` lifecycle and `ReplaceUnderscores` display name generator (configured globally in `fesod-sheet/src/test/resources/junit-platform.properties`, not via per-class annotations)
 - **Tags** (use `@Tag(Tags.XXX)`):
   - `unit` — pure logic, no file I/O
   - `round-trip` — write-then-read via `AbstractExcelTest`

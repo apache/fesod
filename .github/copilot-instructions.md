@@ -4,7 +4,7 @@
 
 Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLSX/CSV) without OOM, derived from Alibaba EasyExcel. It uses Apache POI under the hood with streaming SAX-based reading. The project is an Apache incubator project and must follow ASF conventions.
 
-- **Language**: Java 8+ (source/target = 1.8, but builds on JDK 17+)
+- **Language**: Java 8+ (source/target = 1.8; CI builds/tests on JDK 8–25)
 - **Build**: Maven 3.6.3 via `./mvnw` wrapper (project docs require 3.9+, but wrapper currently pins 3.6.3; both work)
 - **CI matrix**: JDK 8, 11, 17, 21, 25
 

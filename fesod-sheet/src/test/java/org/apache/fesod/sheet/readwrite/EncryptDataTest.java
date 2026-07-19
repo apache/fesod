@@ -124,8 +124,7 @@ public class EncryptDataTest extends AbstractExcelTest {
 
         // Reading without the password must fail because the content is BIFF8-encrypted
         Assertions.assertThrows(
-                Exception.class,
-                () -> FesodSheet.read(file, SimpleData.class, new CollectingReadListener<SimpleData>())
+                Exception.class, () -> FesodSheet.read(file, SimpleData.class, new CollectingReadListener<SimpleData>())
                         .excelType(ExcelTypeEnum.XLS)
                         .sheet()
                         .doReadSync());

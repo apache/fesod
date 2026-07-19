@@ -39,6 +39,7 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.poi.EncryptedDocumentException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -123,11 +124,11 @@ public class EncryptDataTest extends AbstractExcelTest {
                 .doWrite(TestDataBuilder.simpleData(10));
 
         // Reading without the password must fail because the content is BIFF8-encrypted
-        Assertions.assertThrows(
-                Exception.class, () -> FesodSheet.read(file, SimpleData.class, new CollectingReadListener<SimpleData>())
-                        .excelType(ExcelTypeEnum.XLS)
-                        .sheet()
-                        .doReadSync());
+        Assertions.assertThrows(EncryptedDocumentException.class, () -> FesodSheet.read(
+                        file, SimpleData.class, new CollectingReadListener<SimpleData>())
+                .excelType(ExcelTypeEnum.XLS)
+                .sheet()
+                .doReadSync());
 
         // Reading with the correct password must succeed
         List<SimpleData> dataList = FesodSheet.read(file, SimpleData.class, new CollectingReadListener<SimpleData>())

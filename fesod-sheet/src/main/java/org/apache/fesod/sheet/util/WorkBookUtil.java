@@ -92,7 +92,7 @@ public class WorkBookUtil {
                 }
                 writeWorkbookHolder.setCachedWorkbook(hssfWorkbook);
                 writeWorkbookHolder.setWorkbook(hssfWorkbook);
-                if (writeWorkbookHolder.getPassword() != null) {
+                if (!StringUtils.isEmpty(writeWorkbookHolder.getPassword())) {
                     Biff8EncryptionKey.setCurrentUserPassword(writeWorkbookHolder.getPassword());
                     hssfWorkbook.writeProtectWorkbook(writeWorkbookHolder.getPassword(), StringUtils.EMPTY);
                 }

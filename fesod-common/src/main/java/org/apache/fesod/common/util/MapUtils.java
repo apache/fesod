@@ -27,11 +27,43 @@ package org.apache.fesod.common.util;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class MapUtils {
 
     private MapUtils() {}
+
+    /**
+     * A {@link LinkedHashMap} bounded to {@code maxEntries}, evicting the eldest entry on overflow (FIFO). Insertion
+     * order keeps {@link #get} non-mutating on hot paths.
+     */
+    private static final class BoundedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
+        private static final long serialVersionUID = 1L;
+
+        private final int maxEntries;
+
+        private BoundedLinkedHashMap(int maxEntries) {
+            super(capacity(maxEntries), 0.75f, false);
+            this.maxEntries = maxEntries;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+            return size() > maxEntries;
+        }
+    }
+
+    /**
+     * Creates an empty {@code Map} that retains at most {@code maxEntries} entries, evicting the eldest on overflow.
+     * Handy for thread-local caches keyed by an unbounded input set.
+     *
+     * @param maxEntries the maximum number of entries to retain; must be positive
+     * @return a new, empty bounded {@code Map}
+     */
+    public static <K, V> Map<K, V> newBoundedMap(int maxEntries) {
+        return new BoundedLinkedHashMap<>(maxEntries);
+    }
 
     /**
      * Creates a <i>mutable</i>, empty {@code HashMap} instance.

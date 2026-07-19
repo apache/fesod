@@ -28,7 +28,11 @@ package org.apache.fesod.sheet.util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.Locale;
+import java.util.Map;
+import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
@@ -39,6 +43,18 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
  *
  */
 public class NumberUtils {
+
+    private static final int MAX_LOCALE_CACHE_SIZE = 4;
+
+    private static final int MAX_FORMAT_CACHE_SIZE = 64;
+
+    /**
+     * Bounded cache of {@link DecimalFormat}, nested by default FORMAT locale then pattern. {@link DecimalFormat} is
+     * not thread-safe, so it is thread-local; both levels evict FIFO to keep long-lived threads bounded.
+     */
+    private static final ThreadLocal<Map<Locale, Map<String, DecimalFormat>>> DECIMAL_FORMAT_THREAD_LOCAL =
+            new ThreadLocal<>();
+
     private NumberUtils() {}
 
     /**
@@ -60,9 +76,7 @@ public class NumberUtils {
         }
         String format = contentProperty.getNumberFormatProperty().getFormat();
         RoundingMode roundingMode = contentProperty.getNumberFormatProperty().getRoundingMode();
-        DecimalFormat decimalFormat = new DecimalFormat(format);
-        decimalFormat.setRoundingMode(roundingMode);
-        return decimalFormat.format(num);
+        return getCacheDecimalFormat(format, roundingMode).format(num);
     }
 
     /**
@@ -212,9 +226,35 @@ public class NumberUtils {
     private static Number parse(String string, ExcelContentProperty contentProperty) throws ParseException {
         String format = contentProperty.getNumberFormatProperty().getFormat();
         RoundingMode roundingMode = contentProperty.getNumberFormatProperty().getRoundingMode();
-        DecimalFormat decimalFormat = new DecimalFormat(format);
-        decimalFormat.setRoundingMode(roundingMode);
+        DecimalFormat decimalFormat = getCacheDecimalFormat(format, roundingMode);
         decimalFormat.setParseBigDecimal(true);
         return decimalFormat.parse(string);
+    }
+
+    private static DecimalFormat getCacheDecimalFormat(String format, RoundingMode roundingMode) {
+        Locale locale = Locale.getDefault(Locale.Category.FORMAT);
+        Map<Locale, Map<String, DecimalFormat>> localeCache = DECIMAL_FORMAT_THREAD_LOCAL.get();
+        if (localeCache == null) {
+            localeCache = MapUtils.newBoundedMap(MAX_LOCALE_CACHE_SIZE);
+            DECIMAL_FORMAT_THREAD_LOCAL.set(localeCache);
+        }
+        Map<String, DecimalFormat> formatCache = localeCache.get(locale);
+        if (formatCache == null) {
+            formatCache = MapUtils.newBoundedMap(MAX_FORMAT_CACHE_SIZE);
+            localeCache.put(locale, formatCache);
+        }
+        DecimalFormat decimalFormat = formatCache.get(format);
+        if (decimalFormat == null) {
+            decimalFormat = new DecimalFormat(format, DecimalFormatSymbols.getInstance(locale));
+            formatCache.put(format, decimalFormat);
+        }
+        if (decimalFormat.getRoundingMode() != roundingMode) {
+            decimalFormat.setRoundingMode(roundingMode);
+        }
+        return decimalFormat;
+    }
+
+    public static void removeThreadLocalCache() {
+        DECIMAL_FORMAT_THREAD_LOCAL.remove();
     }
 }

@@ -53,6 +53,7 @@ import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
+import org.apache.fesod.sheet.util.NumberUtils;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -292,6 +293,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
      */
     private void removeThreadLocalCache() {
         NumberDataFormatterUtils.removeThreadLocalCache();
+        NumberUtils.removeThreadLocalCache();
         DateUtils.removeThreadLocalCache();
         ClassUtils.removeThreadLocalCache();
     }

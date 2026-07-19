@@ -149,7 +149,7 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         }
         tempCellData.checkEmpty();
         tempCellData.setRowIndex(xlsxReadSheetHolder.getRowIndex());
-        tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
+        tempCellData.setColumnIndex(targetColumnIndex);
         xlsxReadSheetHolder.getCellMap().put(targetColumnIndex, tempCellData);
     }
 }

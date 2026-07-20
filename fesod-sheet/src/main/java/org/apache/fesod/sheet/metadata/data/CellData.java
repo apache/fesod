@@ -45,6 +45,11 @@ import org.apache.fesod.sheet.metadata.AbstractCell;
 @EqualsAndHashCode
 public class CellData<T> extends AbstractCell {
     /**
+     * Marker Excel writes for a {@code true} boolean cell value ({@code <v>1</v>} for {@code t="b"} cells).
+     */
+    private static final String TRUE_NUMBER = "1";
+
+    /**
      * cell type
      */
     private CellDataTypeEnum type;
@@ -70,6 +75,19 @@ public class CellData<T> extends AbstractCell {
      * formula
      */
     private FormulaData formulaData;
+
+    /**
+     * Sets {@link #booleanValue} from the raw {@code <v>} text of a boolean ({@code t="b"}) xlsx cell.
+     *
+     * <p>Excel encodes boolean cells using the numeric markers {@code 0}/{@code 1}, so only the exact
+     * string {@code "1"} maps to {@code true}; any other input (including {@code "true"}) maps to
+     * {@code false}. This mirrors Apache POI's {@code XSSFCell.getBooleanCellValue()}.
+     *
+     * @param str the raw cell value text
+     */
+    public void setBooleanValueFromString(String str) {
+        this.booleanValue = TRUE_NUMBER.equals(str);
+    }
 
     /**
      * Ensure that the object does not appear null

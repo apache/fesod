@@ -33,6 +33,7 @@ import org.apache.fesod.sheet.constant.ExcelXmlConstants;
 import org.apache.fesod.sheet.constant.FesodSheetConstants;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
@@ -49,8 +50,8 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
-        xlsxReadSheetHolder.setColumnIndex(PositionUtils.getCol(
-                attributes.getValue(ExcelXmlConstants.ATTRIBUTE_R), xlsxReadSheetHolder.getColumnIndex()));
+        String cellReference = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_R);
+        xlsxReadSheetHolder.setColumnIndex(PositionUtils.getCol(cellReference, xlsxReadSheetHolder.getColumnIndex()));
 
         // t="s" ,it means String
         // t="str" ,it means String,but does not need to be read in the 'sharedStrings.xml'
@@ -59,7 +60,11 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         // t="e" ,it means Error
         // t="n" ,it means Number
         // t is null ,it means Empty or Number
-        CellDataTypeEnum type = CellDataTypeEnum.buildFromCellType(attributes.getValue(ExcelXmlConstants.ATTRIBUTE_T));
+        String cellType = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_T);
+        CellDataTypeEnum type = CellDataTypeEnum.buildFromCellType(cellType);
+        if (type == null) {
+            throw new ExcelAnalysisException("Invalid cell data type: '" + cellType + "' in cell " + cellReference);
+        }
         xlsxReadSheetHolder.setTempCellData(new ReadCellData<>(type));
         xlsxReadSheetHolder.setTempData(new StringBuilder());
 

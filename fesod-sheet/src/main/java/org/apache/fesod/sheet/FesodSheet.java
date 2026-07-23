@@ -22,6 +22,7 @@ package org.apache.fesod.sheet;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
@@ -329,5 +330,21 @@ public class FesodSheet {
                 .sheetNoIfNotNull(sheetNo)
                 .sheetNameIfNotNull(sheetName)
                 .numRowsIfNotNull(numRows);
+    }
+
+    /**
+     * Build excel the 'readSheet' targeting specific column indexes.
+     *
+     * @param sheetNo       Index of sheet, 0 base.
+     * @param columnIndexes Specific columns to read (e.g., [0, 2] for Column A and C).
+     * @return Excel sheet reader builder.
+     */
+    public static ExcelReaderSheetBuilder readSheetWithColumns(
+            Integer sheetNo, String sheetName, Integer numRows, List<Integer> columnIndexes) {
+        return new ExcelReaderSheetBuilder()
+                .sheetNoIfNotNull(sheetNo)
+                .sheetNameIfNotNull(sheetName)
+                .numRowsIfNotNull(numRows)
+                .includeColumnIndexes(columnIndexes);
     }
 }

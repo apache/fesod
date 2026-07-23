@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.read.metadata;
 
+import java.util.List;
 import lombok.EqualsAndHashCode;
 
 /**
@@ -54,6 +55,11 @@ public class ReadSheet extends ReadBasicParameter {
      */
     public Integer numRows;
 
+    /**
+     * Specific columns to read (0-based indexes)
+     */
+    private List<Integer> columnIndexes;
+
     public ReadSheet() {}
 
     public ReadSheet(Integer sheetNo) {
@@ -69,6 +75,13 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetNo = sheetNo;
         this.sheetName = sheetName;
         this.numRows = numRows;
+    }
+
+    public ReadSheet(Integer sheetNo, String sheetName, Integer numRows, List<Integer> numCols) {
+        this.sheetNo = sheetNo;
+        this.sheetName = sheetName;
+        this.numRows = numRows;
+        this.columnIndexes = numCols;
     }
 
     public Integer getSheetNo() {
@@ -111,6 +124,14 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetVeryHidden = sheetVeryHidden;
     }
 
+    public List<Integer> getColumnIndexes() {
+        return this.columnIndexes;
+    }
+
+    public void setColumnIndexes(List<Integer> columnIndexes) {
+        this.columnIndexes = columnIndexes;
+    }
+
     public void copyBasicParameter(ReadSheet other) {
         if (other == null) {
             return;
@@ -126,6 +147,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());
+        this.setColumnIndexes(other.getColumnIndexes());
     }
 
     @Override

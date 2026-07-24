@@ -33,6 +33,7 @@ import org.apache.fesod.sheet.metadata.csv.CsvRow;
 import org.apache.fesod.sheet.metadata.csv.CsvSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.junit.jupiter.api.Assertions;
@@ -144,14 +145,14 @@ public class CsvRowTest {
         cell.setCellValue(sqlDate);
 
         LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
-        // java.sql.Date is date-only: time component must be stripped to midnight
-        Assertions.assertEquals(LocalDateTime.of(2023, 6, 15, 0, 0, 0), dateValue);
+        // java.sql.Date is date-only: derive expected value from sqlDate itself to avoid timezone sensitivity
+        Assertions.assertEquals(sqlDate.toLocalDate().atStartOfDay(), dateValue);
     }
 
     /**
      * Verifies that {@link CsvCell} handles {@link java.sql.Time} the same way as
      * {@link org.apache.fesod.sheet.metadata.data.WriteCellData}: the time is extracted
-     * via {@code toLocalTime().atDate(LocalDate.of(1970, 1, 1))}, stripping any date
+     * via {@code toLocalTime().atDate(DateUtils.EPOCH)}, stripping any date
      * component that may exist in the underlying milliseconds.
      */
     @Test
@@ -166,8 +167,8 @@ public class CsvRowTest {
         cell.setCellValue(sqlTime);
 
         LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
-        // java.sql.Time is time-only: date component must be normalized to 1970-01-01
-        Assertions.assertEquals(LocalDateTime.of(1970, 1, 1, 12, 30, 45), dateValue);
+        // java.sql.Time is time-only: derive expected value from sqlTime itself to avoid timezone sensitivity
+        Assertions.assertEquals(sqlTime.toLocalTime().atDate(DateUtils.EPOCH), dateValue);
     }
 
     /**

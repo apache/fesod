@@ -36,6 +36,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.enums.NumericCellTypeEnum;
 import org.apache.fesod.sheet.metadata.data.FormulaData;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -167,7 +168,7 @@ public class CsvCell extends CellBase {
         if (value instanceof java.sql.Date) {
             this.dateValue = ((java.sql.Date) value).toLocalDate().atStartOfDay();
         } else if (value instanceof java.sql.Time) {
-            this.dateValue = ((java.sql.Time) value).toLocalTime().atDate(java.time.LocalDate.of(1970, 1, 1));
+            this.dateValue = ((java.sql.Time) value).toLocalTime().atDate(DateUtils.EPOCH);
         } else {
             this.dateValue = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
         }

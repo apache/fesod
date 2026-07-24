@@ -50,14 +50,14 @@ jobs:
 
       - name: Install dependencies
         working-directory: website
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build website
         working-directory: website
         run: pnpm build
 
       - name: Lint markdown files
-        uses: DavidAnson/markdownlint-cli2-action@07035fd053f7be764496c0f8d8f9f41f98305101
+        uses: DavidAnson/markdownlint-cli2-action@6bf21b07787794f89a243495939cd651942aeabe
         with:
           globs: 'website/**/*.md'
           config: 'website/.markdownlint-cli2.jsonc'

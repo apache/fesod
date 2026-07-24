@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.metadata.data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CellDataTest {
+public class ReadCellDataTest {
 
     /**
      * xlsx boolean cells use Excel's {@code 0}/{@code 1} markers, so only {@code "1"} maps to {@code true}.
@@ -40,7 +40,7 @@ public class CellDataTest {
     }
 
     private static Boolean booleanFrom(String str) {
-        CellData<?> cellData = new CellData<>();
+        ReadCellData<?> cellData = new ReadCellData<>();
         cellData.setBooleanValueFromString(str);
         return cellData.getBooleanValue();
     }

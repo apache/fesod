@@ -19,17 +19,18 @@
 
 package org.apache.fesod.sheet.examples;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Base class for Fesod example integration tests.
@@ -58,7 +59,7 @@ public abstract class ExampleTestBase {
         assertTrue(file.length() > 0, "File should not be empty: " + file.getAbsolutePath());
 
         try (FileInputStream fis = new FileInputStream(file);
-                Workbook workbook = WorkbookFactory.create(fis)) {
+             Workbook workbook = WorkbookFactory.create(fis)) {
             assertNotNull(workbook, "Workbook should be readable");
             assertTrue(workbook.getNumberOfSheets() > 0, "Workbook should have at least one sheet");
         } catch (IOException e) {
@@ -70,14 +71,14 @@ public abstract class ExampleTestBase {
      * Assert that the given file is a valid Excel workbook with at least the specified number of
      * data rows (excluding header).
      *
-     * @param file the Excel file to validate
+     * @param file        the Excel file to validate
      * @param minDataRows the minimum number of data rows expected (excluding header row)
      */
     protected static void assertValidExcelFile(File file, int minDataRows) {
         assertValidExcelFile(file);
 
         try (FileInputStream fis = new FileInputStream(file);
-                Workbook workbook = WorkbookFactory.create(fis)) {
+             Workbook workbook = WorkbookFactory.create(fis)) {
             int totalRows = workbook.getSheetAt(0).getPhysicalNumberOfRows();
             // totalRows includes header row, so data rows = totalRows - 1
             assertTrue(
@@ -93,7 +94,7 @@ public abstract class ExampleTestBase {
      * Assert that the given file is a valid Excel workbook with at least the specified number of
      * columns, scanning for the first non-empty row to determine the column count.
      *
-     * @param file the Excel file to validate
+     * @param file       the Excel file to validate
      * @param minColumns the minimum number of columns expected
      */
     protected static void assertValidExcelFileColumns(File file, int minColumns) {
@@ -101,20 +102,16 @@ public abstract class ExampleTestBase {
         assertValidExcelFile(file);
 
         try (FileInputStream fis = new FileInputStream(file);
-                Workbook workbook = WorkbookFactory.create(fis)) {
-
+             Workbook workbook = WorkbookFactory.create(fis)) {
             Sheet sheet = workbook.getSheetAt(0);
-
             // find which row is not empty
             for (int i = 0; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
-
                 if (row != null && row.getPhysicalNumberOfCells() > 0) {
                     totalColumns = row.getLastCellNum();
                     break;
                 }
             }
-
             assertTrue(
                     totalColumns >= minColumns,
                     "Expected at least " + minColumns + " columns, but found " + totalColumns
@@ -127,7 +124,7 @@ public abstract class ExampleTestBase {
     /**
      * Generate a temp output file path within the given directory.
      *
-     * @param tempDir the temporary directory (typically from {@code @TempDir})
+     * @param tempDir  the temporary directory (typically from {@code @TempDir})
      * @param fileName the desired filename
      * @return the absolute path as a String
      */

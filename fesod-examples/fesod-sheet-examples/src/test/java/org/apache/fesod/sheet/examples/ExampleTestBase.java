@@ -19,18 +19,17 @@
 
 package org.apache.fesod.sheet.examples;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * Base class for Fesod example integration tests.
@@ -59,7 +58,7 @@ public abstract class ExampleTestBase {
         assertTrue(file.length() > 0, "File should not be empty: " + file.getAbsolutePath());
 
         try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = WorkbookFactory.create(fis)) {
+                Workbook workbook = WorkbookFactory.create(fis)) {
             assertNotNull(workbook, "Workbook should be readable");
             assertTrue(workbook.getNumberOfSheets() > 0, "Workbook should have at least one sheet");
         } catch (IOException e) {
@@ -78,7 +77,7 @@ public abstract class ExampleTestBase {
         assertValidExcelFile(file);
 
         try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = WorkbookFactory.create(fis)) {
+                Workbook workbook = WorkbookFactory.create(fis)) {
             int totalRows = workbook.getSheetAt(0).getPhysicalNumberOfRows();
             // totalRows includes header row, so data rows = totalRows - 1
             assertTrue(
@@ -102,7 +101,7 @@ public abstract class ExampleTestBase {
         assertValidExcelFile(file);
 
         try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = WorkbookFactory.create(fis)) {
+                Workbook workbook = WorkbookFactory.create(fis)) {
             Sheet sheet = workbook.getSheetAt(0);
             // find which row is not empty
             for (int i = 0; i <= sheet.getLastRowNum(); i++) {

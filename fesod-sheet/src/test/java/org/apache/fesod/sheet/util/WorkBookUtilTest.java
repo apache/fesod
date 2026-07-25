@@ -231,7 +231,10 @@ class WorkBookUtilTest {
 
         // Verify
         Mockito.verify(writeWorkbookHolder).setWorkbook(Mockito.any(HSSFWorkbook.class));
-        Assertions.assertNull(Biff8EncryptionKey.getCurrentUserPassword());
+        // The BIFF8 encryption password must remain set after createWorkBook() so that
+        // workbook.write() (called later in WriteContextImpl.finish()) can apply encryption.
+        // WriteContextImpl.clearEncrypt03() clears it after writing completes.
+        Assertions.assertEquals("123456", Biff8EncryptionKey.getCurrentUserPassword());
     }
 
     @Test

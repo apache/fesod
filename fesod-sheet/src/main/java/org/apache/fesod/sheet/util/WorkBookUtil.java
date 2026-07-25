@@ -92,13 +92,9 @@ public class WorkBookUtil {
                 }
                 writeWorkbookHolder.setCachedWorkbook(hssfWorkbook);
                 writeWorkbookHolder.setWorkbook(hssfWorkbook);
-                if (writeWorkbookHolder.getPassword() != null) {
-                    try {
-                        Biff8EncryptionKey.setCurrentUserPassword(writeWorkbookHolder.getPassword());
-                        hssfWorkbook.writeProtectWorkbook(writeWorkbookHolder.getPassword(), StringUtils.EMPTY);
-                    } finally {
-                        Biff8EncryptionKey.setCurrentUserPassword(null);
-                    }
+                if (!StringUtils.isEmpty(writeWorkbookHolder.getPassword())) {
+                    Biff8EncryptionKey.setCurrentUserPassword(writeWorkbookHolder.getPassword());
+                    hssfWorkbook.writeProtectWorkbook(writeWorkbookHolder.getPassword(), StringUtils.EMPTY);
                 }
                 return;
             case CSV:

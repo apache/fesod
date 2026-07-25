@@ -1,6 +1,6 @@
 ---
 id: 'release-version'
-title: 'How to Release a Version'
+title: 'How to Release'
 ---
 
 <!--

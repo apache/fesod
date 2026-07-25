@@ -36,7 +36,12 @@ public class BooleanUtils {
      *
      * @param str
      * @return
+     * @deprecated this only targets Excel's {@code 0}/{@code 1} boolean cell markers and is not a
+     *     general-purpose string-to-boolean conversion; it should not be used outside that scenario and
+     *     will be removed in a future release. Use
+     *     {@code org.apache.fesod.sheet.metadata.data.ReadCellData#setBooleanValueFromString(String)} instead.
      */
+    @Deprecated
     public static Boolean valueOf(String str) {
         if (TRUE_NUMBER.equals(str)) {
             return Boolean.TRUE;

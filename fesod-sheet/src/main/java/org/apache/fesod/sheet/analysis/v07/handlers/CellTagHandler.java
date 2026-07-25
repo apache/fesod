@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.analysis.v07.handlers;
 
 import java.math.BigDecimal;
 import java.util.List;
-import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.common.util.PositionUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
@@ -126,7 +125,7 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
                     tempCellData.setType(CellDataTypeEnum.EMPTY);
                     break;
                 }
-                tempCellData.setBooleanValue(BooleanUtils.valueOf(tempData.toString()));
+                tempCellData.setBooleanValueFromString(tempData.toString());
                 break;
             case NUMBER:
             case EMPTY:

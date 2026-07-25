@@ -87,6 +87,12 @@ public class DateUtils {
     // for format which start with "年" or "月" or "日" or "时" or "分" or "秒" could be a Chinese date
     private static final Pattern date_ptrn6 = Pattern.compile("(年|月|日|时|分|秒)+");
 
+    /**
+     * The epoch date (1970-01-01) used as the date component when converting
+     * {@code java.sql.Time} to {@code LocalDateTime}.
+     */
+    public static final LocalDate EPOCH = LocalDate.of(1970, 1, 1);
+
     public static final String DATE_FORMAT_10 = "yyyy-MM-dd";
     public static final String DATE_FORMAT_14 = "yyyyMMddHHmmss";
     public static final String DATE_FORMAT_16 = "yyyy-MM-dd HH:mm";

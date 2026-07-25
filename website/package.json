@@ -27,7 +27,7 @@
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "docusaurus-plugin-matomo": "^0.0.8",
-    "markdownlint-cli2": "^0.20.0",
+    "markdownlint-cli2": "^0.23.1",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

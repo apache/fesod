@@ -20,14 +20,20 @@
 package org.apache.fesod.sheet.format;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.metadata.csv.CsvCell;
 import org.apache.fesod.sheet.metadata.csv.CsvRow;
 import org.apache.fesod.sheet.metadata.csv.CsvSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.junit.jupiter.api.Assertions;
@@ -118,6 +124,88 @@ public class CsvRowTest {
                 .registerWriteHandler(new AssertCsvHeadDataWriteHandler(head(), data()))
                 .csv()
                 .doWrite(modelData());
+    }
+
+    /**
+     * Verifies that {@link CsvCell} handles {@link java.sql.Date} the same way as
+     * {@link org.apache.fesod.sheet.metadata.data.WriteCellData}: the date is extracted
+     * via {@code toLocalDate().atStartOfDay()}, stripping any time component that may
+     * exist in the underlying milliseconds (common when JDBC drivers create
+     * {@code java.sql.Date} from a {@code java.util.Date} with time info).
+     */
+    @Test
+    void testCsvCellSqlDateConversion() {
+        // Create a java.sql.Date from a java.util.Date that has a time component
+        Calendar cal = Calendar.getInstance();
+        cal.set(2023, Calendar.JUNE, 15, 23, 30, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        java.sql.Date sqlDate = new java.sql.Date(cal.getTimeInMillis());
+
+        Cell cell = csvRow.createCell(0, CellType.NUMERIC);
+        cell.setCellValue(sqlDate);
+
+        LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
+        // java.sql.Date is date-only: derive expected value from sqlDate itself to avoid timezone sensitivity
+        Assertions.assertEquals(sqlDate.toLocalDate().atStartOfDay(), dateValue);
+    }
+
+    /**
+     * Verifies that {@link CsvCell} handles {@link java.sql.Time} the same way as
+     * {@link org.apache.fesod.sheet.metadata.data.WriteCellData}: the time is extracted
+     * via {@code toLocalTime().atDate(DateUtils.EPOCH)}, stripping any date
+     * component that may exist in the underlying milliseconds.
+     */
+    @Test
+    void testCsvCellSqlTimeConversion() {
+        // Create a java.sql.Time from a java.util.Date that has a date component
+        Calendar cal = Calendar.getInstance();
+        cal.set(2023, Calendar.JUNE, 15, 12, 30, 45);
+        cal.set(Calendar.MILLISECOND, 0);
+        java.sql.Time sqlTime = new java.sql.Time(cal.getTimeInMillis());
+
+        Cell cell = csvRow.createCell(0, CellType.NUMERIC);
+        cell.setCellValue(sqlTime);
+
+        LocalDateTime dateValue = ((CsvCell) cell).getLocalDateTimeCellValue();
+        // java.sql.Time is time-only: derive expected value from sqlTime itself to avoid timezone sensitivity
+        Assertions.assertEquals(sqlTime.toLocalTime().atDate(DateUtils.EPOCH), dateValue);
+    }
+
+    /**
+     * Real-file integration test: writes a physical CSV file containing
+     * {@code java.sql.Date} and {@code java.sql.Time} values via the
+     * {@link CsvCell} API, then reads the file back to verify the output.
+     * <p>
+     * Without the fix, {@code CsvCell.setCellValueImpl(Date)} calls
+     * {@code value.toInstant()} which throws {@code UnsupportedOperationException}
+     * on Java 9+ for {@code java.sql.Date}/{@code java.sql.Time}.
+     */
+    @Test
+    void csvWrite_withSqlDateAndTime_producesCorrectFile() throws Exception {
+        File csvFile = new File(tempDir, "sql-date-test.csv");
+
+        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+            CsvRow row = (CsvRow) sheet.createRow(0);
+
+            // java.sql.Date — without fix: UnsupportedOperationException
+            Cell dateCell = row.createCell(0, CellType.NUMERIC);
+            dateCell.setCellValue(java.sql.Date.valueOf("2024-01-15"));
+
+            // java.sql.Time — without fix: UnsupportedOperationException
+            Cell timeCell = row.createCell(1, CellType.NUMERIC);
+            timeCell.setCellValue(java.sql.Time.valueOf("12:30:45"));
+
+            sheet.close();
+        }
+
+        // Read file back and verify date/time strings
+        List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
+        Assertions.assertEquals(1, lines.size());
+        String line = lines.get(0);
+        Assertions.assertTrue(line.contains("2024-01-15"), "CSV should contain date 2024-01-15, got: " + line);
+        Assertions.assertTrue(line.contains("12:30:45"), "CSV should contain time 12:30:45, got: " + line);
     }
 
     private static List<SimpleCsvData> modelData() {

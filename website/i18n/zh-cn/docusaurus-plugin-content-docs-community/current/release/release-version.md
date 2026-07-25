@@ -3,125 +3,241 @@ id: 'release-version'
 title: '如何发布版本'
 ---
 
-# 1. 前言
+## 1. 准备
 
-## 1.1 Apache 版本发布文档
+### 1.1 版本发布指南
 
-参考以下链接，了解 ASF 版本发布流程：
+参考以下链接，了解 ASF 版本发布相关指南：
 
 - [Apache Release Guide](http://www.apache.org/dev/release-publishing)
 - [Apache Release Policy](http://www.apache.org/dev/release.html)
+- [Apache Incubator Release](https://incubator.apache.org/guides/releasemanagement.html)
 - [Maven Release Info](http://www.apache.org/dev/publishing-maven-artifacts.html)
 
-## 1.2 PGP 签名
+### 1.2 PGP签名
 
-遵循 Apache 版本发布指南，对发布版本签名，用户也可据此判断下载的版本是否被篡改。
+如果您是**第一次**作为发布者，请参考 [Apache Releases Signing documentation](https://infra.apache.org/release-signing)，[Cryptography with OpenPGP](http://www.apache.org/dev/openpgp.html) 指南生成一个  `PGP` 密钥, `PGP` 密钥将用于版本签名。
 
-创建 `pgp` 密钥用于版本签名，使用 **\<your Apache ID>@apache.org** 作为密钥 USER-ID
+#### 1.2.1 安装
 
-详情可参考 [Apache Releases Signing documentation](https://infra.apache.org/release-signing)，[Cryptography with OpenPGP](http://www.apache.org/dev/openpgp.html)
+请根据操作系统安装好对应的 `GnuPG 2.x`，推荐安装最新版本。例如
 
-生成密钥的简要流程：
+```bash
+apt-get install gnupg2
+```
 
-- 通过`gpg --full-gen-key` 生成一个新的 `gpg` 密钥, 设置密钥长度为 4096
+#### 1.2.2 生成密钥
 
-  注：可设置永不过期，也可根据自己需求设置一定的过期时间，但需要在过期后更新的公钥到[DEV KEYS file](https://dist.apache.org/repos/dist/dev/incubator/fesod/KEYS) 和 [RELEASE KEYS file](https://dist.apache.org/repos/dist/release/incubator/fesod/KEYS)
+请使用您的 **\<your Apache ID>@apache.org** 作为密钥用户标识(USER-ID)，生成一个新的 `gpg` 密钥
 
-- 通过 `gpg --keyserver keys.openpgp.org --send-key <your key id>` 上传密钥到公钥服务器
+```bash
+gpg --full-gen-key
+```
 
-  注：如若访问不通，可通过[OpenPGP Keyserver (ubuntu.com)](https://keyserver.ubuntu.com/) 在线上传公钥
+示例
 
-  ```bash
-  使用该命令可查到keyid如：gpg --list-signatures --keyid-format LONG
-  pub   rsa4096/XXXXXXXX 2025-12-15 [SC] [有效至：2027-12-15]
-        F2D3A28A392129B927C7FB42XXXXXXXX
-  uid                   [ 绝对 ] xxxx <xxxx@apache.org>
-  sig 3        XXXXXXXX 2025-12-15  [自签名]
-  sub   rsa4096/XXXXX 2025-12-15 [E] [有效至：2027-12-15]
-  sig          XXXXXXXX 2025-12-15  [自签名]
-  ```
-
-- 通过 `gpg --armor --output ./public-key.txt --export XXXXXXXX` 导出公钥到文本文件
-
-- 将生成的密钥追加到[DEV KEYS file](https://dist.apache.org/repos/dist/dev/incubator/fesod/KEYS) 和 [RELEASE KEYS file](https://dist.apache.org/repos/dist/release/incubator/fesod/KEYS)
-
-注意：
-
-DEV SVN 仓库可以由 Release Manager 自行添加，Release SVN 仓库需要 PMC 权限，可以由 PMC 协助将 KEY 进行上传。
-
-**Tips:** 需要设置默认公钥, 若有多个公钥，请修改 `~/.gnupg/gpg.conf`
-
-参考示例：
-
-```text
-gpg (GnuPG) 2.2.4; Copyright (C) 2017 Free Software Foundation, Inc.
+```bash
+$ gpg --full-gen-key
+gpg (GnuPG) 2.4.8; Copyright (C) 2025 g10 Code GmbH
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
-Please select what kind of key you want:
-  (1) RSA and RSA (default)
-  (2) DSA and Elgamal
-  (3) DSA (sign only)
-  (4) RSA (sign only)
-Your selection? 1
-RSA keys may be between 1024 and 4096 bits long.
-What keysize do you want? (2048) 4096
-Requested keysize is 4096 bits
-Please specify how long the key should be valid.
-        0 = key does not expire
-     <n>  = key expires in n days
-     <n>w = key expires in n weeks
-     <n>m = key expires in n months
-     <n>y = key expires in n years
-Key is valid for? (0)
-Key does not expire at all
-Is this correct? (y/N) y
+请选择您要使用的密钥类型：
+   (1) RSA 和 RSA
+   (2) DSA 和 Elgamal
+   (3) DSA（仅用于签名）
+   (4) RSA（仅用于签名）
+   (9) ECC（签名和加密） *默认*
+  (10) ECC（仅用于签名）
+ （14）卡中现有密钥
+您的选择是？ 1
 
-GnuPG needs to construct a user ID to identify your key.
+RSA 密钥的长度应在 1024 位与 4096 位之间。
+您想要使用的密钥长度？(3072) 4096
+请求的密钥长度是 4096 位
+请设定这个密钥的有效期限。
+         0 = 密钥永不过期
+      <n>  = 密钥在 n 天后过期
+      <n>w = 密钥在 n 周后过期
+      <n>m = 密钥在 n 月后过期
+      <n>y = 密钥在 n 年后过期
+密钥的有效期限是？(0) 0
+密钥永远不会过期
+这些内容正确吗？ (y/N) y
 
-Real name: （设置用户名）(使用apache id)
-Email address: （设置邮件地址）(使用apache邮箱)
-Comment: （填写注释）
-You selected this USER-ID:
-   "用户名 (注释) <邮件地址>"
-
-Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
-You need a Passphrase to protect your secret key. （设置密码）
+真实姓名： (使用apache id)
+电子邮件地址： (使用apache邮箱)
+注释： （填写注释）
+您选定了此用户标识：
+    "用户名 (注释) <邮件地址>"
+    
+ 更改姓名（N）、注释（C）、电子邮件地址（E）或确定（O）/退出（Q）？ o
 ```
 
-将生成的公钥和私钥转化为 ASCII 形式：
+注意事项:
+
+- 密钥类型：根据`gpg`版本，使用安全的密钥类型，推荐至少是 `RSA 和 RSA`
+- 密钥长度：建议设置 4096 位
+- 有效期：可设置永不过期，也可根据自己需求设置一定的过期时间
+- 真实姓名：使用 Apache ID
+- 邮箱地址：使用 Apache 邮箱
+- 注释：注释信息
+
+确定后输入密码
 
 ```bash
-gpg --armor --output ./public-key.txt --export XXXXXXXX
-gpg --armor --output ./private-key.txt --export-secret-keys XXXXXXXX
+┌─────────────────────────────────────────────────────────────┐
+│ Please enter the passphrase to                              │
+│ protect your new key                                        │
+│                                                             │
+│ Passphrases match.                                          │
+│                                                             │
+│ Passphrase: _______________________________________________ │
+│                                                             │
+│ Repeat: ___________________________________________________ │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │                                                         │ │
+│ └─────────────────────────────────────────────────────────┘ │
+│        <OK>                                   <Cancel>      │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+#### 1.2.3 查询密钥
 
 查看密钥列表：
 
-```text
-[root@localhost ~]# gpg --list-signatures --keyid-format LONG
-[keyboxd]
----------
-pub   rsa4096/XXXXXXXX 2025-12-15 [SC] [有效至：2027-12-15]
-      D71C9B1CA898A2408D55EDCXXXXXXXX
-uid                   [ 绝对 ] xxxx <xxxx@apache.org>
-sig 3        XXXXXXXX 2025-12-15  [自签名]
-sub   rsa4096/XXXXX 2025-12-15 [E] [有效至：2027-12-15]
-sig          XXXXXXXX 2025-12-15  [自签名]
+```bash
+gpg --list-signatures --keyid-format LONG
 ```
 
-上传公钥到公钥服务器
+执行后输出本机上所有的密钥列表，通过**\<your Apache ID>@apache.org** 来找到所需的密钥
+
+#### 1.2.3 上传公钥
+
+查询密钥信息
+
+示例：
 
 ```bash
-[root@localhost gpgtest]# gpg --keyserver keys.openpgp.org --send-key XXXXXXXX
-gpg: sending key XXXXXXXX to hkp server keys.openpgp.org
+$ gpg --list-signatures --keyid-format LONG
+[keyboxd]
+---------
+pub   rsa4096/85E2C3CA72D5936C 2025-12-15 [SC]
+      D71C9B1CA898A2408D55EDC785E2C3CA72D5936C
+uid                   [ 绝对 ] XXXXX <xxx@apache.org>
+sig 3        85E2C3CA72D5936C 2025-12-15  [自签名]
+sub   rsa4096/DF02F738216EBD6D 2025-12-15 [E]
+sig          85E2C3CA72D5936C 2025-12-15  [自签名]
 ```
 
-## 1.3 POM 配置
+示例中的[ **85E2C3CA72D5936C** ] 便是需要上传的`<key-id>`，将**公钥**上传至 GPG 密钥公网服务器。
 
-配置 POM 文件，以便将版本部署到 ASF Nexus 仓库。
+```bash
+gpg --keyserver keys.openpgp.org --send-key <key-id> 
 
-① 添加 Apache POM 继承默认设置
+# 示例
+# gpg --keyserver keys.openpgp.org --send-key 85E2C3CA72D5936C
+```
+
+`keys.openpgp.org` 是一个随机选择的密钥服务器，也可以使用 `keyserver.ubuntu.com` 或任何其他功能完备的密钥服务器。如果无法执行命令，也可通过访问[OpenPGP Keyserver (ubuntu.com)](https://keyserver.ubuntu.com/) ，在线手动上传公钥信息。
+
+上传大约需要一分钟之后，可以检查密钥是否创建成功。如果不成功，您可以多次上传并重试。
+
+```bash
+# 检查密钥是否创建成功
+gpg --keyserver keyserver.ubuntu.com --recv-keys <key-id> 
+```
+
+示例
+
+```bash
+$ gpg --keyserver keyserver.ubuntu.com --recv-keys 85E2C3CA72D5936C
+gpg: 密钥 85E2C3CA72D5936C：“XXXXXX <xxxxxx@apache.org>” 未改变
+gpg: 处理的总数：1
+gpg:              未改变：1
+```
+
+也可以访问[OpenPGP Keyserver (ubuntu.com)](https://keyserver.ubuntu.com/) 网址，输入`key-id`，然后点击`Search key` 按钮，查看是否有对应名称的密钥。
+
+#### 1.2.5 上传 Github
+
+建议将 GPG 公钥上传到 Apache ID 绑定的 GitHub 帐户。
+
+- 输入 `https://github.com/settings/keys` 以添加您的 GPG 密钥。
+- 如果添加后发现“未验证”字样，请将 GPG 密钥中使用的电子邮件地址绑定到您的 [GitHub 帐户](https://github.com/settings/emails)。
+
+## 2. 版本发布讨论
+
+向 DEV 邮件列表发送电子邮件来发起下一个版本的讨论
+
+发送至：
+
+```mail
+dev@fesod.apache.org
+```
+
+主题：
+
+```text
+[DISCUSS] Release Apache Fesod(Incubating) ${RELEASE_VERSION}
+```
+
+内容：
+
+```text
+Hi Community,
+
+This is a call for a discussion to release Apache Fesod(Incubating) ${RELEASE_VERSION}.
+
+The change lists about this release:
+https://github.com/apache/fesod/compare/2.0.0-incubating...2.0.1-incubating-rc1
+
+Please leave your comments here about this release plan. We will bump the version in repo and start the release process after the discussion.
+
+Best regards,
+${RELEASE_MANAGER}
+```
+
+- ${RELEASE_VERSION}：替换为下一个要发布的版本号
+- ${RELEASE_MANAGER}：一般为这个版本的版本经理
+
+## 3 物料准备
+
+### 3.1 KEYS 文件
+
+如果您是**第一次**作为发布者或原来的密钥已过期，请将**公钥**分别**追加**到 Apache SVN 项目仓库的 **KEYS** 文件中
+
+- Dev 仓库：<https://dist.apache.org/repos/dist/dev/incubator/fesod>
+- Release 仓库：<https://dist.apache.org/repos/dist/release/incubator/fesod>
+
+操作步骤：
+
+```bash
+# 检出到本地 fesod-release 目录
+svn co https://dist.apache.org/repos/dist/release/incubator/fesod/ fesod-release
+
+# 进入本地目录
+cd fesod-release
+
+# 导出并追加到 KEYS 文件
+(gpg --list-sigs xxx@apache.org && gpg --export --armor  xxx@apache.org) >> KEYS
+
+# 提交
+svn ci -m "add gpg key for xxx"
+```
+
+注意事项：
+
+- 请不要直接覆盖仓库中 `KEYS`文件，只能**追加**
+- SVN 仓库需要 PPMC 权限，可由 PPMC 成员协助您上传。
+
+### 3.2 POM 配置
+
+配置本地 POM 文件，以便将版本推送到 ASF Nexus 仓库。
+
+#### 3.2.1 项目工程
+
+确保项目工程 `pom.xml` 文件设置
 
 ```xml
 <parent>
@@ -131,34 +247,37 @@ gpg: sending key XXXXXXXX to hkp server keys.openpgp.org
 </parent>
 ```
 
-② Maven 配置文件 `settings.xml` 中添加密钥信息
+#### 3.2.1 Maven设置
+
+在本地 Apache Maven 配置文件 `settings.xml` 中设置 Apache ID 和 GPG 密钥信息
 
 ```xml
 <settings>
     <profiles>
         <profile>
-            <id>signed_release</id>
+            <id>apache-release</id>
             <properties>
                 <mavenExecutorId>forked-path</mavenExecutorId>
+                <!-- gpg 密钥的 key-id -->
                 <gpg.keyname>yourKeyName</gpg.keyname>
-          <deploy.url>https://dist.apache.org/repos/dist/dev/incubator/fesod/</deploy.url>
+                <deploy.url>https://dist.apache.org/repos/dist/dev/incubator/fesod/</deploy.url>
             </properties>
         </profile>
     </profiles>
     <servers>
-        <!-- To publish a snapshot of some part of Maven -->
+        <!-- Apache ID 和密码 -->
         <server>
             <id>apache.snapshots.https</id>
             <username>yourApacheID</username>
-            <!-- Use the password encryption by maven -->
             <password>yourApachePassword</password>
         </server>
-        <!-- To stage a release of some part of Maven -->
         <server>
             <id>apache.releases.https</id>
             <username>yourApacheID</username>
             <password>yourApachePassword</password>
         </server>
+      
+        <!-- gpg 密码 -->
         <server>
             <id>gpg.passphrase</id>
             <passphrase>yourKeyPassword</passphrase>
@@ -167,120 +286,127 @@ gpg: sending key XXXXXXXX to hkp server keys.openpgp.org
 </settings>
 ```
 
-**Tips:** 推荐使用 [Maven's password encryption capabilities](http://maven.apache.org/guides/mini/guide-encryption.html) 加密 `gpg.passphrase`
+建议加密配置，可参考如下指南：
 
-# 2.发布流程
+- [Publishing Maven Releases to Maven Central Repository](https://infra.apache.org/publishing-maven-artifacts.html)
+- [Maven's password encryption capabilities](http://maven.apache.org/guides/mini/guide-encryption.html)
 
-## 2.1 准备分支
+### 3.3 版本物料
 
-从主干分支拉取新分支作为发布分支，如现在要发布 `${release_version}` 版本，则从开发分支拉出新分支 `${release_version}`，此后`${release_version}` Release Candidates 涉及的修改及打标签等都在`${release_version}`分支进行，并保证该分支的github actions ci全部通过，最终发布完成后合入主干分支。
+#### 3.3.1 预发布版本
 
-例：如 Java SDK 需要发布 `2.2.0-incubating` 版本，从 `main` 分支拉出新分支 `release-2.2.0-incubating`，并在此分支提交从 Snapshot版本号 替换为 `2.2.0-incubating` 版本号的 commit。
+例如要发布 `2.0.0-incubating` 版本，需要进行如下的操作：
 
-### 2.2 预发布二进制包和源码
+- 创建一个新分支`2.0.0-incubating`作为发布分支
+- 修改 `pom.xml` 中的版本号为 `2.0.0-incubating`
+- 推送 RC(Release Candidates) 版本标签
 
-### 2.2.1 SDK根据 [publishing maven artifacts](https://infra.apache.org/publishing-maven-artifacts.html) [4] 的说明准备发布
+```bash
+# 切换到发布分支
+git checkout -b 2.0.0-incubating
+
+# 创建 RC1 版本Tag
+git tag -s 2.0.0-incubating-rc1 -m "release: release for 2.0.0-incubating RC1"
+
+# 推送 Tag 到远程仓库
+git push origin 2.0.0-incubating-rc1
+```
+
+#### 3.3.2 推送二进制包
+
+编译预发布RC版本分支源码，并推送二进制包到 [预发仓库](https://repository.apache.org/#stagingRepositories)
 
 ```bash
 mvn clean deploy -Papache-release -DskipTests -Dgpg.skip=false
 ```
 
-此时，fesod sdk被发布到 [预发仓库](https://repository.apache.org/#stagingRepositories) （需要apache账号密码登录），找到发布的版本，即 `${STAGING.RELEASE}`， 并点击 Close。
+使用 Apache ID 登录 ASF Nexus 仓库，找到发布的版本并点击 **Close**。
 
-注：如果close失败很可能是因为签名的秘钥对应的公钥在keys.openpgp.org中无法获取到，请自行通过[OpenPGP Keyserver (ubuntu.com)](https://keyserver.ubuntu.com/) 检查
+> 如果 close 失败很可能是因为签名的秘钥对应的公钥在`keys.openpgp.org`中无法获取到，请自行通过[OpenPGP Keyserver (ubuntu.com)](https://keyserver.ubuntu.com/) 检查。
 
-### 2.2.2 打包源代码 (Package Source)
+#### 3.3.3 打包源代码
 
 :::caution 注意
-请勿在日常工作目录中运行发布流程！
+请勿在日常工作目录中打包！
 :::
 
 > 诸如 `node_modules`、IDE 配置文件（例如 `.idea`、`.vscode`）或重构后残留的空目录等本地文件，可能意外被打包到 `source-release.zip` 中。这将导致合规性问题（例如分发未经授权的二进制文件），并引发投票失败。
 
 您**必须**在**全新克隆的Git仓库**中执行发布流程，以确保构建产物可复现且干净。
 
-**注意**：请勿立即用IDE（如IntelliJ或VS Code）打开此目录，否则可能生成配置文件或编译缓存。请先在终端直接运行Maven发布命令。
-
-首先，确认当前代码库处于准备发布的状态。
-
-```bash
-# 1. 切换到主分支并更新
-git checkout main
-git pull
-
-# 2. 创建 GPG 签名的 Tag
-# 注意：请确保 -m 中的内容准确
-git tag -s 2.0.0-incubating-rc1 -m "release: release for 2.0.0-incubating RC1"
-
-# 3. 推送 Tag 到远程仓库
-git push git@github.com:apache/fesod.git 2.0.0-incubating-rc1
-```
+**注意**：请勿用 IDE（如IntelliJ或VS Code）打开源码目录，否则可能生成配置文件或编译缓存。请先在终端直接运行Maven发布命令。
 
 使用 `git archive` 确保源码包的纯净（不包含 .git 目录或其他忽略文件）。
 
 ```bash
-# 1. 导出源码包
 git archive --format=tar.gz \
   --prefix=apache-fesod-2.0.0-incubating-src/ \
   -o apache-fesod-2.0.0-incubating-src.tar.gz \
   e7546d1138d4d3a638df10193a4c29c50a7e55d8
 ```
 
-> **注意**：这里的 hash `e7546d11...` 对应 tag `2.0.0-incubating-rc1` 的 commit hash。
+> **注意**：这里的 hash `e7546d1138d4d3a638df10193a4c29c50a7e55d8` 对应 tag `2.0.0-incubating-rc1` 的 commit hash。
 
-### 2.2.3 签名与校验 (Sign and Hash)
+#### 3.3.4 签名
 
 对生成的源码包进行 GPG 签名和 SHA512 计算。
 
 ```bash
-# 1. GPG 签名 (.asc)
-for i in *.tar.gz; do 
-  echo "Signing $i"; 
-  gpg --armor --output $i.asc --detach-sig $i ; 
-done
+# 1. 指定 GPG key-id 对源码包签名 (.asc)
+# 请将 <key-id> 替换成 GPG 的 key-id
+for i in *.tar.gz; do echo "Signing $i"; gpg -u <key-id> --armor --output $i.asc --detach-sig $i ; done
 
 # 2. 生成 SHA512 校验和 (.sha512)
-for i in *.tar.gz; do 
-  echo "Hashing $i"; 
-  sha512sum $i > $i.sha512 ; 
-done
-
-# 3. 验证 (可选)
-gpg --verify apache-fesod-2.0.0-incubating-src.tar.gz.asc apache-fesod-2.0.0-incubating-src.tar.gz
-sha512sum -c apache-fesod-2.0.0-incubating-src.tar.gz.sha512
+for i in *.tar.gz; do echo "Hashing $i"; sha512sum $i > $i.sha512 ; done
 ```
 
-### 2.2.4 上传源码包至 SVN (Upload to Dist)
-
-将签好名的源码包上传到 Apache 开发分发区 (`dist/dev`)。
+签名完成后可进行本地验证
 
 ```bash
-# 1. 检出 SVN dev 仓库
+# 验证签名
+for i in *.tar.gz; do echo $i; gpg --verify $i.asc $i ; done
+
+# 验证 SHA512
+for i in *.tar.gz; do echo $i; sha512sum --check $i.sha512; done
+```
+
+#### 3.3.5 上传至 SVN
+
+将签好名的源码包上传到 SVN 仓库
+
+```bash
+# 检出 SVN dev 仓库
 svn co https://dist.apache.org/repos/dist/dev/incubator/fesod/ fesod-dev
 cd fesod-dev
 
-# 2. 创建版本目录
+# 创建版本目录
 mkdir 2.0.0-incubating-rc1
 cd 2.0.0-incubating-rc1
 
-# 3. 复制文件 (假设文件在上一级目录)
+# 复制源代码包文件 (假设文件在上一级目录)
 cp ../../apache-fesod-2.0.0-incubating-src.tar.gz .
 cp ../../apache-fesod-2.0.0-incubating-src.tar.gz.asc .
 cp ../../apache-fesod-2.0.0-incubating-src.tar.gz.sha512 .
 
-# 4. 提交到 SVN
+# 提交到 SVN
 cd ..
 svn add 2.0.0-incubating-rc1
 svn commit -m "Add 2.0.0-incubating-rc1 source release"
 ```
 
----
+使用 SVN 仓库需要先设置好用户，也可以在每个命令行中指定用户名和密码，例如
 
-# 3.投票阶段
+```bash
+svn co --username <apache-id> --password <password>
+```
 
-## 3.1 社区内部投票
+如果某些文件是意外出现或者发生某些错误，则需要删除相关内容并执行 `svn delete`，然后重复上述上传过程。
 
-**投票持续至少 72 小时并获得 3 个+1 binding票**
+## 4.社区投票
+
+每个版本可经历多轮次投票，其中 RC N 和 Round N 代表 N 次数，该版本的第几次投票
+
+### 4.1 发起投票
 
 发送至：
 
@@ -290,16 +416,16 @@ dev@fesod.apache.org
 
 标题：
 
-`[VOTE]Release Apache Fesod (Incubating) x.x.x-RCN (RoundN)`
-
-RC N和Round N的N代表次数，该版本的第几次投票
+```text
+[VOTE] Release Apache Fesod (Incubating) ${RELEASE_VERSION}-RCN
+```
 
 正文：
 
 ```text
-Hi Fesod Community,
+Hi Community,
 
-This is a call for vote to release Apache Fesod(incubating) 2.0.0-incubating.
+This is a call for vote to release Apache Fesod(Incubating) ${RELEASE_VERSION}.
 
 The release candidates:
 https://dist.apache.org/repos/dist/dev/incubator/fesod/2.0.0-incubating-rc1
@@ -314,18 +440,17 @@ Hash for the release tag:
 e7546d1138d4d3a638df10193a4c29c50a7e55d8
 
 Release Notes:
-https://github.com/apache/fesod/releases/tag/2.0.0-incubating-rc1
+https://github.com/apache/fesod/releases/tag/2.0.0--rc1
 
-The artifacts have been signed with Key [ 72D5936C ], corresponding
+The artifacts have been signed with Key [ key-id ], corresponding
 to
-[ psxjoy@apache.org ]
+[ xxx@apache.org ]
 which can be found in the keys file:
 https://downloads.apache.org/incubator/fesod/KEYS
 
 Build Environment: JDK 8+, Apache Maven 3.6.0+.
 ./mvnw clean package -DskipTests
 
-
 The vote will be open for at least 72 hours.
 
 Please vote accordingly:
@@ -346,92 +471,117 @@ Checklist for reference:
 To learn more about Apache Fesod , please see https://fesod.apache.org/
 ```
 
-### 3.1.2 完成投票
+将正文中所需内容更正为实际的`${RELEASE_VERSION}`的`RCN`轮次的内容
 
-发布投票通过邮件
+### 4.2 完成投票
+
+**投票持续至少 72 小时并至少获得 3个 +1 的 binding 票** 之后，发布投票结果：
+
+发送至：
+
+```mail
+dev@fesod.apache.org
+```
+
+标题：
+
+```text
+[RESULT][VOTE] Release Apache Fesod (Incubating) ${RELEASE_VERSION}-RCN
+```
+
+正文：
 
 ```text
 Hi Community,
 
+The vote to release Apache Fesod (Incubating) ${RELEASE_VERSION}-RCN-RCN has
+PASSED and closed now.
 
-The vote to release Apache Fesod (Incubating) vx.x.x-RCN has passed
-with 3 +1 binding votes, and no +0 or -1 votes.
+The result is as follows:
 
-3 (+1 binding)
-
+3 binding +1 Votes:
+- XXX
+- XXX
 - XXX
 
+2 non-binding +1 Votes:
 - XXX
-
 - XXX
 
 no further 0 or -1 votes.
 
-
 The vote thread:
-所对应投票邮件的thread链接，如:
-https://lists.apache.org/thread/rwco6lms9qo10whjj8gg1dr8j7drl2gf
+https://lists.apache.org/thread/3b8vz8891cjtjblthvnx95l44sh2fmqz
 
 Thank you for reviewing and voting for our release candidate.
 
-We will soon launch the second stage of voting.
+We will now bring this vote to the general@incubator mailing list for
+IPMC approval.
 ```
 
-## 3.2 孵化器投票
+如果投票失败，先解决提出的问题，然后按照版本发布流程，准备新一轮`RCN` 的物料和发起新一轮投票。
 
-### 3.2.1 孵化器中投票
+## 5 孵化器投票
 
-与社区投票类似，但是需要增加社区投票相关的thread链接，以证明已在社区内达成一致
+社区投票通过并完成后，需要想孵化器邮件列表发起投票。
 
-发送邮件至 `general@incubator.apache.org`
+### 5.1 发起投票
+
+与社区发起投票类似，但是需要增加社区投票通过相关的邮件链接，以证明已在社区内达成一致。
+
+发送至：
+
+```mail
+general@incubator.apache.org
+```
 
 标题：
 
-`[VOTE]Release Apache Fesod (Incubating) x.x.x-RCN`
+```text
+[VOTE] Release Apache Fesod (Incubating) ${RELEASE_VERSION}-RCN
+```
 
-**投票持续至少 72 小时并获得 3 个+1 binding票**
+正文：
 
 ```text
-Hello everyone,
+Hi all,
 
-This is a call for vote to release Apache Fesod(incubating) vx.x.x
+This is a call for vote to release Apache Fesod(Incubating) ${RELEASE_VERSION}-RCN.
 
 The Apache Fesod community has voted and approved the release of Apache
-Fesod(incubating) vx.x.x. We now kindly request the IPMC members
+Fesod(Incubating) ${RELEASE_VERSION}. We now kindly request the IPMC members
 review and vote for this release.
 
+Project description: Apache Fesod (Incubating) is a high-performance,
+easy-to-use Java library for processing spreadsheet files.
 
 The vote thread:
-社区中投票的thread链接, 如：
 https://lists.apache.org/thread/r6hsbb9tmsqmn9s7q9qptv3z287lkcbf
 
-Vote Result:
-社区中投票通过的result thread链接，如：
+The vote result thread:
 https://lists.apache.org/thread/r6hsbb9tmsqmn9s7q9qptv3z287lkcbf
 
 The release candidates:
 https://dist.apache.org/repos/dist/dev/incubator/fesod/x.x.x/
 
-The staging repo:
+The staging repository:
 https://repository.apache.org/content/repositories/${STAGING.RELEASE}/
 
 Git tag for the release:
 https://github.com/apache/fesod/releases/tag/vx.x.x
 
 Hash for the release tag:
-tag分支最后一条commit的id
+ea6687ff9da3d3389c51a39852d84f3a209708c4
 
 Release Notes:
 https://github.com/apache/fesod/releases/tag/vx.x.x
 
 The artifacts have been signed with Key [ key-id ], corresponding
-to
-[ 邮箱如xxxx@apache.org ]
-which can be found in the keys file:
+to [ xxxx@apache.org ] which can be found in the keys file:
 https://downloads.apache.org/incubator/fesod/KEYS
 
 Build Environment: JDK 8+, Apache Maven 3.6.0+.
-/mvnw clean package -DskipTests=true
+./mvnw clean package -DskipTests
 
 The vote will be open for at least 72 hours.
 
@@ -453,18 +603,28 @@ Checklist for reference:
 To learn more about Apache Fesod , please see https://fesod.apache.org/
 ```
 
-### 3.2.2 公示孵化器投票结果
+### 5.2 公示孵化器投票结果
 
-72 小时后，若至少有 3 票通过而没有反对票，则参考如下邮件进行发送结果
+**投票持续至少 72 小时并至少获得 3个 +1 的 binding 票** 之后，发布投票结果：
 
-发送邮件至 `general@incubator.apache.org`
+发送至：
 
-标题：`[RESULT][VOTE] Release Apache Fesod (incubating) x.x.x-RCN`
+```mail
+general@incubator.apache.org
+```
+
+标题：
+
+```text
+[RESULT][VOTE] Release Apache Fesod (Incubating) ${RELEASE_VERSION}-RCN
+```
+
+正文：
 
 ```text
 Hi Incubator PMC,
 
-The vote to release Apache Fesod(incubating) X.X.X-RCN has passed with
+The vote to release Apache Fesod(Incubating) ${RELEASE_VERSION}-RCN has passed with
 3 +1 binding and 1 +1 non-binding votes, no +0 or -1 votes.
 
 Binding votes：
@@ -485,41 +645,61 @@ proceed with publishing the approved artifacts and sending out the
 announcement soon.
 ```
 
-# 4.完成发布
+# 6.完成发布
 
-## 4.1 release 版本
+## 6.1 迁移源代码和二进制包
 
-1. 从Apache Nexus 仓库, 选择之前进行close过的的 **orgapachefesod-XXX** 点击 `Release` 图标发布
+登录 Apache Nexus 仓库, 选择之前进行 close 过的的 **orgapachefesod-XXX** 点击 `Release` 图标发布
 
-2. 将dev下的签名文件、src、bin移动到release路径下，参考如下命令：
+1. 将 dev下的签名文件、src、bin移动到release路径下，参考如下命令：
 
-   `svn mv https://dist.apache.org/repos/dist/dev/incubator/fesod/x.x.x-RCN https://dist.apache.org/repos/dist/release/incubator/fesod/x.x.x -m "Release Fesod X.X.X"`
+   ```bash
+   svn mv https://dist.apache.org/repos/dist/dev/incubator/fesod/x.x.x-RCN https://dist.apache.org/repos/dist/release/incubator/fesod/x.x.x -m "Release X.X.X"
+   ```
 
-3. 将之前release note设置为Set as the latest release并提交
+2. 将之前release note设置为Set as the latest release并提交
 
-4. 将x.x.x的文档更新至fesod官网中，并补充对应binary和source的下载链接
+3. 将x.x.x的文档更新至fesod官网中，并补充对应binary和source的下载链接
 
-## 4.2 版本公示
+## 6.2 版本公示
 
-发送邮件至 `general@incubator.apache.org`
+发送至：
 
-标题 `[ANNOUNCE] Apache Fesod(Incubating) vx.x.x available`
+```mail
+announce@apache.org,dev@fesod.apache.org
+```
+
+标题：
 
 ```text
-Hi All,
+[ANNOUNCE] Apache Fesod(Incubating) ${RELEASE_VERSION} released
+```
 
-The Apache Fesod(Incubating) vx.x.x has been released!
+正文：
+
+```text
+Hello everyone,
+
+The Apache Fesod(Incubating) ${RELEASE_VERSION} has been released!
 
 Apache Fesod is an easy-to-use, high-performance, open source distributed transaction solution.
 
-Download Links: https://fesod.apache.org/download/fesod/
+Download Links:
+https://fesod.apache.org/download/fesod/
 
 Release Notes:
-https://github.com/apache/fesod/releases/tag/vx.x.x/
+https://github.com/apache/fesod/releases/tag/x.x.x/
 
-Website: https://fesod.apache.org/
+Website:
+https://fesod.apache.org/
 
 Resources:
 - Issue: https://github.com/apache/fesod/issues
 - Mailing list: dev@fesod.apache.org
+
+We would like to thank all the contributors who made this release possible, and to
+our Incubator mentors for their great guidance.
+
+${RELEASE_MANAGER}
+On behalf of Apache Fesod (Incubating) PPMC
 ```

@@ -26,8 +26,12 @@
 package org.apache.fesod.sheet.core;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
 import org.apache.fesod.sheet.testkit.Tags;
@@ -113,5 +117,34 @@ public class SimpleDataTest extends AbstractExcelTest {
                                 5))
                 .sheet()
                 .doRead();
+    }
+
+    @Test
+    void pageReadListenerMultipleSheets07() throws Exception {
+        File file = createTempFile(ExcelFormat.XLSX);
+        try (ExcelWriter excelWriter = FesodSheet.write(file, SimpleData.class).build()) {
+            excelWriter.write(
+                    TestDataBuilder.simpleData(3, "First"),
+                    FesodSheet.writerSheet(0, "sheet0").build());
+            excelWriter.write(
+                    TestDataBuilder.simpleData(4, "Second"),
+                    FesodSheet.writerSheet(1, "sheet1").build());
+        }
+
+        List<SimpleData> allData = new ArrayList<>();
+        FesodSheet.read(file, SimpleData.class, new PageReadListener<SimpleData>(allData::addAll, 5))
+                .doReadAll();
+
+        // Each row must be delivered exactly once, even when a sheet ends with a partially filled batch
+        Assertions.assertEquals(
+                Arrays.asList(
+                        "FirstName0",
+                        "FirstName1",
+                        "FirstName2",
+                        "SecondName0",
+                        "SecondName1",
+                        "SecondName2",
+                        "SecondName3"),
+                allData.stream().map(SimpleData::getName).collect(Collectors.toList()));
     }
 }

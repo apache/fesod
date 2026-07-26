@@ -49,16 +49,16 @@ updates:
     labels:
       - "dependencies"
       - "npm"
+    cooldown:
+      semver-patch-days: 90
+      include:
+        - "*"
     groups:
-      docusaur:
+      docusaurus:
         patterns:
           - "@docusaurus/core"
           - "@docusaurus/plugin-client-redirects"
           - "@docusaurus/preset-classic"
       others:
         patterns:
-          - "*"
-      cooldown:
-        semver-patch-days: 90
-        include:
           - "*"

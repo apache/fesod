@@ -30,5 +30,9 @@
   "sidebar.docs.category.migration": {
     "message": "Migration",
     "description": "The label for category migration in sidebar docs"
+  },
+  "sidebar.docs.category.advanced": {
+    "message": "Advanced",
+    "description": "The label for category advanced in sidebar docs"
   }
 }

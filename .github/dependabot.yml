@@ -41,3 +41,24 @@ updates:
     labels:
       - "dependencies"
       - "github actions"
+
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "npm"
+    groups:
+      docusaur:
+        patterns:
+          - "@docusaurus/core"
+          - "@docusaurus/plugin-client-redirects"
+          - "@docusaurus/preset-classic"
+      others:
+        patterns:
+          - "*"
+      cooldown:
+        semver-patch-days: 90
+        include:
+          - "*"

@@ -15,6 +15,12 @@
 # specific language governing permissions and limitations
 # under the License.
 
-ignoredBuiltDependencies:
-  - core-js
-  - core-js-pure
+allowBuilds:
+  '@swc/core': true
+  core-js: true
+
+overrides:
+  brace-expansion: "^5.0.8"
+  js-yaml: "^5.2.2"
+  serialize-javascript: "^7.0.3"
+  uuid: "^14.0.1"

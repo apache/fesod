@@ -30,11 +30,13 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.assertions.ExcelAssertions;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.sheet.write.style.HorizontalCellStyleStrategy;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -44,6 +46,7 @@ import org.junit.jupiter.api.Test;
  * style source mutated the cached annotation format in place and subsequent cells (or, with
  * {@link CacheLocationEnum#MEMORY}, subsequent writes) silently lost the annotation's number format.
  */
+@Tag(Tags.ROUND_TRIP)
 public class ContentStyleDataFormatPollutionTest extends AbstractExcelTest {
 
     private static final short STRATEGY_FORMAT = 2; // "0.00"

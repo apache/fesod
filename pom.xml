@@ -111,7 +111,7 @@
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
-        <assertj.version>3.25.3</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <argLine></argLine>

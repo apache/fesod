@@ -15,12 +15,36 @@
 # specific language governing permissions and limitations
 # under the License.
 
-allowBuilds:
-  '@swc/core': true
-  core-js: true
+name: ASF Allowlist Check
 
-overrides:
-  brace-expansion: "^5.0.8"
-  js-yaml: "^5.2.2"
-  serialize-javascript: "^7.0.3"
-  uuid: "^14.0.1"
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  asf-allowlist-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: apache/infrastructure-actions/allowlist-check@main
+        with:
+          scan-glob: ".github/**/*.y*ml"

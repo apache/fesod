@@ -1,8 +1,7 @@
 {
   "name": "website",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "private": true,
-  "packageManager": "pnpm@10.21.0",
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
@@ -20,21 +19,22 @@
     "github-avatar": "node github-avatar.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.9.1",
-    "@docusaurus/preset-classic": "^3.9.1",
-    "@docusaurus/theme-mermaid": "^3.9.1",
-    "@easyops-cn/docusaurus-search-local": "^0.52.1",
-    "@mdx-js/react": "^3.0.0",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/faster": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/theme-mermaid": "^3.10.2",
+    "@easyops-cn/docusaurus-search-local": "^0.55.2",
+    "@mdx-js/react": "^3.1.1",
     "clsx": "^2.0.0",
     "docusaurus-plugin-matomo": "^0.0.8",
-    "markdownlint-cli2": "^0.20.0",
+    "markdownlint-cli2": "^0.23.1",
     "prism-react-renderer": "^2.3.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.9.1",
-    "@docusaurus/types": "^3.9.1",
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
     "gh-pages": "^6.3.0"
   },
   "browserslist": {
@@ -50,6 +50,7 @@
     ]
   },
   "engines": {
-    "node": ">=18.0"
-  }
+    "node": ">=24.0"
+  },
+  "packageManager": "pnpm@11.8.0"
 }

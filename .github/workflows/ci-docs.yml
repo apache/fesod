@@ -34,15 +34,15 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 11
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Enable corepack
         working-directory: website
@@ -50,7 +50,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: website
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build website
         working-directory: website

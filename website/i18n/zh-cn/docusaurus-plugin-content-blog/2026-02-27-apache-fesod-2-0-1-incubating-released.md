@@ -3,7 +3,6 @@ title: "Apache Fesod (Incubating) 2.0.1-incubating 正式发布"
 description: "Apache Fesod (Incubating) 社区欣然宣布，Apache Fesod (Incubating) 2.0.1-incubating 版本正式发布！"
 authors: [psxjoy]
 tags: [announcement, release]
-date: 2026-02-27T00:00:00.000Z
 ---
 
 **2026年2月** —— Apache Fesod (Incubating) 社区欣然宣布，**Apache Fesod (Incubating) 2.0.1-incubating 版本正式发布！**

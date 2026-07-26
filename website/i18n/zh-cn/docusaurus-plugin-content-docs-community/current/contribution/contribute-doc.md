@@ -14,7 +14,7 @@ title: '文档贡献指南'
 
 ## 环境要求
 
-- [Node.js](https://nodejs.org/en/download/) 版本 20.0 或更高版本（可通过运行 `node -v` 命令进行检查）。您可使用 [nvm](https://github.com/nvm-sh/nvm) 在同一台机器上管理多个 Node 版本。
+- [Node.js](https://nodejs.org/en/download/) 版本 24.0 或更高版本（可通过运行 `node -v` 命令进行检查）。您可使用 [nvm](https://github.com/nvm-sh/nvm) 在同一台机器上管理多个 Node 版本。
 - 安装 Node.js 时，建议勾选所有与依赖项相关的复选框。
 
 ## 目录结构说明

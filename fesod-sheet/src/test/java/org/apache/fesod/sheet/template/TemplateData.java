@@ -37,9 +37,9 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class TemplateData {
-    @ExcelProperty("字符串0")
+    @ExcelProperty("String0")
     private String string0;
 
-    @ExcelProperty("字符串1")
+    @ExcelProperty("String1")
     private String string1;
 }

@@ -31,11 +31,13 @@ import java.nio.file.Path;
 import java.util.UUID;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -43,6 +45,7 @@ import org.mockito.Mockito;
 /**
  * Tests {@link FileUtils}
  */
+@Tag(Tags.UNIT)
 class FileUtilsTest {
 
     @TempDir

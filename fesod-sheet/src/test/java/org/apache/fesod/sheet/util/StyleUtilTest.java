@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import org.apache.fesod.sheet.constant.BuiltinFormats;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.data.HyperlinkData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.fesod.sheet.write.metadata.style.WriteFont;
@@ -45,11 +46,13 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class StyleUtilTest {
 
@@ -123,7 +126,7 @@ class StyleUtilTest {
     void testBuildCellStyle_withPartialPropertiesSet_shouldOnlyApplyNonNullProperties() {
         Workbook workbook = new HSSFWorkbook();
         CellStyle originStyle = workbook.createCellStyle();
-        originStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 原始值
+        originStyle.setVerticalAlignment(VerticalAlignment.CENTER); // original value
 
         WriteCellStyle writeCellStyle = new WriteCellStyle();
         writeCellStyle.setHorizontalAlignment(HorizontalAlignment.LEFT);

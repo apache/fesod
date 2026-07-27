@@ -31,7 +31,7 @@ For how to submit pull requests, please refer to
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above (which can be checked by running `node -v`). You can use [nvm](https://github.com/nvm-sh/nvm) for managing multiple Node versions on a single machine installed.
+- [Node.js](https://nodejs.org/en/download/) version 24.0 or above (which can be checked by running `node -v`). You can use [nvm](https://github.com/nvm-sh/nvm) for managing multiple Node versions on a single machine installed.
 - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
 
 ## Directory Structure Description

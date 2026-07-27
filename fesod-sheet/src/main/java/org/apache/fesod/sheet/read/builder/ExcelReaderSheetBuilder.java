@@ -113,6 +113,23 @@ public class ExcelReaderSheetBuilder extends AbstractExcelReaderParameterBuilder
     }
 
     /**
+     * Specific columns to read
+     *
+     * @param columnIndexes
+     * @return
+     */
+    public ExcelReaderSheetBuilder includeColumnIndexes(List<Integer> columnIndexes) {
+        readSheet.setColumnIndexes(columnIndexes);
+        return this;
+    }
+
+    public ExcelReaderSheetBuilder includeColumnIndexesIfNotNull(List<Integer> columnIndexes) {
+        if (Objects.nonNull(columnIndexes)) {
+            readSheet.setColumnIndexes(columnIndexes);
+        }
+        return this;
+    }
+    /**
      * Sax read
      */
     public void doRead() {

@@ -46,6 +46,11 @@ import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 public class ReadCellData<T> extends CellData<T> {
 
     /**
+     * Marker Excel writes for a {@code true} boolean cell value ({@code <v>1</v>} for {@code t="b"} cells).
+     */
+    private static final String TRUE_NUMBER = "1";
+
+    /**
      * originalNumberValue vs numberValue
      * <ol>
      * <li>
@@ -117,6 +122,19 @@ public class ReadCellData<T> extends CellData<T> {
         }
         setType(CellDataTypeEnum.BOOLEAN);
         setBooleanValue(booleanValue);
+    }
+
+    /**
+     * Sets the boolean value from the raw {@code <v>} text of a boolean ({@code t="b"}) xlsx cell.
+     *
+     * <p>Excel encodes boolean cells using the numeric markers {@code 0}/{@code 1}, so only the exact
+     * string {@code "1"} maps to {@code true}; any other input (including {@code "true"}) maps to
+     * {@code false}. This mirrors Apache POI's {@code XSSFCell.getBooleanCellValue()}.
+     *
+     * @param str the raw cell value text
+     */
+    public void setBooleanValueFromString(String str) {
+        setBooleanValue(TRUE_NUMBER.equals(str));
     }
 
     public static ReadCellData<?> newEmptyInstance() {

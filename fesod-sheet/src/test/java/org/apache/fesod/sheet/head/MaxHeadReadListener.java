@@ -21,9 +21,6 @@ package org.apache.fesod.sheet.head;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.context.AnalysisContext;
@@ -32,18 +29,11 @@ import org.apache.fesod.sheet.event.AnalysisEventListener;
 @Slf4j
 public class MaxHeadReadListener extends AnalysisEventListener<Map<Integer, String>> {
 
-    List<Map<Integer, String>> list = new ArrayList<Map<Integer, String>>();
-    private List<Map<Integer, String>> headList = new ArrayList<>();
-    private Map<Integer, String> headTitleMap = new HashMap<>();
-    private int headSize;
-
-    public MaxHeadReadListener(int headSize) {
-        this.headSize = headSize;
-    }
+    private Map<Integer, String> headTitleMap;
 
     @Override
     public void invoke(Map<Integer, String> data, AnalysisContext context) {
-        list.add(data);
+        // Data validation stays in the test; this listener only captures head metadata.
     }
 
     @Override
@@ -55,6 +45,5 @@ public class MaxHeadReadListener extends AnalysisEventListener<Map<Integer, Stri
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
         headTitleMap = headMap;
-        headList.add(headMap);
     }
 }

@@ -23,9 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.FreezePane;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.UNIT)
 class SheetFreezePanePropertyTest {
 
     @Test

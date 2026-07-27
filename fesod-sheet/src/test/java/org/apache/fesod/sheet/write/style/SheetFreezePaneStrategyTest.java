@@ -20,13 +20,16 @@
 package org.apache.fesod.sheet.write.style;
 
 import org.apache.fesod.sheet.metadata.property.SheetFreezePaneProperty;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+@Tag(Tags.UNIT)
 class SheetFreezePaneStrategyTest {
 
     @Test

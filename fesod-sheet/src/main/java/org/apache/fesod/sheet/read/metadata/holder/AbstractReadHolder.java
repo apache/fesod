@@ -120,7 +120,10 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
         }
 
         if (parentAbstractReadHolder == null) {
-            setConverterMap(DefaultConverterLoader.loadDefaultReadConverter());
+            // Copy the defaults instead of aliasing the shared static map, otherwise custom
+            // converters registered below mutate DefaultConverterLoader's global map and leak
+            // into every later read. Mirrors the write side (AbstractWriteHolder).
+            setConverterMap(new HashMap<>(DefaultConverterLoader.loadDefaultReadConverter()));
         } else {
             setConverterMap(new HashMap<>(parentAbstractReadHolder.getConverterMap()));
         }

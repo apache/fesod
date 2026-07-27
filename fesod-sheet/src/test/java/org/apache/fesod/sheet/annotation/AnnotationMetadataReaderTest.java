@@ -26,13 +26,16 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.List;
 import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AnnotationMetadataReader}
  */
+@Tag(Tags.UNIT)
 class AnnotationMetadataReaderTest {
 
     // ---- Test annotation definitions ----

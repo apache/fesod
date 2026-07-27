@@ -40,6 +40,7 @@ import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -54,6 +55,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -85,6 +87,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  *   <li>Mixed-level composable/direct</li>
  * </ul>
  */
+@Tag(Tags.WRITE)
 class IntegrationCompositeAnnotationTest {
 
     private static final String FILE_GROUPS_METHOD =

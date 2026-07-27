@@ -27,12 +27,15 @@ import java.lang.annotation.Target;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.fesod.sheet.enums.BooleanEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AnnotationAttributes}
  */
+@Tag(Tags.UNIT)
 class AnnotationAttributesTest {
 
     @Target({ElementType.FIELD})

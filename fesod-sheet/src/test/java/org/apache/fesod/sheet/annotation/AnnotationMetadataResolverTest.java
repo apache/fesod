@@ -40,13 +40,16 @@ import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AnnotationMetadataResolver}, {@link DefaultAnnotationMetadataResolver}
  */
+@Tag(Tags.UNIT)
 class AnnotationMetadataResolverTest {
 
     // ---- Test annotation definitions ----

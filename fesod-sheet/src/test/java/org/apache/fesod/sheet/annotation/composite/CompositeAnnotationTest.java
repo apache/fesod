@@ -48,9 +48,11 @@ import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.property.ExcelHeadProperty;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -89,6 +91,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  *       mixed valid/invalid {@code @AliasFor} targets on the same composable annotation</li>
  * </ul>
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class CompositeAnnotationTest {
 

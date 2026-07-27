@@ -23,37 +23,33 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link AnnotatedFieldDescriptor}
+ * Tests for {@link AnnotatedTypeDescriptor}
  */
-class AnnotatedFieldDescriptorTest {
+@Tag(Tags.UNIT)
+class AnnotatedTypeDescriptorTest {
 
-    @Target({ElementType.FIELD})
+    @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface TestAnnotation {}
 
-    @Target({ElementType.FIELD})
+    @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface AnotherAnnotation {}
 
-    static class SampleClass {
-        @TestAnnotation
-        String sampleField;
+    @TestAnnotation
+    static class AnnotatedClass {}
 
-        String plainField;
-    }
+    static class PlainClass {}
 
     // ---- Helper methods ----
-
-    private Field getField(String name) throws NoSuchFieldException {
-        return SampleClass.class.getDeclaredField(name);
-    }
 
     private AnnotationMap createAnnotationMap(
             Class<? extends java.lang.annotation.Annotation> type, Map<String, Object> attrs) {
@@ -66,105 +62,103 @@ class AnnotatedFieldDescriptorTest {
         return new AnnotationMap(new LinkedHashMap<>());
     }
 
+    // ---- EMPTY constant tests ----
+
+    @Test
+    void shouldHaveNullElementAndMap_whenEmpty() {
+        // when / then
+        Assertions.assertNull(AnnotatedTypeDescriptor.EMPTY.getAnnotatedElement());
+        Assertions.assertNull(AnnotatedTypeDescriptor.EMPTY.getAnnotationMap());
+        Assertions.assertEquals(0, AnnotatedTypeDescriptor.EMPTY.getAnnotationCount());
+        Assertions.assertFalse(AnnotatedTypeDescriptor.EMPTY.hasAnnotation(TestAnnotation.class));
+        Assertions.assertNull(AnnotatedTypeDescriptor.EMPTY.getAnnotation(TestAnnotation.class));
+    }
+
     // ---- Constructor tests ----
 
     @Test
-    void shouldCreateDescriptor_whenValidArguments() throws NoSuchFieldException {
+    void shouldCreateDescriptor_whenValidArguments() {
         // given
-        Field field = getField("sampleField");
         AnnotationMap map = createEmptyAnnotationMap();
 
         // when
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "sampleField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(AnnotatedClass.class, map);
 
         // then
-        Assertions.assertSame(field, descriptor.getAnnotatedElement());
-        Assertions.assertEquals("sampleField", descriptor.getFieldName());
+        Assertions.assertSame(AnnotatedClass.class, descriptor.getAnnotatedElement());
         Assertions.assertSame(map, descriptor.getAnnotationMap());
     }
 
     @Test
-    void shouldThrow_whenFieldIsNull() {
+    void shouldAcceptNullElement() {
         // given
         AnnotationMap map = createEmptyAnnotationMap();
-
-        // when / then
-        Assertions.assertThrows(NullPointerException.class, () -> new AnnotatedFieldDescriptor(null, "field", map));
-    }
-
-    @Test
-    void shouldThrow_whenFieldNameIsNull() throws NoSuchFieldException {
-        // given
-        Field field = getField("sampleField");
-        AnnotationMap map = createEmptyAnnotationMap();
-
-        // when / then
-        Assertions.assertThrows(NullPointerException.class, () -> new AnnotatedFieldDescriptor(field, null, map));
-    }
-
-    @Test
-    void shouldThrow_whenFieldNameIsBlank() throws NoSuchFieldException {
-        // given
-        Field field = getField("sampleField");
-        AnnotationMap map = createEmptyAnnotationMap();
-
-        // when / then
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AnnotatedFieldDescriptor(field, "  ", map));
-    }
-
-    @Test
-    void shouldAcceptNullAnnotationMap() throws NoSuchFieldException {
-        // given
-        Field field = getField("sampleField");
 
         // when
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "sampleField", null);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(null, map);
 
         // then
+        Assertions.assertNull(descriptor.getAnnotatedElement());
+        Assertions.assertSame(map, descriptor.getAnnotationMap());
+    }
+
+    @Test
+    void shouldAcceptNullAnnotationMap() {
+        // when
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, null);
+
+        // then
+        Assertions.assertSame(PlainClass.class, descriptor.getAnnotatedElement());
+        Assertions.assertNull(descriptor.getAnnotationMap());
+    }
+
+    @Test
+    void shouldAcceptBothNull() {
+        // when
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(null, null);
+
+        // then
+        Assertions.assertNull(descriptor.getAnnotatedElement());
         Assertions.assertNull(descriptor.getAnnotationMap());
     }
 
     // ---- Inherited: getAnnotatedElement tests ----
 
     @Test
-    void shouldReturnField_whenGetAnnotatedElement() throws NoSuchFieldException {
+    void shouldReturnClass_whenGetAnnotatedElement() {
         // given
-        Field field = getField("plainField");
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", null);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, null);
 
         // when / then
-        Assertions.assertSame(field, descriptor.getAnnotatedElement());
+        Assertions.assertSame(PlainClass.class, descriptor.getAnnotatedElement());
     }
 
     // ---- Inherited: hasAnnotation tests ----
 
     @Test
-    void shouldReturnTrue_whenAnnotationPresent() throws NoSuchFieldException {
+    void shouldReturnTrue_whenAnnotationPresent() {
         // given
-        Field field = getField("sampleField");
         AnnotationMap map = createAnnotationMap(TestAnnotation.class, new LinkedHashMap<>());
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "sampleField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(AnnotatedClass.class, map);
 
         // when / then
         Assertions.assertTrue(descriptor.hasAnnotation(TestAnnotation.class));
     }
 
     @Test
-    void shouldReturnFalse_whenAnnotationNotPresent() throws NoSuchFieldException {
+    void shouldReturnFalse_whenAnnotationNotPresent() {
         // given
-        Field field = getField("plainField");
         AnnotationMap map = createEmptyAnnotationMap();
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, map);
 
         // when / then
         Assertions.assertFalse(descriptor.hasAnnotation(TestAnnotation.class));
     }
 
     @Test
-    void shouldReturnFalse_whenAnnotationMapIsNull() throws NoSuchFieldException {
+    void shouldReturnFalse_whenAnnotationMapIsNull() {
         // given
-        Field field = getField("plainField");
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", null);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, null);
 
         // when / then
         Assertions.assertFalse(descriptor.hasAnnotation(TestAnnotation.class));
@@ -173,36 +167,33 @@ class AnnotatedFieldDescriptorTest {
     // ---- Inherited: getAnnotationCount tests ----
 
     @Test
-    void shouldReturnCorrectCount_whenAnnotationsPresent() throws NoSuchFieldException {
+    void shouldReturnCorrectCount_whenAnnotationsPresent() {
         // given
-        Field field = getField("sampleField");
         Map<String, Object> attrs = new LinkedHashMap<>();
         AnnotationMap map = AnnotationMap.builder()
                 .put(TestAnnotation.class, new AnnotationAttributes(TestAnnotation.class, attrs))
                 .put(AnotherAnnotation.class, new AnnotationAttributes(AnotherAnnotation.class, attrs))
                 .build();
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "sampleField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(AnnotatedClass.class, map);
 
         // when / then
         Assertions.assertEquals(2, descriptor.getAnnotationCount());
     }
 
     @Test
-    void shouldReturnZero_whenNoAnnotations() throws NoSuchFieldException {
+    void shouldReturnZero_whenNoAnnotations() {
         // given
-        Field field = getField("plainField");
         AnnotationMap map = createEmptyAnnotationMap();
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, map);
 
         // when / then
         Assertions.assertEquals(0, descriptor.getAnnotationCount());
     }
 
     @Test
-    void shouldReturnZero_whenAnnotationMapIsNull() throws NoSuchFieldException {
+    void shouldReturnZero_whenAnnotationMapIsNull() {
         // given
-        Field field = getField("plainField");
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", null);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, null);
 
         // when / then
         Assertions.assertEquals(0, descriptor.getAnnotationCount());
@@ -211,13 +202,12 @@ class AnnotatedFieldDescriptorTest {
     // ---- Inherited: getAnnotation tests ----
 
     @Test
-    void shouldReturnAttributes_whenAnnotationPresent() throws NoSuchFieldException {
+    void shouldReturnAttributes_whenAnnotationPresent() {
         // given
-        Field field = getField("sampleField");
         Map<String, Object> attrsMap = new LinkedHashMap<>();
         attrsMap.put("value", "test");
         AnnotationMap map = createAnnotationMap(TestAnnotation.class, attrsMap);
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "sampleField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(AnnotatedClass.class, map);
 
         // when
         AnnotationAttributes result = descriptor.getAnnotation(TestAnnotation.class);
@@ -228,21 +218,19 @@ class AnnotatedFieldDescriptorTest {
     }
 
     @Test
-    void shouldReturnNull_whenAnnotationNotPresent() throws NoSuchFieldException {
+    void shouldReturnNull_whenAnnotationNotPresent() {
         // given
-        Field field = getField("plainField");
         AnnotationMap map = createEmptyAnnotationMap();
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", map);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, map);
 
         // when / then
         Assertions.assertNull(descriptor.getAnnotation(TestAnnotation.class));
     }
 
     @Test
-    void shouldReturnNull_whenAnnotationMapIsNull() throws NoSuchFieldException {
+    void shouldReturnNull_whenAnnotationMapIsNull() {
         // given
-        Field field = getField("plainField");
-        AnnotatedFieldDescriptor descriptor = new AnnotatedFieldDescriptor(field, "plainField", null);
+        AnnotatedTypeDescriptor descriptor = new AnnotatedTypeDescriptor(PlainClass.class, null);
 
         // when / then
         Assertions.assertNull(descriptor.getAnnotation(TestAnnotation.class));

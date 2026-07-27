@@ -27,12 +27,15 @@ import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AnnotationMap}
  */
+@Tag(Tags.UNIT)
 class AnnotationMapTest {
 
     @Target({ElementType.FIELD})

@@ -18,7 +18,6 @@ The project targets Java 8 (`source/target = 1.8`) but CI runs on JDK 8 through 
 
 Builder methods that accept or return mutable collections must protect internal state:
 
-- **`head(Consumer)` pattern**: When `AbstractParameterBuilder.head(Consumer<HeadBuilder>)` stores the result of `DefaultHeadBuilder.define()`, it must wrap it with `toMutableListIfNecessary()` to create a defensive copy. Otherwise, `ExcelHeadProperty.initHeadRowNumber()` will mutate the builder's internal list during write, corrupting subsequent reuses.
 - **General rule**: Any builder method that stores a collection from an external source must copy it. Any getter that returns an internal collection should document whether it's modifiable.
 
 ### 3. Input Validation & Boundary Values
@@ -57,6 +56,7 @@ The same operation may be implemented in multiple places. When fixing a bug in o
 - **License header**: Every new `.java` file must have the ASF Apache 2.0 header (see `tools/spotless/license-header.txt`). License headers are enforced by the Hawkeye workflow (`.github/workflows/license-check.yml`), not Spotless.
 - **Package naming**: All code must be under `org.apache.fesod.*`. Never use `com.alibaba.*` or `cn.idev.*` (legacy packages from EasyExcel era).
 - **Lombok**: `toString.callSuper = CALL` and `equalsAndHashCode.callSuper = CALL` are enforced via `lombok.config`. Subclasses must call super.
+- **No wildcard imports**: Avoid using wildcard imports (e.g., `import java.util.*;`). Always import classes individually. This enhances code readability, makes dependencies explicit, and prevents class name collisions during library upgrades.
 - **No checked exceptions in public API**: Wrap checked exceptions in `ExcelGenerateException` or `ExcelAnalysisException` rather than declaring `throws` on builder methods.
 
 ### 8. Common Pitfalls (from real bug fixes)
@@ -66,6 +66,5 @@ The same operation may be implemented in multiple places. When fixing a bug in o
 | `value.toInstant()` on `java.sql.Date`/`Time` | `UnsupportedOperationException` on Java 9+ | Use `instanceof` + `toLocalDate()`/`toLocalTime()` |
 | `value == -1` validation | Misses other negative values | Check `value == null` or `value < 0` |
 | `try { setThreadLocal(x); } finally { setThreadLocal(null); }` | Clears state needed by later phase | Remove premature cleanup; clean up at end of full operation |
-| `parameter().setHead(DefaultHeadBuilder.define(c))` | Stores internal list reference | Wrap with `toMutableListIfNecessary()` |
 | `new FileWriter(file)` in tests | Platform-default charset | Use `Files.newBufferedWriter(path, StandardCharsets.UTF_8)` |
 | `new FileOutputStream(file)` outside try-with-resources | Resource leak on exception | Wrap in `try (FileOutputStream fos = new FileOutputStream(file)) { ... }` |

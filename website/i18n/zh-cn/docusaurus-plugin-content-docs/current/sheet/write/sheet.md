@@ -34,7 +34,23 @@ public void writeSingleSheet() {
 
 ### 结果
 
-![img](/img/docs/write/repeatedWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td>字符串0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>字符串2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td>字符串3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td>字符串4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td>字符串5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td>字符串6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td>字符串7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td>字符串8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -63,7 +79,22 @@ public void writeMultiSheet() {
 
 ### 结果
 
-![img](/img/docs/write/repeatedWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td>字符串0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>字符串2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td>字符串3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td>字符串4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td>字符串5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td>字符串6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td>字符串7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td>字符串8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -94,4 +125,31 @@ public void tableWrite() {
 
 ### 结果
 
-![img](/img/docs/write/tableWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>字符串1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td>字符串2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td>字符串3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td>字符串4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td>字符串5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td>字符串6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td>字符串7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">12</td><td>字符串9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">14</td><td>字符串0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">15</td><td>字符串1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">16</td><td>字符串2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">17</td><td>字符串3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">18</td><td>字符串4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">19</td><td>字符串5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">20</td><td>字符串6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">21</td><td>字符串7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">22</td><td>字符串8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">23</td><td>字符串9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>

@@ -57,11 +57,23 @@ public void simpleFill() {
 
 ### 模板
 
-![img](/img/docs/fill/simpleFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>复杂</td><td>忽略</td><td>空</td></tr>
+<tr><td class="xl-chrome">2</td><td>{name}</td><td>{number}</td><td>{name}今年{number}岁了</td><td>\{name\}忽略，{name}</td><td>空{.empty}</td></tr>
+</tbody>
+</table>
 
 ### 结果
 
-![img](/img/docs/fill/simpleFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>复杂</td><td>忽略</td></tr>
+<tr><td class="xl-chrome">2</td><td>张三</td><td class="xl-num">5.2</td><td>张三今年5.2岁了</td><td>{name}忽略，张三</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -96,11 +108,33 @@ public void listFill() {
 
 ### 模板
 
-![img](/img/docs/fill/listFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>日期</td></tr>
+<tr><td class="xl-chrome">2</td><td>{.name}</td><td>{.number}</td><td>{.date}</td></tr>
+</tbody>
+</table>
 
 ### 结果
 
-![img](/img/docs/fill/listFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>日期</td></tr>
+<tr><td class="xl-chrome">2</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">3</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">4</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">5</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">6</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">7</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">8</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">9</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">10</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">11</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -136,11 +170,39 @@ public void complexFill() {
 
 ### 模板
 
-![img](/img/docs/fill/complexFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：{date}</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">{.name}</td><td class="xl-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td></td><td></td><td>统计:{total}</td></tr>
+</tbody>
+</table>
 
 ### 结果
 
-![img](/img/docs/fill/complexFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：2024年11月20日</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">15</td><td></td><td></td><td></td><td>统计:1000</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -179,11 +241,38 @@ public void complexFillWithTable() {
 
 ### 模板
 
-![img](/img/docs/fill/complexFillWithTable_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：{date}</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">{.name}</td><td class="xl-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+</tbody>
+</table>
 
 ### 结果
 
-![img](/img/docs/fill/complexFillWithTable_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：2024年11月20日</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td>张三</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">15</td><td></td><td></td><td></td><td>统计: 1000</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -216,11 +305,29 @@ public void horizontalFill() {
 
 ### 模板
 
-![img](/img/docs/fill/horizontalFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-red">{.name}</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-green xl-num">{.number}</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>{.name}</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">5</td><td>时间：{date}</td><td></td><td></td></tr>
+</tbody>
+</table>
 
 ### 结果
 
-![img](/img/docs/fill/horizontalFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td><td class="xl-chrome">I</td><td class="xl-chrome">J</td><td class="xl-chrome">K</td><td class="xl-chrome">L</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td>时间：2024-12-04 20:03:48</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -255,8 +362,40 @@ public void compositeFill() {
 
 ### 模板
 
-![img](/img/docs/fill/compositeFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-red">{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-green">{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td>{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>时间：{date}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>姓名</td><td>数字</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">{data2.name}</td><td class="xl-green">{data2.number}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td></td><td></td><td></td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">11</td><td></td><td></td><td></td><td class="xl-red">{data3.name}</td><td class="xl-green">{data3.number}</td></tr>
+</tbody>
+</table>
 
 ### 结果
 
-![img](/img/docs/fill/compositeFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-red">张三</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>时间：2024-12-04 20:04:59</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>姓名</td><td>数字</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td></td><td>姓名</td><td>数字</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td></td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td></td><td class="xl-red">张三</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td></td><td></td></tr>
+</tbody>
+</table>

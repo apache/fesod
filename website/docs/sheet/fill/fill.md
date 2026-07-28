@@ -54,7 +54,7 @@ public void simpleFill() {
 
     // Approach 1: Fill based on object
     FillData fillData = new FillData();
-    fillData.setName("张三");
+    fillData.setName("John Doe");
     fillData.setNumber(5.2);
     FesodSheet.write("simpleFill.xlsx")
             .withTemplate(templateFileName)
@@ -63,7 +63,7 @@ public void simpleFill() {
 
     // Approach 2: Fill based on Map
     Map<String, Object> map = new HashMap<>();
-    map.put("name", "张三");
+    map.put("name", "John Doe");
     map.put("number", 5.2);
     FesodSheet.write("simpleFillMap.xlsx")
             .withTemplate(templateFileName)
@@ -74,11 +74,23 @@ public void simpleFill() {
 
 ### Template
 
-![img](/img/docs/fill/simpleFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td><td>Empty</td></tr>
+<tr><td class="xl-chrome">2</td><td>{name}</td><td>{number}</td><td>{name} is {number} years old this year</td><td>\{name\} ignored，{name}</td><td>Empty{.empty}</td></tr>
+</tbody>
+</table>
 
 ### Result
 
-![img](/img/docs/fill/simpleFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old this year</td><td>{name} ignored，John Doe</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -113,11 +125,33 @@ public void listFill() {
 
 ### Template
 
-![img](/img/docs/fill/listFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Date</td></tr>
+<tr><td class="xl-chrome">2</td><td>{.name}</td><td>{.number}</td><td>{.date}</td></tr>
+</tbody>
+</table>
 
 ### Result
 
-![img](/img/docs/fill/listFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Date</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">3</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">4</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">5</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">6</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">7</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">8</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">9</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">10</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">11</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -144,7 +178,7 @@ public void complexFill() {
 
         // Fill regular variables
         Map<String, Object> map = new HashMap<>();
-        map.put("date", "2024年11月20日");
+        map.put("date", "November 20, 2024");
         map.put("total", 1000);
         writer.fill(map, writeSheet);
     }
@@ -153,11 +187,39 @@ public void complexFill() {
 
 ### Template
 
-![img](/img/docs/fill/complexFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: {date}</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">{.name}</td><td class="xl-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td></td><td></td><td>Total:{total}</td></tr>
+</tbody>
+</table>
 
 ### Result
 
-![img](/img/docs/fill/complexFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: November 20, 2024</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">15</td><td></td><td></td><td></td><td>Total:1000</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -184,12 +246,12 @@ public void complexFillWithTable() {
 
         // Fill list data
         Map<String, Object> map = new HashMap<>();
-        map.put("date", "2024年11月20日");
+        map.put("date", "November 20, 2024");
         writer.fill(map, writeSheet);
 
         // Fill statistical information
         List<List<String>> totalList = new ArrayList<>();
-        totalList.add(Arrays.asList(null, null, null, "统计: 1000"));
+        totalList.add(Arrays.asList(null, null, null, "Total: 1000"));
         writer.write(totalList, writeSheet);
     }
 }
@@ -197,11 +259,38 @@ public void complexFillWithTable() {
 
 ### Template
 
-![img](/img/docs/fill/complexFillWithTable_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: {date}</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">{.name}</td><td class="xl-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+</tbody>
+</table>
 
 ### Result
 
-![img](/img/docs/fill/complexFillWithTable_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: November 20, 2024</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">15</td><td></td><td></td><td></td><td>Total: 1000</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -226,7 +315,7 @@ public void horizontalFill() {
         writer.fill(data(), config, writeSheet);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("date", "2024年11月20日");
+        map.put("date", "November 20, 2024");
         writer.fill(map, writeSheet);
     }
 }
@@ -234,11 +323,29 @@ public void horizontalFill() {
 
 ### Template
 
-![img](/img/docs/fill/horizontalFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">{.name}</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green xl-num">{.number}</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>{.name}</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">5</td><td>Time: {date}</td><td></td><td></td></tr>
+</tbody>
+</table>
 
 ### Result
 
-![img](/img/docs/fill/horizontalFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td><td class="xl-chrome">I</td><td class="xl-chrome">J</td><td class="xl-chrome">K</td><td class="xl-chrome">L</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td>Time: 2024-12-04 20:03:48</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -273,8 +380,40 @@ public void compositeFill() {
 
 ### Template
 
-![img](/img/docs/fill/compositeFill_file.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green">{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td>{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>Time: {date}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>Name</td><td>Number</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">{data2.name}</td><td class="xl-green">{data2.number}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td></td><td></td><td></td><td>Name</td><td>Number</td></tr>
+<tr><td class="xl-chrome">11</td><td></td><td></td><td></td><td class="xl-red">{data3.name}</td><td class="xl-green">{data3.number}</td></tr>
+</tbody>
+</table>
 
 ### Result
 
-![img](/img/docs/fill/compositeFill_result.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>Time: 2024-12-04 20:04:59</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>Name</td><td>Number</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td>Name</td><td>Number</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td></td><td></td></tr>
+</tbody>
+</table>

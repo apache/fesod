@@ -41,11 +41,11 @@ The `DemoData` POJO class corresponding to the spreadsheet structure:
 @Setter
 @EqualsAndHashCode
 public class DemoData {
-    @ExcelProperty("字符串标题")
+    @ExcelProperty("String Title")
     private String string;
-    @ExcelProperty("日期标题")
+    @ExcelProperty("Date Title")
     private Date date;
-    @ExcelProperty("数字标题")
+    @ExcelProperty("Number Title")
     private Double doubleData;
     @ExcelIgnore
     private String ignore; // Ignored field

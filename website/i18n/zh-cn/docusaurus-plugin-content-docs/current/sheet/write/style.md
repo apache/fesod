@@ -60,7 +60,22 @@ public void annotationStyleWrite() {
 
 ### 结果
 
-![img](/img/docs/write/annotationStyleWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-fill-14 xl-pt30">字符串标题</td><td class="xl-head xl-fill-10 xl-pt20">日期标题</td><td class="xl-head xl-fill-10 xl-pt20">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-fill-40 xl-pt30">字符串0</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-fill-40 xl-pt30">字符串1</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fill-40 xl-pt30">字符串2</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-fill-40 xl-pt30">字符串3</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-fill-40 xl-pt30">字符串4</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-fill-40 xl-pt30">字符串5</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-fill-40 xl-pt30">字符串6</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-fill-40 xl-pt30">字符串7</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-fill-40 xl-pt30">字符串8</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fill-40 xl-pt30">字符串9</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -106,7 +121,22 @@ public void handlerStyleWrite() {
 
 ### 结果
 
-![img](/img/docs/write/handlerStyleWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-fill-10">字符串0</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-fill-10">字符串1</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fill-10">字符串2</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-fill-10">字符串3</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-fill-10">字符串4</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-fill-10">字符串5</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-fill-10">字符串6</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-fill-10">字符串7</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-fill-10">字符串8</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fill-10">字符串9</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -245,4 +275,19 @@ public void widthAndHeightWrite() {
 
 ### 结果
 
-![img](/img/docs/write/widthAndHeightWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome xl-cw-25">B</td><td class="xl-chrome xl-cw-50">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-rh-30">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-rh-20">字符串0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-rh-20">字符串1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-rh-20">字符串2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-rh-20">字符串3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-rh-20">字符串4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-rh-20">字符串5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-rh-20">字符串6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-rh-20">字符串7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-rh-20">字符串8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-rh-20">字符串9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>

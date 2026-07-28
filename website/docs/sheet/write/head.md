@@ -38,11 +38,11 @@ Supports setting multi-level headers by specifying main titles and subtitles thr
 @Setter
 @EqualsAndHashCode
 public class ComplexHeadData {
-    @ExcelProperty({"主标题", "字符串标题"})
+    @ExcelProperty({"Main Title", "String Title"})
     private String string;
-    @ExcelProperty({"主标题", "日期标题"})
+    @ExcelProperty({"Main Title", "Date Title"})
     private Date date;
-    @ExcelProperty({"主标题", "数字标题"})
+    @ExcelProperty({"Main Title", "Number Title"})
     private Double doubleData;
 }
 ```
@@ -62,7 +62,23 @@ public void complexHeadWrite() {
 
 ### Result
 
-![img](/img/docs/write/complexHeadWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head" colspan="3">Main Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">3</td><td>String0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>String1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td>String2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td>String3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td>String4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td>String5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td>String6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td>String7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td>String8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">12</td><td>String9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -81,9 +97,9 @@ public void dynamicHeadWrite() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
     List<List<String>> head = Arrays.asList(
-            Collections.singletonList("动态字符串标题"),
-            Collections.singletonList("动态数字标题"),
-            Collections.singletonList("动态日期标题"));
+            Collections.singletonList("Dynamic String Title"),
+            Collections.singletonList("Dynamic Number Title"),
+            Collections.singletonList("Dynamic Date Title"));
 
     FesodSheet.write(fileName)
             .head(head)
@@ -94,7 +110,22 @@ public void dynamicHeadWrite() {
 
 ### Result
 
-![img](/img/docs/write/dynamicHeadWrite.png)
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">Dynamic String Title</td><td class="xl-head">Dynamic Number Title</td><td class="xl-head">Dynamic Date Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">5</td><td>String3</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">6</td><td>String4</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">7</td><td>String5</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">8</td><td>String6</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">9</td><td>String7</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">10</td><td>String8</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -120,9 +151,9 @@ public void dynamicHeadWriteWithStrategy() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
     List<List<String>> head = Arrays.asList(
-        Collections.singletonList("动态字符串标题"),
-        Collections.singletonList("动态数字标题"),
-        Collections.singletonList("动态日期标题"));
+        Collections.singletonList("Dynamic String Title"),
+        Collections.singletonList("Dynamic Number Title"),
+        Collections.singletonList("Dynamic Date Title"));
 
     FesodSheet.write(fileName)
         .head(head)

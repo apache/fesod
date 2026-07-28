@@ -23,12 +23,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,12 +72,6 @@ public final class AnnotatedClassUtils {
      * thread local cache
      */
     private static final ThreadLocal<Map<FieldCacheKey, CachedFields>> FIELD_THREAD_LOCAL = new ThreadLocal<>();
-
-    /**
-     * The cache configuration information for each of the class
-     */
-    public static final Map<Class<?>, Map<String, ExcelContentProperty>> CLASS_CONTENT_CACHE =
-            new ConcurrentHashMap<>();
 
     /**
      * The cache configuration information for each of the class
@@ -133,14 +125,14 @@ public final class AnnotatedClassUtils {
                     CONTENT_THREAD_LOCAL.set(contentCacheMap);
                 }
                 return contentCacheMap.computeIfAbsent(buildKey(clazz, headClass, fieldName), key -> {
-                    return doGetExcelContentProperty(clazz, typeDescriptor, fieldDescriptor, configurationHolder);
+                    return doGetExcelContentProperty(typeDescriptor, fieldDescriptor);
                 });
             case MEMORY:
                 return CONTENT_CACHE.computeIfAbsent(buildKey(clazz, headClass, fieldName), key -> {
-                    return doGetExcelContentProperty(clazz, typeDescriptor, fieldDescriptor, configurationHolder);
+                    return doGetExcelContentProperty(typeDescriptor, fieldDescriptor);
                 });
             case NONE:
-                return doGetExcelContentProperty(clazz, typeDescriptor, fieldDescriptor, configurationHolder);
+                return doGetExcelContentProperty(typeDescriptor, fieldDescriptor);
             default:
                 throw new UnsupportedOperationException("unsupported enum");
         }
@@ -150,110 +142,12 @@ public final class AnnotatedClassUtils {
         return new ClassUtils.ContentPropertyKey(clazz, headClass, fieldName);
     }
 
-    private static Map<String, ExcelContentProperty> declaredFieldContentMap(
-            Class<?> clazz, ConfigurationHolder configurationHolder) {
-        if (clazz == null) {
-            return null;
-        }
-        switch (configurationHolder.globalConfiguration().getFiledCacheLocation()) {
-            case THREAD_LOCAL:
-                Map<Class<?>, Map<String, ExcelContentProperty>> classContentCacheMap =
-                        CLASS_CONTENT_THREAD_LOCAL.get();
-                if (classContentCacheMap == null) {
-                    classContentCacheMap = MapUtils.newHashMap();
-                    CLASS_CONTENT_THREAD_LOCAL.set(classContentCacheMap);
-                }
-                return classContentCacheMap.computeIfAbsent(clazz, key -> {
-                    return doDeclaredFieldContentMap(clazz);
-                });
-            case MEMORY:
-                return CLASS_CONTENT_CACHE.computeIfAbsent(clazz, key -> {
-                    return doDeclaredFieldContentMap(clazz);
-                });
-            case NONE:
-                return doDeclaredFieldContentMap(clazz);
-            default:
-                throw new UnsupportedOperationException("unsupported enum");
-        }
-    }
-
-    private static Map<String, ExcelContentProperty> doDeclaredFieldContentMap(Class<?> clazz) {
-        if (clazz == null) {
-            return null;
-        }
-        List<Field> tempFieldList = new ArrayList<>();
-        Class<?> tempClass = clazz;
-        while (tempClass != null) {
-            Collections.addAll(tempFieldList, tempClass.getDeclaredFields());
-            // Get the parent class and give it to yourself
-            tempClass = tempClass.getSuperclass();
-        }
-
-        ContentStyle parentContentStyle = clazz.getAnnotation(ContentStyle.class);
-        ContentFontStyle parentContentFontStyle = clazz.getAnnotation(ContentFontStyle.class);
-        Map<String, ExcelContentProperty> fieldContentMap = MapUtils.newHashMapWithExpectedSize(tempFieldList.size());
-        for (Field field : tempFieldList) {
-            ExcelContentProperty excelContentProperty = new ExcelContentProperty();
-            excelContentProperty.setField(field);
-
-            ExcelProperty excelProperty = field.getAnnotation(ExcelProperty.class);
-            if (excelProperty != null) {
-                Class<? extends Converter<?>> convertClazz = excelProperty.converter();
-                if (convertClazz != AutoConverter.class) {
-                    try {
-                        Converter<?> converter =
-                                convertClazz.getDeclaredConstructor().newInstance();
-                        excelContentProperty.setConverter(converter);
-                    } catch (Exception e) {
-                        throw new ExcelCommonException("Can not instance custom converter:" + convertClazz.getName());
-                    }
-                }
-            }
-
-            ContentStyle contentStyle = field.getAnnotation(ContentStyle.class);
-            if (contentStyle == null) {
-                contentStyle = parentContentStyle;
-            }
-            excelContentProperty.setContentStyleProperty(StyleProperty.build(contentStyle));
-
-            ContentFontStyle contentFontStyle = field.getAnnotation(ContentFontStyle.class);
-            if (contentFontStyle == null) {
-                contentFontStyle = parentContentFontStyle;
-            }
-            excelContentProperty.setContentFontProperty(FontProperty.build(contentFontStyle));
-
-            excelContentProperty.setDateTimeFormatProperty(
-                    DateTimeFormatProperty.build(field.getAnnotation(DateTimeFormat.class)));
-            excelContentProperty.setNumberFormatProperty(
-                    NumberFormatProperty.build(field.getAnnotation(NumberFormat.class)));
-
-            fieldContentMap.put(field.getName(), excelContentProperty);
-        }
-        return fieldContentMap;
-    }
-
     private static ExcelContentProperty doGetExcelContentProperty(
-            Class<?> clazz,
-            AnnotatedTypeDescriptor typeDescriptor,
-            AnnotatedFieldDescriptor fieldDescriptor,
-            ConfigurationHolder configurationHolder) {
-        Class<?> headClass = typeDescriptor.getAnnotatedElement();
-        String fieldName = fieldDescriptor.getFieldName();
-
-        ExcelContentProperty headExcelContentProperty = Optional.ofNullable(
-                        doDeclaredFieldContent(typeDescriptor, fieldDescriptor))
-                .orElse(null);
+            AnnotatedTypeDescriptor typeDescriptor, AnnotatedFieldDescriptor fieldDescriptor) {
+        ExcelContentProperty headExcelContentProperty = doDeclaredFieldContent(typeDescriptor, fieldDescriptor);
         ExcelContentProperty combineExcelContentProperty = new ExcelContentProperty();
 
         combineExcelContentProperty(combineExcelContentProperty, headExcelContentProperty);
-        if (clazz != null && clazz != headClass) {
-            ExcelContentProperty excelContentProperty = Optional.ofNullable(
-                            declaredFieldContentMap(clazz, configurationHolder))
-                    .map(map -> map.get(fieldName))
-                    .orElse(null);
-
-            combineExcelContentProperty(combineExcelContentProperty, excelContentProperty);
-        }
         return combineExcelContentProperty;
     }
 

@@ -23,7 +23,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
@@ -246,5 +251,29 @@ class FesodSheetTest {
     void testReadSheet_withAllParams_shouldReturnBuilder() {
         ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0, "DataSheet", 100);
         Assertions.assertNotNull(builder);
+    }
+
+    @Test
+    void testReadCsv_withColumnIndexes_shouldFilterColumns() throws Exception {
+
+        String csvContent = "1,Alice,30,Female\n2,Bob,25,Male";
+        File csvFile = tempDir.resolve("test_columns.csv").toFile();
+        FileUtils.writeStringToFile(csvFile, csvContent, StandardCharsets.UTF_8);
+
+        List<Integer> targetColumns = Arrays.asList(0, 2);
+
+        List<Map<Integer, String>> readResults = FesodSheet.read(csvFile)
+                .includeColumnIndexes(targetColumns)
+                .sheet(0)
+                .doReadSync();
+
+        Assertions.assertNotNull(readResults);
+        Assertions.assertEquals(2, readResults.size());
+
+        Map<Integer, String> row1 = readResults.get(0);
+        Assertions.assertEquals(2, row1.size(), "Should only contain the 2 filtered columns");
+        Assertions.assertEquals("1", row1.get(0));
+        Assertions.assertEquals("30", row1.get(2));
+        Assertions.assertNull(row1.get(1), "Column index 1 (Name) should be omitted");
     }
 }

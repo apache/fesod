@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
@@ -45,17 +46,32 @@ public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements I
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelSSTRecord lsrec = (LabelSSTRecord) record;
+        int originalColumnIndex = lsrec.getColumn();
+
+        List<Integer> includeColumnIndexes = null;
+        if (xlsReadContext.readSheetHolder() != null
+                && xlsReadContext.readSheetHolder().getReadSheet() != null) {
+            includeColumnIndexes =
+                    xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+        }
+
+        int targetColumnIndex = originalColumnIndex;
+        if (includeColumnIndexes != null) {
+            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
+            if (targetColumnIndex == -1) {
+                return;
+            }
+        }
+
         ReadCache readCache = xlsReadContext.readWorkbookHolder().getReadCache();
         Map<Integer, Cell> cellMap = xlsReadContext.xlsReadSheetHolder().getCellMap();
         if (readCache == null) {
-            cellMap.put(
-                    (int) lsrec.getColumn(), ReadCellData.newEmptyInstance(lsrec.getRow(), (int) lsrec.getColumn()));
+            cellMap.put(targetColumnIndex, ReadCellData.newEmptyInstance(lsrec.getRow(), targetColumnIndex));
             return;
         }
         String data = readCache.get(lsrec.getSSTIndex());
         if (data == null) {
-            cellMap.put(
-                    (int) lsrec.getColumn(), ReadCellData.newEmptyInstance(lsrec.getRow(), (int) lsrec.getColumn()));
+            cellMap.put(targetColumnIndex, ReadCellData.newEmptyInstance(lsrec.getRow(), targetColumnIndex));
             return;
         }
 
@@ -66,7 +82,7 @@ public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements I
         } else if (globalConfiguration.getAutoTrim()) {
             data = data.trim();
         }
-        cellMap.put((int) lsrec.getColumn(), ReadCellData.newInstance(data, lsrec.getRow(), (int) lsrec.getColumn()));
+        cellMap.put(targetColumnIndex, ReadCellData.newInstance(data, lsrec.getRow(), targetColumnIndex));
         xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
     }
 }

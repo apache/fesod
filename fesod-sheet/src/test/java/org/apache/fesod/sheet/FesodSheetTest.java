@@ -254,6 +254,35 @@ class FesodSheetTest {
     }
 
     @Test
+    void testReadSheet_withColumnIndexes_xlsFormat() {
+        File xlsFile = tempDir.resolve("test.xls").toFile();
+
+        List<List<String>> head = new ArrayList<>();
+        head.add(Arrays.asList("ID"));
+        head.add(Arrays.asList("Name"));
+        head.add(Arrays.asList("Age"));
+        head.add(Arrays.asList("Gender"));
+
+        List<List<Object>> dataList = new ArrayList<>();
+        dataList.add(Arrays.asList("1", "Alice", "30", "Female"));
+
+        FesodSheet.write(xlsFile).head(head).sheet("Sheet1").doWrite(dataList);
+
+        List<Integer> targetColumns = Arrays.asList(0, 2);
+
+        List<Map<Integer, String>> readResults = FesodSheet.read(xlsFile)
+                .sheet(0)
+                .includeColumnIndexes(targetColumns)
+                .doReadSync();
+
+        Assertions.assertNotNull(readResults);
+        Map<Integer, String> parsedRow = readResults.get(0);
+        Assertions.assertEquals(2, parsedRow.size(), "Should only contain 2 filtered columns");
+        Assertions.assertEquals("1", parsedRow.get(0));
+        Assertions.assertEquals("30", parsedRow.get(1));
+    }
+
+    @Test
     void testReadSheet_withColumnIndexes_shouldConfigureAll() {
 
         List<List<String>> head = new ArrayList<>();

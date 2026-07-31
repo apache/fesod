@@ -41,7 +41,7 @@ private List<DemoData> data() {
     List<DemoData> list = ListUtils.newArrayList();
     for (int i = 0; i < 10; i++) {
         DemoData data = new DemoData();
-        data.setString("String" + i);
+        data.setString("字符串" + i);
         data.setDate(new Date());
         data.setDoubleData(0.56);
         list.add(data);
@@ -96,3 +96,20 @@ public void simpleWrite() {
     }
 }
 ```
+
+### 结果
+
+三种方式生成的文件完全相同。第 1 行是取自 `@ExcelProperty` 的表头标题，`data()` 返回的 10 个对象依次写入第 2 至 11 行。
+`ignore` 字段因为标注了 `@ExcelIgnore` 而不会出现。
+
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td>字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>字符串2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>

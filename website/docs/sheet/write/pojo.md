@@ -31,16 +31,21 @@ This chapter introduces how to write data by configuring POJO classes.
 Dynamically select columns to export by setting a collection of column names, supporting ignoring columns or exporting
 only specific columns.
 
+The collection holds **POJO field names**, not header titles. Both examples below use the `DemoData` class and the
+`data()` method from [Simple Writing](./simple.md), whose fields are `string`, `date` and `doubleData`.
+
 ### Code Examples
 
-Ignore specified columns
+#### Ignore Specified Columns
+
+Everything except the listed fields is written:
 
 ```java
 @Test
-public void excludeOrIncludeWrite() {
+public void excludeColumnWrite() {
     String fileName = "excludeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
 
-    Set<String> excludeColumns = Set.of("date");
+    Set<String> excludeColumns = Collections.singleton("date");
     FesodSheet.write(fileName, DemoData.class)
         .excludeColumnFieldNames(excludeColumns)
         .sheet()
@@ -48,39 +53,104 @@ public void excludeOrIncludeWrite() {
 }
 ```
 
-Export only specified columns
+Result - the `date` field is gone, the other two remain:
+
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+
+#### Export Only Specified Columns
+
+Only the listed fields are written:
 
 ```java
 @Test
-public void excludeOrIncludeWrite() {
-    String fileName = "includeColumnFiledWrite" + System.currentTimeMillis() + ".xlsx";
+public void includeColumnWrite() {
+    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
 
-    Set<String> includeColumns = Set.of("date");
+    Set<String> includeColumns = Collections.singleton("date");
     FesodSheet.write(fileName, DemoData.class)
-        .includeColumnFiledNames(includeColumns)
+        .includeColumnFieldNames(includeColumns)
         .sheet()
         .doWrite(data());
 }
 ```
 
-### Result
+Result - only the `date` field is kept:
 
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">Date Title</td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">6</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">8</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
 </tbody>
 </table>
+
+#### Column Order When Using includeColumnFieldNames
+
+The columns come out in the POJO's order, not the collection's. Listing `doubleData` before `string` still writes
+`string` first, because that is the order the fields are declared in:
+
+```java
+@Test
+public void includeColumnOrderWrite() {
+    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+
+    Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
+    FesodSheet.write(fileName, DemoData.class)
+        .includeColumnFieldNames(includeColumns)
+        .sheet()
+        .doWrite(data());
+}
+```
+
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
+
+Add `.orderByIncludeColumn(true)` to follow the collection's order instead:
+
+```java
+@Test
+public void orderByIncludeColumnWrite() {
+    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+
+    Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
+    FesodSheet.write(fileName, DemoData.class)
+        .includeColumnFieldNames(includeColumns)
+        .orderByIncludeColumn(true)
+        .sheet()
+        .doWrite(data());
+}
+```
+
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">Number Title</td><td class="xl-head">String Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num">0.56</td><td>String0</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
+
+The collection needs a stable iteration order for this - a `LinkedHashSet` or a `List`, not a `HashSet`.
 
 ---
 
@@ -124,18 +194,19 @@ public void indexWrite() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td></td><td class="xl-head">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td>String3</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td>String4</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td>String5</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td>String6</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td>String7</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td>String8</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2024-12-03 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">2026-07-31 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">2026-07-31 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+
+:::note
+Column **C is empty on purpose**. `index` is an absolute, 0-based column position, not a sort key: the fields declare
+`0`, `1` and `3`, so nothing is written at position `2` and the gap is preserved in the output. To place the three
+columns side by side, number them `0`, `1`, `2`.
+:::
 
 ---
 
@@ -180,15 +251,10 @@ private List<List<Object>> dataList() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Number Title</td><td class="xl-head">Date Title</td></tr>
-<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">5</td><td>String3</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">6</td><td>String4</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">7</td><td>String5</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">8</td><td>String6</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">9</td><td>String7</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">10</td><td>String8</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
-<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td><td class="xl-num">2024-12-03 20:50:23</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
 </tbody>
 </table>

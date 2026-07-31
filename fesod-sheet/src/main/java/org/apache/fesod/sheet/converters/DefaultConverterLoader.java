@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
@@ -139,6 +141,7 @@ public class DefaultConverterLoader {
         putAllConverter(new StringNumberConverter());
         putAllConverter(new StringStringConverter());
         putAllConverter(new StringErrorConverter());
+        allConverter = Collections.unmodifiableMap(allConverter);
     }
 
     private static void initDefaultWriteConverter() {
@@ -176,6 +179,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LongStringConverter());
         putWriteStringConverter(new ShortStringConverter());
         putWriteStringConverter(new StringStringConverter());
+        defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
     }
 
     /**
@@ -185,6 +189,15 @@ public class DefaultConverterLoader {
      */
     public static Map<ConverterKey, Converter<?>> loadDefaultWriteConverter() {
         return defaultWriteConverter;
+    }
+
+    /**
+     * Copy default write converter
+     *
+     * @return
+     */
+    public static Map<ConverterKey, Converter<?>> copyDefaultWriteConverter() {
+        return new HashMap<>(loadDefaultWriteConverter());
     }
 
     private static void putWriteConverter(Converter<?> converter) {
@@ -206,12 +219,30 @@ public class DefaultConverterLoader {
     }
 
     /**
+     * Copy default read converter
+     *
+     * @return
+     */
+    public static Map<ConverterKey, Converter<?>> copyDefaultReadConverter() {
+        return new HashMap<>(loadDefaultReadConverter());
+    }
+
+    /**
      * Load all converter
      *
      * @return
      */
     public static Map<ConverterKey, Converter<?>> loadAllConverter() {
         return allConverter;
+    }
+
+    /**
+     * Copy all converter
+     *
+     * @return
+     */
+    public static Map<ConverterKey, Converter<?>> copyAllConverter() {
+        return new HashMap<>(loadAllConverter());
     }
 
     private static void putAllConverter(Converter<?> converter) {

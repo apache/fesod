@@ -29,15 +29,13 @@ public class DefaultConverterLoaderTest {
     @Test
     void loadDefaultWriteConverterIsImmutableAndCopyIsMutable() {
         assertLoadIsImmutableAndCopyIsMutable(
-                DefaultConverterLoader.loadDefaultWriteConverter(),
-                DefaultConverterLoader.copyDefaultWriteConverter());
+                DefaultConverterLoader.loadDefaultWriteConverter(), DefaultConverterLoader.copyDefaultWriteConverter());
     }
 
     @Test
     void loadDefaultReadConverterIsImmutableAndCopyIsMutable() {
         assertLoadIsImmutableAndCopyIsMutable(
-                DefaultConverterLoader.loadDefaultReadConverter(),
-                DefaultConverterLoader.copyDefaultReadConverter());
+                DefaultConverterLoader.loadDefaultReadConverter(), DefaultConverterLoader.copyDefaultReadConverter());
     }
 
     @Test
@@ -48,7 +46,8 @@ public class DefaultConverterLoaderTest {
 
     private static void assertLoadIsImmutableAndCopyIsMutable(
             Map<ConverterKey, Converter<?>> loaded, Map<ConverterKey, Converter<?>> copy) {
-        Map.Entry<ConverterKey, Converter<?>> entry = loaded.entrySet().iterator().next();
+        Map.Entry<ConverterKey, Converter<?>> entry =
+                loaded.entrySet().iterator().next();
 
         Assertions.assertThrows(
                 UnsupportedOperationException.class, () -> loaded.put(entry.getKey(), entry.getValue()));

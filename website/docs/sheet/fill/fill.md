@@ -24,6 +24,31 @@ title: 'Fill'
 
 This section explains how to use Fesod to fill data into files.
 
+## Placeholder Syntax
+
+A template marks the cells to fill with `{}` placeholders. What sits inside the braces decides how
+the cell is filled:
+
+| Placeholder | Meaning | Filled by |
+| --- | --- | --- |
+| `{name}` | a single variable | `doFill(object)`, `doFill(map)` |
+| `{.name}` | the `name` property of every item of a list | `doFill(list)`, `fill(list, ...)` |
+| `{data1.name}` | the same, for the list named `data1` | `fill(new FillWrapper("data1", list), ...)` |
+| `\{name\}` | escaped with `\`, never parsed | nothing |
+
+The leading `.` is what makes a cell repeat once per item - downwards by default, or across the
+columns with `FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL)`. The text before the
+`.` names which list the items come from, so one template can hold several lists side by side.
+
+A cell may mix several placeholders with ordinary text, as in `{name} is {number} years old this
+year`. A placeholder the fill does not supply is cleared rather than left in the sheet: filling a
+list against `{name}`, or an object against `{.name}`, empties the cell and keeps only the text
+around it.
+
+Escaping stops the braces from being parsed, but the `\` characters are only removed when the same
+cell also holds a real placeholder. In a cell that contains nothing else, `\{name\}` is written out
+exactly as typed, backslashes included.
+
 ## Simple Fill
 
 ### Overview
@@ -86,9 +111,9 @@ public void simpleFill() {
 
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
-<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td></tr>
-<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old this year</td><td>{name} ignored，John Doe</td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td><td>Empty</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old this year</td><td>{name} ignored，John Doe</td><td>Empty</td></tr>
 </tbody>
 </table>
 
@@ -135,21 +160,32 @@ public void listFill() {
 
 ### Result
 
+Approach 1:
+
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
 <tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Date</td></tr>
-<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">3</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">4</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">5</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">6</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">7</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">8</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">9</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">10</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">11</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2024-12-04 19:55:44</td></tr>
-<tr><td class="xl-chrome">12</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">3</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">4</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+</tbody>
+</table>
+
+Approach 2:
+
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Date</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">12</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">21</td><td>John Doe</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
 </tbody>
 </table>
 
@@ -193,7 +229,7 @@ public void complexFill() {
 <tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
 <tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: {date}</td><td></td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-red">{.name}</td><td class="xl-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">{.name}</td><td class="xl-fill-bright-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
 <tr><td class="xl-chrome">5</td><td></td><td></td><td></td><td>Total:{total}</td></tr>
 </tbody>
 </table>
@@ -206,18 +242,12 @@ public void complexFill() {
 <tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
 <tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: November 20, 2024</td><td></td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">6</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">8</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">12</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">13</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">14</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">15</td><td></td><td></td><td></td><td>Total:1000</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td></td><td></td><td></td><td>Total:1000</td></tr>
 </tbody>
 </table>
 
@@ -265,11 +295,15 @@ public void complexFillWithTable() {
 <tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
 <tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: {date}</td><td></td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-red">{.name}</td><td class="xl-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">{.name}</td><td class="xl-fill-bright-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
 </tbody>
 </table>
 
 ### Result
+
+The file comes out the same as Complex Fill above. What changes is how it gets there. The template
+stops at the list row instead of reserving a row for `{total}`, and the total is appended afterwards
+with `writer.write(...)`, so the list can grow to any length without rows below it to push down.
 
 <table class="xl-sheet">
 <tbody>
@@ -277,18 +311,12 @@ public void complexFillWithTable() {
 <tr><td class="xl-chrome">1</td><td></td><td></td><td>Statistics</td><td></td></tr>
 <tr><td class="xl-chrome">2</td><td></td><td></td><td>Time: November 20, 2024</td><td></td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>Number</td><td>Name</td><td>Number</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">6</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">8</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">12</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">13</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">14</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">15</td><td></td><td></td><td></td><td>Total: 1000</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td>John Doe</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td></td><td></td><td></td><td>Total: 1000</td></tr>
 </tbody>
 </table>
 
@@ -326,8 +354,8 @@ public void horizontalFill() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">{.name}</td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green xl-num">{.number}</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">{.name}</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">{.number}</td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>{.name}</td></tr>
 <tr><td class="xl-chrome">4</td><td>Number</td><td>{.number}</td></tr>
 <tr><td class="xl-chrome">5</td><td>Time: {date}</td><td></td><td></td></tr>
@@ -339,11 +367,11 @@ public void horizontalFill() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td><td class="xl-chrome">I</td><td class="xl-chrome">J</td><td class="xl-chrome">K</td><td class="xl-chrome">L</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td></tr>
 <tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">5</td><td>Time: 2024-12-04 20:03:48</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">5</td><td>Time: November 20, 2024</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 
@@ -367,7 +395,9 @@ public void compositeFill() {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // Use FillWrapper for filling multiple lists
-        writer.fill(new FillWrapper("data1", data()), writeSheet);
+        // data1 is laid out across the columns, so it is filled horizontally
+        FillConfig fillConfig = FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build();
+        writer.fill(new FillWrapper("data1", data()), fillConfig, writeSheet);
         writer.fill(new FillWrapper("data2", data()), writeSheet);
         writer.fill(new FillWrapper("data3", data()), writeSheet);
 
@@ -383,37 +413,45 @@ public void compositeFill() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">{data1.name}</td><td></td><td></td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green">{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green">{data1.number}</td><td></td><td></td></tr>
 <tr><td class="xl-chrome">3</td><td>Name</td><td>{data1.name}</td><td></td><td></td></tr>
 <tr><td class="xl-chrome">4</td><td>Number</td><td>{data1.number}</td><td></td><td></td></tr>
 <tr><td class="xl-chrome">5</td><td></td><td>Time: {date}</td><td></td><td></td><td></td></tr>
 <tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td class="xl-chrome">8</td><td>Name</td><td>Number</td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-red">{data2.name}</td><td class="xl-green">{data2.number}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-fc-red">{data2.name}</td><td class="xl-fill-bright-green">{data2.number}</td><td></td><td></td><td></td></tr>
 <tr><td class="xl-chrome">10</td><td></td><td></td><td></td><td>Name</td><td>Number</td></tr>
-<tr><td class="xl-chrome">11</td><td></td><td></td><td></td><td class="xl-red">{data3.name}</td><td class="xl-green">{data3.number}</td></tr>
+<tr><td class="xl-chrome">11</td><td></td><td></td><td></td><td class="xl-fc-red">{data3.name}</td><td class="xl-fill-bright-green">{data3.number}</td></tr>
 </tbody>
 </table>
 
 ### Result
 
+`data1` is filled horizontally, so its ten items run across the columns from `C` to `L` on each of
+the four template rows. `data2` and `data3` are filled downwards instead, occupying `A`/`B` in rows 9
+to 18 and `D`/`E` in rows 11 to 20. Calling `fill` again with the same list name appends to it, as in
+[Fill List](#fill-list).
+
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-red">John Doe</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">5</td><td></td><td>Time: 2024-12-04 20:04:59</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">8</td><td>Name</td><td>Number</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td>Name</td><td>Number</td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">12</td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td class="xl-red">John Doe</td><td class="xl-green xl-num">5.2</td><td></td><td></td><td></td></tr>
-<tr><td class="xl-chrome">13</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">⋯</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>Time: 2026-07-31 20:04:59</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>Name</td><td>Number</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td>Name</td><td>Number</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">18</td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">19</td><td></td><td></td><td></td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">20</td><td></td><td></td><td></td><td class="xl-fc-red">John Doe</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
 </tbody>
 </table>

@@ -80,17 +80,12 @@ public void annotationStyleWrite() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head xl-fill-14 xl-pt30">String Title</td><td class="xl-head xl-fill-10 xl-pt20">Date Title</td><td class="xl-head xl-fill-10 xl-pt20">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-fill-40 xl-pt30">String0</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-fill-40 xl-pt30">String1</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-fill-40 xl-pt30">String2</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-fill-40 xl-pt30">String3</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td class="xl-fill-40 xl-pt30">String4</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-fill-40 xl-pt30">String5</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td class="xl-fill-40 xl-pt30">String6</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-fill-40 xl-pt30">String7</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-fill-40 xl-pt30">String8</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-fill-40 xl-pt30">String9</td><td class="xl-num xl-fill-17 xl-pt20">2024-12-03 20:50:23</td><td class="xl-num xl-fill-17 xl-pt20">0.56</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-fill-magenta xl-fs-30">String Title</td><td class="xl-head xl-fill-red xl-fs-20">Date Title</td><td class="xl-head xl-fill-red xl-fs-20">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-fill-sky xl-fs-30">String0</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-fill-sky xl-fs-30">String1</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fill-sky xl-fs-30">String2</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-fill-sky xl-fs-30 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fill-sky xl-fs-30">String9</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
 </tbody>
 </table>
 
@@ -140,17 +135,12 @@ public void handlerStyleWrite() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-fill-10">String0</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-fill-10">String1</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-fill-10">String2</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-fill-10">String3</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td class="xl-fill-10">String4</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-fill-10">String5</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td class="xl-fill-10">String6</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-fill-10">String7</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-fill-10">String8</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-fill-10">String9</td><td class="xl-num xl-fill-10">45629.90044</td><td class="xl-num xl-fill-10">0.56</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-fill-red xl-fs-20">String Title</td><td class="xl-head xl-fill-red xl-fs-20">Date Title</td><td class="xl-head xl-fill-red xl-fs-20">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-fill-green xl-fs-20">String0</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-fill-green xl-fs-20">String1</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fill-green xl-fs-20">String2</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fill-green xl-fs-20">String9</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
 </tbody>
 </table>
 
@@ -293,15 +283,10 @@ public void widthAndHeightWrite() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome xl-cw-25">B</td><td class="xl-chrome xl-cw-50">C</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head xl-rh-30">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-rh-20">String0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-rh-20">String1</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td class="xl-rh-20">String2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-rh-20">String3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td class="xl-rh-20">String4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-rh-20">String5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td class="xl-rh-20">String6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-rh-20">String7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td class="xl-rh-20">String8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-rh-20">String9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-rh-20">String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-rh-20">String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-rh-20">String2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-rh-20 xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-rh-20">String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>

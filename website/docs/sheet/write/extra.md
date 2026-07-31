@@ -70,7 +70,18 @@ public void commentWrite() {
 
 ### Result
 
-![img](/img/docs/write/commentWrite.png)
+The comment is attached to `B1` and is only shown when that cell is hovered.
+
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head xl-comment-anchor">Date Title<b class="xl-comment">Comment content</b></td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -263,16 +274,16 @@ public void mergeWrite() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td rowspan="2">String0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td rowspan="2">String2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td rowspan="2">String4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td rowspan="2">String6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td rowspan="2">String8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">2</td><td rowspan="2">String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td rowspan="2">String2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td rowspan="2">String4</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td rowspan="2">String6</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td rowspan="2">String8</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
 
@@ -301,6 +312,33 @@ public class DropdownWriteHandler implements SheetWriteHandler {
 }
 ```
 
+Usage
+
+```java
+@Test
+public void dropdownWrite() {
+    String fileName = "dropdownWrite" + System.currentTimeMillis() + ".xlsx";
+
+    FesodSheet.write(fileName, DemoData.class)
+        .registerWriteHandler(new DropdownWriteHandler())
+        .sheet("Dropdown Example")
+        .doWrite(data());
+}
+```
+
 ### Result
 
-![img](/img/docs/write/customHandlerWrite.png)
+The validation covers `A2:A11`, so every cell in that range offers the list. Selecting one shows the
+dropdown button and its options - drawn open here on `A2`.
+
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-dropdown">String0<b class="xl-dropdown-btn">▾</b><b class="xl-dropdown-list"><b>Option1</b><b>Option2</b></b></td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>

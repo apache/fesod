@@ -53,7 +53,18 @@ public void commentWrite() {
 
 ### 结果
 
-![img](/img/docs/write/commentWrite.png)
+批注挂在 `B1` 上，只有鼠标悬停在该单元格时才会显示。
+
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head xl-comment-anchor">日期标题<b class="xl-comment">批注内容</b></td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td>字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
 
 ---
 
@@ -247,16 +258,16 @@ public void mergeWrite() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
-<tr><td class="xl-chrome">2</td><td rowspan="2">字符串0</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td rowspan="2">字符串2</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td rowspan="2">字符串4</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td rowspan="2">字符串6</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td rowspan="2">字符串8</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-num">2024-12-03 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">2</td><td rowspan="2">字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td rowspan="2">字符串2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">6</td><td rowspan="2">字符串4</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">8</td><td rowspan="2">字符串6</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">10</td><td rowspan="2">字符串8</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
 
@@ -285,6 +296,32 @@ public class DropdownWriteHandler implements SheetWriteHandler {
 }
 ```
 
+使用
+
+```java
+@Test
+public void dropdownWrite() {
+    String fileName = "dropdownWrite" + System.currentTimeMillis() + ".xlsx";
+
+    FesodSheet.write(fileName, DemoData.class)
+        .registerWriteHandler(new DropdownWriteHandler())
+        .sheet("下拉框示例")
+        .doWrite(data());
+}
+```
+
 ### 结果
 
-![img](/img/docs/write/customHandlerWrite.png)
+校验范围是 `A2:A11`，该区域内的每个单元格都可以选择列表中的值。选中单元格后会出现下拉按钮和选项，这里直接画成 `A2` 展开的状态。
+
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-dropdown">字符串0<b class="xl-dropdown-btn">▾</b><b class="xl-dropdown-list"><b>选项1</b><b>选项2</b></b></td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>字符串2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>

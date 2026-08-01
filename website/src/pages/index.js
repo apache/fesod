@@ -27,10 +27,35 @@ import Translate from '@docusaurus/Translate';
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
 
+const COLUMN_COUNT = 60;
+const ROW_COUNT = 18;
+
+function columnLetter(index) {
+    let n = index + 1;
+    let label = '';
+    while (n > 0) {
+        const remainder = (n - 1) % 26;
+        label = String.fromCharCode(65 + remainder) + label;
+        n = Math.floor((n - 1) / 26);
+    }
+    return label;
+}
+
 function HomepageHeader() {
     const {siteConfig} = useDocusaurusContext();
     return (
         <header className={clsx('hero hero--primary', styles.heroBanner)}>
+            <div className={styles.gridOverlay} aria-hidden="true" />
+            <div className={styles.colLabels} aria-hidden="true">
+                {Array.from({length: COLUMN_COUNT}, (_, i) => (
+                    <span key={i}>{columnLetter(i)}</span>
+                ))}
+            </div>
+            <div className={styles.rowLabels} aria-hidden="true">
+                {Array.from({length: ROW_COUNT}, (_, i) => (
+                    <span key={i}>{i + 1}</span>
+                ))}
+            </div>
             <div className="container">
                 <Heading as="h1" className="hero__title">
                     {siteConfig.title}

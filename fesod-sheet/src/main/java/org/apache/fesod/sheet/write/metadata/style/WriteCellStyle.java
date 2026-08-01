@@ -179,7 +179,7 @@ public class WriteCellStyle {
         }
         if (source.getDataFormatData() != null) {
             if (target.getDataFormatData() == null) {
-                target.setDataFormatData(source.getDataFormatData());
+                target.setDataFormatData(source.getDataFormatData().clone());
             } else {
                 DataFormatData.merge(source.getDataFormatData(), target.getDataFormatData());
             }

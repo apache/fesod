@@ -445,19 +445,19 @@ Hi Community,
 This is a call for vote to release Apache Fesod(Incubating) ${RELEASE_VERSION}.
 
 The release candidates:
-https://dist.apache.org/repos/dist/dev/incubator/fesod/2.0.0-incubating-rc1
+https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-RCN
 
 The staging repo:
 https://repository.apache.org/content/repositories/orgapachefesod-1016
 
 Git tag for the release:
-https://github.com/apache/fesod/releases/tag/2.0.0-incubating-rc1
+https://github.com/apache/fesod/releases/tag/${RELEASE_VERSION}-RCN
 
 Hash for the release tag:
 e7546d1138d4d3a638df10193a4c29c50a7e55d8
 
 Release Notes:
-https://github.com/apache/fesod/releases/tag/2.0.0--rc1
+https://github.com/apache/fesod/releases/tag/${RELEASE_VERSION}-RCN
 
 The artifacts have been signed with Key [ key-id ], corresponding
 to

@@ -139,13 +139,12 @@
     height: calc(15 * var(--xl-row-unit));
     padding: 0 calc(0.85 * var(--xl-col-unit));
     border-right: 1px solid var(--xl-grid);
+    background-color: var(--xl-white);
     white-space: nowrap;
 }
 
 .xl-sheet td:not(.xl-chrome):not(.xl-head) {
-    height: calc(15 * var(--xl-row-unit));
     border-top: none;
-    background: var(--xl-white);
     color: #333;
 }
 

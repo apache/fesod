@@ -208,6 +208,46 @@ public class CsvRowTest {
         Assertions.assertTrue(line.contains("12:30:45"), "CSV should contain time 12:30:45, got: " + line);
     }
 
+    /**
+     * Real-file integration test: writes a physical CSV file containing a
+     * {@link Calendar} value via the {@link CsvCell} API, then reads the file
+     * back to verify the output.
+     * <p>
+     * Without the fix, {@link CsvCell#setCellValueImpl(Calendar)} sets the cell
+     * to {@code NUMERIC} but does not mark it as a date
+     * ({@code numericCellType = NumericCellTypeEnum.DATE}), so
+     * {@link CsvSheet} takes the number branch in {@code buildCellValue},
+     * finds {@code numberValue} null, and writes an empty field - the
+     * Calendar value is silently lost. The sibling {@code Date} and
+     * {@code LocalDateTime} setters already set the date type.
+     */
+    @Test
+    void csvWrite_withCalendar_producesCorrectFile() throws Exception {
+        File csvFile = new File(tempDir, "calendar-test.csv");
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2024, Calendar.JANUARY, 15, 12, 30, 45);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+            CsvRow row = (CsvRow) sheet.createRow(0);
+
+            // Calendar - without fix: written as an empty field (silent data loss)
+            Cell cell = row.createCell(0, CellType.NUMERIC);
+            cell.setCellValue(cal);
+
+            sheet.close();
+        }
+
+        List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
+        Assertions.assertEquals(1, lines.size());
+        String line = lines.get(0);
+        Assertions.assertTrue(
+                line.contains("2024-01-15"), "CSV should contain the calendar date 2024-01-15, got: " + line);
+    }
+
     private static List<SimpleCsvData> modelData() {
         List<SimpleCsvData> data = new ArrayList<>();
         data.add(new SimpleCsvData("1", "Jackson", "20"));

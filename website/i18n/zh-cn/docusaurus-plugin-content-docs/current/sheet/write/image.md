@@ -68,7 +68,7 @@ public void imageWrite() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">image</td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-pic xl-rh-100"><img src="/img/docs/write/sample-image.svg" alt="图片"/></td></tr>
+<tr class="xl-rh-100"><td class="xl-chrome">2</td><td class="xl-pic xl-rh-100"><img src="/img/docs/write/sample-image.svg" alt="图片"/></td></tr>
 </tbody>
 </table>
 

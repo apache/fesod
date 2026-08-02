@@ -99,7 +99,8 @@ public void simpleWrite() {
 
 ### 结果
 
-三种方式生成的文件完全相同。第 1 行是取自 `@ExcelProperty` 的表头标题，`data()` 返回的 10 个对象依次写入第 2 至 11 行。
+三种方式生成的文件完全相同。
+第 1 行是取自 `@ExcelProperty` 的表头标题，`data()` 返回的多个数据对象依次写入第 2 至 11 行。
 `ignore` 字段因为标注了 `@ExcelIgnore` 而不会出现。
 
 <div class="xl-sheet-container">

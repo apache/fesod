@@ -74,6 +74,7 @@ public void simpleFill() {
 
 ### 模板
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -81,9 +82,11 @@ public void simpleFill() {
 <tr><td class="xl-chrome">2</td><td>{name}</td><td>{number}</td><td>{name}今年{number}岁了</td><td>\{name\}忽略，{name}</td><td>空{.empty}</td></tr>
 </tbody>
 </table>
+</div>
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -91,6 +94,7 @@ public void simpleFill() {
 <tr><td class="xl-chrome">2</td><td>张三</td><td class="xl-num">5.2</td><td>张三今年5.2岁了</td><td>{name}忽略，张三</td><td>空</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -125,6 +129,7 @@ public void listFill() {
 
 ### 模板
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -132,11 +137,13 @@ public void listFill() {
 <tr><td class="xl-chrome">2</td><td>{.name}</td><td>{.number}</td><td>{.date}</td></tr>
 </tbody>
 </table>
+</div>
 
 ### 结果
 
 方案1：
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -148,9 +155,11 @@ public void listFill() {
 <tr><td class="xl-chrome">11</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
 </tbody>
 </table>
+</div>
 
 方案2：
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -163,6 +172,7 @@ public void listFill() {
 <tr><td class="xl-chrome">21</td><td>张三</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -198,6 +208,7 @@ public void complexFill() {
 
 ### 模板
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
@@ -208,9 +219,11 @@ public void complexFill() {
 <tr><td class="xl-chrome">5</td><td></td><td></td><td></td><td>统计:{total}</td></tr>
 </tbody>
 </table>
+</div>
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
@@ -225,6 +238,7 @@ public void complexFill() {
 <tr><td class="xl-chrome">14</td><td></td><td></td><td></td><td>统计:1000</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -263,6 +277,7 @@ public void complexFillWithTable() {
 
 ### 模板
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
@@ -272,11 +287,13 @@ public void complexFillWithTable() {
 <tr><td class="xl-chrome">4</td><td class="xl-fc-red">{.name}</td><td class="xl-fill-bright-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
 </tbody>
 </table>
+</div>
 
 ### 结果
 
 最终文件与上面的复杂填充相同，区别在于生成方式：模板到列表行为止，不再为 `{total}` 预留一行，统计信息在填充之后通过 `writer.write(...)` 追加，因此列表可以任意增长，下方没有需要被顶下去的行。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
@@ -291,6 +308,7 @@ public void complexFillWithTable() {
 <tr><td class="xl-chrome">14</td><td></td><td></td><td></td><td>统计: 1000</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -323,6 +341,7 @@ public void horizontalFill() {
 
 ### 模板
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -333,19 +352,22 @@ public void horizontalFill() {
 <tr><td class="xl-chrome">5</td><td>时间：{date}</td><td></td><td></td></tr>
 </tbody>
 </table>
+</div>
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td><td class="xl-chrome">I</td><td class="xl-chrome">J</td><td class="xl-chrome">K</td><td class="xl-chrome">L</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td></tr>
-<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">3</td><td>姓名</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td></tr>
-<tr><td class="xl-chrome">4</td><td>数字</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">5</td><td>时间：2024年11月20日</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td><td class="xl-fc-red">张三</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>张三</td><td>张三</td><td>张三</td><td>张三</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td>时间：2024年11月20日</td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -382,6 +404,7 @@ public void compositeFill() {
 
 ### 模板
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -398,11 +421,15 @@ public void compositeFill() {
 <tr><td class="xl-chrome">11</td><td></td><td></td><td></td><td class="xl-fc-red">{data3.name}</td><td class="xl-fill-bright-green">{data3.number}</td></tr>
 </tbody>
 </table>
+</div>
 
 ### 结果
 
-`data1` 采用横向填充，十条数据在四个模板行上从 `C` 列排到 `L` 列。`data2` 和 `data3` 则是纵向填充，分别占据第 9 到 18 行的 `A`/`B` 列和第 11 到 20 行的 `D`/`E` 列。再次用同一个列表名调用 `fill` 会接着往后追加，参见[填充列表](#填充列表)。
+- `data1` 采用横向填充，十条数据在四个模板行上从 `C` 列排到 `L` 列。
+- `data2` 和 `data3` 则是纵向填充，分别占据第 9 到 18 行的 `A`/`B` 列和第 11 到 20 行的 `D`/`E` 列。
+- 用同一个列表名调用 `fill` 会接着往后追加，参见[填充列表](#填充列表)。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">⋯</td></tr>
@@ -424,3 +451,4 @@ public void compositeFill() {
 <tr><td class="xl-chrome">20</td><td></td><td></td><td></td><td class="xl-fc-red">张三</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
 </tbody>
 </table>
+</div>

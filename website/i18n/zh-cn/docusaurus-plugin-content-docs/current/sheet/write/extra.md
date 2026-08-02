@@ -29,7 +29,7 @@ public class CommentWriteHandler implements RowWriteHandler {
             // 在第一行第二列创建批注
             Comment comment = drawingPatriarch.createCellComment(
                 new XSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 2, 1));
-            comment.setString(new XSSFRichTextString("批注内容"));
+            comment.setString(new XSSFRichTextString("批注1"));
             sheet.getRow(0).getCell(1).setCellComment(comment);
         }
     }
@@ -46,7 +46,7 @@ public void commentWrite() {
     FesodSheet.write(fileName, DemoData.class)
         .inMemory(Boolean.TRUE) // 批注必须启用内存模式
         .registerWriteHandler(new CommentWriteHandler())
-        .sheet("批注示例")
+        .sheet()
         .doWrite(data());
 }
 ```
@@ -59,7 +59,7 @@ public void commentWrite() {
 <table class="xl-sheet xl-sheet--overlay">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head xl-comment-anchor">日期标题<b class="xl-comment">批注内容</b></td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head xl-comment-anchor">日期标题<b class="xl-comment">批注1</b></td><td class="xl-head">数字标题</td></tr>
 <tr><td class="xl-chrome">2</td><td>字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 <tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 <tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>

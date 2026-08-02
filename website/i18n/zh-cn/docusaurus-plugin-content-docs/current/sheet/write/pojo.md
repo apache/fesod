@@ -70,7 +70,7 @@ public void includeColumnWrite() {
 }
 ```
 
-**结果** 
+**结果**
 
 只保留 `date` 字段：
 

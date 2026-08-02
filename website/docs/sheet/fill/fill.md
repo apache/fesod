@@ -453,8 +453,8 @@ public void compositeFill() {
 
 ### Result
 
-- `data1` is filled horizontally, so its ten items run across the columns from `C` to `L` on each of the four template rows. 
-- `data2` and `data3` are filled downwards instead, occupying `A`/`B` in rows 9 to 18 and `D`/`E` in rows 11 to 20. 
+- `data1` is filled horizontally, so its ten items run across the columns from `C` to `L` on each of the four template rows.
+- `data2` and `data3` are filled downwards instead, occupying `A`/`B` in rows 9 to 18 and `D`/`E` in rows 11 to 20.
 - Calling `fill` again with the same list name appends to it, as in [Fill List](#fill-list).
 
 <div class="xl-sheet-container">

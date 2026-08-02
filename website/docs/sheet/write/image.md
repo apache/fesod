@@ -84,6 +84,7 @@ public void imageWrite() {
 
 The column is named after the field, unless `@ExcelProperty` gives it a title.
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td></tr>
@@ -91,6 +92,7 @@ The column is named after the field, unless `@ExcelProperty` gives it a title.
 <tr><td class="xl-chrome">2</td><td class="xl-pic xl-rh-100"><img src="/img/docs/write/sample-image.svg" alt="image"/></td></tr>
 </tbody>
 </table>
+</div>
 
 Switching to another source is only a change of field type - the written picture is the same:
 
@@ -172,24 +174,36 @@ Margins larger than the cell can make Excel prompt to repair the file when it is
 
 Column `A` holds the text and both images; the second image overlaps column `B`.
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome">B</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">image</td><td></td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-pic-multi xl-rh-100"><img class="xl-pic-abs xl-pic-abs-left" src="/img/docs/write/sample-image.svg" alt="image"/><img class="xl-pic-abs xl-pic-abs-right" src="/img/docs/write/sample-image.svg" alt="image"/><b>Additional text content</b></td><td></td></tr>
+<tr class="xl-rh-100"><td class="xl-chrome">2</td><td class="xl-pic-multi xl-rh-100"><img class="xl-pic-abs xl-pic-abs-left" src="/img/docs/write/sample-image.svg" alt="image"/><img class="xl-pic-abs xl-pic-abs-right" src="/img/docs/write/sample-image.svg" alt="image"/><b>Additional text content</b></td><td></td></tr>
 </tbody>
 </table>
+</div>
 
 ## URL Sources
 
-A `URL` field is fetched over the network while the file is written, under a fetch policy that by
-default allows `http` and `https` only, refuses hosts resolving to a loopback, link-local, site-local
-or otherwise private address, follows at most 3 redirects and reads at most 10 MB. The connect
-timeout is 1s and the read timeout 5s.
+A `URL` field is fetched over the network while the file is written, under a fetch polices:
+
+- Fefault allows `http` and `https` only;
+- Refuses hosts resolving to a loopback, link-local, site-local or otherwise private address;
+- Follows at most 3 redirects and reads at most 10 MB;
+- The connect timeout is 1s and the read timeout 5s.
 
 A refused fetch fails the write with an `IOException` naming the rule that stopped it:
-`URL image protocol is not allowed`, `URL image host resolves to a restricted address`,
-`URL image request exceeded redirect limit` or `URL image data exceeds maximum size`.
+
+```shell
+URL image protocol is not allowed
+
+URL image host resolves to a restricted address
+
+URL image request exceeded redirect limit
+
+URL image data exceeds maximum size
+```
 
 The policy is global and can be replaced:
 

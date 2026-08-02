@@ -160,7 +160,7 @@ public void dynamicHeadWriteWithStrategy() {
 </table>
 </div>
 
-####  HORIZONTAL_ONLY
+#### HORIZONTAL_ONLY
 
 合并 `A1:E1`、`B2:C2`、`D2:E2`
 

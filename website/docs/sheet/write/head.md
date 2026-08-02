@@ -196,7 +196,7 @@ Merges `A1:E1`, `B2:C2`, `D2:E2`. The repeated `ID` in column A stays split:
 </table>
 </div>
 
-#### VERTICAL_ONLY 
+#### VERTICAL_ONLY
 
 Merges only `A2:A3`; the row-spanning titles stay split:
 

@@ -72,7 +72,7 @@ public void imageWrite() {
 </tbody>
 </table>
 
-换成其他来源只需要改字段类型，写出的图片是一样的：
+指定不同的来源方式：
 
 ```java
 private InputStream image;   // 也可以是 byte[]、Byte[]、URL
@@ -143,7 +143,8 @@ public void imageCellWrite() throws Exception {
 }
 ```
 
-图片格式会从数据本身识别，因此不需要设置 `ImageData.imageType`。边距设置得超过单元格大小时，打开文件可能会出现修复提示。
+图片格式支持自动识别，因此不需要设置 `ImageData.imageType`。
+边距设置如果超过单元格大小时，打开文件可能会出现修复提示。
 
 ### 结果
 
@@ -153,17 +154,32 @@ public void imageCellWrite() throws Exception {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome">B</td></tr>
 <tr><td class="xl-chrome">1</td><td class="xl-head">image</td><td></td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-pic-multi xl-rh-100"><img class="xl-pic-abs xl-pic-abs-left" src="/img/docs/write/sample-image.svg" alt="图片"/><img class="xl-pic-abs xl-pic-abs-right" src="/img/docs/write/sample-image.svg" alt="图片"/><b>额外的放一些文字</b></td><td></td></tr>
+<tr class="xl-rh-100"><td class="xl-chrome">2</td><td class="xl-pic-multi xl-rh-100"><img class="xl-pic-abs xl-pic-abs-left" src="/img/docs/write/sample-image.svg" alt="图片"/><img class="xl-pic-abs xl-pic-abs-right" src="/img/docs/write/sample-image.svg" alt="图片"/><b>额外的放一些文字</b></td><td></td></tr>
 </tbody>
 </table>
 
 ## URL 来源
 
-`URL` 字段在写文件时通过网络下载，并受下载策略约束：默认只允许 `http` 和 `https`，拒绝解析到回环、链路本地、站点本地等私有地址的主机，最多跟随 3 次重定向，最多读取 10 MB。连接超时为 1 秒，读取超时为 5 秒。
+写入文件时将通过 `URL` 下载，但内置了如下的一些安全策略：
 
-被拒绝的下载会让写出失败，并抛出指明具体规则的 `IOException`：`URL image protocol is not allowed`、`URL image host resolves to a restricted address`、`URL image request exceeded redirect limit` 或 `URL image data exceeds maximum size`。
+- 默认只允许 `http` 和 `https`;
+- 拒绝解析到回环、链路本地、站点本地等私有地址的主机;
+- 最多跟随 3 次重定向，最多读取 10 MB;
+- 连接超时为 1 秒，读取超时为 5 秒。
 
-该策略是全局的，可以整体替换：
+不满足上述约束时间会下载失败，且抛出自定义明细错误信息的 `IOException` 异常：
+
+```shell
+URL image protocol is not allowed
+
+URL image host resolves to a restricted address
+
+URL image request exceeded redirect limit
+
+URL image data exceeds maximum size
+```
+
+支持自定义设置安全策略：
 
 ```java
 @Test

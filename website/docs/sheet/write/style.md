@@ -77,6 +77,7 @@ public void annotationStyleWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -88,6 +89,7 @@ public void annotationStyleWrite() {
 <tr><td class="xl-chrome">11</td><td class="xl-fill-sky xl-fs-30">String9</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -132,6 +134,7 @@ public void handlerStyleWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -143,6 +146,7 @@ public void handlerStyleWrite() {
 <tr><td class="xl-chrome">11</td><td class="xl-fill-green xl-fs-20">String9</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -279,6 +283,7 @@ public void widthAndHeightWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome xl-cw-25">B</td><td class="xl-chrome xl-cw-50">C</td></tr>
@@ -290,3 +295,4 @@ public void widthAndHeightWrite() {
 <tr><td class="xl-chrome">11</td><td class="xl-rh-20">String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>

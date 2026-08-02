@@ -51,9 +51,7 @@ public void writeSingleSheet() {
 
 ### Result
 
-One sheet with 51 rows: the header is written once, and each of the five `write` calls appends its
-10 rows after the previous batch.
-
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -66,6 +64,7 @@ One sheet with 51 rows: the header is written once, and each of the five `write`
 </tbody>
 </table>
 <table class="xl-sheet-tabs"><tbody><tr><td class="xl-tab-active">Sheet1</td></tr></tbody></table>
+</div>
 
 ---
 
@@ -94,10 +93,7 @@ public void writeMultiSheet() {
 
 ### Result
 
-The loop creates five sheets, `Sheet0` through `Sheet4`, each with its own header row and its own
-copy of the 10 rows. The grid below is `Sheet0`; the other four are identical, so the sheet tabs are
-what separates this result from the single-sheet one above.
-
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -110,6 +106,7 @@ what separates this result from the single-sheet one above.
 </tbody>
 </table>
 <table class="xl-sheet-tabs"><tbody><tr><td class="xl-tab-active">Sheet0</td><td>Sheet1</td><td>Sheet2</td><td>Sheet3</td><td>Sheet4</td></tr></tbody></table>
+</div>
 
 ---
 
@@ -140,6 +137,7 @@ public void tableWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -158,6 +156,7 @@ public void tableWrite() {
 </tbody>
 </table>
 <table class="xl-sheet-tabs"><tbody><tr><td class="xl-tab-active">Table Example</td></tr></tbody></table>
+</div>
 
 :::note
 Each `WriteTable` writes its own header, so the header repeats once per table - rows 1 and 12 - with the two batches

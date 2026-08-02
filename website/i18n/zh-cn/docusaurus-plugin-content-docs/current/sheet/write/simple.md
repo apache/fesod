@@ -102,6 +102,7 @@ public void simpleWrite() {
 三种方式生成的文件完全相同。第 1 行是取自 `@ExcelProperty` 的表头标题，`data()` 返回的 10 个对象依次写入第 2 至 11 行。
 `ignore` 字段因为标注了 `@ExcelIgnore` 而不会出现。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -113,3 +114,4 @@ public void simpleWrite() {
 <tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>

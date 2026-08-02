@@ -34,8 +34,7 @@ public void writeSingleSheet() {
 
 ### 结果
 
-同一个 Sheet 共 51 行：表头只写入一次，随后 5 次 `write` 调用各追加 10 行数据。
-
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -48,6 +47,7 @@ public void writeSingleSheet() {
 </tbody>
 </table>
 <table class="xl-sheet-tabs"><tbody><tr><td class="xl-tab-active">Sheet1</td></tr></tbody></table>
+</div>
 
 ---
 
@@ -76,9 +76,7 @@ public void writeMultiSheet() {
 
 ### 结果
 
-循环创建了 5 个 Sheet：`Sheet0` 到 `Sheet4`，每个 Sheet 都有各自的表头和各自的 10 行数据。下方展示的是
-`Sheet0`，其余四个完全相同，因此与上面单 Sheet 示例的区别只体现在底部的 Sheet 标签上。
-
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -91,6 +89,7 @@ public void writeMultiSheet() {
 </tbody>
 </table>
 <table class="xl-sheet-tabs"><tbody><tr><td class="xl-tab-active">Sheet0</td><td>Sheet1</td><td>Sheet2</td><td>Sheet3</td><td>Sheet4</td></tr></tbody></table>
+</div>
 
 ---
 
@@ -121,6 +120,7 @@ public void tableWrite() {
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -139,6 +139,7 @@ public void tableWrite() {
 </tbody>
 </table>
 <table class="xl-sheet-tabs"><tbody><tr><td class="xl-tab-active">Table示例</td></tr></tbody></table>
+</div>
 
 :::note
 每个 `WriteTable` 各写入一行自己的表头，因此表头分别出现在第 1 行和第 12 行，两段各 10 行数据依次位于

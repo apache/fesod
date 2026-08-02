@@ -45,6 +45,7 @@ public void complexHeadWrite() {
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -57,6 +58,7 @@ public void complexHeadWrite() {
 <tr><td class="xl-chrome">12</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -88,6 +90,7 @@ public void dynamicHeadWrite() {
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -99,6 +102,7 @@ public void dynamicHeadWrite() {
 <tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -141,13 +145,11 @@ public void dynamicHeadWriteWithStrategy() {
 }
 ```
 
-每个内层列表代表一**列**，自上而下列出该列在各级表头中的标题。因此第 1 行中 `"主标题"` 横跨全部五列，第 2 行中
-`"A 组"` 覆盖 B–C 两列，而 `"编号"` 在 A 列的第 2–3 行重复出现。
+#### NONE
 
-### 各策略的结果
+每个表头单元格都各自独立：
 
-**NONE** —— 每个表头单元格都各自独立：
-
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -156,9 +158,13 @@ public void dynamicHeadWriteWithStrategy() {
 <tr><td class="xl-chrome">3</td><td class="xl-head">编号</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td></tr>
 </tbody>
 </table>
+</div>
 
-**HORIZONTAL_ONLY** —— 合并 `A1:E1`、`B2:C2`、`D2:E2`。A 列中重复的 `编号` 保持拆分：
+####  HORIZONTAL_ONLY
 
+合并 `A1:E1`、`B2:C2`、`D2:E2`
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -167,9 +173,13 @@ public void dynamicHeadWriteWithStrategy() {
 <tr><td class="xl-chrome">3</td><td class="xl-head">编号</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td></tr>
 </tbody>
 </table>
+</div>
 
-**VERTICAL_ONLY** —— 只合并 `A2:A3`，横向跨列的标题保持拆分：
+#### VERTICAL_ONLY
 
+只合并 `A2:A3`
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -178,9 +188,13 @@ public void dynamicHeadWriteWithStrategy() {
 <tr><td class="xl-chrome">3</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td></tr>
 </tbody>
 </table>
+</div>
 
-**FULL_RECTANGLE** —— 合并 `A1:E1`、`A2:A3`、`B2:C2`、`D2:E2`：
+#### FULL_RECTANGLE
 
+合并 `A1:E1`、`A2:A3`、`B2:C2`、`D2:E2`
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -189,9 +203,13 @@ public void dynamicHeadWriteWithStrategy() {
 <tr><td class="xl-chrome">3</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td></tr>
 </tbody>
 </table>
+</div>
 
-**AUTO**（默认）—— 合并 `A1:E1`、`B2:C2`、`D2:E2`，但**不会**合并 `A2:A3`：
+#### AUTO
 
+合并 `A1:E1`、`B2:C2`、`D2:E2`，但不会合并 `A2:A3`：
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -200,6 +218,7 @@ public void dynamicHeadWriteWithStrategy() {
 <tr><td class="xl-chrome">3</td><td class="xl-head">编号</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td><td class="xl-head">姓名</td><td class="xl-head">年龄</td></tr>
 </tbody>
 </table>
+</div>
 
 :::tip
 `AUTO` 的水平合并与 `FULL_RECTANGLE` 完全一致，两者的区别只在**垂直**合并上。`AUTO` 会看*重复的名称从哪一行开始*：

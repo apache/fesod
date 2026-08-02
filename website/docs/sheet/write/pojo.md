@@ -53,8 +53,11 @@ public void excludeColumnWrite() {
 }
 ```
 
-Result - the `date` field is gone, the other two remain:
+**Result**
 
+The `date` field is gone, the other two remain:
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
@@ -66,6 +69,7 @@ Result - the `date` field is gone, the other two remain:
 <tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 #### Export Only Specified Columns
 
@@ -84,8 +88,11 @@ public void includeColumnWrite() {
 }
 ```
 
-Result - only the `date` field is kept:
+**Result**
 
+Only the `date` field is kept:
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
@@ -97,60 +104,7 @@ Result - only the `date` field is kept:
 <tr><td class="xl-chrome">11</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
 </tbody>
 </table>
-
-#### Column Order When Using includeColumnFieldNames
-
-The columns come out in the POJO's order, not the collection's. Listing `doubleData` before `string` still writes
-`string` first, because that is the order the fields are declared in:
-
-```java
-@Test
-public void includeColumnOrderWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
-
-    Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
-    FesodSheet.write(fileName, DemoData.class)
-        .includeColumnFieldNames(includeColumns)
-        .sheet()
-        .doWrite(data());
-}
-```
-
-<table class="xl-sheet">
-<tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
-</tbody>
-</table>
-
-Add `.orderByIncludeColumn(true)` to follow the collection's order instead:
-
-```java
-@Test
-public void orderByIncludeColumnWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
-
-    Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
-    FesodSheet.write(fileName, DemoData.class)
-        .includeColumnFieldNames(includeColumns)
-        .orderByIncludeColumn(true)
-        .sheet()
-        .doWrite(data());
-}
-```
-
-<table class="xl-sheet">
-<tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">Number Title</td><td class="xl-head">String Title</td></tr>
-<tr><td class="xl-chrome">2</td><td class="xl-num">0.56</td><td>String0</td></tr>
-<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
-</tbody>
-</table>
-
-The collection needs a stable iteration order for this - a `LinkedHashSet` or a `List`, not a `HashSet`.
+</div>
 
 ---
 
@@ -158,7 +112,7 @@ The collection needs a stable iteration order for this - a `LinkedHashSet` or a 
 
 ### Overview
 
-Specify column order using the `index` attribute of the `@ExcelProperty` annotation.
+Specify column order.
 
 ### POJO Class
 
@@ -178,6 +132,10 @@ public class IndexData {
 
 ### Code Example
 
+#### `index` attribute
+
+Using the `index` attribute of the `@ExcelProperty` annotation.
+
 ```java
 @Test
 public void indexWrite() {
@@ -188,8 +146,9 @@ public void indexWrite() {
 }
 ```
 
-### Result
+**Result**
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
@@ -201,12 +160,77 @@ public void indexWrite() {
 <tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td></td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 :::note
 Column **C is empty on purpose**. `index` is an absolute, 0-based column position, not a sort key: the fields declare
 `0`, `1` and `3`, so nothing is written at position `2` and the gap is preserved in the output. To place the three
 columns side by side, number them `0`, `1`, `2`.
 :::
+
+#### includeColumnFieldNames
+
+The columns come out in the POJO's order, not the collection's. Listing `doubleData` before `string` still writes
+`string` first, because that is the order the fields are declared in:
+
+```java
+@Test
+public void includeColumnOrderWrite() {
+    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+
+    Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
+    FesodSheet.write(fileName, DemoData.class)
+        .includeColumnFieldNames(includeColumns)
+        .sheet()
+        .doWrite(data());
+}
+```
+
+**Result**
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
+</div>
+
+#### orderByIncludeColumn
+
+Add `.orderByIncludeColumn(true)` to follow the collection's order instead:
+
+```java
+@Test
+public void orderByIncludeColumnWrite() {
+    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+
+    Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
+    FesodSheet.write(fileName, DemoData.class)
+        .includeColumnFieldNames(includeColumns)
+        .orderByIncludeColumn(true)
+        .sheet()
+        .doWrite(data());
+}
+```
+
+**Result**
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">Number Title</td><td class="xl-head">String Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num">0.56</td><td>String0</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+</tbody>
+</table>
+</div>
+
+The collection needs a stable iteration order for this - a `LinkedHashSet` or a `List`, not a `HashSet`.
 
 ---
 
@@ -247,6 +271,7 @@ private List<List<Object>> dataList() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -258,3 +283,4 @@ private List<List<Object>> dataList() {
 <tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
 </tbody>
 </table>
+</div>

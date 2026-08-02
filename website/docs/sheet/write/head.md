@@ -62,6 +62,7 @@ public void complexHeadWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -74,6 +75,7 @@ public void complexHeadWrite() {
 <tr><td class="xl-chrome">12</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -105,6 +107,7 @@ public void dynamicHeadWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -116,6 +119,7 @@ public void dynamicHeadWrite() {
 <tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">0.56</td><td class="xl-num">2026-07-31 20:50:23</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -162,10 +166,11 @@ public void dynamicHeadWriteWithStrategy() {
 Each inner list is one **column**, listing its title from the top level down. So `"Main Title"` spans all five columns in row 1,\
 `"Group A"` covers columns B–C in row 2, and `"ID"` repeats down rows 2–3 of column A.
 
-### Results per Strategy
+#### NONE
 
-**NONE** - every header cell stands alone:
+Every header cell stands alone:
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -174,9 +179,13 @@ Each inner list is one **column**, listing its title from the top level down. So
 <tr><td class="xl-chrome">3</td><td class="xl-head">ID</td><td class="xl-head">Name</td><td class="xl-head">Age</td><td class="xl-head">Name</td><td class="xl-head">Age</td></tr>
 </tbody>
 </table>
+</div>
 
-**HORIZONTAL_ONLY** - merges `A1:E1`, `B2:C2`, `D2:E2`. The repeated `ID` in column A stays split:
+#### HORIZONTAL_ONLY
 
+Merges `A1:E1`, `B2:C2`, `D2:E2`. The repeated `ID` in column A stays split:
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -185,9 +194,13 @@ Each inner list is one **column**, listing its title from the top level down. So
 <tr><td class="xl-chrome">3</td><td class="xl-head">ID</td><td class="xl-head">Name</td><td class="xl-head">Age</td><td class="xl-head">Name</td><td class="xl-head">Age</td></tr>
 </tbody>
 </table>
+</div>
 
-**VERTICAL_ONLY** - merges only `A2:A3`; the row-spanning titles stay split:
+#### VERTICAL_ONLY 
 
+Merges only `A2:A3`; the row-spanning titles stay split:
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -196,9 +209,13 @@ Each inner list is one **column**, listing its title from the top level down. So
 <tr><td class="xl-chrome">3</td><td class="xl-head">Name</td><td class="xl-head">Age</td><td class="xl-head">Name</td><td class="xl-head">Age</td></tr>
 </tbody>
 </table>
+</div>
 
-**FULL_RECTANGLE** - merges `A1:E1`, `A2:A3`, `B2:C2`, `D2:E2`:
+#### FULL_RECTANGLE
 
+Merges `A1:E1`, `A2:A3`, `B2:C2`, `D2:E2`:
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -207,9 +224,13 @@ Each inner list is one **column**, listing its title from the top level down. So
 <tr><td class="xl-chrome">3</td><td class="xl-head">Name</td><td class="xl-head">Age</td><td class="xl-head">Name</td><td class="xl-head">Age</td></tr>
 </tbody>
 </table>
+</div>
 
-**AUTO** (default) - merges `A1:E1`, `B2:C2`, `D2:E2`, but **not** `A2:A3`:
+#### AUTO
 
+Merges `A1:E1`, `B2:C2`, `D2:E2`, but **not** `A2:A3`:
+
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
@@ -218,6 +239,7 @@ Each inner list is one **column**, listing its title from the top level down. So
 <tr><td class="xl-chrome">3</td><td class="xl-head">ID</td><td class="xl-head">Name</td><td class="xl-head">Age</td><td class="xl-head">Name</td><td class="xl-head">Age</td></tr>
 </tbody>
 </table>
+</div>
 
 :::tip
 `AUTO` merges horizontally exactly like `FULL_RECTANGLE`. The two differ only in **vertical** merging, where

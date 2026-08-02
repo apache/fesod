@@ -53,8 +53,9 @@ public void commentWrite() {
 
 ### 结果
 
-批注挂在 `B1` 上，只有鼠标悬停在该单元格时才会显示。
+在第一行第二列单元格上出现批注信息。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet xl-sheet--overlay">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -65,6 +66,7 @@ public void commentWrite() {
 <tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -106,6 +108,7 @@ public void writeHyperlinkDataWrite() {
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
@@ -113,6 +116,7 @@ public void writeHyperlinkDataWrite() {
 <tr><td class="xl-chrome">2</td><td><a href="https://example.com">点击访问</a></td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -156,6 +160,7 @@ public void writeFormulaDataWrite() {
 
 ### 结果
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
@@ -163,6 +168,7 @@ public void writeFormulaDataWrite() {
 <tr><td class="xl-chrome">2</td><td>=SUM(A1:A10)</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -186,90 +192,6 @@ public void templateWrite() {
         .doWrite(data());
 }
 ```
-
----
-
-## 合并单元格
-
-### 概述
-
-支持通过注解或自定义合并策略实现合并单元格。
-
-### 代码示例
-
-注解方式
-
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class DemoMergeData {
-    @ContentLoopMerge(eachRow = 2) // 每隔 2 行合并一次
-    @ExcelProperty("字符串标题")
-    private String string;
-
-    @ExcelProperty("日期标题")
-    private Date date;
-
-    @ExcelProperty("数字标题")
-    private Double doubleData;
-}
-```
-
-自定义合并策略
-
-```java
-public class CustomMergeStrategy extends AbstractMergeStrategy {
-    @Override
-    protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
-        // merge方法会为每个单元格都调用一次，确保相同单元格只执行一次合并
-        if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
-            int startRow = relativeRowIndex + 1; // 第0行是表头，数据从第1行开始
-            int endRow = startRow + 1; // 合并当前行和下一行
-            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
-        }
-    }
-}
-```
-
-使用
-
-```java
-@Test
-public void mergeWrite() {
-    String fileName = "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-
-    // 注解方式
-    FesodSheet.write(fileName, DemoMergeData.class)
-        .sheet("合并示例")
-        .doWrite(data());
-
-    // 自定义合并策略
-    FesodSheet.write(fileName, DemoData.class)
-        .registerWriteHandler(new CustomMergeStrategy())
-        .sheet("自定义合并")
-        .doWrite(data());
-}
-```
-
-### 结果
-
-<table class="xl-sheet">
-<tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
-<tr><td class="xl-chrome">2</td><td rowspan="2">字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td rowspan="2">字符串2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td rowspan="2">字符串4</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td rowspan="2">字符串6</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td rowspan="2">字符串8</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-</tbody>
-</table>
 
 ---
 
@@ -312,8 +234,9 @@ public void dropdownWrite() {
 
 ### 结果
 
-校验范围是 `A2:A11`，该区域内的每个单元格都可以选择列表中的值。选中单元格后会出现下拉按钮和选项，这里直接画成 `A2` 展开的状态。
+校验范围是 `A2:A11`，该区域内的每个单元格都可以选择下拉框中的值。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet xl-sheet--overlay">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -325,3 +248,4 @@ public void dropdownWrite() {
 <tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>

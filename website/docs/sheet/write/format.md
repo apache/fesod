@@ -64,6 +64,7 @@ public void converterWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -75,3 +76,4 @@ public void converterWrite() {
 <tr><td class="xl-chrome">11</td><td>Custom: String9</td><td>2024/12/03 20:50:23</td><td class="xl-num">56.%</td></tr>
 </tbody>
 </table>
+</div>

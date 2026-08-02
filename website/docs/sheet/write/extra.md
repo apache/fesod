@@ -46,7 +46,7 @@ public class CommentWriteHandler implements RowWriteHandler {
             // Create comment in first row, second column
             Comment comment = drawingPatriarch.createCellComment(
                 new XSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 2, 1));
-            comment.setString(new XSSFRichTextString("Comment content"));
+            comment.setString(new XSSFRichTextString("Comments"));
             sheet.getRow(0).getCell(1).setCellComment(comment);
         }
     }
@@ -72,16 +72,18 @@ public void commentWrite() {
 
 The comment is attached to `B1` and is only shown when that cell is hovered.
 
+<div class="xl-sheet-container">
 <table class="xl-sheet xl-sheet--overlay">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head xl-comment-anchor">Date Title<b class="xl-comment">Comment content</b></td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head xl-comment-anchor">Date Title<b class="xl-comment">Comments</b></td><td class="xl-head">Number Title</td></tr>
 <tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 <tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 <tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
 <tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -123,6 +125,7 @@ public void writeHyperlinkDataWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
@@ -130,6 +133,7 @@ public void writeHyperlinkDataWrite() {
 <tr><td class="xl-chrome">2</td><td><a href="https://example.com">Click to visit</a></td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -172,6 +176,7 @@ public void writeFormulaDataWrite() {
 
 ### Result
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
@@ -179,6 +184,7 @@ public void writeFormulaDataWrite() {
 <tr><td class="xl-chrome">2</td><td>=SUM(A1:A10)</td></tr>
 </tbody>
 </table>
+</div>
 
 ---
 
@@ -202,90 +208,6 @@ public void templateWrite() {
         .doWrite(data());
 }
 ```
-
----
-
-## Merged Cells
-
-### Overview
-
-Supports merged cells through annotations or custom merge strategies.
-
-### Code Example
-
-Annotation approach
-
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class DemoMergeData {
-    @ContentLoopMerge(eachRow = 2) // Merge every 2 rows
-    @ExcelProperty("String Title")
-    private String string;
-
-    @ExcelProperty("Date Title")
-    private Date date;
-
-    @ExcelProperty("Number Title")
-    private Double doubleData;
-}
-```
-
-Custom merge strategy
-
-```java
-public class CustomMergeStrategy extends AbstractMergeStrategy {
-    @Override
-    protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
-        // merge method will be called for each cell, ensuring that the same cell is merged only once
-        if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
-            int startRow = relativeRowIndex + 1; // Row 0 is the header, data starts from row 1
-            int endRow = startRow + 1; // Merge current row and next row
-            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
-        }
-    }
-}
-```
-
-Usage
-
-```java
-@Test
-public void mergeWrite() {
-    String fileName = "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-
-    // Annotation approach
-    FesodSheet.write(fileName, DemoMergeData.class)
-        .sheet("Merge Example")
-        .doWrite(data());
-
-    // Custom merge strategy
-    FesodSheet.write(fileName, DemoData.class)
-        .registerWriteHandler(new CustomMergeStrategy())
-        .sheet("Custom Merge")
-        .doWrite(data());
-}
-```
-
-### Result
-
-<table class="xl-sheet">
-<tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
-<tr><td class="xl-chrome">2</td><td rowspan="2">String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">4</td><td rowspan="2">String2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">5</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">6</td><td rowspan="2">String4</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">7</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">8</td><td rowspan="2">String6</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">10</td><td rowspan="2">String8</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-<tr><td class="xl-chrome">11</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
-</tbody>
-</table>
 
 ---
 
@@ -331,6 +253,7 @@ public void dropdownWrite() {
 The validation covers `A2:A11`, so every cell in that range offers the list. Selecting one shows the
 dropdown button and its options - drawn open here on `A2`.
 
+<div class="xl-sheet-container">
 <table class="xl-sheet xl-sheet--overlay">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
@@ -342,3 +265,4 @@ dropdown button and its options - drawn open here on `A2`.
 <tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
 </tbody>
 </table>
+</div>

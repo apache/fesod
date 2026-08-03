@@ -22,7 +22,7 @@ title: 'Extra'
 
 # Extra Information
 
-This chapter introduces how to write extra information such as comments, hyperlinks, formulas, merged cells, etc.
+This chapter introduces how to write extra information such as comments, hyperlinks, formulas, etc.
 
 ## Comments
 

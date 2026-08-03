@@ -188,7 +188,7 @@ Column `A` holds the text and both images; the second image overlaps column `B`.
 
 A `URL` field is fetched over the network while the file is written, under a fetch polices:
 
-- Fefault allows `http` and `https` only;
+- Default allows `http` and `https` only;
 - Refuses hosts resolving to a loopback, link-local, site-local or otherwise private address;
 - Follows at most 3 redirects and reads at most 10 MB;
 - The connect timeout is 1s and the read timeout 5s.

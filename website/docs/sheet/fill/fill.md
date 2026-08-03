@@ -69,6 +69,22 @@ public class FillData {
 }
 ```
 
+### Data List
+
+```java
+private List<FillData> data() {
+    List<FillData> list = ListUtils.newArrayList();
+    for (int i = 0; i < 10; i++) {
+        FillData fillData = new FillData();
+        fillData.setName("John Doe" + i);
+        fillData.setNumber(5.2);
+        fillData.setDate(new Date());
+        list.add(fillData);
+    }
+    return list;
+}
+```
+
 ### Code Example
 
 ```java
@@ -116,7 +132,7 @@ public void simpleFill() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
 <tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td><td>Empty</td></tr>
-<tr><td class="xl-chrome">2</td><td>John</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old</td><td>{name} ignored，John Doe</td><td>Empty</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old</td><td>{name} ignored，John Doe</td><td>Empty</td></tr>
 </tbody>
 </table>
 </div>
@@ -387,12 +403,12 @@ public void horizontalFill() {
 <div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td></tr>
-<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td></tr>
-<tr><td class="xl-chrome">5</td><td>Time: November 20, 2024</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">…</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-fc-red">John Doe</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td>John Doe</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">5</td><td>Time: November 20, 2024</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 </div>

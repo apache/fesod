@@ -64,6 +64,7 @@ public void imageWrite() {
 
 没有用 `@ExcelProperty` 指定标题时，列名就是字段名。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td></tr>
@@ -71,6 +72,7 @@ public void imageWrite() {
 <tr class="xl-rh-100"><td class="xl-chrome">2</td><td class="xl-pic xl-rh-100"><img src="/img/docs/write/sample-image.svg" alt="图片"/></td></tr>
 </tbody>
 </table>
+</div>
 
 指定不同的来源方式：
 
@@ -150,6 +152,7 @@ public void imageCellWrite() throws Exception {
 
 `A` 列同时包含文字和两张图片，其中第二张图片覆盖到了 `B` 列。
 
+<div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome">B</td></tr>
@@ -157,6 +160,7 @@ public void imageCellWrite() throws Exception {
 <tr class="xl-rh-100"><td class="xl-chrome">2</td><td class="xl-pic-multi xl-rh-100"><img class="xl-pic-abs xl-pic-abs-left" src="/img/docs/write/sample-image.svg" alt="图片"/><img class="xl-pic-abs xl-pic-abs-right" src="/img/docs/write/sample-image.svg" alt="图片"/><b>额外的放一些文字</b></td><td></td></tr>
 </tbody>
 </table>
+</div>
 
 ## URL 来源
 

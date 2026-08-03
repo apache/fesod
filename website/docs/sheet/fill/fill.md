@@ -120,7 +120,7 @@ public void simpleFill() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
 <tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td><td>Empty</td></tr>
-<tr><td class="xl-chrome">2</td><td>{name}</td><td>{number}</td><td>{name} is {number} years old</td><td>\{name\} ignored，{name}</td><td>Empty{.empty}</td></tr>
+<tr><td class="xl-chrome">2</td><td>{name}</td><td>{number}</td><td>{name} is {number} years old</td><td>\{name\} ignored, {name}</td><td>Empty{.empty}</td></tr>
 </tbody>
 </table>
 </div>
@@ -132,7 +132,7 @@ public void simpleFill() {
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
 <tr><td class="xl-chrome">1</td><td>Name</td><td>Number</td><td>Complex</td><td>Ignored</td><td>Empty</td></tr>
-<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old</td><td>{name} ignored，John Doe</td><td>Empty</td></tr>
+<tr><td class="xl-chrome">2</td><td>John Doe</td><td class="xl-num">5.2</td><td>John Doe is 5.2 years old</td><td>{name} ignored, John Doe</td><td>Empty</td></tr>
 </tbody>
 </table>
 </div>

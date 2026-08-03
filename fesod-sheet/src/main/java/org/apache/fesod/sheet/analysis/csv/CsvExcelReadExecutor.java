@@ -224,17 +224,26 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
         Boolean autoStrip =
                 csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoStrip();
         List<Integer> includeColumnIndexes = csvReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+
         while (cellIterator.hasNext()) {
             String cellString = cellIterator.next();
             int currentColumnIndex = columnIndex++;
-            if (includeColumnIndexes != null && !includeColumnIndexes.contains(currentColumnIndex)) {
-                continue;
+            int targetColumnIndex;
+
+            if (includeColumnIndexes == null) {
+                targetColumnIndex = currentColumnIndex;
+            } else {
+                targetColumnIndex = includeColumnIndexes.indexOf(currentColumnIndex);
+                if (targetColumnIndex < 0) {
+                    continue;
+                }
             }
+
             ReadCellData<String> readCellData = new ReadCellData<>();
             readCellData.setRowIndex(rowIndex);
-            readCellData.setColumnIndex(currentColumnIndex);
 
-            // csv is an empty string of whether <code>,,</code> is read or <code>,"",</code>
+            readCellData.setColumnIndex(targetColumnIndex);
+            
             if (StringUtils.isNotBlank(cellString)) {
                 readCellData.setType(CellDataTypeEnum.STRING);
                 if (autoStrip) {
@@ -247,7 +256,8 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
             } else {
                 readCellData.setType(CellDataTypeEnum.EMPTY);
             }
-            cellMap.put(currentColumnIndex, readCellData);
+
+            cellMap.put(targetColumnIndex, readCellData);
         }
 
         RowTypeEnum rowType = MapUtils.isEmpty(cellMap) ? RowTypeEnum.EMPTY : RowTypeEnum.DATA;

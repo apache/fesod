@@ -186,7 +186,7 @@ Column `A` holds the text and both images; the second image overlaps column `B`.
 
 ## URL Sources
 
-A `URL` field is fetched over the network while the file is written, under a fetch polices:
+A `URL` field is fetched over the network while the file is written, under the following fetch policies:
 
 - Default allows `http` and `https` only;
 - Refuses hosts resolving to a loopback, link-local, site-local or otherwise private address;

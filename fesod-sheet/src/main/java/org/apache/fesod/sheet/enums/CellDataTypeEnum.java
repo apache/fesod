@@ -83,8 +83,9 @@ public enum CellDataTypeEnum {
     /**
      * Build data types
      *
-     * @param cellType
-     * @return
+     * @param cellType the raw {@code t} attribute value of a cell
+     * @return the matching type, {@link #EMPTY} when {@code cellType} is empty, or {@code null} when
+     *         {@code cellType} is not a recognized type; callers are expected to handle the {@code null} case.
      */
     public static CellDataTypeEnum buildFromCellType(String cellType) {
         if (StringUtils.isEmpty(cellType)) {

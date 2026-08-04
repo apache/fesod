@@ -265,9 +265,9 @@ class FesodSheetTest {
         List<Integer> targetColumns = Arrays.asList(0, 2);
 
         List<Map<Integer, String>> readResults = FesodSheet.read(csvFile)
-                .includeColumnIndexes(targetColumns)
                 .csv()
                 .sheet(0)
+                .includeColumnIndexes(Set.of(0, 2))
                 .doReadSync();
 
         Assertions.assertNotNull(readResults);

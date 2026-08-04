@@ -258,7 +258,7 @@ class FesodSheetTest {
     @Test
     void testReadCsv_withColumnIndexes_shouldFilterColumns() throws Exception {
 
-        String csvContent = "1,Alice,30,Female\n2,Bob,25,Male";
+        String csvContent = "ID,Name,Age,Gender\n2,Bob,25,Male";
         File csvFile = tempDir.resolve("test_columns.csv").toFile();
         FileUtils.writeStringToFile(csvFile, csvContent, StandardCharsets.UTF_8);
 
@@ -266,17 +266,17 @@ class FesodSheetTest {
 
         List<Map<Integer, String>> readResults = FesodSheet.read(csvFile)
                 .csv()
-                .sheet(0)
                 .includeColumnIndexes(targetColumns)
                 .doReadSync();
 
         Assertions.assertNotNull(readResults);
-        Assertions.assertEquals(2, readResults.size());
+        Assertions.assertEquals(1, readResults.size());
 
         Map<Integer, String> row1 = readResults.get(0);
-        Assertions.assertEquals(2, row1.size(), "Should only contain the 2 filtered columns");
-        Assertions.assertEquals("1", row1.get(0));
-        Assertions.assertEquals("30", row1.get(1));
+        Assertions.assertEquals(
+                2, row1.size(), "Should only contain the 1 filtered columns (excepting the head by default)");
+        Assertions.assertEquals("2", row1.get(0));
+        Assertions.assertEquals("25", row1.get(1));
     }
 
     @Test

@@ -263,8 +263,8 @@ class FesodSheetTest {
         List<Integer> targetColumns = Arrays.asList(0, 2);
 
         List<Map<Integer, String>> readResults = FesodSheet.read(csvFile)
-                .csv()
                 .includeColumnIndexes(targetColumns)
+                .csv()
                 .sheet(0)
                 .doReadSync();
 

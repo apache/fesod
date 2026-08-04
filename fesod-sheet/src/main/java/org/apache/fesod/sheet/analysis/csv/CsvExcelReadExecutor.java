@@ -223,7 +223,8 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
                 csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoTrim();
         Boolean autoStrip =
                 csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoStrip();
-        List<Integer> includeColumnIndexes = csvReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+        List<Integer> includeColumnIndexes =
+                csvReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
 
         while (cellIterator.hasNext()) {
             String cellString = cellIterator.next();
@@ -243,7 +244,7 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
             readCellData.setRowIndex(rowIndex);
 
             readCellData.setColumnIndex(targetColumnIndex);
-            
+
             if (StringUtils.isNotBlank(cellString)) {
                 readCellData.setType(CellDataTypeEnum.STRING);
                 if (autoStrip) {

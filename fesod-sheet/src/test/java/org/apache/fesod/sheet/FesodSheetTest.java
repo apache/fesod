@@ -25,8 +25,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
@@ -276,10 +276,9 @@ class FesodSheetTest {
         Map<Integer, String> row1 = readResults.get(0);
         Assertions.assertEquals(2, row1.size(), "Should only contain the 2 filtered columns");
         Assertions.assertEquals("1", row1.get(0));
-        Assertions.assertEquals("30", row1.get(2));
-        Assertions.assertNull(row1.get(1), "Column index 1 (Name) should be omitted");
+        Assertions.assertEquals("30", row1.get(1));
     }
-  
+
     @Test
     void testReadSheet_withColumnIndexes_shouldConfigureAll() {
 

@@ -105,6 +105,7 @@
     font-size: calc(13 * var(--xl-pt));
     background: var(--xl-paper);
     border: 1px solid var(--xl-grid);
+    border-radius: var(--ifm-global-radius);
     margin-bottom: calc(10 * var(--xl-row-unit));
 }
 
@@ -380,6 +381,7 @@
     max-width: 100%;
     border: 0;
     margin-bottom: 0;
+    margin-left: calc(5 * var(--xl-col-unit));
 }
 
 .xl-sheet-tabs tbody {

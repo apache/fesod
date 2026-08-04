@@ -77,6 +77,7 @@ public class PageReadListener<T> implements ReadListener<T> {
     public void doAfterAllAnalysed(AnalysisContext context) {
         if (CollectionUtils.isNotEmpty(cachedDataList)) {
             consumer.accept(cachedDataList);
+            cachedDataList = ListUtils.newArrayListWithExpectedSize(batchCount);
         }
     }
 }

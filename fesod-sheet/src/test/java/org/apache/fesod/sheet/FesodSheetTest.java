@@ -26,12 +26,14 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
+import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
@@ -276,5 +278,43 @@ class FesodSheetTest {
         Assertions.assertEquals("1", row1.get(0));
         Assertions.assertEquals("30", row1.get(2));
         Assertions.assertNull(row1.get(1), "Column index 1 (Name) should be omitted");
+    }
+  
+    @Test
+    void testReadSheet_withColumnIndexes_shouldConfigureAll() {
+
+        List<List<String>> head = new ArrayList<>();
+        head.add(new ArrayList<>(Arrays.asList("ID")));
+        head.add(new ArrayList<>(Arrays.asList("Name")));
+        head.add(new ArrayList<>(Arrays.asList("Age")));
+        head.add(new ArrayList<>(Arrays.asList("Gender")));
+
+        List<List<Object>> dataList = new ArrayList<>();
+        dataList.add(Arrays.asList("1", "Alice", "30", "Female"));
+
+        FesodSheet.write(tempFile).head(head).sheet("Sheet1").doWrite(dataList);
+
+        List<Integer> targetColumns = Arrays.asList(0, 2);
+
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheetWithColumns(0, "Sheet1", 100, targetColumns);
+        ReadSheet configuredSheet = builder.build();
+        List<Map<Integer, String>> readResults = FesodSheet.read(tempFile)
+                .sheet(0)
+                .includeColumnIndexes(targetColumns)
+                .doReadSync();
+
+        // builder tests
+        Assertions.assertNotNull(builder, "Builder should not be null");
+        Assertions.assertNotNull(configuredSheet, "The internal ReadSheet should be created");
+        Assertions.assertEquals(0, configuredSheet.getSheetNo());
+        Assertions.assertEquals("Sheet1", configuredSheet.getSheetName());
+        Assertions.assertEquals(100, configuredSheet.getNumRows());
+        Assertions.assertEquals(targetColumns, configuredSheet.getColumnIndexes());
+        // data related tests
+        Assertions.assertNotNull(readResults);
+        Map<Integer, String> parsedRow = readResults.get(0);
+        Assertions.assertEquals(2, parsedRow.size());
+        Assertions.assertEquals("1", parsedRow.get(0));
+        Assertions.assertEquals("30", parsedRow.get(1));
     }
 }

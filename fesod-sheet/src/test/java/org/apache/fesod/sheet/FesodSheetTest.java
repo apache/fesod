@@ -319,4 +319,48 @@ class FesodSheetTest {
         Assertions.assertEquals("1", parsedRow.get(0));
         Assertions.assertEquals("30", parsedRow.get(1));
     }
+
+    @Test
+    void testReadSheet_withColumnIndexes_xlsFormat_allCellTypes() {
+        File xlsFile = tempDir.resolve("test_all_types.xls").toFile();
+
+        List<List<String>> head = new ArrayList<>();
+        head.add(Arrays.asList("StringCol"));
+        head.add(Arrays.asList("NumberCol"));
+        head.add(Arrays.asList("BooleanCol"));
+        head.add(Arrays.asList("DateCol"));
+        head.add(Arrays.asList("FormulaCol"));
+        head.add(Arrays.asList("BlankCol"));
+
+        List<Object> row = new ArrayList<>();
+        row.add("Hello Fesod");
+        row.add(100.50);
+        row.add(true);
+        row.add(new Date());
+        row.add("=SUM(10, 20)");
+        row.add(null);
+
+        List<List<Object>> dataList = Collections.singletonList(row);
+
+        FesodSheet.write(xlsFile).head(head).sheet("Sheet1").doWrite(dataList);
+
+        List<Integer> targetColumns = Arrays.asList(0, 2, 4);
+
+        List<Map<Integer, String>> readResults = FesodSheet.read(xlsFile)
+                .sheet(0)
+                .includeColumnIndexes(targetColumns)
+                .doReadSync();
+
+        Assertions.assertNotNull(readResults);
+        Assertions.assertEquals(1, readResults.size());
+
+        Map<Integer, String> parsedRow = readResults.get(0);
+
+        Assertions.assertEquals(3, parsedRow.size(), "Should only contain the 3 requested target columns");
+
+        Assertions.assertEquals("Hello Fesod", parsedRow.get(0), "Target 0 should contain String from Col 0");
+        Assertions.assertEquals("TRUE", parsedRow.get(1).toUpperCase(), "Target 1 should contain Boolean from Col 2");
+
+        Assertions.assertNotNull(parsedRow.get(2), "Target 2 should contain Formula result from Col 4");
+    }
 }

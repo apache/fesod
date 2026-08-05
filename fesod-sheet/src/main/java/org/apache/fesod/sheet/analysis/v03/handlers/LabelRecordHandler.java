@@ -41,6 +41,19 @@ public class LabelRecordHandler extends AbstractXlsRecordHandler implements Igno
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelRecord lrec = (LabelRecord) record;
+        int originalColumnIndex = lrec.getColumn();
+
+        List<Integer> includeColumnIndexes =
+                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+
+        int targetColumnIndex = originalColumnIndex;
+        if (includeColumnIndexes != null) {
+            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
+            if (targetColumnIndex < 0) {
+                return;
+            }
+        }
+
         String data = lrec.getValue();
         if (data != null) {
             GlobalConfiguration globalConfiguration =
@@ -54,7 +67,7 @@ public class LabelRecordHandler extends AbstractXlsRecordHandler implements Igno
         xlsReadContext
                 .xlsReadSheetHolder()
                 .getCellMap()
-                .put((int) lrec.getColumn(), ReadCellData.newInstance(data, lrec.getRow(), (int) lrec.getColumn()));
+                .put(targetColumnIndex, ReadCellData.newInstance(data, lrec.getRow(), targetColumnIndex));
         xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
     }
 }

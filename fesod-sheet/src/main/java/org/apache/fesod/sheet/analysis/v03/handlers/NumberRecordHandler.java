@@ -47,11 +47,8 @@ public class NumberRecordHandler extends AbstractXlsRecordHandler implements Ign
         int originalColumnIndex = nr.getColumn();
 
         List<Integer> includeColumnIndexes = null;
-        if (xlsReadContext.readSheetHolder() != null
-                && xlsReadContext.readSheetHolder().getReadSheet() != null) {
-            includeColumnIndexes =
-                    xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-        }
+
+        includeColumnIndexes = xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
 
         int targetColumnIndex = originalColumnIndex;
         if (includeColumnIndexes != null) {

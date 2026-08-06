@@ -48,14 +48,13 @@ public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements I
         LabelSSTRecord lsrec = (LabelSSTRecord) record;
         int originalColumnIndex = lsrec.getColumn();
 
-        List<Integer> includeColumnIndexes = null;
-
-        includeColumnIndexes = xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+        List<Integer> includeColumnIndexes =
+                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
 
         int targetColumnIndex = originalColumnIndex;
         if (includeColumnIndexes != null) {
             targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex == -1) {
+            if (targetColumnIndex < 0) {
                 return;
             }
         }

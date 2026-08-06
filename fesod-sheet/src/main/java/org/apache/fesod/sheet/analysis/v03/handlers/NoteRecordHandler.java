@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
-import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.enums.CellExtraTypeEnum;
@@ -46,20 +45,8 @@ public class NoteRecordHandler extends AbstractXlsRecordHandler implements Ignor
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         NoteRecord nr = (NoteRecord) record;
-        int originalColumnIndex = nr.getColumn();
-
-        List<Integer> includeColumnIndexes =
-                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-
-        int targetColumnIndex = originalColumnIndex;
-        if (includeColumnIndexes != null) {
-            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex < 0) {
-                return;
-            }
-        }
         String text = xlsReadContext.xlsReadSheetHolder().getObjectCacheMap().get(nr.getShapeId());
-        CellExtra cellExtra = new CellExtra(CellExtraTypeEnum.COMMENT, text, nr.getRow(), targetColumnIndex);
+        CellExtra cellExtra = new CellExtra(CellExtraTypeEnum.COMMENT, text, nr.getRow(), nr.getColumn());
         xlsReadContext.xlsReadSheetHolder().setCellExtra(cellExtra);
         xlsReadContext.analysisEventProcessor().extra(xlsReadContext);
     }

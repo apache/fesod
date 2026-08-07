@@ -15,7 +15,7 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 ./mvnw clean install -DskipTests
 
 # Run tests (must explicitly enable)
-./mvnw clean package -Dmaven.test.skip=false -pl fesod-common,fesod-shaded,fesod-sheet,fesod-examples/fesod-sheet-examples
+./mvnw clean package -Dmaven.test.skip=false -pl fesod-common,fesod-shaded,fesod-sheet,fesod-examples
 
 # Format check / auto-format
 ./mvnw spotless:check

@@ -33,7 +33,6 @@ Supports exporting images through various methods including files, streams, byte
 #### POJO Class
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode

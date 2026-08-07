@@ -18,7 +18,6 @@ title: '实体类'
 忽略指定列
 
 ```java
-
 @Test
 public void excludeOrIncludeWrite() {
     String fileName = "excludeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
@@ -61,7 +60,6 @@ public void excludeOrIncludeWrite() {
 ### POJO 类
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode

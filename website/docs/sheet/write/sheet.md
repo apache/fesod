@@ -35,7 +35,6 @@ Write data in batches to the same Sheet.
 ### Code Example
 
 ```java
-
 @Test
 public void writeSingleSheet() {
     String fileName = "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
@@ -64,7 +63,6 @@ Write data in batches to multiple Sheets, enabling paginated writing for large d
 ### Code Example
 
 ```java
-
 @Test
 public void writeMultiSheet() {
     String fileName = "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
@@ -93,7 +91,6 @@ Supports using multiple Tables within a single Sheet for segmented writing.
 ### Code Example
 
 ```java
-
 @Test
 public void tableWrite() {
     String fileName = "tableWrite" + System.currentTimeMillis() + ".xlsx";

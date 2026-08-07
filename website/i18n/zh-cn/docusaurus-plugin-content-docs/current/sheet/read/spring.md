@@ -18,7 +18,6 @@ title: '与 Spring 集成'
 确保在 pom.xml 文件中包括必要的依赖项：
 
 ```xml
-
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod</artifactId>

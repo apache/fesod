@@ -77,7 +77,6 @@ new features in the latest version will enhance your experience.
 If you are using Maven for project building, add the following configuration in the `pom.xml` file:
 
 ```xml
-
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>

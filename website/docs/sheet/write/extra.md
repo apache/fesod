@@ -168,7 +168,7 @@ public void writeFormulaDataWrite() {
     FormulaData formulaData = new FormulaData();
     formulaData.setFormulaValue("SUM(A2:B2)");
     // Or
-    // formulaData.setFormulaValue("=SUM(A1:B2)");
+    // formulaData.setFormulaValue("=SUM(A2:B2)");
     cellData.setFormulaData(formulaData);
     data.setFormulaData(cellData);
 

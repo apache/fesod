@@ -101,6 +101,7 @@
 
 .xl-sheet-container {
     width: fit-content;
+    max-width: 100%;
     overflow-x: auto;
     font-size: calc(13 * var(--xl-pt));
     background: var(--xl-paper);

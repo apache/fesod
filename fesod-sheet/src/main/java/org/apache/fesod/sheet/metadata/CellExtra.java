@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.metadata;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
 import org.apache.fesod.sheet.enums.CellExtraTypeEnum;
 import org.apache.poi.ss.util.CellReference;
@@ -34,6 +36,8 @@ import org.apache.poi.ss.util.CellReference;
  *
  *
  */
+@Getter
+@Setter
 public class CellExtra extends AbstractCell {
     /**
      * Cell extra type
@@ -97,54 +101,6 @@ public class CellExtra extends AbstractCell {
         this.firstRowIndex = firstRowIndex;
         this.firstColumnIndex = firstColumnIndex;
         this.lastRowIndex = lastRowIndex;
-        this.lastColumnIndex = lastColumnIndex;
-    }
-
-    public CellExtraTypeEnum getType() {
-        return type;
-    }
-
-    public void setType(CellExtraTypeEnum type) {
-        this.type = type;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Integer getFirstRowIndex() {
-        return firstRowIndex;
-    }
-
-    public void setFirstRowIndex(Integer firstRowIndex) {
-        this.firstRowIndex = firstRowIndex;
-    }
-
-    public Integer getFirstColumnIndex() {
-        return firstColumnIndex;
-    }
-
-    public void setFirstColumnIndex(Integer firstColumnIndex) {
-        this.firstColumnIndex = firstColumnIndex;
-    }
-
-    public Integer getLastRowIndex() {
-        return lastRowIndex;
-    }
-
-    public void setLastRowIndex(Integer lastRowIndex) {
-        this.lastRowIndex = lastRowIndex;
-    }
-
-    public Integer getLastColumnIndex() {
-        return lastColumnIndex;
-    }
-
-    public void setLastColumnIndex(Integer lastColumnIndex) {
         this.lastColumnIndex = lastColumnIndex;
     }
 }

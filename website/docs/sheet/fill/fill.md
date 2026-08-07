@@ -403,11 +403,11 @@ public void horizontalFill() {
 <div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">…</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe0</td><td class="xl-fc-red">John Doe1</td><td class="xl-fc-red">John Doe2</td><td class="xl-fc-red">John Doe3</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe0</td><td>John Doe1</td><td>John Doe2</td><td>John Doe3</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">⋯</td><td class="xl-chrome">L</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe0</td><td class="xl-fc-red">John Doe1</td><td class="xl-fc-red">John Doe2</td><td class="xl-muted">…</td><td class="xl-fc-red">John Doe9</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe0</td><td>John Doe1</td><td>John Doe2</td><td class="xl-muted">…</td><td>John Doe9</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-num">5.2</td></tr>
 <tr><td class="xl-chrome">5</td><td>Time: November 20, 2024</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
@@ -476,11 +476,11 @@ public void compositeFill() {
 <div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">⋯</td></tr>
-<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe0</td><td class="xl-fc-red">John Doe1</td><td class="xl-fc-red">John Doe2</td><td class="xl-fc-red">John Doe3</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe0</td><td>John Doe1</td><td>John Doe2</td><td>John Doe3</td><td class="xl-muted">…</td></tr>
-<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">⋯</td><td class="xl-chrome">L</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">Statistics</td><td>Name</td><td class="xl-fc-red">John Doe0</td><td class="xl-fc-red">John Doe1</td><td class="xl-fc-red">John Doe2</td><td class="xl-muted">…</td><td class="xl-fc-red">John Doe9</td></tr>
+<tr><td class="xl-chrome">2</td><td>Number</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>Name</td><td>John Doe0</td><td>John Doe1</td><td>John Doe2</td><td class="xl-muted">…</td><td>John Doe9</td></tr>
+<tr><td class="xl-chrome">4</td><td>Number</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-num">5.2</td></tr>
 <tr><td class="xl-chrome">5</td><td></td><td>Time: 2026-07-31 20:04:59</td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>

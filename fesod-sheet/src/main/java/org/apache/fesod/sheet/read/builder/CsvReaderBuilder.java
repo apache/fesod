@@ -118,6 +118,17 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
     }
 
     /**
+     * Specific columns to read
+     *
+     * @param columnIndexes
+     * @return
+     */
+    public CsvReaderBuilder includeColumnIndexes(List<Integer> columnIndexes) {
+        readSheet.setColumnIndexes(columnIndexes);
+        return this;
+    }
+
+    /**
      * Sets the escape character.
      *
      * @param escape the Character used to escape special characters in values

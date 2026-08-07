@@ -131,6 +131,8 @@ public void writeHyperlinkDataWrite() {
 @Setter
 @EqualsAndHashCode
 public class WriteCellDemoData {
+    private Integer num1;
+    private Integer num2;
     private WriteCellData<String> formulaData;
 }
 ```
@@ -143,12 +145,14 @@ public class WriteCellDemoData {
 public void writeFormulaDataWrite() {
     String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
     WriteCellDemoData data = new WriteCellDemoData();
+    data.setNum1(10);
+    data.setNum2(20);
     // 设置公式
     WriteCellData<String> cellData = new WriteCellData<>();
     FormulaData formulaData = new FormulaData();
-    formulaData.setFormulaValue("SUM(A1:A10)");
+    formulaData.setFormulaValue("SUM(A2:B2)");
     // 或
-    // formulaData.setFormulaValue("=SUM(A1:A10)");
+    // formulaData.setFormulaValue("=SUM(A2:B2)");
     cellData.setFormulaData(formulaData);
     data.setFormulaData(cellData);
 
@@ -163,9 +167,9 @@ public void writeFormulaDataWrite() {
 <div class="xl-sheet-container">
 <table class="xl-sheet">
 <tbody>
-<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-head">formulaData</td></tr>
-<tr><td class="xl-chrome">2</td><td>=SUM(A1:A10)</td></tr>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">num1</td><td class="xl-head">num2</td><td class="xl-head">formulaData</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num">10</td><td class="xl-num">20</td><td class="xl-num">30</td></tr>
 </tbody>
 </table>
 </div>

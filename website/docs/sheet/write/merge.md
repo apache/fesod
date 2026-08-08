@@ -67,14 +67,18 @@ public void annotationMergeWrite() {
 
 ### Result
 
-```text
-| String Title | Date Title          | Number Title |
-|--------------|---------------------|--------------|
-| String0      | 2025-01-01 00:00:00 | 0.56         |
-| (merged)     | 2025-01-01 00:00:00 | 0.56         |
-| String1      | 2025-01-01 00:00:00 | 0.56         |
-| (merged)     | 2025-01-01 00:00:00 | 0.56         |
-```
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td rowspan="2">String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td rowspan="2">String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 

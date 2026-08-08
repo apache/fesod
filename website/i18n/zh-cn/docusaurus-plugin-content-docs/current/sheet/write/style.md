@@ -60,7 +60,19 @@ public void annotationStyleWrite() {
 
 ### 结果
 
-![img](/img/docs/write/annotationStyleWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-fill-magenta xl-fs-30">字符串标题</td><td class="xl-head xl-fill-red xl-fs-20">日期标题</td><td class="xl-head xl-fill-red xl-fs-20">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-fill-sky xl-fs-30">字符串0</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-fill-sky xl-fs-30">字符串1</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fill-sky xl-fs-30">字符串2</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-fill-sky xl-fs-30 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fill-sky xl-fs-30">字符串9</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -106,7 +118,19 @@ public void handlerStyleWrite() {
 
 ### 结果
 
-![img](/img/docs/write/handlerStyleWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-fill-red xl-fs-20">字符串标题</td><td class="xl-head xl-fill-red xl-fs-20">日期标题</td><td class="xl-head xl-fill-red xl-fs-20">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-fill-green xl-fs-20">字符串0</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-fill-green xl-fs-20">字符串1</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fill-green xl-fs-20">字符串2</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td><td class="xl-fill-green xl-fs-20 xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fill-green xl-fs-20">字符串9</td><td class="xl-num xl-fill-green xl-fs-20">2026-07-31 20:50:23</td><td class="xl-num xl-fill-green xl-fs-20">0.56</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -245,4 +269,16 @@ public void widthAndHeightWrite() {
 
 ### 结果
 
-![img](/img/docs/write/widthAndHeightWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome xl-cw-25">A</td><td class="xl-chrome xl-cw-25">B</td><td class="xl-chrome xl-cw-50">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head xl-rh-30">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-rh-20">字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-rh-20">字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-rh-20">字符串2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-rh-20 xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-rh-20">字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>

@@ -50,14 +50,18 @@ public void annotationMergeWrite() {
 
 ### 效果
 
-```text
-| 字符串标题 | 日期标题            | 数字标题 |
-|-----------|---------------------|---------|
-| String0   | 2025-01-01 00:00:00 | 0.56    |
-| (已合并)   | 2025-01-01 00:00:00 | 0.56    |
-| String1   | 2025-01-01 00:00:00 | 0.56    |
-| (已合并)   | 2025-01-01 00:00:00 | 0.56    |
-```
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td rowspan="2">字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td rowspan="2">字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 

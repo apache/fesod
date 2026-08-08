@@ -170,10 +170,6 @@ public static void main(String[] args) {
 |:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
 | [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [订阅](mailto:dev-subscribe@fesod.apache.org)  ｜  [取消订阅](mailto:dev-unsubscribe@fesod.apache.org) |
 
-### Star 历史
-
-[![Star History Chart](https://api.star-history.com/svg?repos=apache/fesod&type=Date)](https://www.star-history.com/#apache/fesod&Date)
-
 ## 许可证
 
 Apache Fesod (Incubating) 项目采用 [Apache License 2.0](LICENSE) 许可证。

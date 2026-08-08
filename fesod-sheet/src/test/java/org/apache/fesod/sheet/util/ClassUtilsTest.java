@@ -231,7 +231,7 @@ class ClassUtilsTest {
         // that DO carry an explicit index (ComplexEntity: id->0, name->2).
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
         Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);
-        
+
         Mockito.when(writeHolder.excludeColumnFieldNames()).thenReturn(Collections.singleton("email"));
         Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
         Mockito.when(writeHolder.ignore(Mockito.eq("email"), Mockito.anyInt())).thenReturn(true);

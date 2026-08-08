@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
 
 /**
@@ -57,6 +58,27 @@ public class OnceAbsoluteMergeProperty {
         this.lastColumnIndex = lastColumnIndex;
     }
 
+    public static OnceAbsoluteMergeProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(OnceAbsoluteMerge.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "OnceAbsoluteMergeProperty only support OnceAbsoluteMerge annotation"
+                            + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+        return new OnceAbsoluteMergeProperty(
+                attributes.getRequiredAttribute("firstRowIndex", Integer.class),
+                attributes.getRequiredAttribute("lastRowIndex", Integer.class),
+                attributes.getRequiredAttribute("firstColumnIndex", Integer.class),
+                attributes.getRequiredAttribute("lastColumnIndex", Integer.class));
+    }
+
+    /**
+     * @see OnceAbsoluteMergeProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static OnceAbsoluteMergeProperty build(OnceAbsoluteMerge onceAbsoluteMerge) {
         if (onceAbsoluteMerge == null) {
             return null;

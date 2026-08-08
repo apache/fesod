@@ -184,6 +184,15 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
         return self();
     }
 
+    /**
+     * Whether to enable fully composable annotations support. Only effective when either {@link BasicParameter#head} or
+     * {@link BasicParameter#clazz} is set. Default is false.
+     */
+    public T enableMetaMarked(Boolean enableMetaMarked) {
+        parameter().setEnableMetaMarked(enableMetaMarked);
+        return self();
+    }
+
     @SuppressWarnings("unchecked")
     protected T self() {
         return (T) this;

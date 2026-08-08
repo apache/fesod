@@ -39,8 +39,10 @@ import org.apache.fesod.sheet.exception.ExcelDataConvertException;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
+import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.read.metadata.holder.ReadSheetHolder;
 import org.apache.fesod.sheet.read.metadata.property.ExcelReadHeadProperty;
+import org.apache.fesod.sheet.util.AnnotatedClassUtils;
 import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.ConverterUtils;
@@ -185,14 +187,25 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                 continue;
             }
             ReadCellData<?> cellData = cellDataMap.get(index);
+
+            ExcelContentProperty excelContentProperty;
+            // Supports composable annotation processing (new-beta) and
+            // real-time class analysis (old-stable) to ensure compatibility
+            if (Boolean.TRUE.equals(readSheetHolder.globalConfiguration().getEnableMetaMarked())) {
+                excelContentProperty = AnnotatedClassUtils.declaredExcelContentProperty(
+                        dataMap,
+                        readSheetHolder.excelReadHeadProperty().getTypeDescriptor(),
+                        head.getFieldDescriptor(),
+                        readSheetHolder);
+            } else {
+                excelContentProperty = ClassUtils.declaredExcelContentProperty(
+                        dataMap, readSheetHolder.excelReadHeadProperty().getHeadClazz(), fieldName, readSheetHolder);
+            }
+
             Object value = ConverterUtils.convertToJavaObject(
                     cellData,
                     head.getField(),
-                    ClassUtils.declaredExcelContentProperty(
-                            dataMap,
-                            readSheetHolder.excelReadHeadProperty().getHeadClazz(),
-                            fieldName,
-                            readSheetHolder),
+                    excelContentProperty,
                     readSheetHolder.converterMap(),
                     context,
                     context.readRowHolder().getRowIndex(),

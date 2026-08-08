@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 
 /**
@@ -39,6 +40,26 @@ public class ColumnWidthProperty {
         this.width = width;
     }
 
+    public static ColumnWidthProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(ColumnWidth.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "ColumnWidthProperty only support ColumnWidth annotation" + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+        Integer columnWidth = attributes.getRequiredAttribute("value", Integer.class);
+        if (columnWidth < 0) {
+            return null;
+        }
+        return new ColumnWidthProperty(columnWidth);
+    }
+
+    /**
+     * @see ColumnWidthProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static ColumnWidthProperty build(ColumnWidth columnWidth) {
         if (columnWidth == null || columnWidth.value() < 0) {
             return null;

@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +36,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.StringUtils;
+import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
+import org.apache.fesod.sheet.annotation.AnnotatedTypeDescriptor;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
+import org.apache.fesod.sheet.annotation.AnnotationMetadataReader;
+import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
+import org.apache.fesod.sheet.metadata.CachedFields;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
-import org.apache.fesod.sheet.metadata.FieldCache;
-import org.apache.fesod.sheet.metadata.FieldWrapper;
 import org.apache.fesod.sheet.metadata.Head;
-import org.apache.fesod.sheet.util.ClassUtils;
+import org.apache.fesod.sheet.util.AnnotatedClassUtils;
 import org.apache.fesod.sheet.write.metadata.holder.AbstractWriteHolder;
 
 /**
@@ -54,13 +59,14 @@ import org.apache.fesod.sheet.write.metadata.holder.AbstractWriteHolder;
 public class ExcelHeadProperty {
 
     /**
-     * Custom class
-     */
-    private Class<?> headClazz;
-    /**
      * The types of head
      */
     private HeadKindEnum headKind;
+
+    /**
+     * Custom class descriptor
+     */
+    private AnnotatedTypeDescriptor typeDescriptor;
     /**
      * The number of rows in the line with the most rows
      */
@@ -70,8 +76,11 @@ public class ExcelHeadProperty {
      */
     private Map<Integer, Head> headMap;
 
+    private AnnotationMetadataReader metadataReader;
+
     public ExcelHeadProperty(ConfigurationHolder configurationHolder, Class<?> headClazz, List<List<String>> head) {
-        this.headClazz = headClazz;
+        metadataReader = new AnnotationMetadataReader(
+                configurationHolder.globalConfiguration().getEnableMetaMarked());
         headMap = new TreeMap<>();
         headKind = HeadKindEnum.NONE;
         headRowNumber = 0;
@@ -83,13 +92,13 @@ public class ExcelHeadProperty {
                         continue;
                     }
                 }
-                headMap.put(headIndex, new Head(headIndex, null, null, head.get(i), Boolean.FALSE, Boolean.TRUE));
+                headMap.put(headIndex, new Head(headIndex, null, head.get(i), Boolean.FALSE, Boolean.TRUE));
                 headIndex++;
             }
             headKind = HeadKindEnum.STRING;
         }
         // convert headClazz to head
-        initColumnProperties(configurationHolder);
+        initColumnProperties(headClazz, configurationHolder);
 
         initHeadRowNumber();
         if (log.isDebugEnabled()) {
@@ -117,18 +126,22 @@ public class ExcelHeadProperty {
         }
     }
 
-    private void initColumnProperties(ConfigurationHolder configurationHolder) {
+    private void initColumnProperties(Class<?> headClazz, ConfigurationHolder configurationHolder) {
         if (headClazz == null) {
+            this.typeDescriptor = AnnotatedTypeDescriptor.EMPTY;
             return;
         }
-        FieldCache fieldCache = ClassUtils.declaredFields(headClazz, configurationHolder);
 
-        for (Map.Entry<Integer, FieldWrapper> entry :
-                fieldCache.getSortedFieldMap().entrySet()) {
+        this.typeDescriptor = new AnnotatedTypeDescriptor(headClazz, metadataReader.read(headClazz));
+        CachedFields cachedFields =
+                AnnotatedClassUtils.declaredFields(headClazz, metadataReader::read, configurationHolder);
+
+        for (Map.Entry<Integer, AnnotatedFieldDescriptor> entry :
+                cachedFields.getSortedFieldMap().entrySet()) {
             initOneColumnProperty(
                     entry.getKey(),
                     entry.getValue(),
-                    fieldCache.getIndexFieldMap().containsKey(entry.getKey()));
+                    cachedFields.getIndexFieldMap().containsKey(entry.getKey()));
         }
         headKind = HeadKindEnum.CLASS;
     }
@@ -137,29 +150,55 @@ public class ExcelHeadProperty {
      * Initialization column property
      *
      * @param index
-     * @param field
+     * @param fieldDescriptor
      * @param forceIndex
      * @return Ignore current field
      */
-    private void initOneColumnProperty(int index, FieldWrapper field, Boolean forceIndex) {
+    private void initOneColumnProperty(int index, AnnotatedFieldDescriptor fieldDescriptor, Boolean forceIndex) {
         List<String> tmpHeadList = new ArrayList<>();
-        boolean notForceName = field.getHeads() == null
-                || field.getHeads().length == 0
-                || (field.getHeads().length == 1 && StringUtils.isEmpty(field.getHeads()[0]));
+        String[] heads = getHeads(fieldDescriptor);
+        boolean notForceName = heads.length == 0 || (heads.length == 1 && StringUtils.isEmpty(heads[0]));
+
         if (headMap.containsKey(index)) {
             tmpHeadList.addAll(headMap.get(index).getHeadNameList());
         } else {
             if (notForceName) {
-                tmpHeadList.add(field.getFieldName());
+                tmpHeadList.add(fieldDescriptor.getFieldName());
             } else {
-                Collections.addAll(tmpHeadList, field.getHeads());
+                Collections.addAll(tmpHeadList, heads);
             }
         }
-        Head head = new Head(index, field.getField(), field.getFieldName(), tmpHeadList, forceIndex, !notForceName);
+
+        Head head = new Head(index, fieldDescriptor, tmpHeadList, forceIndex, !notForceName);
         headMap.put(index, head);
+    }
+
+    private static String[] getHeads(AnnotatedFieldDescriptor fieldDescriptor) {
+        if (fieldDescriptor.getAnnotationCount() == 0) {
+            return new String[0];
+        }
+        if (fieldDescriptor.hasAnnotation(ExcelProperty.class)) {
+            AnnotationAttributes attrs = fieldDescriptor.getAnnotation(ExcelProperty.class);
+            return attrs.getRequiredAttribute("value", String[].class);
+        }
+        return new String[0];
     }
 
     public boolean hasHead() {
         return headKind != HeadKindEnum.NONE;
+    }
+
+    public AnnotationAttributes findClazzAnnotation(Class<? extends Annotation> clazz) {
+        if (HeadKindEnum.CLASS.equals(headKind)) {
+            return typeDescriptor.getAnnotation(clazz);
+        }
+        return null;
+    }
+
+    public Class<?> getHeadClazz() {
+        if (HeadKindEnum.CLASS.equals(headKind)) {
+            return typeDescriptor.getAnnotatedElement();
+        }
+        return null;
     }
 }

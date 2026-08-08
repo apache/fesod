@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.metadata.property;
 
 import java.math.RoundingMode;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.format.NumberFormat;
 
 /**
@@ -42,6 +43,25 @@ public class NumberFormatProperty {
         this.roundingMode = roundingMode;
     }
 
+    public static NumberFormatProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(NumberFormat.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "NumberFormatProperty only support NumberFormat annotation" + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+
+        return new NumberFormatProperty(
+                attributes.getRequiredAttribute("value", String.class),
+                attributes.getRequiredAttribute("roundingMode", RoundingMode.class));
+    }
+
+    /**
+     * @see NumberFormatProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static NumberFormatProperty build(NumberFormat numberFormat) {
         if (numberFormat == null) {
             return null;

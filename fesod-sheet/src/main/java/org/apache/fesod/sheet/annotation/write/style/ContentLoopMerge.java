@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  *
  *
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ContentLoopMerge {

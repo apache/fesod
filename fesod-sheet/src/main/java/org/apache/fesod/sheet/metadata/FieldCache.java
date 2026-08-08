@@ -34,8 +34,9 @@ import lombok.Setter;
 /**
  * filed cache
  *
- *
+ * @see CachedFields
  */
+@Deprecated
 @Getter
 @Setter
 @EqualsAndHashCode

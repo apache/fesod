@@ -32,12 +32,13 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
-import org.apache.fesod.sheet.metadata.FieldCache;
-import org.apache.fesod.sheet.metadata.FieldWrapper;
+import org.apache.fesod.sheet.metadata.CachedFields;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.util.AnnotatedClassUtils;
 import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
@@ -148,11 +149,31 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
             int relativeRowIndex,
             int dataIndex,
             int columnIndex) {
-        ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                null,
-                writeContext.currentWriteHolder().excelWriteHeadProperty().getHeadClazz(),
-                head == null ? null : head.getFieldName(),
-                writeContext.currentWriteHolder());
+
+        ExcelContentProperty excelContentProperty;
+        // Supports composable annotation processing (new-beta) and
+        // real-time class analysis (old-stable) to ensure compatibility
+        if (Boolean.TRUE.equals(
+                writeContext.currentWriteHolder().globalConfiguration().getEnableMetaMarked())) {
+            if (head != null && head.hasFieldDescriptor()) {
+                excelContentProperty = AnnotatedClassUtils.declaredExcelContentProperty(
+                        null,
+                        writeContext
+                                .currentWriteHolder()
+                                .excelWriteHeadProperty()
+                                .getTypeDescriptor(),
+                        head.getFieldDescriptor(),
+                        writeContext.currentWriteHolder());
+            } else {
+                excelContentProperty = null;
+            }
+        } else {
+            excelContentProperty = ClassUtils.declaredExcelContentProperty(
+                    null,
+                    writeContext.currentWriteHolder().excelWriteHeadProperty().getHeadClazz(),
+                    head == null ? null : head.getFieldName(),
+                    writeContext.currentWriteHolder());
+        }
 
         CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
                 writeContext, row, rowIndex, head, columnIndex, relativeRowIndex, Boolean.FALSE, excelContentProperty);
@@ -191,8 +212,23 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
                     continue;
                 }
 
-                ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                        beanMap, currentWriteHolder.excelWriteHeadProperty().getHeadClazz(), name, currentWriteHolder);
+                ExcelContentProperty excelContentProperty;
+                // Supports composable annotation processing (new-beta) and
+                // real-time class analysis (old-stable) to ensure compatibility
+                if (Boolean.TRUE.equals(currentWriteHolder.globalConfiguration().getEnableMetaMarked())) {
+                    excelContentProperty = AnnotatedClassUtils.declaredExcelContentProperty(
+                            beanMap,
+                            currentWriteHolder.excelWriteHeadProperty().getTypeDescriptor(),
+                            head.getFieldDescriptor(),
+                            currentWriteHolder);
+                } else {
+                    excelContentProperty = ClassUtils.declaredExcelContentProperty(
+                            beanMap,
+                            currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
+                            name,
+                            currentWriteHolder);
+                }
+
                 CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
                         writeContext,
                         row,
@@ -225,18 +261,37 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
         }
         maxCellIndex++;
 
-        FieldCache fieldCache = ClassUtils.declaredFields(oneRowData.getClass(), writeContext.currentWriteHolder());
-        for (Map.Entry<Integer, FieldWrapper> entry :
-                fieldCache.getSortedFieldMap().entrySet()) {
-            FieldWrapper field = entry.getValue();
-            String fieldName = field.getFieldName();
+        CachedFields cachedFields = AnnotatedClassUtils.declaredFields(
+                oneRowData.getClass(),
+                currentWriteHolder.excelWriteHeadProperty().getMetadataReader()::read,
+                writeContext.currentWriteHolder());
+        for (Map.Entry<Integer, AnnotatedFieldDescriptor> entry :
+                cachedFields.getSortedFieldMap().entrySet()) {
+            AnnotatedFieldDescriptor fieldDescriptor = entry.getValue();
+            String fieldName = fieldDescriptor.getFieldName();
             boolean uselessData = !beanKeySet.contains(fieldName) || beanMapHandledSet.contains(fieldName);
             if (uselessData) {
                 continue;
             }
             Object value = beanMap.get(fieldName);
-            ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                    beanMap, currentWriteHolder.excelWriteHeadProperty().getHeadClazz(), fieldName, currentWriteHolder);
+
+            ExcelContentProperty excelContentProperty;
+            // Supports composable annotation processing (new-beta) and
+            // real-time class analysis (old-stable) to ensure compatibility
+            if (Boolean.TRUE.equals(currentWriteHolder.globalConfiguration().getEnableMetaMarked())) {
+                excelContentProperty = AnnotatedClassUtils.declaredExcelContentProperty(
+                        beanMap,
+                        currentWriteHolder.excelWriteHeadProperty().getTypeDescriptor(),
+                        fieldDescriptor,
+                        currentWriteHolder);
+            } else {
+                excelContentProperty = ClassUtils.declaredExcelContentProperty(
+                        beanMap,
+                        currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
+                        fieldName,
+                        currentWriteHolder);
+            }
+
             CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
                     writeContext,
                     row,

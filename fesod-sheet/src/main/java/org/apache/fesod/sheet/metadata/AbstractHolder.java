@@ -99,6 +99,15 @@ public abstract class AbstractHolder implements ConfigurationHolder {
             globalConfiguration.setAutoStrip(basicParameter.getAutoStrip());
         }
 
+        if (basicParameter.getEnableMetaMarked() == null) {
+            if (prentAbstractHolder != null) {
+                globalConfiguration.setEnableMetaMarked(
+                        prentAbstractHolder.getGlobalConfiguration().getEnableMetaMarked());
+            }
+        } else {
+            globalConfiguration.setEnableMetaMarked(basicParameter.getEnableMetaMarked());
+        }
+
         if (basicParameter.getUse1904windowing() == null) {
             if (prentAbstractHolder != null) {
                 globalConfiguration.setUse1904windowing(

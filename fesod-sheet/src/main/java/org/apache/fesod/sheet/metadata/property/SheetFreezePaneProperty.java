@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.metadata.property;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
 import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 
 /**
@@ -55,6 +56,28 @@ public class SheetFreezePaneProperty {
      */
     private int topRow;
 
+    public static SheetFreezePaneProperty build(AnnotationAttributes attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        if (!attributes.isAnnotationTypeEqual(FreezePane.class)) {
+            throw new IllegalArgumentException(String.format(
+                    "SheetFreezePaneProperty only support FreezePane annotation" + ", but currently provides '%s'",
+                    attributes.getAnnotationType()));
+        }
+        SheetFreezePaneProperty result = new SheetFreezePaneProperty();
+        result.setColSplit(attributes.getRequiredAttribute("colSplit", Integer.class));
+        result.setRowSplit(attributes.getRequiredAttribute("rowSplit", Integer.class));
+        result.setLeftmostColumn(
+                getOrDefault(attributes.getRequiredAttribute("leftmostColumn", Integer.class), result.getColSplit()));
+        result.setTopRow(getOrDefault(attributes.getRequiredAttribute("topRow", Integer.class), result.getRowSplit()));
+        return result;
+    }
+
+    /**
+     * @see SheetFreezePaneProperty#build(AnnotationAttributes)
+     */
+    @Deprecated
     public static SheetFreezePaneProperty build(FreezePane freezePane) {
         if (freezePane == null) {
             return null;

@@ -31,13 +31,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.sheet.annotation.AnnotatedFieldDescriptor;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
  * filed wrapper
  *
- *
+ * @see AnnotatedFieldDescriptor
  */
+@Deprecated
 @Getter
 @Setter
 @EqualsAndHashCode

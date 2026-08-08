@@ -41,6 +41,7 @@ import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.util.AnnotatedClassUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
@@ -358,11 +359,23 @@ public class WriteContextImpl implements WriteContext {
         for (Map.Entry<Integer, Head> entry : headMap.entrySet()) {
             Head head = entry.getValue();
             int columnIndex = entry.getKey();
-            ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                    null,
-                    currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
-                    head.getFieldName(),
-                    currentWriteHolder);
+
+            ExcelContentProperty excelContentProperty;
+            // Supports composable annotation processing (new-beta) and
+            // real-time class analysis (old-stable) to ensure compatibility
+            if (Boolean.TRUE.equals(currentWriteHolder.globalConfiguration().getEnableMetaMarked())) {
+                excelContentProperty = AnnotatedClassUtils.declaredExcelContentProperty(
+                        null,
+                        currentWriteHolder.excelWriteHeadProperty().getTypeDescriptor(),
+                        head.getFieldDescriptor(),
+                        currentWriteHolder);
+            } else {
+                excelContentProperty = ClassUtils.declaredExcelContentProperty(
+                        null,
+                        currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
+                        head.getFieldName(),
+                        currentWriteHolder);
+            }
 
             CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
                     this, row, rowIndex, head, columnIndex, relativeRowIndex, Boolean.TRUE, excelContentProperty);
@@ -565,6 +578,7 @@ public class WriteContextImpl implements WriteContext {
         NumberUtils.removeThreadLocalCache();
         DateUtils.removeThreadLocalCache();
         ClassUtils.removeThreadLocalCache();
+        AnnotatedClassUtils.removeThreadLocalCache();
     }
 
     /**

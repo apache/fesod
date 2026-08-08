@@ -26,14 +26,9 @@
 package org.apache.fesod.sheet.handler;
 
 import java.io.File;
-import java.util.Collections;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
@@ -43,6 +38,10 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatCapability;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.apache.fesod.sheet.write.metadata.WriteTable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -81,7 +80,25 @@ public class WriteHandlerTest extends AbstractExcelTest {
         writeHandler.afterAll();
     }
 
-    private void writeSheetWithMultiWrites(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource
+    void tableWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
+        WriteHandler writeHandler = new WriteHandler();
+        FesodSheet.write(file)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
+                .sheet()
+                .table(0)
+                .registerWriteHandler(writeHandler)
+                .doWrite(TestDataBuilder.simpleData(1));
+        writeHandler.afterAll();
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY)
+    void sheetMultiWrites(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         CountingWriteHandler writeHandler = CountingWriteHandler.builder()
                 .withBeforeCellCreate(1L)
                 .withAfterCellCreate(1L)
@@ -99,37 +116,27 @@ public class WriteHandlerTest extends AbstractExcelTest {
                 .withAfterWorkbookDispose(1L)
                 .build();
 
-        try (ExcelWriter writer =
-                FesodSheet.write(file).head(WriteHandlerData.class).build()) {
+        try (ExcelWriter writer = FesodSheet.write(file)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
+                .build()) {
 
             WriteSheet writeSheet = FesodSheet.writerSheet()
                     .needHead(Boolean.TRUE)
                     .registerWriteHandler(writeHandler)
                     .build();
 
-            writer.write(data(), writeSheet);
-            writer.write(data(), writeSheet);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet);
         }
 
         writeHandler.afterAll();
     }
 
     @ParameterizedTest
-    @ExcelFormatSource
-    void tableWrite(ExcelFormat format) throws Exception {
+    @ExcelFormatSource(value = FormatScope.BINARY)
+    void multiTableWrites(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
-        WriteHandler writeHandler = new WriteHandler();
-        FesodSheet.write(file)
-                .head(SimpleData.class)
-                .includeColumnFieldNames(Collections.singletonList("name"))
-                .sheet()
-                .table(0)
-                .registerWriteHandler(writeHandler)
-                .doWrite(TestDataBuilder.simpleData(1));
-        writeHandler.afterAll();
-    }
-
-    private void writeTableWithMultiWrites(File file) {
         CountingWriteHandler writeHandler = CountingWriteHandler.builder()
                 .withBeforeCellCreate(2L)
                 .withAfterCellCreate(2L)
@@ -147,8 +154,10 @@ public class WriteHandlerTest extends AbstractExcelTest {
                 .withAfterWorkbookDispose(1L)
                 .build();
 
-        try (ExcelWriter writer =
-                FesodSheet.write(file).head(WriteHandlerData.class).build()) {
+        try (ExcelWriter writer = FesodSheet.write(file)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
+                .build()) {
 
             WriteSheet writeSheet = FesodSheet.writerSheet()
                     .needHead(Boolean.FALSE)
@@ -157,14 +166,17 @@ public class WriteHandlerTest extends AbstractExcelTest {
             WriteTable table1 = FesodSheet.writerTable(0).needHead(Boolean.TRUE).build();
             WriteTable table2 = FesodSheet.writerTable(1).needHead(Boolean.TRUE).build();
 
-            writer.write(data(), writeSheet, table1);
-            writer.write(data(), writeSheet, table2);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet, table1);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet, table2);
         }
 
         writeHandler.afterAll();
     }
 
-    private void writeTableWithMultiSheetAndWrites(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY)
+    void complexMultiSheetAndMultiTableWrites(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         CountingWriteHandler writeHandler = CountingWriteHandler.builder()
                 .withBeforeCellCreate(4L)
                 .withAfterCellCreate(4L)
@@ -183,7 +195,8 @@ public class WriteHandlerTest extends AbstractExcelTest {
                 .build();
 
         try (ExcelWriter writer = FesodSheet.write(file)
-                .head(WriteHandlerData.class)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
                 .registerWriteHandler(writeHandler)
                 .build()) {
 
@@ -191,11 +204,11 @@ public class WriteHandlerTest extends AbstractExcelTest {
                     FesodSheet.writerSheet(0).needHead(Boolean.FALSE).build();
 
             writer.write(
-                    data(),
+                    TestDataBuilder.simpleData(1),
                     writeSheet1,
                     FesodSheet.writerTable(0).needHead(Boolean.TRUE).build());
             writer.write(
-                    data(),
+                    TestDataBuilder.simpleData(1),
                     writeSheet1,
                     FesodSheet.writerTable(1).needHead(Boolean.TRUE).build());
 
@@ -203,11 +216,11 @@ public class WriteHandlerTest extends AbstractExcelTest {
                     FesodSheet.writerSheet(1).needHead(Boolean.FALSE).build();
 
             writer.write(
-                    data(),
+                    TestDataBuilder.simpleData(1),
                     writeSheet2,
                     FesodSheet.writerTable(0).needHead(Boolean.TRUE).build());
             writer.write(
-                    data(),
+                    TestDataBuilder.simpleData(1),
                     writeSheet2,
                     FesodSheet.writerTable(1).needHead(Boolean.TRUE).build());
         }
@@ -215,7 +228,12 @@ public class WriteHandlerTest extends AbstractExcelTest {
         writeHandler.afterAll();
     }
 
-    private void fillSheetWithMultiFills(File template, File file) {
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
+    void sheetFills(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
+        File template = readFile("fill" + File.separator + "fillHandler" + (format == ExcelFormat.XLSX ? "07" : "03")
+                + format.getExtension());
         CountingWriteHandler writeHandler = CountingWriteHandler.builder()
                 .withBeforeCellCreate(0L)
                 .withAfterCellCreate(0L)
@@ -251,7 +269,10 @@ public class WriteHandlerTest extends AbstractExcelTest {
         writeHandler.afterAll();
     }
 
-    private void writeMultiSheet(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY)
+    void multiSheetWrites(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         CountingWriteHandler writeHandler = CountingWriteHandler.builder()
                 .withBeforeCellCreate(2L)
                 .withAfterCellCreate(2L)
@@ -270,23 +291,29 @@ public class WriteHandlerTest extends AbstractExcelTest {
                 .build();
 
         try (ExcelWriter writer = FesodSheet.write(file)
-                .head(WriteHandlerData.class)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
                 .registerWriteHandler(writeHandler)
                 .build()) {
 
             WriteSheet writeSheet1 =
                     FesodSheet.writerSheet(0).needHead(Boolean.TRUE).build();
-            writer.write(data(), writeSheet1);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet1);
 
             WriteSheet writeSheet2 =
                     FesodSheet.writerSheet(1).needHead(Boolean.TRUE).build();
-            writer.write(data(), writeSheet2);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet2);
         }
 
         writeHandler.afterAll();
     }
 
-    private void fillMultiSheet(File template, File file) {
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
+    void multiSheetFills(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
+        File template = readFile("fill" + File.separator + "fillHandler" + (format == ExcelFormat.XLSX ? "07" : "03")
+                + format.getExtension());
         CountingWriteHandler writeHandler = CountingWriteHandler.builder()
                 .withBeforeCellCreate(0L)
                 .withAfterCellCreate(0L)
@@ -329,7 +356,10 @@ public class WriteHandlerTest extends AbstractExcelTest {
         writeHandler.afterAll();
     }
 
-    private void writeMultiSheetWithSheetLevelHandler(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY)
+    void multiSheetLevelHandlerWrites(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         CountingWriteHandler writeHandler1 = CountingWriteHandler.builder()
                 .withBeforeCellCreate(1L)
                 .withAfterCellCreate(1L)
@@ -365,33 +395,25 @@ public class WriteHandlerTest extends AbstractExcelTest {
                 .withAfterWorkbookDispose(1L)
                 .build();
 
-        try (ExcelWriter writer =
-                FesodSheet.write(file).head(WriteHandlerData.class).build()) {
+        try (ExcelWriter writer = FesodSheet.write(file)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
+                .build()) {
 
             WriteSheet writeSheet1 = FesodSheet.writerSheet(0)
                     .needHead(Boolean.TRUE)
                     .registerWriteHandler(writeHandler1)
                     .build();
-            writer.write(data(), writeSheet1);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet1);
 
             WriteSheet writeSheet2 = FesodSheet.writerSheet(1)
                     .needHead(Boolean.TRUE)
                     .registerWriteHandler(writeHandler2)
                     .build();
-            writer.write(data(), writeSheet2);
+            writer.write(TestDataBuilder.simpleData(1), writeSheet2);
         }
 
         writeHandler1.afterAll();
         writeHandler2.afterAll();
-    }
-
-    private List<WriteHandlerData> data() {
-        List<WriteHandlerData> list = new ArrayList<WriteHandlerData>();
-        for (int i = 0; i < 1; i++) {
-            WriteHandlerData data = new WriteHandlerData();
-            data.setName("姓名" + i);
-            list.add(data);
-        }
-        return list;
     }
 }

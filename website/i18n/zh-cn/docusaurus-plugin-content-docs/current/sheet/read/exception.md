@@ -14,7 +14,6 @@ title: '异常处理'
 ## 数据监听器
 
 ```java
-
 @Slf4j
 public class DemoExceptionListener extends AnalysisEventListener<ExceptionDemoData> {
     @Override
@@ -39,7 +38,6 @@ public class DemoExceptionListener extends AnalysisEventListener<ExceptionDemoDa
 ## 代码示例
 
 ```java
-
 @Test
 public void exceptionRead() {
     String fileName = "path/to/demo.xlsx";

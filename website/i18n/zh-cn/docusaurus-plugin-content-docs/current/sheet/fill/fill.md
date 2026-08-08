@@ -7,6 +7,23 @@ title: '填充'
 
 本章节介绍如何使用 Fesod 来填充数据到文件中。
 
+## 占位符语法
+
+模板通过 `{}` 占位符标记需要填充的单元格，大括号里的内容决定了填充方式：
+
+| 占位符 | 含义 | 由谁填充 |
+| --- | --- | --- |
+| `{name}` | 单个变量 | `doFill(object)`、`doFill(map)` |
+| `{.name}` | 列表中每一项的 `name` 属性 | `doFill(list)`、`fill(list, ...)` |
+| `{data1.name}` | 同上，但取自名为 `data1` 的列表 | `fill(new FillWrapper("data1", list), ...)` |
+| `\{name\}` | 用 `\` 转义，不会被解析 | 不填充 |
+
+开头的 `.` 决定了单元格会按列表的每一项重复：默认向下重复，也可以通过 `FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL)` 向右重复。`.` 之前的文字指明数据来自哪个列表，因此一个模板中可以并存多个列表。
+
+一个单元格里可以混合多个占位符和普通文本，例如 `{name}今年{number}岁了`。填充时没有提供的占位符会被清空，而不是原样留在表格里：用列表填充 `{name}`，或者用单个对象填充 `{.name}`，都会清空该单元格，只保留周围的文本。
+
+转义只是让大括号不被解析，而 `\` 本身只有在同一个单元格里还存在真实占位符时才会被去掉。如果单元格里没有别的内容，`\{name\}` 会原样写出，包括反斜杠。
+
 ## 简单填充
 
 ### 概述
@@ -16,7 +33,6 @@ title: '填充'
 ### POJO 类
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -27,10 +43,25 @@ public class FillData {
 }
 ```
 
+### 数据列表
+
+```java
+private List<FillData> data() {
+    List<FillData> list = ListUtils.newArrayList();
+    for (int i = 0; i < 10; i++) {
+        FillData fillData = new FillData();
+        fillData.setName("张三" + i);
+        fillData.setNumber(5.2);
+        fillData.setDate(new Date());
+        list.add(fillData);
+    }
+    return list;
+}
+```
+
 ### 代码示例
 
 ```java
-
 @Test
 public void simpleFill() {
     String templateFileName = "path/to/simple.xlsx";
@@ -57,11 +88,27 @@ public void simpleFill() {
 
 ### 模板
 
-![img](/img/docs/fill/simpleFill_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>复杂</td><td>忽略</td><td>空</td></tr>
+<tr><td class="xl-chrome">2</td><td>{name}</td><td>{number}</td><td>{name}今年{number}岁了</td><td>\{name\}忽略，{name}</td><td>空{.empty}</td></tr>
+</tbody>
+</table>
+</div>
 
 ### 结果
 
-![img](/img/docs/fill/simpleFill_result.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>复杂</td><td>忽略</td><td>空</td></tr>
+<tr><td class="xl-chrome">2</td><td>张三</td><td class="xl-num">5.2</td><td>张三今年5.2岁了</td><td>{name}忽略，张三</td><td>空</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -74,7 +121,6 @@ public void simpleFill() {
 ### 代码示例
 
 ```java
-
 @Test
 public void listFill() {
     String templateFileName = "path/to/list.xlsx";
@@ -96,11 +142,50 @@ public void listFill() {
 
 ### 模板
 
-![img](/img/docs/fill/listFill_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>日期</td></tr>
+<tr><td class="xl-chrome">2</td><td>{.name}</td><td>{.number}</td><td>{.date}</td></tr>
+</tbody>
+</table>
+</div>
 
 ### 结果
 
-![img](/img/docs/fill/listFill_result.png)
+方案1：
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>日期</td></tr>
+<tr><td class="xl-chrome">2</td><td>张三0</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">3</td><td>张三1</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">4</td><td>张三2</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>张三9</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+</tbody>
+</table>
+</div>
+
+方案2：
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td>姓名</td><td>数字</td><td>日期</td></tr>
+<tr><td class="xl-chrome">2</td><td>张三0</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>张三9</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">12</td><td>张三0</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">21</td><td>张三9</td><td class="xl-num">5.2</td><td class="xl-num">2026-07-31 19:55:44</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -113,7 +198,6 @@ public void listFill() {
 ### 代码示例
 
 ```java
-
 @Test
 public void complexFill() {
     String templateFileName = "path/to/complex.xlsx";
@@ -136,11 +220,37 @@ public void complexFill() {
 
 ### 模板
 
-![img](/img/docs/fill/complexFill_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：{date}</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">{.name}</td><td class="xl-fill-bright-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td></td><td></td><td>统计:{total}</td></tr>
+</tbody>
+</table>
+</div>
 
 ### 结果
 
-![img](/img/docs/fill/complexFill_result.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：2024年11月20日</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">张三0</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三0</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-fc-red">张三1</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三1</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-fc-red">张三2</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三2</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-fc-red">张三9</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三9</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td></td><td></td><td></td><td>统计:1000</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -153,7 +263,6 @@ public void complexFill() {
 ### 代码示例
 
 ```java
-
 @Test
 public void complexFillWithTable() {
     String templateFileName = "path/to/complexFillWithTable.xlsx";
@@ -179,11 +288,38 @@ public void complexFillWithTable() {
 
 ### 模板
 
-![img](/img/docs/fill/complexFillWithTable_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：{date}</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">{.name}</td><td class="xl-fill-bright-green xl-num">{.number}</td><td>{.name}</td><td>{.number}</td></tr>
+</tbody>
+</table>
+</div>
 
 ### 结果
 
-![img](/img/docs/fill/complexFillWithTable_result.png)
+最终文件与上面的复杂填充相同，区别在于生成方式：模板到列表行为止，不再为 `{total}` 预留一行，统计信息在填充之后通过 `writer.write(...)` 追加，因此列表可以任意增长，下方没有需要被顶下去的行。
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td></tr>
+<tr><td class="xl-chrome">1</td><td></td><td></td><td>统计</td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td></td><td></td><td>时间：2024年11月20日</td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>数字</td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-fc-red">张三0</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三0</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-fc-red">张三1</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三1</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-fc-red">张三2</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三2</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">13</td><td class="xl-fc-red">张三9</td><td class="xl-fill-bright-green xl-num">5.2</td><td>张三9</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">14</td><td></td><td></td><td></td><td>统计: 1000</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -196,7 +332,6 @@ public void complexFillWithTable() {
 ### 代码示例
 
 ```java
-
 @Test
 public void horizontalFill() {
     String templateFileName = "path/to/horizontal.xlsx";
@@ -216,11 +351,33 @@ public void horizontalFill() {
 
 ### 模板
 
-![img](/img/docs/fill/horizontalFill_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-fc-red">{.name}</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-fill-bright-green xl-num">{.number}</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>{.name}</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td>{.number}</td></tr>
+<tr><td class="xl-chrome">5</td><td>时间：{date}</td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 ### 结果
 
-![img](/img/docs/fill/horizontalFill_result.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">⋯</td><td class="xl-chrome">L</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-fc-red">张三0</td><td class="xl-fc-red">张三1</td><td class="xl-fc-red">张三2</td><td class="xl-muted">…</td><td class="xl-fc-red">张三9</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>张三0</td><td>张三1</td><td>张三2</td><td class="xl-muted">…</td><td>张三9</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td>时间：2024年11月20日</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -233,7 +390,6 @@ public void horizontalFill() {
 ### 代码示例
 
 ```java
-
 @Test
 public void compositeFill() {
     String templateFileName = "path/to/composite.xlsx";
@@ -242,7 +398,9 @@ public void compositeFill() {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // 使用 FillWrapper 进行多列表填充
-        writer.fill(new FillWrapper("data1", data()), writeSheet);
+        // data1 在模板中是横向排列的，因此使用横向填充
+        FillConfig fillConfig = FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build();
+        writer.fill(new FillWrapper("data1", data()), fillConfig, writeSheet);
         writer.fill(new FillWrapper("data2", data()), writeSheet);
         writer.fill(new FillWrapper("data3", data()), writeSheet);
 
@@ -255,8 +413,51 @@ public void compositeFill() {
 
 ### 模板
 
-![img](/img/docs/fill/compositeFill_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-fc-red">{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-fill-bright-green">{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>{data1.name}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td>{data1.number}</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>时间：{date}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>姓名</td><td>数字</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-fc-red">{data2.name}</td><td class="xl-fill-bright-green">{data2.number}</td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td></td><td></td><td></td><td>姓名</td><td>数字</td></tr>
+<tr><td class="xl-chrome">11</td><td></td><td></td><td></td><td class="xl-fc-red">{data3.name}</td><td class="xl-fill-bright-green">{data3.number}</td></tr>
+</tbody>
+</table>
+</div>
 
 ### 结果
 
-![img](/img/docs/fill/compositeFill_result.png)
+- `data1` 采用横向填充，十条数据在四个模板行上从 `C` 列排到 `L` 列。
+- `data2` 和 `data3` 则是纵向填充，分别占据第 9 到 18 行的 `A`/`B` 列和第 11 到 20 行的 `D`/`E` 列。
+- 用同一个列表名调用 `fill` 会接着往后追加，参见[填充列表](#填充列表)。
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">⋯</td><td class="xl-chrome">L</td></tr>
+<tr><td class="xl-chrome">1</td><td rowspan="4">统计</td><td>姓名</td><td class="xl-fc-red">张三0</td><td class="xl-fc-red">张三1</td><td class="xl-fc-red">张三2</td><td class="xl-muted">…</td><td class="xl-fc-red">张三9</td></tr>
+<tr><td class="xl-chrome">2</td><td>数字</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-fill-bright-green xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-fill-bright-green xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">3</td><td>姓名</td><td>张三0</td><td>张三1</td><td>张三2</td><td class="xl-muted">…</td><td>张三9</td></tr>
+<tr><td class="xl-chrome">4</td><td>数字</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-num">5.2</td><td class="xl-muted">…</td><td class="xl-num">5.2</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>时间：2026-07-31 20:04:59</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td>姓名</td><td>数字</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-fc-red">张三0</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-fc-red">张三1</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td>姓名</td><td>数字</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-fc-red">张三2</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td class="xl-fc-red">张三0</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">12</td><td class="xl-fc-red">张三3</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td class="xl-fc-red">张三1</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td class="xl-muted">…</td><td class="xl-muted">…</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">18</td><td class="xl-fc-red">张三9</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td class="xl-fc-red">张三7</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">19</td><td></td><td></td><td></td><td class="xl-fc-red">张三8</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+<tr><td class="xl-chrome">20</td><td></td><td></td><td></td><td class="xl-fc-red">张三9</td><td class="xl-fill-bright-green xl-num">5.2</td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>

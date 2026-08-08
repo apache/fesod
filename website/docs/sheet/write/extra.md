@@ -22,7 +22,7 @@ title: 'Extra'
 
 # Extra Information
 
-This chapter introduces how to write extra information such as comments, hyperlinks, formulas, merged cells, etc.
+This chapter introduces how to write extra information such as comments, hyperlinks, formulas, etc.
 
 ## Comments
 
@@ -46,7 +46,7 @@ public class CommentWriteHandler implements RowWriteHandler {
             // Create comment in first row, second column
             Comment comment = drawingPatriarch.createCellComment(
                 new XSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 2, 1));
-            comment.setString(new XSSFRichTextString("批注内容"));
+            comment.setString(new XSSFRichTextString("Comments"));
             sheet.getRow(0).getCell(1).setCellComment(comment);
         }
     }
@@ -63,14 +63,27 @@ public void commentWrite() {
     FesodSheet.write(fileName, DemoData.class)
         .inMemory(Boolean.TRUE) // Comments must enable in-memory mode
         .registerWriteHandler(new CommentWriteHandler())
-        .sheet("批注示例")
+        .sheet()
         .doWrite(data());
 }
 ```
 
 ### Result
 
-![img](/img/docs/write/commentWrite.png)
+The comment is attached to `B1` and is only shown when that cell is hovered.
+
+<div class="xl-sheet-container">
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head xl-comment-anchor">Date Title<b class="xl-comment">Comments</b></td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -112,7 +125,15 @@ public void writeHyperlinkDataWrite() {
 
 ### Result
 
-![img](/img/docs/write/writeCellDataWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">hyperlink</td></tr>
+<tr><td class="xl-chrome">2</td><td><a href="https://example.com">Click to visit</a></td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -127,6 +148,8 @@ Write extra formula information
 @Setter
 @EqualsAndHashCode
 public class WriteCellDemoData {
+    private Integer num1;
+    private Integer num2;
     private WriteCellData<String> formulaData;
 }
 ```
@@ -138,12 +161,14 @@ public class WriteCellDemoData {
 public void writeFormulaDataWrite() {
     String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
     WriteCellDemoData data = new WriteCellDemoData();
+    data.setNum1(10);
+    data.setNum2(20);
     // Set formula
     WriteCellData<String> cellData = new WriteCellData<>();
     FormulaData formulaData = new FormulaData();
-    formulaData.setFormulaValue("SUM(A1:A10)");
+    formulaData.setFormulaValue("SUM(A2:B2)");
     // Or
-    // formulaData.setFormulaValue("=SUM(A1:A10)");
+    // formulaData.setFormulaValue("=SUM(A2:B2)");
     cellData.setFormulaData(formulaData);
     data.setFormulaData(cellData);
 
@@ -155,7 +180,15 @@ public void writeFormulaDataWrite() {
 
 ### Result
 
-![img](/img/docs/write/writeCellDataWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">num1</td><td class="xl-head">num2</td><td class="xl-head">formulaData</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num">10</td><td class="xl-num">20</td><td class="xl-num">30</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -182,75 +215,6 @@ public void templateWrite() {
 
 ---
 
-## Merged Cells
-
-### Overview
-
-Supports merged cells through annotations or custom merge strategies.
-
-### Code Example
-
-Annotation approach
-
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class DemoMergeData {
-    @ContentLoopMerge(eachRow = 2) // Merge every 2 rows
-    @ExcelProperty("字符串标题")
-    private String string;
-
-    @ExcelProperty("日期标题")
-    private Date date;
-
-    @ExcelProperty("数字标题")
-    private Double doubleData;
-}
-```
-
-Custom merge strategy
-
-```java
-public class CustomMergeStrategy extends AbstractMergeStrategy {
-    @Override
-    protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
-        // merge method will be called for each cell, ensuring that the same cell is merged only once
-        if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
-            int startRow = relativeRowIndex + 1; // Row 0 is the header, data starts from row 1
-            int endRow = startRow + 1; // Merge current row and next row
-            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
-        }
-    }
-}
-```
-
-Usage
-
-```java
-@Test
-public void mergeWrite() {
-    String fileName = "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-
-    // Annotation approach
-    FesodSheet.write(fileName, DemoMergeData.class)
-        .sheet("合并示例")
-        .doWrite(data());
-
-    // Custom merge strategy
-    FesodSheet.write(fileName, DemoData.class)
-        .registerWriteHandler(new CustomMergeStrategy())
-        .sheet("自定义合并")
-        .doWrite(data());
-}
-```
-
-### Result
-
-![img](/img/docs/write/mergeWrite.png)
-
----
-
 ## Custom Interceptors
 
 ### Overview
@@ -267,13 +231,42 @@ public class DropdownWriteHandler implements SheetWriteHandler {
     public void afterSheetCreate(SheetWriteHandlerContext context) {
         DataValidationHelper helper = context.getWriteSheetHolder().getSheet().getDataValidationHelper();
         CellRangeAddressList range = new CellRangeAddressList(1, 10, 0, 0); // Dropdown area
-        DataValidationConstraint constraint = helper.createExplicitListConstraint(new String[] {"选项1", "选项2"});
+        DataValidationConstraint constraint = helper.createExplicitListConstraint(new String[] {"Option1", "Option2"});
         DataValidation validation = helper.createValidation(constraint, range);
         context.getWriteSheetHolder().getSheet().addValidationData(validation);
     }
 }
 ```
 
+Usage
+
+```java
+@Test
+public void dropdownWrite() {
+    String fileName = "dropdownWrite" + System.currentTimeMillis() + ".xlsx";
+
+    FesodSheet.write(fileName, DemoData.class)
+        .registerWriteHandler(new DropdownWriteHandler())
+        .sheet("Dropdown Example")
+        .doWrite(data());
+}
+```
+
 ### Result
 
-![img](/img/docs/write/customHandlerWrite.png)
+The validation covers `A2:A11`, so every cell in that range offers the list. Selecting one shows the
+dropdown button and its options - drawn open here on `A2`.
+
+<div class="xl-sheet-container">
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-dropdown">String0<b class="xl-dropdown-btn">▾</b><b class="xl-dropdown-list"><b>Option1</b><b>Option2</b></b></td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>

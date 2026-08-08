@@ -59,7 +59,6 @@ Ensure the necessary dependencies are included in your pom.xml file:
 First, define a POJO class for mapping spreadsheet data:
 
 ```java
-
 @Getter
 @Setter
 @ToString
@@ -75,7 +74,6 @@ public class UploadData {
 Create a listener to handle each row of data:
 
 ```java
-
 @Slf4j
 public class UploadDataListener extends AnalysisEventListener<UploadData> {
     private final List<UploadData> list = new ArrayList<>();
@@ -99,7 +97,6 @@ public class UploadDataListener extends AnalysisEventListener<UploadData> {
 Create a controller to handle file upload requests:
 
 ```java
-
 @RestController
 @RequestMapping("/excel")
 public class ExcelController {

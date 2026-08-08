@@ -26,6 +26,8 @@
 package org.apache.fesod.sheet.read.metadata.holder;
 
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.sheet.enums.HolderEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.Cell;
@@ -37,6 +39,8 @@ import org.apache.fesod.sheet.metadata.Holder;
  *
  *
  */
+@Getter
+@Setter
 public class ReadRowHolder implements Holder {
     /**
      * Returns row index of a row in the sheet that contains this cell.Start form 0.
@@ -67,46 +71,6 @@ public class ReadRowHolder implements Holder {
         this.rowIndex = rowIndex;
         this.rowType = rowType;
         this.globalConfiguration = globalConfiguration;
-        this.cellMap = cellMap;
-    }
-
-    public GlobalConfiguration getGlobalConfiguration() {
-        return globalConfiguration;
-    }
-
-    public void setGlobalConfiguration(GlobalConfiguration globalConfiguration) {
-        this.globalConfiguration = globalConfiguration;
-    }
-
-    public Object getCurrentRowAnalysisResult() {
-        return currentRowAnalysisResult;
-    }
-
-    public void setCurrentRowAnalysisResult(Object currentRowAnalysisResult) {
-        this.currentRowAnalysisResult = currentRowAnalysisResult;
-    }
-
-    public Integer getRowIndex() {
-        return rowIndex;
-    }
-
-    public void setRowIndex(Integer rowIndex) {
-        this.rowIndex = rowIndex;
-    }
-
-    public RowTypeEnum getRowType() {
-        return rowType;
-    }
-
-    public void setRowType(RowTypeEnum rowType) {
-        this.rowType = rowType;
-    }
-
-    public Map<Integer, Cell> getCellMap() {
-        return cellMap;
-    }
-
-    public void setCellMap(Map<Integer, Cell> cellMap) {
         this.cellMap = cellMap;
     }
 

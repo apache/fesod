@@ -24,10 +24,12 @@ import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.holder.ReadWorkbookHolder;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Tests {@link ParameterUtil}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class ParameterUtilTest {
 

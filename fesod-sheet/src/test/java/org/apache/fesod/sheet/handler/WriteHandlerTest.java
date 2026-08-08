@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.handler;
 
 import java.io.File;
+import java.util.Collections;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,190 +37,47 @@ import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.util.TestFileUtil;
-import org.apache.fesod.sheet.write.metadata.WriteSheet;
-import org.apache.fesod.sheet.write.metadata.WriteTable;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
  *
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class WriteHandlerTest {
+@Tag(Tags.ROUND_TRIP)
+@Tag(Tags.WRITE)
+public class WriteHandlerTest extends AbstractExcelTest {
 
-    private File file07;
-    private File file03;
-    private File fileCsv;
-
-    private File fillTemplate07;
-    private File fillTemplate03;
-    private File fill07;
-    private File fill03;
-
-    @BeforeEach
-    void init() throws Exception {
-        file07 = TestFileUtil.createNewFile("writeHandler07.xlsx");
-        file03 = TestFileUtil.createNewFile("writeHandler03.xls");
-        fileCsv = TestFileUtil.createNewFile("writeHandlerCsv.csv");
-
-        fillTemplate07 = loadTemplate("fillHandler07.xlsx");
-        fillTemplate03 = loadTemplate("fillHandler03.xls");
-        fill07 = TestFileUtil.createNewFile("fill07.xlsx");
-        fill03 = TestFileUtil.createNewFile("fill03.xls");
-    }
-
-    private File loadTemplate(String filename) throws URISyntaxException {
-        URL resource = getClass().getClassLoader().getResource("fill" + File.separator + filename);
-        Assertions.assertNotNull(resource);
-        return new File(resource.toURI());
-    }
-
-    @Test
-    public void t01WorkbookWrite07() throws Exception {
-        workbookWrite(file07);
-    }
-
-    @Test
-    public void t02WorkbookWrite03() throws Exception {
-        workbookWrite(file03);
-    }
-
-    @Test
-    public void t03WorkbookWriteCsv() throws Exception {
-        workbookWrite(fileCsv);
-    }
-
-    @Test
-    public void t11SheetWrite07() throws Exception {
-        sheetWrite(file07);
-    }
-
-    @Test
-    public void t12SheetWrite03() throws Exception {
-        sheetWrite(file03);
-    }
-
-    @Test
-    public void t13SheetWriteCsv() throws Exception {
-        sheetWrite(fileCsv);
-    }
-
-    @Test
-    public void t21TableWrite07() throws Exception {
-        tableWrite(file07);
-    }
-
-    @Test
-    public void t22TableWrite03() throws Exception {
-        tableWrite(file03);
-    }
-
-    @Test
-    public void t23TableWriteCsv() throws Exception {
-        tableWrite(fileCsv);
-    }
-
-    @Test
-    public void t31SheetWrite07() throws Exception {
-        writeSheetWithMultiWrites(file07);
-    }
-
-    @Test
-    public void t32SheetWrite03() throws Exception {
-        writeSheetWithMultiWrites(file03);
-    }
-
-    @Test
-    public void t33SheetWriteCsv() throws Exception {
-        writeSheetWithMultiWrites(fileCsv);
-    }
-
-    @Test
-    public void t41TableWrite07() throws Exception {
-        writeTableWithMultiWrites(file07);
-    }
-
-    @Test
-    public void t42TableWrite03() throws Exception {
-        writeTableWithMultiWrites(file03);
-    }
-
-    @Test
-    public void t43TableWriteCsv() throws Exception {
-        writeTableWithMultiWrites(fileCsv);
-    }
-
-    @Test
-    public void t51SheetFill07() throws Exception {
-        fillSheetWithMultiFills(fillTemplate07, fill07);
-    }
-
-    @Test
-    public void t52SheetFill03() throws Exception {
-        fillSheetWithMultiFills(fillTemplate03, fill03);
-    }
-
-    @Test
-    public void t61MultiSheetWrite07() throws Exception {
-        writeMultiSheet(file07);
-    }
-
-    @Test
-    public void t62MultiSheetWrite03() throws Exception {
-        writeMultiSheet(file03);
-    }
-
-    @Test
-    public void t71MultiSheetTableWrite07() throws Exception {
-        writeTableWithMultiSheetAndWrites(file07);
-    }
-
-    @Test
-    public void t72MultiSheetTableWrite03() throws Exception {
-        writeTableWithMultiSheetAndWrites(file03);
-    }
-
-    @Test
-    public void t81MultiSheetFill07() throws Exception {
-        fillMultiSheet(fillTemplate07, file07);
-    }
-
-    @Test
-    public void t82MultiSheetFill03() throws Exception {
-        fillMultiSheet(fillTemplate03, file03);
-    }
-
-    @Test
-    public void t91MultiSheetWithSheetLevelHandler07() throws Exception {
-        writeMultiSheetWithSheetLevelHandler(file07);
-    }
-
-    @Test
-    public void t92MultiSheetWithSheetLevelHandler03() throws Exception {
-        writeMultiSheetWithSheetLevelHandler(file03);
-    }
-
-    private void workbookWrite(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource
+    void workbookWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         WriteHandler writeHandler = new WriteHandler();
         FesodSheet.write(file)
-                .head(WriteHandlerData.class)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
                 .registerWriteHandler(writeHandler)
                 .sheet()
-                .doWrite(data());
+                .doWrite(TestDataBuilder.simpleData(1));
         writeHandler.afterAll();
     }
 
-    private void sheetWrite(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource
+    void sheetWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         WriteHandler writeHandler = new WriteHandler();
         FesodSheet.write(file)
-                .head(WriteHandlerData.class)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
                 .sheet()
                 .registerWriteHandler(writeHandler)
-                .doWrite(data());
+                .doWrite(TestDataBuilder.simpleData(1));
         writeHandler.afterAll();
     }
 
@@ -256,14 +114,18 @@ public class WriteHandlerTest {
         writeHandler.afterAll();
     }
 
-    private void tableWrite(File file) {
+    @ParameterizedTest
+    @ExcelFormatSource
+    void tableWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         WriteHandler writeHandler = new WriteHandler();
         FesodSheet.write(file)
-                .head(WriteHandlerData.class)
+                .head(SimpleData.class)
+                .includeColumnFieldNames(Collections.singletonList("name"))
                 .sheet()
                 .table(0)
                 .registerWriteHandler(writeHandler)
-                .doWrite(data());
+                .doWrite(TestDataBuilder.simpleData(1));
         writeHandler.afterAll();
     }
 

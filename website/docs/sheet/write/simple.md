@@ -36,16 +36,15 @@ This is the most basic and commonly used writing approach.
 The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
 public class DemoData {
-    @ExcelProperty("字符串标题")
+    @ExcelProperty("String Title")
     private String string;
-    @ExcelProperty("日期标题")
+    @ExcelProperty("Date Title")
     private Date date;
-    @ExcelProperty("数字标题")
+    @ExcelProperty("Number Title")
     private Double doubleData;
     @ExcelIgnore
     private String ignore; // Ignored field
@@ -75,7 +74,6 @@ Fesod provides multiple writing methods, including `Lambda` expressions, data li
 #### `Lambda` Expression
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -89,7 +87,6 @@ public void simpleWrite() {
 #### Data List
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -103,7 +100,6 @@ public void simpleWrite() {
 #### `ExcelWriter` Object
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -114,3 +110,22 @@ public void simpleWrite() {
     }
 }
 ```
+
+### Result
+
+All three approaches produce the same file. Row 1 holds the header titles taken from `@ExcelProperty`, and the 10
+objects returned by `data()` follow in rows 2-11. The `ignore` field is absent because it is annotated `@ExcelIgnore`.
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>String0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>String1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>String2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>String9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>

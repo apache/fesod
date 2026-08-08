@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.util;
 
 import java.io.IOException;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -28,11 +29,13 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link PoiUtils}
  */
+@Tag(Tags.UNIT)
 class PoiUtilsTest {
 
     @Test

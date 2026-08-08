@@ -32,90 +32,122 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatCapability;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.fesod.sheet.util.TestFileUtil;
 import org.apache.fesod.sheet.util.TestUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
 
 /**
- *
+ * Test converter read/write for all Excel formats using parameterized tests.
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class ConverterDataTest {
+@Tag(Tags.ROUND_TRIP)
+public class ConverterDataTest extends AbstractExcelTest {
 
-    private static File file07;
-    private static File file03;
-    private static File fileCsv;
-    private static File fileImage07;
-    private static File fileImage03;
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAndWrite(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
+        List<ConverterWriteData> data = TestDataBuilder.converterWriteData();
 
-    @BeforeAll
-    public static void init() {
-        file07 = TestFileUtil.createNewFile("converter07.xlsx");
-        file03 = TestFileUtil.createNewFile("converter03.xls");
-        fileCsv = TestFileUtil.createNewFile("converterCsv.csv");
-        fileImage07 = TestFileUtil.createNewFile("converterImage07.xlsx");
-        fileImage03 = TestFileUtil.createNewFile("converterImage03.xls");
+        RoundTripHelper.write(file, ConverterWriteData.class, data);
+        List<ConverterReadData> result = RoundTripHelper.read(file, ConverterReadData.class);
+
+        Assertions.assertEquals(1, result.size());
+        ConverterReadData row = result.get(0);
+        Assertions.assertEquals(TestUtil.TEST_DATE, row.getDate());
+        Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE, row.getLocalDate());
+        Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE_TIME, row.getLocalDateTime());
+        Assertions.assertEquals(Boolean.TRUE, row.getBooleanData());
+        Assertions.assertEquals(row.getBigDecimal().doubleValue(), BigDecimal.ONE.doubleValue(), 0.0);
+        Assertions.assertEquals(row.getBigInteger().intValue(), BigInteger.ONE.intValue(), 0.0);
+        Assertions.assertEquals(1L, (long) row.getLongData());
+        Assertions.assertEquals(1L, (long) row.getIntegerData());
+        Assertions.assertEquals(1L, (long) row.getShortData());
+        Assertions.assertEquals(1L, (long) row.getByteData());
+        Assertions.assertEquals(1.0, row.getDoubleData(), 0.0);
+        Assertions.assertEquals((float) 1.0, row.getFloatData(), 0.0);
+        Assertions.assertEquals("test", row.getString());
+        Assertions.assertEquals("custom", row.getCellData().getStringValue());
     }
 
-    @Test
-    public void t01ReadAndWrite07() throws Exception {
-        readAndWrite(file07);
-    }
-
-    @Test
-    public void t02ReadAndWrite03() throws Exception {
-        readAndWrite(file03);
-    }
-
-    @Test
-    public void t03ReadAndWriteCsv() throws Exception {
-        readAndWrite(fileCsv);
-    }
-
-    private void readAndWrite(File file) throws Exception {
-        FesodSheet.write(file, ConverterWriteData.class).sheet().doWrite(data());
-        FesodSheet.read(file, ConverterReadData.class, new ConverterDataListener())
+    @ParameterizedTest
+    @ExcelFormatSource
+    void readAllConverter(ExcelFormat format) throws Exception {
+        String fileName = "converter" + File.separator + "converter"
+                + format.name().toLowerCase().replace("xlsx", "07").replace("xls", "03")
+                + format.getExtension();
+        List<ReadAllConverterData> list = FesodSheet.read(readFile(fileName))
+                .head(ReadAllConverterData.class)
                 .sheet()
-                .doRead();
+                .doReadSync();
+        Assertions.assertEquals(1, list.size());
+        ReadAllConverterData data = list.get(0);
+        Assertions.assertEquals(data.getBigDecimalBoolean().doubleValue(), BigDecimal.ONE.doubleValue(), 0.0);
+        Assertions.assertEquals(data.getBigDecimalNumber().doubleValue(), BigDecimal.ONE.doubleValue(), 0.0);
+        Assertions.assertEquals(data.getBigDecimalString().doubleValue(), BigDecimal.ONE.doubleValue(), 0.0);
+        Assertions.assertEquals(data.getBigIntegerBoolean().intValue(), BigInteger.ONE.intValue(), 0.0);
+        Assertions.assertEquals(data.getBigIntegerNumber().intValue(), BigInteger.ONE.intValue(), 0.0);
+        Assertions.assertEquals(data.getBigIntegerString().intValue(), BigInteger.ONE.intValue(), 0.0);
+        Assertions.assertTrue(data.getBooleanBoolean());
+        Assertions.assertTrue(data.getBooleanNumber());
+        Assertions.assertTrue(data.getBooleanString());
+        Assertions.assertEquals(1L, (long) data.getByteBoolean());
+        Assertions.assertEquals(1L, (long) data.getByteNumber());
+        Assertions.assertEquals(1L, (long) data.getByteString());
+        Assertions.assertEquals(data.getDateNumber(), DateUtils.parseDate("2020-01-01 01:01:01"));
+        Assertions.assertEquals(data.getDateString(), DateUtils.parseDate("2020-01-01 01:01:01"));
+        Assertions.assertEquals(
+                data.getLocalDateTimeNumber(), DateUtils.parseLocalDateTime("2020-01-01 01:01:01", null, null));
+        Assertions.assertEquals(
+                data.getLocalDateTimeString(), DateUtils.parseLocalDateTime("2020-01-01 01:01:01", null, null));
+        Assertions.assertEquals(1.0, data.getDoubleBoolean(), 0.0);
+        Assertions.assertEquals(1.0, data.getDoubleNumber(), 0.0);
+        Assertions.assertEquals(1.0, data.getDoubleString(), 0.0);
+        Assertions.assertEquals((float) 1.0, data.getFloatBoolean(), 0.0);
+        Assertions.assertEquals((float) 1.0, data.getFloatNumber(), 0.0);
+        Assertions.assertEquals((float) 1.0, data.getFloatString(), 0.0);
+        Assertions.assertEquals(1L, (long) data.getIntegerBoolean());
+        Assertions.assertEquals(1L, (long) data.getIntegerNumber());
+        Assertions.assertEquals(1L, (long) data.getIntegerString());
+        Assertions.assertEquals(1L, (long) data.getLongBoolean());
+        Assertions.assertEquals(1L, (long) data.getLongNumber());
+        Assertions.assertEquals(1L, (long) data.getLongString());
+        Assertions.assertEquals(1L, (long) data.getShortBoolean());
+        Assertions.assertEquals(1L, (long) data.getShortNumber());
+        Assertions.assertEquals(1L, (long) data.getShortString());
+        Assertions.assertEquals("true", data.getStringBoolean().toLowerCase());
+        Assertions.assertEquals("测试", data.getStringString());
+        Assertions.assertEquals("#VALUE!", data.getStringError());
+        if (format != ExcelFormat.CSV) {
+            Assertions.assertEquals("2020-1-1 1:01", data.getStringNumberDate());
+        } else {
+            Assertions.assertEquals("2020-01-01 01:01:01", data.getStringNumberDate());
+        }
+        double doubleStringFormulaNumber = new BigDecimal(data.getStringFormulaNumber()).doubleValue();
+        Assertions.assertEquals(2.0, doubleStringFormulaNumber, 0.0);
+        Assertions.assertEquals("1测试", data.getStringFormulaString());
     }
 
-    @Test
-    public void t11ReadAllConverter07() {
-        readAllConverter("converter" + File.separator + "converter07.xlsx");
-    }
-
-    @Test
-    public void t12ReadAllConverter03() {
-        readAllConverter("converter" + File.separator + "converter03.xls");
-    }
-
-    @Test
-    public void t13ReadAllConverterCsv() {
-        readAllConverter("converter" + File.separator + "converterCsv.csv");
-    }
-
-    @Test
-    public void t21WriteImage07() throws Exception {
-        writeImage(fileImage07);
-    }
-
-    @Test
-    public void t22WriteImage03() throws Exception {
-        writeImage(fileImage03);
-    }
-
-    private void writeImage(File file) throws Exception {
+    @ParameterizedTest
+    @ExcelFormatSource(requires = FormatCapability.IMAGES)
+    void writeImage(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
         InputStream inputStream = null;
         try {
             List<ImageData> list = new ArrayList<>();
             ImageData imageData = new ImageData();
             list.add(imageData);
-            String imagePath = TestFileUtil.getPath() + "converter" + File.separator + "img.jpg";
+            String imagePath =
+                    readFile("converter" + File.separator + "img.jpg").getAbsolutePath();
             imageData.setByteArray(FileUtils.readFileToByteArray(new File(imagePath)));
             imageData.setFile(new File(imagePath));
             imageData.setString(imagePath);
@@ -127,32 +159,5 @@ public class ConverterDataTest {
                 inputStream.close();
             }
         }
-    }
-
-    private void readAllConverter(String fileName) {
-        FesodSheet.read(TestFileUtil.readFile(fileName), ReadAllConverterData.class, new ReadAllConverterDataListener())
-                .sheet()
-                .doRead();
-    }
-
-    private List<ConverterWriteData> data() throws Exception {
-        List<ConverterWriteData> list = new ArrayList<ConverterWriteData>();
-        ConverterWriteData converterWriteData = new ConverterWriteData();
-        converterWriteData.setDate(TestUtil.TEST_DATE);
-        converterWriteData.setLocalDate(TestUtil.TEST_LOCAL_DATE);
-        converterWriteData.setLocalDateTime(TestUtil.TEST_LOCAL_DATE_TIME);
-        converterWriteData.setBooleanData(Boolean.TRUE);
-        converterWriteData.setBigDecimal(BigDecimal.ONE);
-        converterWriteData.setBigInteger(BigInteger.ONE);
-        converterWriteData.setLongData(1L);
-        converterWriteData.setIntegerData(1);
-        converterWriteData.setShortData((short) 1);
-        converterWriteData.setByteData((byte) 1);
-        converterWriteData.setDoubleData(1.0);
-        converterWriteData.setFloatData((float) 1.0);
-        converterWriteData.setString("测试");
-        converterWriteData.setCellData(new WriteCellData<>("自定义"));
-        list.add(converterWriteData);
-        return list;
     }
 }

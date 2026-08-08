@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.util;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.handler.chain.CellHandlerExecutionChain;
 import org.apache.fesod.sheet.write.handler.chain.RowHandlerExecutionChain;
 import org.apache.fesod.sheet.write.handler.chain.SheetHandlerExecutionChain;
@@ -37,6 +38,7 @@ import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -47,6 +49,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Tests {@link WriteHandlerUtilsTest}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class WriteHandlerUtilsTest {
 

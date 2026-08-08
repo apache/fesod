@@ -29,6 +29,6 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Setter
 @EqualsAndHashCode
 public class GlobalConverterWriteData {
-    @ExcelProperty("时间戳-字符串")
+    @ExcelProperty("TimestampString")
     private Timestamp timestampData;
 }

@@ -41,9 +41,9 @@ import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 @HeadStyle
 @HeadFontStyle
 public class StyleData {
-    @ExcelProperty("字符串")
+    @ExcelProperty("String")
     private String string;
 
-    @ExcelProperty("字符串1")
+    @ExcelProperty("String1")
     private String string1;
 }

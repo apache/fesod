@@ -55,7 +55,7 @@ public class ExampleDataGenerator {
         List<Date> list = new ArrayList<>();
         long now = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
-            list.add(new Date(now + i * 1000 * 60 * 60 * 24));
+            list.add(new Date(now + (long) i * 1000 * 60 * 60 * 24));
         }
         return list;
     }

@@ -36,8 +36,9 @@ import org.apache.fesod.sheet.util.FileUtils;
 /**
  * String and image converter
  *
- *
+ * @see StringPathnameImageConverter
  */
+@Deprecated
 public class StringImageConverter implements Converter<String> {
     @Override
     public Class<?> supportJavaTypeKey() {

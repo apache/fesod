@@ -41,10 +41,12 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -54,6 +56,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Tests {@link ClassUtils}
  */
+@Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 class ClassUtilsTest {
 
@@ -125,7 +128,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void test_declaredFields_cache_ThreadLocal() throws NoSuchFieldException, IllegalAccessException {
+    void test_declaredFields_cache_ThreadLocal() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
 
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
@@ -197,6 +200,29 @@ class ClassUtilsTest {
 
         boolean hasAge = map.values().stream().anyMatch(f -> "age".equals(f.getFieldName()));
         Assertions.assertTrue(hasAge);
+    }
+
+    @Test
+    void test_declaredFields_WriteHolder_exclude_preservesUnrelatedExplicitIndex() {
+        // Excluding a field that has NO explicit @ExcelProperty(index) (here "email",
+        // which uses order=10) must not perturb indexFieldMap, which only holds fields
+        // that DO carry an explicit index (ComplexEntity: id->0, name->2).
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+
+        Mockito.when(writeHolder.excludeColumnFieldNames()).thenReturn(Collections.singleton("email"));
+        Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+        Mockito.when(writeHolder.ignore(Mockito.eq("email"), Mockito.anyInt())).thenReturn(true);
+
+        FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
+
+        Map<Integer, FieldWrapper> indexFieldMap = fieldCache.getIndexFieldMap();
+        // id (@ExcelProperty(index = 0)) and name (index = 2) must still be present and
+        // bound to their explicit indices; the ignored field was never in this map.
+        Assertions.assertTrue(indexFieldMap.containsKey(0), "explicit index 0 (id) must remain");
+        Assertions.assertEquals("id", indexFieldMap.get(0).getFieldName());
+        Assertions.assertTrue(indexFieldMap.containsKey(2), "explicit index 2 (name) must remain");
+        Assertions.assertEquals("name", indexFieldMap.get(2).getFieldName());
+        Assertions.assertFalse(indexFieldMap.values().stream().anyMatch(f -> "email".equals(f.getFieldName())));
     }
 
     @Test

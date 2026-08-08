@@ -26,12 +26,16 @@
 package org.apache.fesod.sheet.write.metadata.fill;
 
 import java.util.Collection;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Multiple lists are supported when packing
  *
  *
  **/
+@Getter
+@Setter
 public class FillWrapper {
     /**
      * The collection prefix that needs to be filled.
@@ -48,22 +52,6 @@ public class FillWrapper {
 
     public FillWrapper(String name, Collection collectionData) {
         this.name = name;
-        this.collectionData = collectionData;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Collection getCollectionData() {
-        return collectionData;
-    }
-
-    public void setCollectionData(Collection collectionData) {
         this.collectionData = collectionData;
     }
 }

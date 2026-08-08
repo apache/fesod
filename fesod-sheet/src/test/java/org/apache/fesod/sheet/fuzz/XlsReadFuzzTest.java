@@ -27,14 +27,17 @@ import lombok.SneakyThrows;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Fuzzes the XLS (BIFF) parsing path with arbitrary bytes.
  */
+@Tag(Tags.FUZZ)
 public class XlsReadFuzzTest {
     private static final int MAX_SIZE = 1_000_000; // 1MB guard
 

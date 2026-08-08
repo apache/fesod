@@ -5,7 +5,7 @@ title: '额外信息'
 
 # 额外信息
 
-本章节将介绍如何写入额外的信息，如批注、超链接、公式、合并单元格等。
+本章节将介绍如何写入额外的信息，如批注、超链接、公式等。
 
 ## 批注
 
@@ -29,7 +29,7 @@ public class CommentWriteHandler implements RowWriteHandler {
             // 在第一行第二列创建批注
             Comment comment = drawingPatriarch.createCellComment(
                 new XSSFClientAnchor(0, 0, 0, 0, (short) 1, 0, (short) 2, 1));
-            comment.setString(new XSSFRichTextString("批注内容"));
+            comment.setString(new XSSFRichTextString("批注1"));
             sheet.getRow(0).getCell(1).setCellComment(comment);
         }
     }
@@ -46,14 +46,27 @@ public void commentWrite() {
     FesodSheet.write(fileName, DemoData.class)
         .inMemory(Boolean.TRUE) // 批注必须启用内存模式
         .registerWriteHandler(new CommentWriteHandler())
-        .sheet("批注示例")
+        .sheet()
         .doWrite(data());
 }
 ```
 
 ### 结果
 
-![img](/img/docs/write/commentWrite.png)
+在第一行第二列单元格上出现批注信息。
+
+<div class="xl-sheet-container">
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head xl-comment-anchor">日期标题<b class="xl-comment">批注1</b></td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td>字符串0</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -95,7 +108,15 @@ public void writeHyperlinkDataWrite() {
 
 ### 结果
 
-![img](/img/docs/write/writeCellDataWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">hyperlink</td></tr>
+<tr><td class="xl-chrome">2</td><td><a href="https://example.com">点击访问</a></td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -110,6 +131,8 @@ public void writeHyperlinkDataWrite() {
 @Setter
 @EqualsAndHashCode
 public class WriteCellDemoData {
+    private Integer num1;
+    private Integer num2;
     private WriteCellData<String> formulaData;
 }
 ```
@@ -121,12 +144,14 @@ public class WriteCellDemoData {
 public void writeFormulaDataWrite() {
     String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
     WriteCellDemoData data = new WriteCellDemoData();
+    data.setNum1(10);
+    data.setNum2(20);
     // 设置公式
     WriteCellData<String> cellData = new WriteCellData<>();
     FormulaData formulaData = new FormulaData();
-    formulaData.setFormulaValue("SUM(A1:A10)");
+    formulaData.setFormulaValue("SUM(A2:B2)");
     // 或
-    // formulaData.setFormulaValue("=SUM(A1:A10)");
+    // formulaData.setFormulaValue("=SUM(A2:B2)");
     cellData.setFormulaData(formulaData);
     data.setFormulaData(cellData);
 
@@ -138,7 +163,15 @@ public void writeFormulaDataWrite() {
 
 ### 结果
 
-![img](/img/docs/write/writeCellDataWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">num1</td><td class="xl-head">num2</td><td class="xl-head">formulaData</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num">10</td><td class="xl-num">20</td><td class="xl-num">30</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -165,75 +198,6 @@ public void templateWrite() {
 
 ---
 
-## 合并单元格
-
-### 概述
-
-支持通过注解或自定义合并策略实现合并单元格。
-
-### 代码示例
-
-注解方式
-
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class DemoMergeData {
-    @ContentLoopMerge(eachRow = 2) // 每隔 2 行合并一次
-    @ExcelProperty("字符串标题")
-    private String string;
-
-    @ExcelProperty("日期标题")
-    private Date date;
-
-    @ExcelProperty("数字标题")
-    private Double doubleData;
-}
-```
-
-自定义合并策略
-
-```java
-public class CustomMergeStrategy extends AbstractMergeStrategy {
-    @Override
-    protected void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex) {
-        // merge方法会为每个单元格都调用一次，确保相同单元格只执行一次合并
-        if (relativeRowIndex != null && relativeRowIndex % 2 == 0 && head.getColumnIndex() == 0) {
-            int startRow = relativeRowIndex + 1; // 第0行是表头，数据从第1行开始
-            int endRow = startRow + 1; // 合并当前行和下一行
-            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
-        }
-    }
-}
-```
-
-使用
-
-```java
-@Test
-public void mergeWrite() {
-    String fileName = "mergeWrite" + System.currentTimeMillis() + ".xlsx";
-
-    // 注解方式
-    FesodSheet.write(fileName, DemoMergeData.class)
-        .sheet("合并示例")
-        .doWrite(data());
-
-    // 自定义合并策略
-    FesodSheet.write(fileName, DemoData.class)
-        .registerWriteHandler(new CustomMergeStrategy())
-        .sheet("自定义合并")
-        .doWrite(data());
-}
-```
-
-### 结果
-
-![img](/img/docs/write/mergeWrite.png)
-
----
-
 ## 自定义拦截器
 
 ### 概述
@@ -257,6 +221,34 @@ public class DropdownWriteHandler implements SheetWriteHandler {
 }
 ```
 
+使用
+
+```java
+@Test
+public void dropdownWrite() {
+    String fileName = "dropdownWrite" + System.currentTimeMillis() + ".xlsx";
+
+    FesodSheet.write(fileName, DemoData.class)
+        .registerWriteHandler(new DropdownWriteHandler())
+        .sheet("下拉框示例")
+        .doWrite(data());
+}
+```
+
 ### 结果
 
-![img](/img/docs/write/customHandlerWrite.png)
+校验范围是 `A2:A11`，该区域内的每个单元格都可以选择下拉框中的值。
+
+<div class="xl-sheet-container">
+<table class="xl-sheet xl-sheet--overlay">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">字符串标题</td><td class="xl-head">日期标题</td><td class="xl-head">数字标题</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-dropdown">字符串0<b class="xl-dropdown-btn">▾</b><b class="xl-dropdown-list"><b>选项1</b><b>选项2</b></b></td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串1</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">4</td><td>字符串2</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串9</td><td class="xl-num">2026-07-31 20:50:23</td><td class="xl-num">0.56</td></tr>
+</tbody>
+</table>
+</div>

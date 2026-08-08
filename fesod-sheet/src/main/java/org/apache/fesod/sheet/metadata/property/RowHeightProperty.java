@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
 import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 
@@ -33,6 +35,8 @@ import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
  *
  *
  */
+@Getter
+@Setter
 public class RowHeightProperty {
     private Short height;
 
@@ -52,13 +56,5 @@ public class RowHeightProperty {
             return null;
         }
         return new RowHeightProperty(contentRowHeight.value());
-    }
-
-    public Short getHeight() {
-        return height;
-    }
-
-    public void setHeight(Short height) {
-        this.height = height;
     }
 }

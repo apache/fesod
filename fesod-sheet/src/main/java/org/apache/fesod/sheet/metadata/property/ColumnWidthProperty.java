@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 
 /**
@@ -32,6 +34,8 @@ import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
  *
  *
  */
+@Getter
+@Setter
 public class ColumnWidthProperty {
     private Integer width;
 
@@ -44,13 +48,5 @@ public class ColumnWidthProperty {
             return null;
         }
         return new ColumnWidthProperty(columnWidth.value());
-    }
-
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
     }
 }

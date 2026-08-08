@@ -372,7 +372,11 @@ public class ClassUtils {
             // The current field needs to be ignored
             if (isGroupsMismatch || writeHolder.ignore(field.getFieldName(), entry.getKey())) {
                 ignoreSet.add(field.getFieldName());
-                indexFieldMap.remove(index);
+                // indexFieldMap is keyed by the field's explicit @ExcelProperty(index), which for
+                // explicit-index fields equals the sortedFieldMap position (entry.getKey()); remove
+                // by that key, not the running counter, otherwise an unrelated explicit-index entry
+                // is dropped and the ignored field's entry may survive.
+                indexFieldMap.remove(key);
             } else {
                 // Mandatory sorted fields
                 if (indexFieldMap.containsKey(key)) {

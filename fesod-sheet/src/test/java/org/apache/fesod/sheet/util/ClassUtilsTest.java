@@ -225,6 +225,29 @@ class ClassUtilsTest {
     }
 
     @Test
+    void test_declaredFields_WriteHolder_exclude_preservesUnrelatedExplicitIndex() {
+        // Excluding a field that has NO explicit @ExcelProperty(index) (here "email",
+        // which uses order=10) must not perturb indexFieldMap, which only holds fields
+        // that DO carry an explicit index (ComplexEntity: id->0, name->2).
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
+
+        Mockito.when(writeHolder.excludeColumnFieldNames()).thenReturn(Collections.singleton("email"));
+        Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+        Mockito.when(writeHolder.ignore(Mockito.eq("email"), Mockito.anyInt())).thenReturn(true);
+
+        FieldCache fieldCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
+
+        Map<Integer, FieldWrapper> indexFieldMap = fieldCache.getIndexFieldMap();
+        // id (@ExcelProperty(index = 0)) and name (index = 2) must still be present and
+        // bound to their explicit indices; the ignored field was never in this map.
+        Assertions.assertTrue(indexFieldMap.containsKey(0), "explicit index 0 (id) must remain");
+        Assertions.assertEquals("id", indexFieldMap.get(0).getFieldName());
+        Assertions.assertTrue(indexFieldMap.containsKey(2), "explicit index 2 (name) must remain");
+        Assertions.assertEquals("name", indexFieldMap.get(2).getFieldName());
+        Assertions.assertFalse(indexFieldMap.values().stream().anyMatch(f -> "email".equals(f.getFieldName())));
+    }
+
+    @Test
     void test_declaredFields_resort() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
         Mockito.when(writeHolder.writeViewMatcher()).thenReturn(WriteViewMatcher.NOOP);

@@ -16,7 +16,6 @@ Spring Boot 项目中可以通过 HTTP 接口生成电子表格文件并提供�
 ### 代码示例
 
 ```java
-
 @GetMapping("download")
 public void download(HttpServletResponse response) throws IOException {
     response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

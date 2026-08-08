@@ -34,7 +34,6 @@ making it convenient to use Fesod in web environments.
 ### Code Example
 
 ```java
-
 @GetMapping("download")
 public void download(HttpServletResponse response) throws IOException {
     response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

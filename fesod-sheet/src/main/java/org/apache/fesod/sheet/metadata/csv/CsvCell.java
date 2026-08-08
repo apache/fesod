@@ -190,6 +190,10 @@ public class CsvCell extends CellBase {
         }
         this.dateValue = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
         this.cellType = CellType.NUMERIC;
+        // Mark the numeric cell as a date so CsvSheet.buildCellValue takes the date
+        // branch; otherwise it falls back to numberValue (null) and writes an empty
+        // field, silently dropping the Calendar value. Mirrors the Date/LocalDateTime setters.
+        this.numericCellType = NumericCellTypeEnum.DATE;
     }
 
     @Override

@@ -38,6 +38,21 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
  */
 public class EscapeHexCellWriteHandler implements CellWriteHandler {
 
+    // Static hex lookup table for O(1) character validation
+    private static final boolean[] HEX_TABLE = new boolean[128];
+
+    static {
+        for (char c = '0'; c <= '9'; c++) HEX_TABLE[c] = true;
+        for (char c = 'A'; c <= 'F'; c++) HEX_TABLE[c] = true;
+        for (char c = 'a'; c <= 'f'; c++) HEX_TABLE[c] = true;
+    }
+
+    private static final String PREFIX = "_x";
+    private static final int PREFIX_LENGTH = PREFIX.length();
+    private static final int HEX_DIGIT_COUNT = 4;
+    // "_x" + 4 hex digits + closing "_"
+    private static final int PATTERN_LENGTH = PREFIX_LENGTH + HEX_DIGIT_COUNT + 1;
+
     @Override
     public void afterCellDataConverted(
             WriteSheetHolder writeSheetHolder,
@@ -57,15 +72,6 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
         }
     }
 
-    // Static hex lookup table for O(1) character validation
-    private static final boolean[] HEX_TABLE = new boolean[128];
-
-    static {
-        for (char c = '0'; c <= '9'; c++) HEX_TABLE[c] = true;
-        for (char c = 'A'; c <= 'F'; c++) HEX_TABLE[c] = true;
-        for (char c = 'a'; c <= 'f'; c++) HEX_TABLE[c] = true;
-    }
-
     /**
      * Escapes hexadecimal-encoded strings with optimized performance Replaces _xHHHH_ with _x005F_xHHHH_ to prevent POI
      * from decoding them
@@ -74,7 +80,7 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
         int length = originalString.length();
 
         // Fast path: if string is too short to contain pattern, return original
-        if (length < 7) {
+        if (length < PATTERN_LENGTH) {
             return originalString;
         }
 
@@ -83,26 +89,27 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
         int lastEnd = 0;
         int searchStart = 0;
         int patternIndex;
-        while ((patternIndex = originalString.indexOf("_x", searchStart)) != -1) {
+        while ((patternIndex = originalString.indexOf(PREFIX, searchStart)) != -1) {
             // Check if we have enough characters for full pattern
-            if (patternIndex + 6 >= length) {
+            if (patternIndex + PATTERN_LENGTH - 1 >= length) {
                 break;
             }
 
             // Quick validation: check if it ends with '_' and has valid hex
-            if (originalString.charAt(patternIndex + 6) == '_' && isValidHexFast(originalString, patternIndex + 2)) {
+            if (originalString.charAt(patternIndex + PATTERN_LENGTH - 1) == '_'
+                    && isValidHexFast(originalString, patternIndex + PREFIX_LENGTH)) {
                 if (result == null) {
                     result = new StringBuilder(length + 64); // More generous pre-allocation
                 }
                 // Append content since the previous match, then the escaped pattern
                 result.append(originalString, lastEnd, patternIndex);
                 result.append("_x005F_x");
-                result.append(originalString, patternIndex + 2, patternIndex + 6);
+                result.append(originalString, patternIndex + PREFIX_LENGTH, patternIndex + PATTERN_LENGTH - 1);
                 result.append('_');
-                lastEnd = patternIndex + 7;
-                searchStart = patternIndex + 7;
+                lastEnd = patternIndex + PATTERN_LENGTH;
+                searchStart = patternIndex + PATTERN_LENGTH;
             } else {
-                searchStart = patternIndex + 2;
+                searchStart = patternIndex + PREFIX_LENGTH;
             }
         }
 
@@ -123,7 +130,7 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
      * Fast hex validation using lookup table - O(1) per character
      */
     private static boolean isValidHexFast(String str, int startIndex) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < HEX_DIGIT_COUNT; i++) {
             char c = str.charAt(startIndex + i);
             if (c >= 128 || !HEX_TABLE[c]) {
                 return false;

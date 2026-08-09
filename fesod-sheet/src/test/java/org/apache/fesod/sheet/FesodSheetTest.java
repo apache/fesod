@@ -258,32 +258,27 @@ class FesodSheetTest {
     }
 
     @Test
-    void testReadSheet_withColumnIndexes_xlsFormat() {
-        File xlsFile = tempDir.resolve("test.xls").toFile();
+    void testReadCsv_withColumnIndexes_shouldFilterColumns() throws Exception {
 
-        List<List<String>> head = new ArrayList<>();
-        head.add(Arrays.asList("ID"));
-        head.add(Arrays.asList("Name"));
-        head.add(Arrays.asList("Age"));
-        head.add(Arrays.asList("Gender"));
-
-        List<List<Object>> dataList = new ArrayList<>();
-        dataList.add(Arrays.asList("1", "Alice", "30", "Female"));
-
-        FesodSheet.write(xlsFile).head(head).sheet("Sheet1").doWrite(dataList);
+        String csvContent = "ID,Name,Age,Gender\n2,Bob,25,Male";
+        File csvFile = tempDir.resolve("test_columns.csv").toFile();
+        FileUtils.writeStringToFile(csvFile, csvContent, StandardCharsets.UTF_8);
 
         List<Integer> targetColumns = Arrays.asList(0, 2);
 
-        List<Map<Integer, String>> readResults = FesodSheet.read(xlsFile)
-                .sheet(0)
+        List<Map<Integer, String>> readResults = FesodSheet.read(csvFile)
+                .csv()
                 .includeColumnIndexes(targetColumns)
                 .doReadSync();
 
         Assertions.assertNotNull(readResults);
-        Map<Integer, String> parsedRow = readResults.get(0);
-        Assertions.assertEquals(2, parsedRow.size(), "Should only contain 2 filtered columns");
-        Assertions.assertEquals("1", parsedRow.get(0));
-        Assertions.assertEquals("30", parsedRow.get(1));
+        Assertions.assertEquals(1, readResults.size());
+
+        Map<Integer, String> row1 = readResults.get(0);
+        Assertions.assertEquals(
+                2, row1.size(), "Should only contain the 1 filtered columns (excepting the head by default)");
+        Assertions.assertEquals("2", row1.get(0));
+        Assertions.assertEquals("25", row1.get(1));
     }
 
     @Test
@@ -320,6 +315,35 @@ class FesodSheetTest {
         Assertions.assertNotNull(readResults);
         Map<Integer, String> parsedRow = readResults.get(0);
         Assertions.assertEquals(2, parsedRow.size());
+        Assertions.assertEquals("1", parsedRow.get(0));
+        Assertions.assertEquals("30", parsedRow.get(1));
+    }
+
+    @Test
+    void testReadSheet_withColumnIndexes_xlsFormat() {
+        File xlsFile = tempDir.resolve("test.xls").toFile();
+
+        List<List<String>> head = new ArrayList<>();
+        head.add(Arrays.asList("ID"));
+        head.add(Arrays.asList("Name"));
+        head.add(Arrays.asList("Age"));
+        head.add(Arrays.asList("Gender"));
+
+        List<List<Object>> dataList = new ArrayList<>();
+        dataList.add(Arrays.asList("1", "Alice", "30", "Female"));
+
+        FesodSheet.write(xlsFile).head(head).sheet("Sheet1").doWrite(dataList);
+
+        List<Integer> targetColumns = Arrays.asList(0, 2);
+
+        List<Map<Integer, String>> readResults = FesodSheet.read(xlsFile)
+                .sheet(0)
+                .includeColumnIndexes(targetColumns)
+                .doReadSync();
+
+        Assertions.assertNotNull(readResults);
+        Map<Integer, String> parsedRow = readResults.get(0);
+        Assertions.assertEquals(2, parsedRow.size(), "Should only contain 2 filtered columns");
         Assertions.assertEquals("1", parsedRow.get(0));
         Assertions.assertEquals("30", parsedRow.get(1));
     }

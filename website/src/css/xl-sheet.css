@@ -261,8 +261,20 @@
     border-left: none;
 }
 
-.xl-border-right-none {
+.xl-sheet .xl-border-right-none {
     border-right: none !important;
+}
+
+.xl-sheet .xl-border__horizontal_default {
+    border-bottom: var(--ifm-table-border-width) solid var(--xl-ink);
+    border-left: 1px solid var(--xl-grid);
+    border-right: none;
+}
+
+.xl-sheet .xl-border_bottom_default {
+    border-bottom: var(--ifm-table-border-width) solid var(--xl-grid);
+    border-left: var(--ifm-table-border-width) solid var(--xl-ink);
+    border-right: var(--ifm-table-border-width) solid var(--xl-ink);
 }
 
 /* Pictures */

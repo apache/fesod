@@ -78,7 +78,9 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
             return originalString;
         }
 
-        // Fast path: search for first potential pattern
+        // Lazily allocated: stays null (no allocation) when no valid pattern is found
+        StringBuilder result = null;
+        int lastEnd = 0;
         int searchStart = 0;
         int patternIndex;
         while ((patternIndex = originalString.indexOf("_x", searchStart)) != -1) {
@@ -89,46 +91,11 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
 
             // Quick validation: check if it ends with '_' and has valid hex
             if (originalString.charAt(patternIndex + 6) == '_' && isValidHexFast(originalString, patternIndex + 2)) {
-
-                // Found at least one pattern, proceed with full processing
-                return processWithPatterns(originalString, patternIndex);
-            }
-
-            searchStart = patternIndex + 2;
-        }
-
-        // No valid patterns found
-        return originalString;
-    }
-
-    /**
-     * Process string when we know it contains at least one valid pattern
-     */
-    private String processWithPatterns(String originalString, int firstPatternIndex) {
-        int length = originalString.length();
-        StringBuilder result = new StringBuilder(length + 64); // More generous pre-allocation
-        int lastEnd;
-
-        // Process the first known pattern
-        result.append(originalString, 0, firstPatternIndex);
-        result.append("_x005F_x");
-        result.append(originalString, firstPatternIndex + 2, firstPatternIndex + 6);
-        result.append('_');
-        lastEnd = firstPatternIndex + 7;
-
-        // Continue searching for more patterns
-        int searchStart = firstPatternIndex + 7;
-        int patternIndex;
-        while ((patternIndex = originalString.indexOf("_x", searchStart)) != -1) {
-            if (patternIndex + 6 >= length) {
-                break;
-            }
-
-            if (originalString.charAt(patternIndex + 6) == '_' && isValidHexFast(originalString, patternIndex + 2)) {
-
-                // Append content between patterns
+                if (result == null) {
+                    result = new StringBuilder(length + 64); // More generous pre-allocation
+                }
+                // Append content since the previous match, then the escaped pattern
                 result.append(originalString, lastEnd, patternIndex);
-                // Append escaped pattern
                 result.append("_x005F_x");
                 result.append(originalString, patternIndex + 2, patternIndex + 6);
                 result.append('_');
@@ -137,6 +104,11 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
             } else {
                 searchStart = patternIndex + 2;
             }
+        }
+
+        // No valid patterns found
+        if (result == null) {
+            return originalString;
         }
 
         // Append remaining content

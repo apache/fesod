@@ -84,22 +84,6 @@ private List<FillData> data() {
 }
 ```
 
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class MultiRowFillData {
-    private Integer no;
-    private String string1;
-    private String string2;
-    private String string3;
-    private LocalDate localDate1;
-    private LocalDate localDate2;
-    private Long long1;
-    private Long long2;
-}
-```
-
 ### Code Example
 
 ```java
@@ -247,6 +231,45 @@ the `mergeStrategy` parameter to control the merging behavior of the generated r
   - *Warning: Excessive cell style instances may lead to performance issues and could exceed the cell style limit
   (64,000 for .xlsx format, 4,000 for .xls format). Please use with caution when handling large volumes of data.*
 
+### POJO Class
+
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class MultiRowFillData {
+    private Integer no;
+    private String string1;
+    private String string2;
+    private String string3;
+    private LocalDate localDate1;
+    private LocalDate localDate2;
+    private Long long1;
+    private Long long2;
+}
+```
+
+### Data List
+
+```java
+private List<MultiRowFillData> data1() {
+    List<FillData> list = ListUtils.newArrayList();
+    for (int i = 0; i < 5; i++) {
+        MultiRowFillData fillData = new MultiRowFillData();
+        fillData.setNo(i);
+        fillData.setString1("string1");
+        fillData.setString2("string2");
+        fillData.setString3("string3");
+        fillData.setLocalDate1(LocalDate.now());
+        fillData.setLocalDate2(LocalDate.now());
+        fillData.setNumber1(100L);
+        fillData.setNumber2(200L);
+        list.add(fillData);
+    }
+    return list;
+}
+```
+
 ### Code Example
 
 #### `FillMergeStrategy.NONE`
@@ -266,11 +289,37 @@ public void listMultiRowFill() {
 
 ##### Template
 
-![img](/img/docs/fill/listMultiRowFill_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>No(Merge Across Rows)</td><td>String1-2(Normal)</td><td>String3(Merge Across Rows)</td><td colspan="2">Date1-2(Merge Across Columns)</td><td colspan="2">Number1(Merge Across Rows And Columns)</td><td>Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">{.no}</td><td>{.string1}</td><td rowspan="2">{.string3}</td><td class="xl-num" colspan="2">{.localDate1}</td><td class="xl-num" colspan="2" rowspan="2">{.number1}</td><td class="xl-num">{.number2}</td></tr>
+<tr><td class="xl-chrome">3</td><td>{.string2}</td><td class="xl-num" colspan="2">{.localDate2}</td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 ##### Result
 
-![img](/img/docs/fill/listMultiRowFill_file_result.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>No(Merge Across Rows)</td><td>String1-2(Normal)</td><td>String3(Merge Across Rows)</td><td colspan="2">Date1-2(Merge Across Columns)</td><td colspan="2">Number1(Merge Across Rows And Columns)</td><td>Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">0</td><td>string1</td><td rowspan="2">string3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">3</td><td>string2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num">1</td><td>string1</td><td>string3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>string2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-num">2</td><td>string1</td><td>string3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td>string2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-num">3</td><td>string1</td><td>string3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">9</td><td></td><td>string2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-num">4</td><td>string1</td><td>string3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">11</td><td></td><td>string2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 #### `FillMergeStrategy.AUTO`
 
@@ -289,11 +338,37 @@ public void listMultiRowFill() {
 
 ##### Template
 
-![img](/img/docs/fill/listMultiRowFillWithAutoMerge_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>No(Merge Across Rows)</td><td>String1-2(Normal)</td><td>String3(Merge Across Rows)</td><td colspan="2">Date1-2(Merge Across Columns)</td><td colspan="2">Number1(Merge Across Rows And Columns)</td><td>Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">{.no}</td><td>{.string1}</td><td rowspan="2">{.string3}</td><td class="xl-num" colspan="2">{.localDate1}</td><td class="xl-num" colspan="2" rowspan="2">{.number1}</td><td class="xl-num">{.number2}</td></tr>
+<tr><td class="xl-chrome">3</td><td>{.string2}</td><td class="xl-num" colspan="2">{.localDate2}</td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 ##### Result
 
-![img](/img/docs/fill/listMultiRowFillWithAutoMerge_file_result.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>No(Merge Across Rows)</td><td>String1-2(Normal)</td><td>String3(Merge Across Rows)</td><td colspan="2">Date1-2(Merge Across Columns)</td><td colspan="2">Number1(Merge Across Rows And Columns)</td><td>Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">0</td><td>string1</td><td rowspan="2">string3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">3</td><td>string2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num" rowspan="2">1</td><td>string1</td><td rowspan="2">string3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">5</td><td>string2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-num" rowspan="2">2</td><td>string1</td><td rowspan="2">string3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">7</td><td>string2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-num" rowspan="2">3</td><td>string1</td><td rowspan="2">string3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">9</td><td>string2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-num" rowspan="2">4</td><td>string1</td><td rowspan="2">string3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">11</td><td>string2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 #### `FillMergeStrategy.MERGE_CELL_STYLE`
 
@@ -312,11 +387,37 @@ public void listMultiRowFill() {
 
 ##### Template
 
-![img](/img/docs/fill/listMultiRowFillWithAutoMergeAndUnifyStyle_file.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-border">No(Merge Across Rows)</td><td class="xl-border">String1-2()Normal</td><td class="xl-border">String3(Merge Across Rows)</td><td class="xl-border" colspan="2">Date1-2(Merge Across Columns)</td><td class="xl-border" colspan="2">Number1(Merge Across Rows And Columns)</td><td class="xl-border">Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num xl-border" rowspan="2">{.no}</td><td class="xl-border">{.string1}</td><td class="xl-border" rowspan="2">{.string3}</td><td class="xl-num xl-border" colspan="2">{.localDate1}</td><td class="xl-num xl-border" colspan="2" rowspan="2">{.number1}</td><td class="xl-num xl-border">{.number2}</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-border">{.string2}</td><td class="xl-num xl-border" colspan="2">{.localDate2}</td><td class="xl-border"></td></tr>
+</tbody>
+</table>
+</div>
 
 ##### Result
 
-![img](/img/docs/fill/listMultiRowFillWithAutoMergeAndUnifyStyle_file_result.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-border">No(Merge Across Rows)</td><td class="xl-border">String1-2()Normal</td><td class="xl-border">String3(Merge Across Rows)</td><td class="xl-border" colspan="2">Date1-2(Merge Across Columns)</td><td class="xl-border" colspan="2">Number1(Merge Across Rows And Columns)</td><td class="xl-border">Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num xl-border" rowspan="2">0</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-border">string2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border"></td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num xl-border" rowspan="2">1</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-border">string2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border" style="border-left: 1px solid var(--xl-grid); border-right: none;"></td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-num xl-border" rowspan="2">2</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-border">string2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border" style="border-left: 1px solid var(--xl-grid); border-right: none;"></td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-num xl-border" rowspan="2">3</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-border">string2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border" style="border-left: 1px solid var(--xl-grid); border-right: none;"></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-num xl-border" rowspan="2">4</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" style="border-bottom: 1px solid var(--xl-grid);" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-border">string2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td></td></tr>
+</tbody>
+</table>
+</div>
 
 > Note: In `MERGE_CELL_STYLE` mode, why do some cells lack styles?  
 > This is because the template variables do not cover these cells, so the styles from the template are not copied.

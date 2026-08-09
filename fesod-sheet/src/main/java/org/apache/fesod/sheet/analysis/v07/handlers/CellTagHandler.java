@@ -26,13 +26,14 @@
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
 import java.math.BigDecimal;
-import org.apache.fesod.common.util.BooleanUtils;
+import java.util.List;
 import org.apache.fesod.common.util.PositionUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
 import org.apache.fesod.sheet.constant.FesodSheetConstants;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
@@ -49,8 +50,8 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
-        xlsxReadSheetHolder.setColumnIndex(PositionUtils.getCol(
-                attributes.getValue(ExcelXmlConstants.ATTRIBUTE_R), xlsxReadSheetHolder.getColumnIndex()));
+        String cellReference = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_R);
+        xlsxReadSheetHolder.setColumnIndex(PositionUtils.getCol(cellReference, xlsxReadSheetHolder.getColumnIndex()));
 
         // t="s" ,it means String
         // t="str" ,it means String,but does not need to be read in the 'sharedStrings.xml'
@@ -59,7 +60,11 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         // t="e" ,it means Error
         // t="n" ,it means Number
         // t is null ,it means Empty or Number
-        CellDataTypeEnum type = CellDataTypeEnum.buildFromCellType(attributes.getValue(ExcelXmlConstants.ATTRIBUTE_T));
+        String cellType = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_T);
+        CellDataTypeEnum type = CellDataTypeEnum.buildFromCellType(cellType);
+        if (type == null) {
+            throw new ExcelAnalysisException("Invalid cell data type: '" + cellType + "' in cell " + cellReference);
+        }
         xlsxReadSheetHolder.setTempCellData(new ReadCellData<>(type));
         xlsxReadSheetHolder.setTempData(new StringBuilder());
 
@@ -81,6 +86,22 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
     public void endElement(XlsxReadContext xlsxReadContext, String name) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
         ReadCellData<?> tempCellData = xlsxReadSheetHolder.getTempCellData();
+        int targetColumnIndex = 0;
+
+        List<Integer> includeColumnIndexes =
+                xlsxReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+
+        if (includeColumnIndexes == null) {
+            targetColumnIndex = xlsxReadSheetHolder.getColumnIndex();
+        } else {
+            // if it's a target column, rewrite the cell's internal index
+            targetColumnIndex = includeColumnIndexes.indexOf(xlsxReadSheetHolder.getColumnIndex());
+            if (targetColumnIndex < 0) {
+
+                return;
+            }
+        }
+
         StringBuilder tempData = xlsxReadSheetHolder.getTempData();
         String tempDataString = tempData.toString();
         CellDataTypeEnum oldType = tempCellData.getType();
@@ -104,7 +125,7 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
                     tempCellData.setType(CellDataTypeEnum.EMPTY);
                     break;
                 }
-                tempCellData.setBooleanValue(BooleanUtils.valueOf(tempData.toString()));
+                tempCellData.setBooleanValueFromString(tempData.toString());
                 break;
             case NUMBER:
             case EMPTY:
@@ -130,10 +151,9 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
                 tempCellData.setStringValue(tempCellData.getStringValue().trim());
             }
         }
-
         tempCellData.checkEmpty();
         tempCellData.setRowIndex(xlsxReadSheetHolder.getRowIndex());
-        tempCellData.setColumnIndex(xlsxReadSheetHolder.getColumnIndex());
-        xlsxReadSheetHolder.getCellMap().put(xlsxReadSheetHolder.getColumnIndex(), tempCellData);
+        tempCellData.setColumnIndex(targetColumnIndex);
+        xlsxReadSheetHolder.getCellMap().put(targetColumnIndex, tempCellData);
     }
 }

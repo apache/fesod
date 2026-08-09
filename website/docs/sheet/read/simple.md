@@ -41,7 +41,6 @@ Listeners cannot be managed by Spring and must be re-instantiated each time a sp
 #### `Lambda` Expressions
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -57,7 +56,6 @@ public void simpleRead() {
 #### Anonymous Inner Classes
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -79,7 +77,6 @@ public void simpleRead() {
 #### Data Listeners
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -104,7 +101,6 @@ structure, then read data through Fesod's listener mechanism.
 The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -120,7 +116,6 @@ public class DemoData {
 `DemoDataListener` is a custom listener used to process data read from spreadsheet.
 
 ```java
-
 @Slf4j
 public class DemoDataListener implements ReadListener<DemoData> {
 
@@ -139,7 +134,6 @@ public class DemoDataListener implements ReadListener<DemoData> {
 ### Code Example
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -162,7 +156,6 @@ data directly, where the key is the **column index** and the value is the **cell
 ### Data Listener
 
 ```java
-
 @Slf4j
 public class NoModelDataListener extends AnalysisEventListener<Map<Integer, String>> {
 
@@ -192,7 +185,6 @@ scenarios with **small data volumes**. The read data can be either a list of POJ
 The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -208,7 +200,6 @@ public class DemoData {
 #### Reading as POJO Object List
 
 ```java
-
 @Test
 public void synchronousReadToObjectList() {
     String fileName = "path/to/demo.xlsx";
@@ -231,7 +222,6 @@ When not using POJOs, each row can be read as a Map, where the key is the column
 content.
 
 ```java
-
 @Test
 public void synchronousReadToMapList() {
     String fileName = "path/to/demo.xlsx";
@@ -246,3 +236,35 @@ public void synchronousReadToMapList() {
     }
 }
 ```
+
+## Reading Specific Columns (Column Filtering)
+
+By default, Fesod reads all columns from a sheet. If you only want to process specific columns, you can use `.includeColumnIndexes(List<Integer>)`. This selects specific columns out of the entire sheet column set
+
+### Reading Specific Columns to Map List (Synchronous)
+
+When reading without a POJO template, the filtered columns are packed sequentially into the resulting `Map<Integer, String>`. The first targeted column is mapped to key `0`, the second to key `1`, and so on.
+
+```java
+@Test
+public void readSpecificColumnsToMapList() {
+    String fileName = "path/to/demo.xlsx";
+    
+    // We only want to read Column A (Index 0) and Column C (Index 2)
+    List<Integer> targetColumns = Arrays.asList(0, 2);
+
+    List<Map<Integer, String>> list = FesodSheet.read(fileName)
+            .sheet()
+            .includeColumnIndexes(targetColumns)
+            .doReadSync();
+
+    for (Map<Integer, String> data : list) {
+        // Column Index 0 is mapped to key 0
+        String id = data.get(0); 
+        // Column Index 2 is mapped sequentially to key 1
+        String age = data.get(1); 
+        
+        log.info("ID: {}, Age: {}", id, age);
+    }
+}
+

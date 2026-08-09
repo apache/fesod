@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.sheet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
@@ -38,6 +37,7 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.TitleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -58,7 +58,7 @@ public class MultipleSheetsDataTest extends AbstractExcelTest {
             int count = 1;
             for (ReadSheet readSheet : sheets) {
                 excelReader.read(readSheet);
-                assertEquals(count, listener.getRowCount());
+                Assertions.assertEquals(count, listener.getRowCount());
                 count++;
             }
         }

@@ -19,14 +19,13 @@
 
 package org.apache.fesod.sheet.testkit.assertions;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -59,7 +58,7 @@ class ExcelAssertionsTest {
     @Test
     void assertThatThrowsForMissingFile() {
         File missing = new File(tempDir, "nonexistent.xlsx");
-        assertThrows(AssertionError.class, () -> ExcelAssertions.assertThat(missing));
+        Assertions.assertThrows(AssertionError.class, () -> ExcelAssertions.assertThat(missing));
     }
 
     @Test
@@ -74,7 +73,7 @@ class ExcelAssertionsTest {
     void sheetCountMismatchThrows() {
         File file = writeSimpleFile("test.xlsx");
         try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
-            assertThrows(AssertionError.class, () -> ea.workbook().hasSheetCount(5));
+            Assertions.assertThrows(AssertionError.class, () -> ea.workbook().hasSheetCount(5));
         }
     }
 
@@ -82,7 +81,7 @@ class ExcelAssertionsTest {
     void sheetIndexOutOfBoundsThrows() {
         File file = writeSimpleFile("test.xlsx");
         try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
-            assertThrows(AssertionError.class, () -> ea.sheet(99));
+            Assertions.assertThrows(AssertionError.class, () -> ea.sheet(99));
         }
     }
 
@@ -99,7 +98,7 @@ class ExcelAssertionsTest {
     void nullRowThrows() {
         File file = writeSimpleFile("test.xlsx");
         try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
-            assertThrows(AssertionError.class, () -> ea.sheet(0).row(999));
+            Assertions.assertThrows(AssertionError.class, () -> ea.sheet(0).row(999));
         }
     }
 
@@ -107,7 +106,8 @@ class ExcelAssertionsTest {
     void nullCellThrows() {
         File file = writeSimpleFile("test.xlsx");
         try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
-            assertThrows(AssertionError.class, () -> ea.sheet(0).row(0).cell(999));
+            Assertions.assertThrows(
+                    AssertionError.class, () -> ea.sheet(0).row(0).cell(999));
         }
     }
 
@@ -127,7 +127,8 @@ class ExcelAssertionsTest {
     void stringValueIncorrectThrows() {
         File file = writeSimpleFile("test.xlsx");
         try (ExcelAssertions ea = ExcelAssertions.assertThat(file)) {
-            assertThrows(AssertionError.class, () -> ea.sheet(0).row(1).cell(0).hasStringValue("wrong"));
+            Assertions.assertThrows(
+                    AssertionError.class, () -> ea.sheet(0).row(1).cell(0).hasStringValue("wrong"));
         }
     }
 
@@ -147,7 +148,8 @@ class ExcelAssertionsTest {
             ea.sheet(0)
                     .row(1)
                     .cell(0)
-                    .satisfies(cell -> assertTrue(cell.getStringCellValue().startsWith("Name")));
+                    .satisfies(cell ->
+                            Assertions.assertTrue(cell.getStringCellValue().startsWith("Name")));
         }
     }
 

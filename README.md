@@ -77,7 +77,6 @@ new features in the latest version will enhance your experience.
 If you are using Maven for project building, add the following configuration in the `pom.xml` file:
 
 ```xml
-
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
@@ -187,10 +186,6 @@ list.
 | Name                                                | Mailing list                                                                                                  |
 |:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
 | [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [Subscribe](mailto:dev-subscribe@fesod.apache.org)  ｜  [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org) |
-
-### Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=apache/fesod&type=Date)](https://www.star-history.com/#apache/fesod&Date)
 
 ## License
 

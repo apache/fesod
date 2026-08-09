@@ -1,0 +1,415 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * Excel-like grids used in the write/fill docs in place of screenshots.
+ *
+ * Geometry is expressed in Excel's own units and scaled by --xl-scale. Each
+ * spreadsheet value gets its own class, named after that value:
+ *
+ *   <td class="xl-cw-25">           @ColumnWidth(25)
+ *   <td class="xl-rh-30">           @ContentRowHeight(30)
+ *   <td class="xl-fs-20">           setFontHeightInPoints(20)
+ *   <td class="xl-fill-red">
+ *   <td class="xl-fc-red">
+ *
+ * The values have to be enumerated here rather than passed inline, because an
+ * MDX `style` attribute is parsed by hast-util-to-estree via style-to-js, and
+ * the version this site resolves throws on any `style` attribute at all.
+ */
+
+.xl-sheet-container,
+.xl-sheet,
+.xl-sheet-tabs {
+    --xl-scale: 1;
+    --xl-col-unit: calc(7.2px * var(--xl-scale)); /* one Excel column-width unit */
+    --xl-row-unit: calc(1.8px * var(--xl-scale)); /* one point of Excel row height */
+    --xl-pt: calc(0.8pt * var(--xl-scale));
+
+    --xl-paper: #f5f5f5;
+    --xl-ink: #000;
+    --xl-grid: #e0e0e0;
+    --xl-head-bg: #bfbfbf;
+    --xl-chrome-bg: #f5f5f5;
+    --xl-chrome-grid: #e0e0e0;
+    --xl-tab-bg: #f5f5f5;
+    --xl-tab-fg: #555;
+
+    --xl-white: #ffffff;
+    --xl-red: #ff0000;
+    --xl-magenta: #ff00ff;
+    --xl-green: #14824b;
+    --xl-sky: #1890ff;
+    --xl-bright-green: #168f52;
+
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", Helvetica, sans-serif, Arial;
+    line-height: 1.2;
+}
+
+/* dark theme */
+
+[data-theme='dark'] {
+    .xl-sheet-container {
+        border: none;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .xl-sheet .xl-chrome {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--xl-white);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .xl-sheet .xl-head {
+        border-color: var(--xl-grid);
+    }
+
+    .xl-sheet-tabs td {
+        background: transparent;
+        color: #e8e8e8;
+    }
+
+    .xl-sheet-tabs .xl-tab-active {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--xl-white);
+        border-bottom-color: #00b95f;
+    }
+
+    .xl-sheet td:not(.xl-chrome):not(.xl-head) {
+        border-top: none;
+        border-bottom: none;
+    }
+}
+
+/* Container */
+
+.xl-sheet-container {
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: calc(13 * var(--xl-pt));
+    background: var(--xl-paper);
+    border: 1px solid var(--xl-grid);
+    border-radius: var(--ifm-global-radius);
+    margin-bottom: calc(10 * var(--xl-row-unit));
+}
+
+/* Grid */
+
+.xl-sheet {
+    /* Infima sets `table { display: block }`, which stretches the paper
+       background across the full content width; shrink-to-fit instead. */
+    width: fit-content;
+    max-width: 100%;
+}
+
+.xl-sheet tr {
+    border-top: none;
+    border-bottom: 1px solid var(--xl-grid);
+}
+
+.xl-sheet tr:first-child {
+    border-top: none;
+}
+
+.xl-sheet tr:first-child td {
+    border-top: none;
+}
+
+.xl-sheet tr:last-child {
+    border-bottom: none;
+}
+
+.xl-sheet td {
+    min-width: calc(8 * var(--xl-col-unit));
+    height: calc(15 * var(--xl-row-unit));
+    color: #333;
+    padding: 0 calc(0.85 * var(--xl-col-unit));
+    border-right: 1px solid var(--xl-grid);
+    background-color: var(--xl-white);
+    white-space: nowrap;
+}
+
+.xl-sheet td:not(.xl-chrome):not(.xl-head) {
+    border-top: none;
+}
+
+.xl-sheet td:first-child {
+    border-left: none;
+}
+
+.xl-sheet td:last-child {
+    border-right: none;
+}
+
+.xl-sheet a {
+    color: var(--xl-sky);
+    text-decoration: underline;
+}
+
+.xl-sheet td:not(.xl-chrome):empty {
+    min-width: calc(10.5 * var(--xl-col-unit));
+    background: var(--xl-white);
+}
+
+/* Cell roles */
+
+.xl-sheet .xl-chrome {
+    min-width: calc(5 * var(--xl-col-unit));
+    background: var(--xl-chrome-bg);
+    border-color: var(--xl-chrome-grid);
+    color: #333;
+    text-align: center;
+}
+
+.xl-sheet .xl-head {
+    background: var(--xl-head-bg);
+    padding: 1px calc(0.85 * var(--xl-col-unit));
+    font-weight: 500;
+    color: #333;
+    white-space: normal;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.xl-sheet .xl-num {
+    text-align: right;
+}
+
+.xl-sheet .xl-muted {
+    color: #999;
+    text-align: center;
+}
+
+/* Cell modifiers, one per spreadsheet value in use */
+
+.xl-sheet .xl-cw-25 {
+    width: calc(25 * var(--xl-col-unit));
+}
+
+.xl-sheet .xl-cw-50 {
+    width: calc(50 * var(--xl-col-unit));
+}
+
+.xl-sheet .xl-rh-20 {
+    height: calc(20 * var(--xl-row-unit));
+}
+
+.xl-sheet .xl-rh-30 {
+    height: calc(30 * var(--xl-row-unit));
+}
+
+.xl-sheet .xl-rh-100 {
+    height: calc(100 * var(--xl-row-unit));
+}
+
+.xl-sheet .xl-fs-20 {
+    font-size: calc(20 * var(--xl-pt));
+}
+
+.xl-sheet .xl-fs-30 {
+    font-size: calc(30 * var(--xl-pt));
+}
+
+.xl-sheet .xl-fill-red {
+    background: var(--xl-red);
+}
+
+.xl-sheet .xl-fill-magenta {
+    background: var(--xl-magenta);
+}
+
+.xl-sheet .xl-fill-green {
+    background: var(--xl-green);
+}
+
+.xl-sheet .xl-fill-sky {
+    background: var(--xl-sky);
+}
+
+.xl-sheet .xl-fill-bright-green {
+    background: var(--xl-bright-green);
+}
+
+.xl-sheet .xl-fc-red {
+    color: var(--xl-red);
+}
+
+/* Pictures */
+
+.xl-sheet .xl-pic,
+.xl-sheet .xl-pic-multi {
+    padding: 0;
+}
+
+/* Fesod anchors the picture to exactly fill its cell, so it is stretched
+   to the cell box rather than keeping its aspect ratio. */
+.xl-sheet .xl-pic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.xl-sheet .xl-pic-multi {
+    position: relative;
+}
+
+.xl-sheet .xl-pic-multi > b {
+    position: absolute;
+    left: 6px;
+    bottom: 2px;
+    font-weight: normal;
+}
+
+/* Both axes are given: an absolutely positioned <img> with `width: auto`
+   falls back to its intrinsic size and ignores `right`. */
+.xl-sheet .xl-pic-abs {
+    position: absolute;
+    top: 7px;
+    height: 150px;
+}
+
+/* The second picture starts further right and runs into the next column. */
+.xl-sheet .xl-pic-abs-left {
+    left: 7px;
+    width: 51px;
+}
+
+.xl-sheet .xl-pic-abs-right {
+    left: 65px;
+    width: 182px;
+}
+
+/* Overlays */
+
+/* Comments and dropdowns are drawn open, as a screenshot would show them, and
+   they reach outside the grid. Infima's `table { overflow: auto }` would clip
+   them, so a sheet carrying one opts out of scrolling. */
+.xl-sheet--overlay {
+    overflow: visible;
+}
+
+.xl-sheet .xl-comment-anchor,
+.xl-sheet .xl-dropdown {
+    position: relative;
+}
+
+.xl-sheet .xl-comment-anchor::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top: 8px solid #d93025;
+    border-left: 8px solid transparent;
+}
+
+.xl-sheet .xl-comment {
+    position: absolute;
+    top: 55%;
+    left: calc(100% + 4px);
+    z-index: 2;
+    padding: 2px 8px;
+    background: #ffffe1;
+    border: 1px solid #b7b7b7;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, .25);
+    font-size: calc(13 * var(--xl-pt));
+    font-weight: normal;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.xl-sheet .xl-dropdown-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--xl-tab-bg);
+    border: none;
+    font-size: calc(11 * var(--xl-pt));
+    font-weight: normal;
+}
+
+.xl-sheet .xl-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 2;
+    min-width: 100%;
+    background: var(--xl-paper);
+    border: none;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, .25);
+    font-weight: normal;
+}
+
+.xl-sheet .xl-dropdown-list > b {
+    display: block;
+    padding: 4px 6px;
+    font-weight: normal;
+}
+
+/* Sheet tabs, rendered directly under a .xl-sheet grid */
+
+.xl-sheet:has(+ .xl-sheet-tabs) {
+    margin-bottom: 0;
+}
+
+/* A table rather than a div, because the docs may only use the elements
+   markdownlint's MD033 allowlist permits. The tabs still lay out as a flex
+   row, so the table's own box model is switched off. */
+.xl-sheet-tabs {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    border: 0;
+    margin-bottom: 0;
+    margin-left: calc(5 * var(--xl-col-unit));
+}
+
+.xl-sheet-tabs tbody {
+    display: block;
+}
+
+.xl-sheet-tabs tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    background: transparent;
+}
+
+.xl-sheet-tabs tr:first-child {
+    border-top: none;
+}
+
+.xl-sheet-tabs td {
+    padding: 6px 8px;
+    border: 0;
+    background: var(--xl-tab-bg);
+    color: var(--xl-tab-fg);
+}
+
+.xl-sheet-tabs .xl-tab-active {
+    background: var(--xl-paper);
+    color: var(--xl-ink);
+    border-bottom: 2px solid var(--xl-green);
+    font-weight: 500;
+}

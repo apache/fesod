@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
@@ -40,6 +39,7 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.WriteTable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -67,9 +67,9 @@ public class RepetitionDataTest extends AbstractExcelTest {
             excelReader.read(readSheet);
         }
 
-        assertEquals(2, listener.getRowCount());
-        assertEquals("String0", listener.getRows().get(0).getString());
-        assertEquals("String0", listener.getRows().get(1).getString());
+        Assertions.assertEquals(2, listener.getRowCount());
+        Assertions.assertEquals("String0", listener.getRows().get(0).getString());
+        Assertions.assertEquals("String0", listener.getRows().get(1).getString());
     }
 
     @ParameterizedTest
@@ -92,8 +92,8 @@ public class RepetitionDataTest extends AbstractExcelTest {
             excelReader.read(readSheet);
         }
 
-        assertEquals(2, listener.getRowCount());
-        assertEquals("String0", listener.getRows().get(0).getString());
-        assertEquals("String0", listener.getRows().get(1).getString());
+        Assertions.assertEquals(2, listener.getRowCount());
+        Assertions.assertEquals("String0", listener.getRows().get(0).getString());
+        Assertions.assertEquals("String0", listener.getRows().get(1).getString());
     }
 }

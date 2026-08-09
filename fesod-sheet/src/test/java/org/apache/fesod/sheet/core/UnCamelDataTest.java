@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -55,14 +55,14 @@ public class UnCamelDataTest extends AbstractExcelTest {
         CollectingReadListener<UnCamelData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, UnCamelData.class, listener).sheet().doRead();
 
-        assertEquals(10, listener.getRowCount());
+        Assertions.assertEquals(10, listener.getRowCount());
         UnCamelData row = listener.getFirstRow();
-        assertEquals("string1", row.getString1());
-        assertEquals("string2", row.getString2());
-        assertEquals("string3", row.getSTring3());
-        assertEquals("string4", row.getSTring4());
-        assertEquals("string5", row.getSTRING5());
-        assertEquals("string6", row.getSTRing6());
+        Assertions.assertEquals("string1", row.getString1());
+        Assertions.assertEquals("string2", row.getString2());
+        Assertions.assertEquals("string3", row.getSTring3());
+        Assertions.assertEquals("string4", row.getSTring4());
+        Assertions.assertEquals("string5", row.getSTRING5());
+        Assertions.assertEquals("string6", row.getSTRing6());
     }
 
     @ParameterizedTest
@@ -82,13 +82,13 @@ public class UnCamelDataTest extends AbstractExcelTest {
                 .sheet()
                 .doRead();
 
-        assertEquals(1, headMaps.size());
+        Assertions.assertEquals(1, headMaps.size());
         Map<Integer, String> headMap = headMaps.get(0);
-        assertEquals("string1", headMap.get(0));
-        assertEquals("string2", headMap.get(1));
-        assertEquals("STring3", headMap.get(2));
-        assertEquals("STring4", headMap.get(3));
-        assertEquals("STRING5", headMap.get(4));
-        assertEquals("STRing6", headMap.get(5));
+        Assertions.assertEquals("string1", headMap.get(0));
+        Assertions.assertEquals("string2", headMap.get(1));
+        Assertions.assertEquals("STring3", headMap.get(2));
+        Assertions.assertEquals("STring4", headMap.get(3));
+        Assertions.assertEquals("STRING5", headMap.get(4));
+        Assertions.assertEquals("STRing6", headMap.get(5));
     }
 }

@@ -25,9 +25,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -47,6 +44,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -62,14 +60,14 @@ public class CacheDataTest extends AbstractExcelTest {
         Field field = FieldUtils.getField(ClassUtils.class, "FIELD_THREAD_LOCAL", true);
         ThreadLocal<Map<Class<?>, FieldCache>> fieldThreadLocal =
                 (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(ClassUtils.class.newInstance());
-        assertNull(fieldThreadLocal.get());
+        Assertions.assertNull(fieldThreadLocal.get());
         FesodSheet.write(file07, CacheData.class).sheet().doWrite(TestDataBuilder.cacheData(10));
         FesodSheet.read(file07, CacheData.class, new PageReadListener<CacheData>(dataList -> {
-                    assertNotNull(fieldThreadLocal.get());
+                    Assertions.assertNotNull(fieldThreadLocal.get());
                 }))
                 .sheet()
                 .doRead();
-        assertNull(fieldThreadLocal.get());
+        Assertions.assertNull(fieldThreadLocal.get());
     }
 
     @Test
@@ -120,10 +118,10 @@ public class CacheDataTest extends AbstractExcelTest {
         }
 
         Map<Integer, String> headMap = listener.getHeadMap();
-        assertNotNull(headMap);
-        assertEquals(2, headMap.size());
-        assertEquals(expectedFirstHead, headMap.get(0));
-        assertEquals("Age", headMap.get(1));
+        Assertions.assertNotNull(headMap);
+        Assertions.assertEquals(2, headMap.size());
+        Assertions.assertEquals(expectedFirstHead, headMap.get(0));
+        Assertions.assertEquals("Age", headMap.get(1));
     }
 
     private void setNameHeader(String nameHeader) throws Exception {

@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.head;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
@@ -34,6 +33,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -53,8 +53,8 @@ public class ComplexHeadDataTest extends AbstractExcelTest {
                 .xlsxSAXParserFactoryName("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl")
                 .sheet()
                 .doReadSync();
-        assertEquals(1, result.size());
-        assertEquals("String4", result.get(0).getString4());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("String4", result.get(0).getString4());
     }
 
     @ParameterizedTest
@@ -67,7 +67,7 @@ public class ComplexHeadDataTest extends AbstractExcelTest {
                 .doWrite(TestDataBuilder.complexHeadData(1));
         List<ComplexHeadData> result =
                 FesodSheet.read(file).head(ComplexHeadData.class).sheet().doReadSync();
-        assertEquals(1, result.size());
-        assertEquals("String4", result.get(0).getString4());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("String4", result.get(0).getString4());
     }
 }

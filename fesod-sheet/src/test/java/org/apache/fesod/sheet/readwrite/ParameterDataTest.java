@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -45,6 +44,7 @@ import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.WriteTable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -217,7 +217,7 @@ public class ParameterDataTest extends AbstractExcelTest {
     }
 
     private void assertParameterData(List<SimpleData> dataList) {
-        assertEquals(10, dataList.size());
-        assertEquals("Name0", dataList.get(0).getName());
+        Assertions.assertEquals(10, dataList.size());
+        Assertions.assertEquals("Name0", dataList.get(0).getName());
     }
 }

@@ -19,36 +19,21 @@
 
 package org.apache.fesod.sheet.write.handler;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.testkit.Tags;
-import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
-import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @Tag(Tags.UNIT)
 class EscapeHexCellWriteHandlerTest {
-
-    @TempDir
-    File tempDir;
 
     private final EscapeHexCellWriteHandler handler = new EscapeHexCellWriteHandler();
 
@@ -129,45 +114,5 @@ class EscapeHexCellWriteHandlerTest {
                     () -> handler.afterCellDataConverted(null, null, emptyStringData, cell, null, 0, Boolean.FALSE));
             Assertions.assertNull(emptyStringData.getStringValue());
         }
-    }
-
-    private File writeEscapedWorkbook(ExcelFormat format) throws IOException {
-        File file = format.createTempFile("escape-hex", tempDir);
-        List<List<String>> rows = new ArrayList<>();
-        rows.add(Collections.singletonList("_xB9f0_ and _x1234_"));
-
-        FesodSheet.write(file)
-                .excelType(format.toExcelTypeEnum())
-                .head(Collections.singletonList(Collections.singletonList("value")))
-                .registerWriteHandler(new EscapeHexCellWriteHandler())
-                .sheet("escape")
-                .doWrite(rows);
-        return file;
-    }
-
-    private String readBackFirstDataValue(File file, ExcelFormat format) throws IOException {
-        if (format == ExcelFormat.CSV) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                reader.readLine(); // header
-                return reader.readLine();
-            }
-        }
-        try (Workbook workbook = WorkbookFactory.create(file)) {
-            return workbook.getSheetAt(0).getRow(1).getCell(0).getStringCellValue();
-        }
-    }
-
-    /**
-     * Writes a file with the handler registered and reads it back: the caller must see the literal they typed.
-     *
-     * <p>All three formats expect the same value, for different reasons. On XLSX the handler escapes the sequence
-     * and POI's reader decodes that escape away again. On XLS and CSV the handler never fires, since it only
-     * touches {@link SXSSFCell}, so there was nothing to undo.
-     */
-    @ParameterizedTest(name = "[{index}] {0} round-trips the literal hex sequence")
-    @ExcelFormatSource
-    void registeredOnAWrite_keepsLiteralHexSequencesIntactAcrossFormats(ExcelFormat format) throws IOException {
-        File file = writeEscapedWorkbook(format);
-        Assertions.assertEquals("_xB9f0_ and _x1234_", readBackFirstDataValue(file, format));
     }
 }

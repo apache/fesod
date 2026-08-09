@@ -42,7 +42,6 @@ Apache Fesod(Incubating) 使用了以下核心依赖：
 如果您使用 Maven 进行项目构建，请在 `pom.xml` 文件中引入以下配置：
 
 ```xml
-
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>

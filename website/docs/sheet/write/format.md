@@ -37,15 +37,15 @@ Supports date, number, or other custom formats through annotations.
 @Setter
 @EqualsAndHashCode
 public class ConverterData {
-    @ExcelProperty(value = "字符串标题", converter = CustomStringStringConverter.class)
+    @ExcelProperty(value = "String Title", converter = CustomStringStringConverter.class)
     private String string;
 
-    @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
-    @ExcelProperty("日期标题")
+    @DateTimeFormat("yyyy/MM/dd HH:mm:ss")
+    @ExcelProperty("Date Title")
     private Date date;
 
     @NumberFormat("#.##%")
-    @ExcelProperty("数字标题")
+    @ExcelProperty("Number Title")
     private Double doubleData;
 }
 ```
@@ -64,4 +64,16 @@ public void converterWrite() {
 
 ### Result
 
-![img](/img/docs/write/converterWrite.png)
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-head">String Title</td><td class="xl-head">Date Title</td><td class="xl-head">Number Title</td></tr>
+<tr><td class="xl-chrome">2</td><td>Custom: String0</td><td>2024/12/03 20:50:23</td><td class="xl-num">56.%</td></tr>
+<tr><td class="xl-chrome">3</td><td>Custom: String1</td><td>2024/12/03 20:50:23</td><td class="xl-num">56.%</td></tr>
+<tr><td class="xl-chrome">4</td><td>Custom: String2</td><td>2024/12/03 20:50:23</td><td class="xl-num">56.%</td></tr>
+<tr><td class="xl-chrome">⋮</td><td class="xl-muted">…</td><td class="xl-muted">…</td><td class="xl-muted">…</td></tr>
+<tr><td class="xl-chrome">11</td><td>Custom: String9</td><td>2024/12/03 20:50:23</td><td class="xl-num">56.%</td></tr>
+</tbody>
+</table>
+</div>

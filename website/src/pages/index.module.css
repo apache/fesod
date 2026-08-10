@@ -24,6 +24,7 @@
 
 .heroBanner {
     --grid-size: 48px;
+    --grid-fade: 10px;
     padding: 6rem 0;
     text-align: center;
     position: relative;
@@ -85,8 +86,10 @@
 .colLabels {
     top: 0;
     left: 0;
+    right: 0;
     height: var(--grid-size);
     padding-left: var(--grid-size);
+    mask-image: linear-gradient(to left, transparent, #000 var(--grid-fade));
 }
 
 .rowLabels {
@@ -96,6 +99,7 @@
     width: var(--grid-size);
     height: 100%;
     padding-top: var(--grid-size);
+    mask-image: linear-gradient(to top, transparent, #000 var(--grid-fade));
 }
 
 .colLabels span,

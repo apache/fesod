@@ -391,7 +391,7 @@ public void listMultiRowFill() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-border">No(Merge Across Rows)</td><td class="xl-border">String1-2()Normal</td><td class="xl-border">String3(Merge Across Rows)</td><td class="xl-border" colspan="2">Date1-2(Merge Across Columns)</td><td class="xl-border" colspan="2">Number1(Merge Across Rows And Columns)</td><td class="xl-border">Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-border">No(Merge Across Rows)</td><td class="xl-border">String1-2(Normal)</td><td class="xl-border">String3(Merge Across Rows)</td><td class="xl-border" colspan="2">Date1-2(Merge Across Columns)</td><td class="xl-border" colspan="2">Number1(Merge Across Rows And Columns)</td><td class="xl-border">Number2(Normal)</td></tr>
 <tr><td class="xl-chrome">2</td><td class="xl-num xl-border" rowspan="2">{.no}</td><td class="xl-border">{.string1}</td><td class="xl-border" rowspan="2">{.string3}</td><td class="xl-num xl-border" colspan="2">{.localDate1}</td><td class="xl-num xl-border" colspan="2" rowspan="2">{.number1}</td><td class="xl-num xl-border">{.number2}</td></tr>
 <tr><td class="xl-chrome">3</td><td class="xl-border">{.string2}</td><td class="xl-num xl-border" colspan="2">{.localDate2}</td><td class="xl-border"></td></tr>
 </tbody>
@@ -404,7 +404,7 @@ public void listMultiRowFill() {
 <table class="xl-sheet">
 <tbody>
 <tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
-<tr><td class="xl-chrome">1</td><td class="xl-border">No(Merge Across Rows)</td><td class="xl-border">String1-2()Normal</td><td class="xl-border">String3(Merge Across Rows)</td><td class="xl-border" colspan="2">Date1-2(Merge Across Columns)</td><td class="xl-border" colspan="2">Number1(Merge Across Rows And Columns)</td><td class="xl-border">Number2(Normal)</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-border">No(Merge Across Rows)</td><td class="xl-border">String1-2(Normal)</td><td class="xl-border">String3(Merge Across Rows)</td><td class="xl-border" colspan="2">Date1-2(Merge Across Columns)</td><td class="xl-border" colspan="2">Number1(Merge Across Rows And Columns)</td><td class="xl-border">Number2(Normal)</td></tr>
 <tr><td class="xl-chrome">2</td><td class="xl-num xl-border" rowspan="2">0</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
 <tr><td class="xl-chrome">3</td><td class="xl-border">string2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border"></td></tr>
 <tr><td class="xl-chrome">4</td><td class="xl-num xl-border" rowspan="2">1</td><td class="xl-border">string1</td><td class="xl-border" rowspan="2">string3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>

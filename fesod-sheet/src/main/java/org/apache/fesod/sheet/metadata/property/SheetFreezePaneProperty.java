@@ -19,9 +19,8 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.FreezePane;
 
 /**
@@ -31,40 +30,38 @@ import org.apache.fesod.sheet.annotation.write.style.FreezePane;
  * It is typically built from the {@link FreezePane} annotation.
  */
 @Getter
-@Setter
-@EqualsAndHashCode
+@AllArgsConstructor
 public class SheetFreezePaneProperty {
 
     /**
      * Horizontal position of split.
      */
-    private int colSplit;
+    private final int colSplit;
 
     /**
      * Vertical position of split.
      */
-    private int rowSplit;
+    private final int rowSplit;
 
     /**
      * Left column visible in right pane.
      */
-    private int leftmostColumn;
+    private final int leftmostColumn;
 
     /**
      * Top row visible in bottom pane
      */
-    private int topRow;
+    private final int topRow;
 
     public static SheetFreezePaneProperty build(FreezePane freezePane) {
         if (freezePane == null) {
             return null;
         }
-        SheetFreezePaneProperty result = new SheetFreezePaneProperty();
-        result.setColSplit(freezePane.colSplit());
-        result.setRowSplit(freezePane.rowSplit());
-        result.setLeftmostColumn(getOrDefault(freezePane.leftmostColumn(), freezePane.colSplit()));
-        result.setTopRow(getOrDefault(freezePane.topRow(), freezePane.rowSplit()));
-        return result;
+        return new SheetFreezePaneProperty(
+                freezePane.colSplit(),
+                freezePane.rowSplit(),
+                getOrDefault(freezePane.leftmostColumn(), freezePane.colSplit()),
+                getOrDefault(freezePane.topRow(), freezePane.rowSplit()));
     }
 
     private static Integer getOrDefault(Integer value, Integer defaultValue) {

@@ -38,7 +38,8 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
  */
 public class EscapeHexCellWriteHandler implements CellWriteHandler {
 
-    // Static hex lookup table for O(1) character validation
+    // ASCII hex digits only. Not Character.digit(c, 16), which also accepts non-ASCII
+    // digits such as U+0663 that OOXML never encodes with.
     private static final boolean[] HEX_TABLE = new boolean[128];
 
     static {
@@ -50,8 +51,6 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
     private static final String PREFIX = "_x";
     private static final int PREFIX_LENGTH = PREFIX.length();
     private static final int HEX_DIGIT_COUNT = 4;
-    // "_x" + 4 hex digits + closing "_"
-    private static final int PATTERN_LENGTH = PREFIX_LENGTH + HEX_DIGIT_COUNT + 1;
 
     @Override
     public void afterCellDataConverted(
@@ -73,16 +72,10 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
     }
 
     /**
-     * Escapes hexadecimal-encoded strings with optimized performance Replaces _xHHHH_ with _x005F_xHHHH_ to prevent POI
-     * from decoding them
+     * Replaces every _xHHHH_ sequence with _x005F_xHHHH_ to prevent POI from decoding them.
      */
     private String escapeHex(String originalString) {
         int length = originalString.length();
-
-        // Fast path: if string is too short to contain pattern, return original
-        if (length < PATTERN_LENGTH) {
-            return originalString;
-        }
 
         // Lazily allocated: stays null (no allocation) when no valid pattern is found
         StringBuilder result = null;
@@ -90,26 +83,27 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
         int searchStart = 0;
         int patternIndex;
         while ((patternIndex = originalString.indexOf(PREFIX, searchStart)) != -1) {
-            // Check if we have enough characters for full pattern
-            if (patternIndex + PATTERN_LENGTH - 1 >= length) {
+            int hexStart = patternIndex + PREFIX_LENGTH;
+            int suffixIndex = hexStart + HEX_DIGIT_COUNT;
+            int patternEnd = suffixIndex + 1;
+            // Too few characters left for a full pattern, and any later match has even fewer
+            if (patternEnd > length) {
                 break;
             }
 
-            // Quick validation: check if it ends with '_' and has valid hex
-            if (originalString.charAt(patternIndex + PATTERN_LENGTH - 1) == '_'
-                    && isValidHexFast(originalString, patternIndex + PREFIX_LENGTH)) {
+            if (originalString.charAt(suffixIndex) == '_' && isHexDigits(originalString, hexStart)) {
                 if (result == null) {
-                    result = new StringBuilder(length + 64); // More generous pre-allocation
+                    result = new StringBuilder(length + 64);
                 }
                 // Append content since the previous match, then the escaped pattern
                 result.append(originalString, lastEnd, patternIndex);
                 result.append("_x005F_x");
-                result.append(originalString, patternIndex + PREFIX_LENGTH, patternIndex + PATTERN_LENGTH - 1);
+                result.append(originalString, hexStart, suffixIndex);
                 result.append('_');
-                lastEnd = patternIndex + PATTERN_LENGTH;
-                searchStart = patternIndex + PATTERN_LENGTH;
+                lastEnd = patternEnd;
+                searchStart = patternEnd;
             } else {
-                searchStart = patternIndex + PREFIX_LENGTH;
+                searchStart = hexStart;
             }
         }
 
@@ -118,18 +112,14 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
             return originalString;
         }
 
-        // Append remaining content
-        if (lastEnd < length) {
-            result.append(originalString, lastEnd, length);
-        }
-
+        result.append(originalString, lastEnd, length);
         return result.toString();
     }
 
     /**
-     * Fast hex validation using lookup table - O(1) per character
+     * Checks whether the four characters starting at {@code startIndex} are all ASCII hex digits.
      */
-    private static boolean isValidHexFast(String str, int startIndex) {
+    private static boolean isHexDigits(String str, int startIndex) {
         for (int i = 0; i < HEX_DIGIT_COUNT; i++) {
             char c = str.charAt(startIndex + i);
             if (c >= 128 || !HEX_TABLE[c]) {

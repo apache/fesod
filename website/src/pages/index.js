@@ -27,7 +27,7 @@ import Translate from '@docusaurus/Translate';
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
 
-const COLUMN_COUNT = 60;
+const COLUMN_COUNT = 120;
 const ROW_COUNT = 18;
 
 function columnLetter(index) {

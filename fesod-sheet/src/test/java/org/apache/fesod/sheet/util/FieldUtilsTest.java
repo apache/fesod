@@ -21,7 +21,9 @@ package org.apache.fesod.sheet.util;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.metadata.NullObject;
@@ -241,5 +243,66 @@ class FieldUtilsTest {
 
         Assertions.assertNotNull(field);
         Assertions.assertTrue(field.isAccessible());
+    }
+
+    static class ParentClass {
+        public static final String STATIC_PARENT_FIELD = "STATIC";
+        private String commonField = "parentCommon";
+        private Integer parentOnlyField;
+    }
+
+    static class ChildClass extends ParentClass {
+        private String commonField = "childCommon";
+        private Double childOnlyField;
+    }
+
+    static class EmptyClass {}
+
+    @Test
+    void test_resolveFields_nullClass_throwsException() {
+        IllegalArgumentException exception =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> FieldUtils.resolveFields(null));
+        Assertions.assertEquals("The class must not be null", exception.getMessage());
+    }
+
+    @Test
+    void test_resolveFields_emptyClass_returnsEmptyList() {
+        List<Field> fields = FieldUtils.resolveFields(EmptyClass.class);
+        Assertions.assertNotNull(fields);
+        Assertions.assertTrue(fields.isEmpty());
+    }
+
+    @Test
+    void test_resolveFields_InheritanceAndShadowing_SubclassTakesPrecedence() {
+        List<Field> fields = FieldUtils.resolveFields(ChildClass.class);
+
+        Assertions.assertEquals(3, fields.size());
+
+        List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+        Assertions.assertTrue(fieldNames.contains("childOnlyField"));
+        Assertions.assertTrue(fieldNames.contains("parentOnlyField"));
+        Assertions.assertTrue(fieldNames.contains("commonField"));
+
+        Field commonField = fields.stream()
+                .filter(f -> f.getName().equals("commonField"))
+                .findFirst()
+                .get();
+        Assertions.assertEquals(ChildClass.class, commonField.getDeclaringClass());
+    }
+
+    @Test
+    void test_resolveFields_IgnoresStaticFields() {
+        List<Field> fields = FieldUtils.resolveFields(ChildClass.class);
+
+        boolean hasStaticField = fields.stream().anyMatch(f -> f.getName().equals("STATIC_PARENT_FIELD"));
+
+        Assertions.assertFalse(hasStaticField);
+    }
+
+    @Test
+    void test_resolveFields_returnsUnmodifiableList() {
+        List<Field> fields = FieldUtils.resolveFields(ChildClass.class);
+
+        Assertions.assertThrows(UnsupportedOperationException.class, fields::clear);
     }
 }

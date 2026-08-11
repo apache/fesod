@@ -29,7 +29,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -225,13 +224,7 @@ public class ClassUtils {
         if (clazz == null) {
             return null;
         }
-        List<Field> tempFieldList = new ArrayList<>();
-        Class<?> tempClass = clazz;
-        while (tempClass != null) {
-            Collections.addAll(tempFieldList, tempClass.getDeclaredFields());
-            // Get the parent class and give it to yourself
-            tempClass = tempClass.getSuperclass();
-        }
+        List<Field> tempFieldList = FieldUtils.resolveFields(clazz);
 
         ContentStyle parentContentStyle = clazz.getAnnotation(ContentStyle.class);
         ContentFontStyle parentContentFontStyle = clazz.getAnnotation(ContentFontStyle.class);
@@ -305,20 +298,8 @@ public class ClassUtils {
     }
 
     private static FieldCache doDeclaredFields(Class<?> clazz, ConfigurationHolder configurationHolder) {
-        List<Field> tempFieldList = new ArrayList<>();
-        Map<String, Field> fieldNameToField = new HashMap<>();
-        Class<?> tempClass = clazz;
-        // Prefer subclass fields, only process the bottom-most (subclass) definition for fields with the same name
-        while (tempClass != null) {
-            for (Field field : tempClass.getDeclaredFields()) {
-                String fieldName = FieldUtils.resolveCglibFieldName(field);
-                if (!fieldNameToField.containsKey(fieldName)) {
-                    fieldNameToField.put(fieldName, field);
-                    tempFieldList.add(field);
-                }
-            }
-            tempClass = tempClass.getSuperclass();
-        }
+        List<Field> tempFieldList = FieldUtils.resolveFields(clazz);
+
         ExcelIgnoreUnannotated excelIgnoreUnannotated = clazz.getAnnotation(ExcelIgnoreUnannotated.class);
         Set<String> ignoreSet = new HashSet<>();
         // First collect all field names annotated with ExcelIgnore (including subclass overrides)

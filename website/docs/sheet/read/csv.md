@@ -42,6 +42,7 @@ The main parameters are as follows:
 | `nullString`      | `null`             | String used to represent `null` values. Note this is different from an empty string `""`.                                                |
 | `escape`          | `null`             | Escape character used to escape quote characters themselves.                                                                             |
 | `includeColumnIndexes` | `null`             | List of 0-based column indices to read. Excluded columns are skipped, and target columns are remapped to contiguous 0-based indices.     |
+
 ---
 
 ## Parameter Details and Examples
@@ -149,7 +150,6 @@ public void escapeDemo() {
 #### Code Example
 
 ```java
-
 @Test
 public void includeColumnIndexesDemo() {
         String csvFile = "path/to/your.csv";
@@ -163,7 +163,9 @@ public void includeColumnIndexesDemo() {
            excelReader.read(readSheet);
         }
     }
+    
 ```   
+
 ## CSVFormat Configuration Details and Examples
 
 Supports directly building a `CSVFormat` object.
@@ -191,3 +193,5 @@ public void csvFormatDemo() {
     }
 }
 ```
+
+

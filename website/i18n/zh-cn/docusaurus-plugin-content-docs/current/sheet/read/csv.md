@@ -24,6 +24,7 @@ Fesod 通过不同的参数设计进行 CSV
 | `nullString`      | `null`    | 用于表示 `null` 值的字符串。注意这与空字符串 `""` 不同。                                                   |
 | `escape`          | `null`    | 转义字符，用于转义引用符号自身。                                                                      |
 | `includeColumnIndexes` | `null`    | 指定需要读取的列索引列表（从 0 开始）。未指定的列将被跳过，且读取的数据会被重新映射为从 0 开始的连续索引。                   |
+
 ---
 
 ## 参数详解与示例
@@ -126,7 +127,6 @@ public void escapeDemo() {
 #### 代码示例
 
 ```java
-
 @Test
 public void includeColumnIndexesDemo() {
         String csvFile = "path/to/your.csv";
@@ -140,6 +140,7 @@ public void includeColumnIndexesDemo() {
            excelReader.read(readSheet);
         }
 }
+
 ```
 ## CSVFormat 设置详解与示例
 
@@ -162,7 +163,6 @@ public void csvFormatDemo() {
             CsvReadWorkbookHolder csvReadWorkbookHolder = (CsvReadWorkbookHolder) readWorkbookHolder;
             csvReadWorkbookHolder.setCsvFormat(csvFormat);
         }
-
         ReadSheet readSheet = FesodSheet.readSheet(0).build();
         excelReader.read(readSheet);
     }

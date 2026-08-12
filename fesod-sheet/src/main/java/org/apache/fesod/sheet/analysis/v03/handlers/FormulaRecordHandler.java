@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
@@ -53,10 +54,23 @@ public class FormulaRecordHandler extends AbstractXlsRecordHandler implements Ig
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         FormulaRecord frec = (FormulaRecord) record;
+        int originalColumnIndex = frec.getColumn();
+
+        List<Integer> includeColumnIndexes =
+                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+
+        int targetColumnIndex = originalColumnIndex;
+        if (includeColumnIndexes != null) {
+            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
+            if (targetColumnIndex < 0) {
+                return;
+            }
+        }
+
         Map<Integer, Cell> cellMap = xlsReadContext.xlsReadSheetHolder().getCellMap();
         ReadCellData<?> tempCellData = new ReadCellData<>();
         tempCellData.setRowIndex(frec.getRow());
-        tempCellData.setColumnIndex((int) frec.getColumn());
+        tempCellData.setColumnIndex(targetColumnIndex);
         CellType cellType = CellType.forInt(frec.getCachedResultType());
         String formulaValue = null;
         try {
@@ -98,21 +112,21 @@ public class FormulaRecordHandler extends AbstractXlsRecordHandler implements Ig
                                 .getGlobalConfiguration()
                                 .getLocale()));
                 tempCellData.setDataFormatData(dataFormatData);
-                cellMap.put((int) frec.getColumn(), tempCellData);
+                cellMap.put(targetColumnIndex, tempCellData);
                 break;
             case ERROR:
                 tempCellData.setType(CellDataTypeEnum.ERROR);
                 tempCellData.setStringValue(ERROR);
-                cellMap.put((int) frec.getColumn(), tempCellData);
+                cellMap.put(targetColumnIndex, tempCellData);
                 break;
             case BOOLEAN:
                 tempCellData.setType(CellDataTypeEnum.BOOLEAN);
                 tempCellData.setBooleanValue(frec.getCachedBooleanValue());
-                cellMap.put((int) frec.getColumn(), tempCellData);
+                cellMap.put(targetColumnIndex, tempCellData);
                 break;
             default:
                 tempCellData.setType(CellDataTypeEnum.EMPTY);
-                cellMap.put((int) frec.getColumn(), tempCellData);
+                cellMap.put(targetColumnIndex, tempCellData);
                 break;
         }
     }

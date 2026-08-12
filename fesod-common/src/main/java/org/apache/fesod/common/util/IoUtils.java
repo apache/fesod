@@ -53,12 +53,8 @@ public class IoUtils {
      */
     public static byte[] toByteArray(final InputStream input) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try {
-            copy(input, output);
-            return output.toByteArray();
-        } finally {
-            output.toByteArray();
-        }
+        copy(input, output);
+        return output.toByteArray();
     }
 
     /**

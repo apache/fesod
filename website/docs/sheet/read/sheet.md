@@ -35,7 +35,6 @@ You can read multiple sheets from a spreadsheet file, but the same sheet cannot 
 #### Reading All Sheets
 
 ```java
-
 @Test
 public void readAllSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -58,7 +57,6 @@ You can read a specific sheet from a spreadsheet file, supporting specification 
 ### Code Example
 
 ```java
-
 @Test
 public void readSingleSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -87,7 +85,6 @@ This supports both **"normal hidden"** and **"very hidden"** states.
 ### Code Example
 
 ```java
-
 @Test
 public void exceptionRead() {
     String fileName = "path/to/demo.xlsx";

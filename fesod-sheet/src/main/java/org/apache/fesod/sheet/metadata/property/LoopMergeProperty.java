@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 
 /**
@@ -32,6 +34,8 @@ import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
  *
  *
  */
+@Getter
+@Setter
 public class LoopMergeProperty {
     /**
      * Each row
@@ -52,21 +56,5 @@ public class LoopMergeProperty {
             return null;
         }
         return new LoopMergeProperty(contentLoopMerge.eachRow(), contentLoopMerge.columnExtend());
-    }
-
-    public int getEachRow() {
-        return eachRow;
-    }
-
-    public void setEachRow(int eachRow) {
-        this.eachRow = eachRow;
-    }
-
-    public int getColumnExtend() {
-        return columnExtend;
-    }
-
-    public void setColumnExtend(int columnExtend) {
-        this.columnExtend = columnExtend;
     }
 }

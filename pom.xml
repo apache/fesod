@@ -99,7 +99,7 @@
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <lombok.version>1.18.44</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
-        <fastjson2.version>2.0.62</fastjson2.version>
+        <fastjson2.version>2.0.64</fastjson2.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>1.7.36</slf4j-simple.version>
         <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
@@ -111,7 +111,7 @@
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
-        <assertj.version>3.25.3</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <surefire.jvm.args>-Xmx2g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8</surefire.jvm.args>
         <surefire.jdk9plus.args></surefire.jdk9plus.args>
         <argLine></argLine>

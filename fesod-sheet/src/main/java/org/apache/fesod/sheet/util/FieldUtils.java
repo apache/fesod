@@ -203,13 +203,13 @@ public class FieldUtils {
         Class<?> tempClass = cls;
         while (tempClass != null && tempClass != Object.class) {
             for (Field field : tempClass.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers()) || field.isSynthetic()) {
+                boolean shouldSkip = Modifier.isStatic(field.getModifiers())
+                        || field.isSynthetic()
+                        || !fieldNames.add(resolveCglibFieldName(field));
+                if (shouldSkip) {
                     continue;
                 }
-
-                if (fieldNames.add(resolveCglibFieldName(field))) {
-                    result.add(field);
-                }
+                result.add(field);
             }
             tempClass = tempClass.getSuperclass();
         }

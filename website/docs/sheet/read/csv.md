@@ -164,7 +164,7 @@ public void includeColumnIndexesDemo() {
         }
     }
     
-```   
+```
 
 ## CSVFormat Configuration Details and Examples
 
@@ -193,5 +193,3 @@ public void csvFormatDemo() {
     }
 }
 ```
-
-

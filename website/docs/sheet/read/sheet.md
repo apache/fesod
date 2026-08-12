@@ -110,6 +110,7 @@ By configuring `includeColumnIndexes`, you can specify which columns to read fro
 Note: This feature supports both modern `.xlsx` (OOXML) and legacy `.xls` (BIFF8 / Excel 97–2003) file formats.
 
 Code Example
+
 ```java
 @Test
 public void readSpecificColumns() {

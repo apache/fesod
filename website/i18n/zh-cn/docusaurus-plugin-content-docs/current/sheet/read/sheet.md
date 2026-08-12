@@ -109,5 +109,3 @@ public void readSpecificColumns() {
     }
 }
 ```
-
-

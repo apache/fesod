@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.write.handler;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -97,6 +98,15 @@ class EscapeHexCellWriteHandlerTest {
         WriteCellData<?> cellData = new WriteCellData<>(CellDataTypeEnum.ERROR, "_x0041_");
 
         handler.afterCellDataConverted(null, null, cellData, cell, null, 0, Boolean.FALSE);
+
+        Assertions.assertEquals("_x0041_", cellData.getStringValue());
+    }
+
+    @Test
+    void afterCellDataConverted_ignoresNonSxssfCells() {
+        WriteCellData<?> cellData = new WriteCellData<>("_x0041_");
+
+        handler.afterCellDataConverted(null, null, cellData, Mockito.mock(HSSFCell.class), null, 0, Boolean.FALSE);
 
         Assertions.assertEquals("_x0041_", cellData.getStringValue());
     }

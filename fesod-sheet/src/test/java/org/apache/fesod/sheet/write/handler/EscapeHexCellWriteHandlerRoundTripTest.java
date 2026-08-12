@@ -21,8 +21,9 @@ package org.apache.fesod.sheet.write.handler;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +58,7 @@ class EscapeHexCellWriteHandlerRoundTripTest extends AbstractExcelTest {
 
     private String readBackFirstDataValue(File file, ExcelFormat format) throws IOException {
         if (format == ExcelFormat.CSV) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
                 reader.readLine(); // header
                 return reader.readLine();
             }

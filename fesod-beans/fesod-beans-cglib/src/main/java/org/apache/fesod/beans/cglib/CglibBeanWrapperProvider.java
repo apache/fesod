@@ -22,6 +22,9 @@ package org.apache.fesod.beans.cglib;
 import org.apache.fesod.common.beans.BeanWrapper;
 import org.apache.fesod.common.beans.BeanWrapperProvider;
 
+/**
+ * An SPI {@link BeanWrapperProvider} implementation backed by CGLIB.
+ */
 public class CglibBeanWrapperProvider implements BeanWrapperProvider {
 
     @Override

@@ -26,6 +26,9 @@ import org.apache.fesod.common.util.ValidateUtils;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.shaded.cglib.core.DefaultNamingPolicy;
 
+/**
+ * A {@link BeanWrapper} implementation backed by CGLIB's {@link BeanMap}.
+ */
 public final class CglibBeanWrapper implements BeanWrapper {
 
     private final BeanMap delegate;

@@ -42,6 +42,7 @@ class BasicParameter {
 class ReadBasicParameter {
   - Integer headRowNumber
   - List~ReadListener~?~~ customReadListenerList
+  - Collection~Integer~ includeColumnIndexes
 }
 class ReadSheet {
   - Integer sheetNo
@@ -138,6 +139,7 @@ All parameters inherit from `BasicParameter`.
 |------------------------|---------------|----------------------------------------------------------------------------------------------------------------|
 | customReadListenerList | Empty         | Can register multiple listeners. When reading spreadsheet, the listener's methods will be continuously called. |
 | headRowNumber          | 1             | The number of rows in the header of spreadsheet, default is 1 row.                                             |
+| includeColumnIndexes          | Empty             | Specify 0-based column indices to read. Excluded columns are skipped during parsing, and target columns are remapped to contiguous 0-based indices.                                             |
 
 ### ReadWorkbook
 
@@ -171,6 +173,7 @@ All parameters inherit from `BasicParameter`.
 | sheetHidden     | false         | Normal Hidden Status                                                                           |
 | sheetVeryHidden | false         | Absolute Hidden State                                                                          |
 | numRows         | 0             | Read the specified number of rows. 0 means no limit on the number of rows, i.e. read all rows. |
+| includeColumnIndexes         | Empty             | Specify 0-based column indices to read. Excluded columns are skipped during parsing, and target columns are remapped to contiguous 0-based indices. |
 
 ## Writing Operations
 

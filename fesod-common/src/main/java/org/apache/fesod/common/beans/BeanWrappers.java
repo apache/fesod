@@ -19,6 +19,7 @@
 
 package org.apache.fesod.common.beans;
 
+import java.util.Map;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import lombok.AccessLevel;
@@ -52,6 +53,12 @@ public class BeanWrappers {
     public static BeanWrapper create(Object bean) {
         if (bean == null) {
             return null;
+        }
+        if (bean instanceof Map) {
+            return new MapBeanWrapper((Map) bean);
+        }
+        if (bean instanceof BeanWrapper) {
+            return (BeanWrapper) bean;
         }
         return provider.create(bean);
     }

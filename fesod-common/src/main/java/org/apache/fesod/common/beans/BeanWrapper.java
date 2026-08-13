@@ -70,9 +70,14 @@ public interface BeanWrapper {
     Class<?> getPropertyType(String propertyName);
 
     /**
+     * Returns the type of the wrapped bean instance.
+     */
+    default Class<?> getWrappedClass() {
+        return unwrap().getClass();
+    }
+
+    /**
      * Returns the wrapped bean object.
-     *
-     * @return the wrapped bean object
      */
     Object unwrap();
 }

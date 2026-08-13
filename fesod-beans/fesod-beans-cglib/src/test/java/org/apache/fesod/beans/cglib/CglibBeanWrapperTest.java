@@ -152,6 +152,16 @@ class CglibBeanWrapperTest {
     }
 
     @Test
+    void shouldReturnWrappedClass() {
+        SampleBean bean = new SampleBean();
+        BeanWrapper wrapper = new CglibBeanWrapper(bean);
+
+        Assertions.assertThat(wrapper.getWrappedClass())
+                .isEqualTo(SampleBean.class)
+                .isEqualTo(bean.getClass());
+    }
+
+    @Test
     void shouldReflectExternalBeanMutation() {
         SampleBean bean = new SampleBean("Jackson", 1, false);
         BeanWrapper wrapper = new CglibBeanWrapper(bean);

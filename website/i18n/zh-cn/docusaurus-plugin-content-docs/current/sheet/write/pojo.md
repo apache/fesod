@@ -99,7 +99,6 @@ public void includeColumnWrite() {
 ### POJO 类
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode

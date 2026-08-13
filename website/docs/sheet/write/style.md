@@ -64,7 +64,6 @@ public class DemoStyleData {
 ### Code Example
 
 ```java
-
 @Test
 public void annotationStyleWrite() {
     String fileName = "annotationStyleWrite" + System.currentTimeMillis() + ".xlsx";

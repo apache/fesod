@@ -18,7 +18,6 @@ title: '简单写入'
 与电子表格结构对应的 POJO 类 `DemoData`
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -57,7 +56,6 @@ Fesod 提供了多种写入方式，包括 `Lambda` 表达式、数据列表、`
 #### `Lambda` 表达式
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -71,7 +69,6 @@ public void simpleWrite() {
 #### 数据列表
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -85,7 +82,6 @@ public void simpleWrite() {
 #### `ExcelWriter` 对象
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";

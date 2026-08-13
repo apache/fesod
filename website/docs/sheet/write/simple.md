@@ -36,7 +36,6 @@ This is the most basic and commonly used writing approach.
 The `DemoData` POJO class corresponding to the spreadsheet structure:
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -75,7 +74,6 @@ Fesod provides multiple writing methods, including `Lambda` expressions, data li
 #### `Lambda` Expression
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -89,7 +87,6 @@ public void simpleWrite() {
 #### Data List
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
@@ -103,7 +100,6 @@ public void simpleWrite() {
 #### `ExcelWriter` Object
 
 ```java
-
 @Test
 public void simpleWrite() {
     String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";

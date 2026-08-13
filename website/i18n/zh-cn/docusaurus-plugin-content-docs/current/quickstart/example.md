@@ -11,7 +11,7 @@ title: '简单示例'
 
 ```java
 // 实现 ReadListener 接口，设置读取数据的操作
-public class DemoDataListener implements ReadListener<DemoData> {
+class DemoDataListener implements ReadListener<DemoData> {
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
         System.out.println("解析到一条数据" + JSON.toJSONString(data));
@@ -23,10 +23,11 @@ public class DemoDataListener implements ReadListener<DemoData> {
     }
 }
 
-public static void main(String[] args) {
-    String fileName = "demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     // 读取文件
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
@@ -36,7 +37,7 @@ public static void main(String[] args) {
 
 ```java
 // 示例数据类
-public class DemoData {
+class DemoData {
     @ExcelProperty("字符串标题")
     private String string;
     @ExcelProperty("日期标题")
@@ -48,7 +49,7 @@ public class DemoData {
 }
 
 // 填充要写入的数据
-private static List<DemoData> data() {
+List<DemoData> data() {
     List<DemoData> list = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
         DemoData data = new DemoData();
@@ -60,9 +61,10 @@ private static List<DemoData> data() {
     return list;
 }
 
-public static void main(String[] args) {
-    String fileName = "demo.xlsx";
-    // 创建一个名为“模板”的 sheet 页，并写入数据
-    FesodSheet.write(fileName, DemoData.class).sheet("模板").doWrite(data());
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    // 创建一个名为"模板"的 sheet 页，并写入数据
+    FesodSheet.write(pathname, DemoData.class).sheet("模板").doWrite(data());
 }
 ```

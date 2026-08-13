@@ -123,11 +123,10 @@ public class CustomCellStyleHandler implements CellWriteHandler {
 Register and Use
 
 ```java
-@Test
-public void customCellStyleWrite() {
-    String fileName = "customCellStyleWrite.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new CustomCellStyleHandler())
             .sheet("Custom Style")
             .doWrite(data());
@@ -164,11 +163,10 @@ public class CommentRowWriteHandler implements RowWriteHandler {
 Register and Use
 
 ```java
-@Test
-public void commentWrite() {
-    String fileName = "commentWrite.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new CommentRowWriteHandler())
             .sheet("Insert Comment")
             .doWrite(data());
@@ -204,11 +202,10 @@ public class DropdownSheetWriteHandler implements SheetWriteHandler {
 Register and Use
 
 ```java
-@Test
-public void dropdownWrite() {
-    String fileName = "dropdownWrite.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new DropdownSheetWriteHandler())
             .sheet("Add Dropdown")
             .doWrite(data());
@@ -294,11 +291,10 @@ public class DemoDataListener implements ReadListener<DemoData> {
 Use
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet() // Read the first sheet by default
             .doRead();
 }
@@ -332,11 +328,10 @@ public class HeadDataListener implements ReadListener<DemoData> {
 Use
 
 ```java
-@Test
-public void readWithHead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new HeadDataListener())
+    FesodSheet.read(pathname, DemoData.class, new HeadDataListener())
             .sheet() // Read the first sheet by default
             .doRead();
 }
@@ -372,11 +367,10 @@ public class ExceptionHandlingListener implements ReadListener<DemoData> {
 Use
 
 ```java
-@Test
-public void readWithExceptionHandling() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+    FesodSheet.read(pathname, DemoData.class, new ExceptionHandlingListener())
             .sheet()
             .doRead();
 }
@@ -385,13 +379,12 @@ public void readWithExceptionHandling() {
 #### Pagination
 
 ```java
-@Test
-public void pageRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
+    FesodSheet.read(pathname, DemoData.class, new PageReadListener<>(dataList -> {
                 // Pagination batch processing
-                log.info("Read a batch of data: {}", JSON.toJSONString(dataList));
+                System.out.println("Read a batch of data: " + JSON.toJSONString(dataList));
                 // Implement data processing logic
             }))
             .sheet()
@@ -501,11 +494,10 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()  // Read the first sheet by default
             .doRead();
 }
@@ -547,11 +539,10 @@ public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
-@Test
-public void readWithHead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListenerWithHead())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListenerWithHead())
             .sheet()  // Read the first sheet by default
             .doRead();
 }
@@ -593,11 +584,10 @@ public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
-@Test
-public void readWithExceptionHandling() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+    FesodSheet.read(pathname, DemoData.class, new ExceptionHandlingListener())
             .sheet()
             .doRead();
 }
@@ -709,18 +699,17 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
 Use
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // Read
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .registerConverter(new TimestampNumberConverter())
             .sheet()
             .doRead();
 
     // Write
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
             .registerConverter(new TimestampNumberConverter())
             .sheet()
             .doWrite(data());

@@ -103,11 +103,10 @@ public class CustomCellStyleHandler implements CellWriteHandler {
 注册并使用
 
 ```java
-@Test
-public void customCellStyleWrite() {
-    String fileName = "customCellStyleWrite.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new CustomCellStyleHandler())
             .sheet("自定义样式")
             .doWrite(data());
@@ -144,11 +143,10 @@ public class CommentRowWriteHandler implements RowWriteHandler {
 注册并使用
 
 ```java
-@Test
-public void commentWrite() {
-    String fileName = "commentWrite.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new CommentRowWriteHandler())
             .sheet("插入批注")
             .doWrite(data());
@@ -184,11 +182,10 @@ public class DropdownSheetWriteHandler implements SheetWriteHandler {
 注册并使用
 
 ```java
-@Test
-public void dropdownWrite() {
-    String fileName = "dropdownWrite.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new DropdownSheetWriteHandler())
             .sheet("添加下拉框")
             .doWrite(data());
@@ -271,11 +268,10 @@ public class DemoDataListener implements ReadListener<DemoData> {
 使用
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet() // 默认读取第一个 Sheet
             .doRead();
 }
@@ -309,11 +305,10 @@ public class HeadDataListener implements ReadListener<DemoData> {
 使用
 
 ```java
-@Test
-public void readWithHead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new HeadDataListener())
+    FesodSheet.read(pathname, DemoData.class, new HeadDataListener())
             .sheet() // 默认读取第一个 Sheet
             .doRead();
 }
@@ -349,11 +344,10 @@ public class ExceptionHandlingListener implements ReadListener<DemoData> {
 使用
 
 ```java
-@Test
-public void readWithExceptionHandling() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+    FesodSheet.read(pathname, DemoData.class, new ExceptionHandlingListener())
             .sheet()
             .doRead();
 }
@@ -362,13 +356,12 @@ public void readWithExceptionHandling() {
 #### 分页处理
 
 ```java
-@Test
-public void pageRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
+    FesodSheet.read(pathname, DemoData.class, new PageReadListener<>(dataList -> {
                 // 分页批量处理
-                log.info("读取到一批数据: {}", JSON.toJSONString(dataList));
+                System.out.println("读取到一批数据: " + JSON.toJSONString(dataList));
                 // 实现数据处理逻辑
             }))
             .sheet()
@@ -468,11 +461,10 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
 使用
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()  // 默认读取第一个 Sheet
             .doRead();
 }
@@ -513,11 +505,10 @@ public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 使用
 
 ```java
-@Test
-public void readWithHead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListenerWithHead())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListenerWithHead())
             .sheet()  // 默认读取第一个 Sheet
             .doRead();
 }
@@ -558,11 +549,10 @@ public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 使用
 
 ```java
-@Test
-public void readWithExceptionHandling() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new ExceptionHandlingListener())
+    FesodSheet.read(pathname, DemoData.class, new ExceptionHandlingListener())
             .sheet()
             .doRead();
 }
@@ -663,18 +653,17 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
 使用
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // 读取
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .registerConverter(new TimestampNumberConverter())
             .sheet()
             .doRead();
 
     // 写入
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
             .registerConverter(new TimestampNumberConverter())
             .sheet()
             .doWrite(data());

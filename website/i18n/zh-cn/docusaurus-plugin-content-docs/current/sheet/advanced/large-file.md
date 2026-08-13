@@ -16,11 +16,10 @@ title: '大文件写入'
 ### 代码示例
 
 ```java
-@Test
-public void largeFileWrite() {
-    String fileName = "largeFile" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter excelWriter = FesodSheet.write(fileName, DemoData.class)
+    try (ExcelWriter excelWriter = FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new WorkbookWriteHandler() {
                 @Override
                 public void afterWorkbookCreate(WorkbookWriteHandlerContext context) {

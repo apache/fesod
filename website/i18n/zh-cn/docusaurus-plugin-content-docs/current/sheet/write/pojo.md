@@ -23,12 +23,11 @@ title: '实体类'
 除列出的字段外，其余字段都会写入：
 
 ```java
-@Test
-public void excludeColumnWrite() {
-    String fileName = "excludeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> excludeColumns = Collections.singleton("date");
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .excludeColumnFieldNames(excludeColumns)
         .sheet()
         .doWrite(data());
@@ -58,12 +57,11 @@ public void excludeColumnWrite() {
 只有列出的字段会写入：
 
 ```java
-@Test
-public void includeColumnWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> includeColumns = Collections.singleton("date");
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .includeColumnFieldNames(includeColumns)
         .sheet()
         .doWrite(data());
@@ -119,10 +117,10 @@ public class IndexData {
 通过 `@ExcelProperty` 注解的 `index` 属性指定列顺序。
 
 ```java
-@Test
-public void indexWrite() {
-    String fileName = "indexWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, IndexData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, IndexData.class)
         .sheet()
         .doWrite(data());
 }
@@ -154,12 +152,11 @@ public void indexWrite() {
 列的顺序取决于 POJO，而不是集合。即使把 `doubleData` 写在 `string` 前面，输出中仍然是 `string` 在前，因为字段就是按这个顺序声明的：
 
 ```java
-@Test
-public void includeColumnOrderWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .includeColumnFieldNames(includeColumns)
         .sheet()
         .doWrite(data());
@@ -184,12 +181,11 @@ public void includeColumnOrderWrite() {
 加上 `.orderByIncludeColumn(true)`，即可改为按集合的顺序排列：
 
 ```java
-@Test
-public void orderByIncludeColumnWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .includeColumnFieldNames(includeColumns)
         .orderByIncludeColumn(true)
         .sheet()
@@ -223,24 +219,23 @@ public void orderByIncludeColumnWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void noModelWrite() {
-    String fileName = "noModelWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
         .head(head()) // 动态头
         .sheet("无对象写入")
         .doWrite(dataList());
 }
 
-private List<List<String>> head() {
+List<List<String>> head() {
     return Arrays.asList(
         Collections.singletonList("字符串标题"),
         Collections.singletonList("数字标题"),
         Collections.singletonList("日期标题"));
 }
 
-private List<List<Object>> dataList() {
+List<List<Object>> dataList() {
     List<List<Object>> list = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
         list.add(Arrays.asList("字符串" + i, 0.56, new Date()));

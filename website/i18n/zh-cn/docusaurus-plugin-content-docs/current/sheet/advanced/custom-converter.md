@@ -61,11 +61,10 @@ public class CustomStringStringConverter implements Converter<String> {
 ### 使用全局转换器写入
 
 ```java
-@Test
-public void customConverterWrite() {
-    String fileName = "customConverterWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .registerConverter(new CustomStringStringConverter())
         .sheet()
         .doWrite(data());
@@ -75,11 +74,10 @@ public void customConverterWrite() {
 ### 使用全局转换器读取
 
 ```java
-@Test
-public void customConverterRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
         .registerConverter(new CustomStringStringConverter())
         .sheet()
         .doRead();

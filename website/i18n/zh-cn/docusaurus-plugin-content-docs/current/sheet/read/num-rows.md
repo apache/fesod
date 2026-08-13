@@ -17,12 +17,13 @@ title: '行数'
 ### 代码示例
 
 ```java
-@Test
-public void allSheetRead() {
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     // 读取前100行
-    FesodSheet.read(fileName, DemoData.class, new PageReadListener<DemoData>(dataList -> {
+    FesodSheet.read(pathname, DemoData.class, new PageReadListener<DemoData>(dataList -> {
         for (DemoData demoData : dataList) {
-            log.info("读取到一条数据{}", JSON.toJSONString(demoData));
+            System.out.println("读取到一条数据" + JSON.toJSONString(demoData));
         }
     })).numRows(100).sheet().doRead();
 }
@@ -35,9 +36,10 @@ public void allSheetRead() {
 ### 代码示例
 
 ```java
-@Test
-public void singleSheetRead() {
-    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    try (ExcelReader excelReader = FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).build()) {
         ReadSheet readSheet = FesodSheet.readSheet(0).build();
         readSheet.setNumRows(100); // 读取前100行
         excelReader.read(readSheet);

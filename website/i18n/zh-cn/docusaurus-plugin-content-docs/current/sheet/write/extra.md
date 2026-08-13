@@ -39,11 +39,10 @@ public class CommentWriteHandler implements RowWriteHandler {
 使用
 
 ```java
-@Test
-public void commentWrite() {
-    String fileName = "commentWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .inMemory(Boolean.TRUE) // 批注必须启用内存模式
         .registerWriteHandler(new CommentWriteHandler())
         .sheet()
@@ -88,9 +87,9 @@ public class WriteCellDemoData {
 ### 代码示例
 
 ```java
-@Test
-public void writeHyperlinkDataWrite() {
-    String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     WriteCellDemoData data = new WriteCellDemoData();
     // 设置超链接
     WriteCellData cellData = new WriteCellData<>("点击访问");
@@ -100,7 +99,7 @@ public void writeHyperlinkDataWrite() {
     cellData.setHyperlinkData(hyperlinkData);
     data.setHyperlink(cellData);
 
-    FesodSheet.write(fileName, WriteCellDemoData.class)
+    FesodSheet.write(pathname, WriteCellDemoData.class)
         .sheet()
         .doWrite(Collections.singletonList(data));
 }
@@ -140,9 +139,9 @@ public class WriteCellDemoData {
 ### 代码示例
 
 ```java
-@Test
-public void writeFormulaDataWrite() {
-    String fileName = "writeCellDataWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     WriteCellDemoData data = new WriteCellDemoData();
     data.setNum1(10);
     data.setNum2(20);
@@ -155,7 +154,7 @@ public void writeFormulaDataWrite() {
     cellData.setFormulaData(formulaData);
     data.setFormulaData(cellData);
 
-    FesodSheet.write(fileName, WriteCellDemoData.class)
+    FesodSheet.write(pathname, WriteCellDemoData.class)
             .sheet()
             .doWrite(Collections.singletonList(data));
 }
@@ -184,13 +183,12 @@ public void writeFormulaDataWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void templateWrite() {
-    String templateFileName = "path/to/template.xlsx";
-    String fileName = "templateWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
-        .withTemplate(templateFileName)
+    FesodSheet.write(pathname, DemoData.class)
+        .withTemplate(template)
         .sheet()
         .doWrite(data());
 }
@@ -224,11 +222,10 @@ public class DropdownWriteHandler implements SheetWriteHandler {
 使用
 
 ```java
-@Test
-public void dropdownWrite() {
-    String fileName = "dropdownWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .registerWriteHandler(new DropdownWriteHandler())
         .sheet("下拉框示例")
         .doWrite(data());

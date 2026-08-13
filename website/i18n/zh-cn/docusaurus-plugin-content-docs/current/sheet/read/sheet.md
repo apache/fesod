@@ -18,11 +18,10 @@ title: 'Sheet'
 #### 读取全部 Sheet
 
 ```java
-@Test
-public void readAllSheet() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).doReadAll();
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).doReadAll();
 }
 ```
 
@@ -39,11 +38,10 @@ public void readAllSheet() {
 ### 代码示例
 
 ```java
-@Test
-public void readSingleSheet() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
+    try (ExcelReader excelReader = FesodSheet.read(pathname).build()) {
         // Sheet 索引
         ReadSheet sheet1 = FesodSheet.readSheet(0).head(DemoData.class).registerReadListener(new DemoDataListener()).build();
         // Sheet 名
@@ -64,11 +62,10 @@ public void readSingleSheet() {
 ### 代码示例
 
 ```java
-@Test
-public void exceptionRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .ignoreHiddenSheet(Boolean.TRUE)
             .sheet()
             .doRead();

@@ -37,12 +37,13 @@ rows, i.e., read all rows. The row count includes header rows.
 ### Code Example
 
 ```java
-@Test
-public void allSheetRead() {
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     // Read the first 100 rows
-    FesodSheet.read(fileName, DemoData.class, new PageReadListener<DemoData>(dataList -> {
+    FesodSheet.read(pathname, DemoData.class, new PageReadListener<DemoData>(dataList -> {
         for (DemoData demoData : dataList) {
-            log.info("Read one record: {}", JSON.toJSONString(demoData));
+            System.out.println("Read one record: " + JSON.toJSONString(demoData));
         }
     })).numRows(100).sheet().doRead();
 }
@@ -55,9 +56,10 @@ public void allSheetRead() {
 ### Code Example
 
 ```java
-@Test
-public void singleSheetRead() {
-    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    try (ExcelReader excelReader = FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).build()) {
         ReadSheet readSheet = FesodSheet.readSheet(0).build();
         readSheet.setNumRows(100); // Read the first 100 rows
         excelReader.read(readSheet);

@@ -39,10 +39,10 @@ public class DemoMergeData {
 ### 代码示例
 
 ```java
-@Test
-public void annotationMergeWrite() {
-    String fileName = "annotationMergeWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, DemoMergeData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, DemoMergeData.class)
         .sheet()
         .doWrite(data());
 }
@@ -74,13 +74,12 @@ public void annotationMergeWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void strategyMergeWrite() {
-    String fileName = "strategyMergeWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // 合并第 0 列中每 2 行
     LoopMergeStrategy strategy = new LoopMergeStrategy(2, 0);
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .registerWriteHandler(strategy)
         .sheet()
         .doWrite(data());
@@ -114,10 +113,10 @@ public class CustomMergeStrategy extends AbstractMergeStrategy {
 使用方式：
 
 ```java
-@Test
-public void customMergeWrite() {
-    String fileName = "customMergeWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, DemoData.class)
         .registerWriteHandler(new CustomMergeStrategy())
         .sheet()
         .doWrite(data());

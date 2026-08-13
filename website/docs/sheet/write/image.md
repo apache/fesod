@@ -66,15 +66,14 @@ public class ImageDemoData {
 ### Code Example
 
 ```java
-@Test
-public void imageWrite() {
-    String fileName = "imageWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
     String imagePath = "path/to/image.jpg";
 
     ImageDemoData data = new ImageDemoData();
     data.setImage(new File(imagePath));
 
-    FesodSheet.write(fileName, ImageDemoData.class)
+    FesodSheet.write(pathname, ImageDemoData.class)
         .sheet()
         .doWrite(Collections.singletonList(data));
 }
@@ -125,9 +124,9 @@ public class ImageCellDemoData {
 ### Code Example
 
 ```java
-@Test
-public void imageCellWrite() throws Exception {
-    String fileName = "imageCellWrite" + System.currentTimeMillis() + ".xlsx";
+void main() throws Exception {
+    String pathname = "path/to/demo.xlsx";
+
     byte[] imageBytes = Files.readAllBytes(Paths.get("path/to/image.jpg"));
 
     WriteCellData<Void> writeCellData = new WriteCellData<>();
@@ -161,7 +160,7 @@ public void imageCellWrite() throws Exception {
     ImageCellDemoData data = new ImageCellDemoData();
     data.setImage(writeCellData);
 
-    FesodSheet.write(fileName, ImageCellDemoData.class)
+    FesodSheet.write(pathname, ImageCellDemoData.class)
         .sheet()
         .doWrite(Collections.singletonList(data));
 }
@@ -208,8 +207,7 @@ URL image data exceeds maximum size
 The policy is global and can be replaced:
 
 ```java
-@Test
-public void configureUrlImages() {
+void main() {
     UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
         .maxImageBytes(2 * 1024 * 1024)
         .maxRedirects(1)

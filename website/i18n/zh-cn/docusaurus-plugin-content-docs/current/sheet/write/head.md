@@ -32,10 +32,10 @@ public class ComplexHeadData {
 ### 代码示例
 
 ```java
-@Test
-public void complexHeadWrite() {
-    String fileName = "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, ComplexHeadData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, ComplexHeadData.class)
             .sheet()
             .doWrite(data());
 }
@@ -69,16 +69,15 @@ public void complexHeadWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void dynamicHeadWrite() {
-    String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     List<List<String>> head = Arrays.asList(
             Collections.singletonList("动态字符串标题"),
             Collections.singletonList("动态数字标题"),
             Collections.singletonList("动态日期标题"));
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
             .head(head)
             .sheet()
             .doWrite(data());
@@ -123,9 +122,8 @@ public void dynamicHeadWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void dynamicHeadWriteWithStrategy() {
-    String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     List<List<String>> head = Arrays.asList(
         Arrays.asList("主标题", "编号", "编号"),
@@ -134,7 +132,7 @@ public void dynamicHeadWriteWithStrategy() {
         Arrays.asList("主标题", "B 组", "姓名"),
         Arrays.asList("主标题", "B 组", "年龄"));
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
         .head(head)
         .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
         .sheet()
@@ -238,11 +236,15 @@ public void dynamicHeadWriteWithStrategy() {
 **禁用合并**: 使用 `NONE` 完全禁用自动合并：
 
 ```java
-FesodSheet.write(fileName)
-    .head(head)
-    .headerMergeStrategy(HeaderMergeStrategy.NONE)
-    .sheet()
-    .doWrite(data());
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname)
+        .head(head)
+        .headerMergeStrategy(HeaderMergeStrategy.NONE)
+        .sheet()
+        .doWrite(data());
+}
 ```
 
 **注意**: 旧的 `automaticMergeHead` 参数仍然支持以保持向后兼容。当未设置 `headerMergeStrategy` 时，行为由 `automaticMergeHead` 决定（`true` → `AUTO`，`false` → `NONE`）。

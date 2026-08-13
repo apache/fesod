@@ -54,11 +54,10 @@ public class IndexOrNameData {
 #### Code Example
 
 ```java
-@Test
-public void indexOrNameRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, IndexOrNameData.class, new DemoDataListener())
+    FesodSheet.read(pathname, IndexOrNameData.class, new DemoDataListener())
             .sheet()
             .doRead();
 }
@@ -89,11 +88,10 @@ public class CellDataReadDemoData {
 ### Code Example
 
 ```java
-@Test
-public void cellDataRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, CellDataReadDemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, CellDataReadDemoData.class, new DemoDataListener())
             .sheet()
             .doRead();
 }

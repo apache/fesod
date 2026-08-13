@@ -62,16 +62,17 @@ private List<FillData> data() {
 ### 代码示例
 
 ```java
-@Test
-public void simpleFill() {
-    String templateFileName = "path/to/simple.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname0 = "path/to/demo0.xlsx";
+    String pathname1 = "path/to/demo1.xlsx";
 
     // 方案1：基于对象填充
     FillData fillData = new FillData();
     fillData.setName("张三");
     fillData.setNumber(5.2);
-    FesodSheet.write("simpleFill.xlsx")
-            .withTemplate(templateFileName)
+    FesodSheet.write(pathname0)
+            .withTemplate(template)
             .sheet()
             .doFill(fillData);
 
@@ -79,8 +80,8 @@ public void simpleFill() {
     Map<String, Object> map = new HashMap<>();
     map.put("name", "张三");
     map.put("number", 5.2);
-    FesodSheet.write("simpleFillMap.xlsx")
-            .withTemplate(templateFileName)
+    FesodSheet.write(pathname1)
+            .withTemplate(template)
             .sheet()
             .doFill(map);
 }
@@ -121,18 +122,19 @@ public void simpleFill() {
 ### 代码示例
 
 ```java
-@Test
-public void listFill() {
-    String templateFileName = "path/to/list.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname0 = "path/to/demo0.xlsx";
+    String pathname1 = "path/to/demo1.xlsx";
 
     // 方案1：一次性填充所有数据
-    FesodSheet.write("listFill.xlsx")
-            .withTemplate(templateFileName)
+    FesodSheet.write(pathname0)
+            .withTemplate(template)
             .sheet()
             .doFill(data());
 
     // 方案2：分批填充
-    try (ExcelWriter writer = FesodSheet.write("listFillBatch.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname1).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
         writer.fill(data(), writeSheet);
         writer.fill(data(), writeSheet);
@@ -198,11 +200,11 @@ public void listFill() {
 ### 代码示例
 
 ```java
-@Test
-public void complexFill() {
-    String templateFileName = "path/to/complex.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("complexFill.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // 填充列表数据，开启 forceNewRow
@@ -263,11 +265,11 @@ public void complexFill() {
 ### 代码示例
 
 ```java
-@Test
-public void complexFillWithTable() {
-    String templateFileName = "path/to/complexFillWithTable.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("complexFillWithTable.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // 填充列表数据
@@ -332,11 +334,11 @@ public void complexFillWithTable() {
 ### 代码示例
 
 ```java
-@Test
-public void horizontalFill() {
-    String templateFileName = "path/to/horizontal.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("horizontalFill.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         FillConfig config = FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build();
@@ -390,11 +392,11 @@ public void horizontalFill() {
 ### 代码示例
 
 ```java
-@Test
-public void compositeFill() {
-    String templateFileName = "path/to/composite.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("compositeFill.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // 使用 FillWrapper 进行多列表填充

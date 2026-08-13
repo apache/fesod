@@ -48,13 +48,12 @@ POJO 中所有字段均为 `String` 类型。Fesod 会在设置字段值之前�
 ### 代码示例
 
 ```java
-@Test
-public void converterRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, ConverterData.class, new PageReadListener<ConverterData>(dataList -> {
+    FesodSheet.read(pathname, ConverterData.class, new PageReadListener<ConverterData>(dataList -> {
         for (ConverterData data : dataList) {
-            log.info("读取到一行数据：{}", JSON.toJSONString(data));
+            System.out.println("读取到一行数据：" + JSON.toJSONString(data));
         }
     })).sheet().doRead();
 }

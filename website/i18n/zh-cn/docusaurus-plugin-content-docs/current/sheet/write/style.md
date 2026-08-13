@@ -47,11 +47,10 @@ public class DemoStyleData {
 ### 代码示例
 
 ```java
-@Test
-public void annotationStyleWrite() {
-    String fileName = "annotationStyleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoStyleData.class)
+    FesodSheet.write(pathname, DemoStyleData.class)
             .sheet()
             .doWrite(data());
 }
@@ -84,9 +83,8 @@ public void annotationStyleWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void handlerStyleWrite() {
-    String fileName = "handlerStyleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // 定义表头样式
     WriteCellStyle headStyle = new WriteCellStyle();
@@ -107,7 +105,7 @@ public void handlerStyleWrite() {
     HorizontalCellStyleStrategy styleStrategy =
             new HorizontalCellStyleStrategy(headStyle, contentStyle);
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(styleStrategy)
             .sheet("样式模板")
             .doWrite(data());
@@ -172,11 +170,10 @@ public class CustomCellStyleWriteHandler implements CellWriteHandler {
 使用
 
 ```java
-@Test
-public void customCellStyleWrite() {
-    String fileName = "customCellStyleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new CustomCellStyleWriteHandler())
             .sheet("自定义样式")
             .doWrite(data());
@@ -194,11 +191,10 @@ public void customCellStyleWrite() {
 ### 代码示例
 
 ```java
-@Test
-public void poiStyleWrite() {
-    String fileName = "poiStyleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .registerWriteHandler(new CellWriteHandler() {
                 @Override
                 public void afterCellDispose(CellWriteHandlerContext context) {
@@ -252,11 +248,10 @@ public class WidthAndHeightData {
 ### 代码示例
 
 ```java
-@Test
-public void widthAndHeightWrite() {
-    String fileName = "widthAndHeightWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, WidthAndHeightData.class)
+    FesodSheet.write(pathname, WidthAndHeightData.class)
             .sheet()
             .doWrite(data());
 }

@@ -30,11 +30,9 @@ import org.apache.fesod.common.util.ValidateUtils;
 public final class MapBeanWrapper implements BeanWrapper {
 
     private final Map<String, Object> delegate;
-    private final Set<String> properties;
 
     public MapBeanWrapper(Map<String, Object> map) {
         this.delegate = ValidateUtils.notNull(map, "The map must not be null");
-        this.properties = Collections.unmodifiableSet(this.delegate.keySet());
     }
 
     @Override
@@ -56,7 +54,7 @@ public final class MapBeanWrapper implements BeanWrapper {
 
     @Override
     public Set<String> getPropertyNames() {
-        return properties;
+        return Collections.unmodifiableSet(delegate.keySet());
     }
 
     @Override

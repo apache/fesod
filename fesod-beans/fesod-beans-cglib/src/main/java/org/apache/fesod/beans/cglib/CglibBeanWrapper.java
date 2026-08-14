@@ -21,6 +21,7 @@ package org.apache.fesod.beans.cglib;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.fesod.common.beans.BeanWrapper;
 import org.apache.fesod.common.util.ValidateUtils;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
@@ -31,6 +32,7 @@ import org.apache.fesod.shaded.cglib.core.DefaultNamingPolicy;
  */
 public final class CglibBeanWrapper implements BeanWrapper {
 
+    private static final Map<Class<?>, BeanMap> BEAN_MAP_CACHE = new ConcurrentHashMap<>();
     private final BeanMap delegate;
 
     public CglibBeanWrapper(Object bean) {
@@ -40,11 +42,15 @@ public final class CglibBeanWrapper implements BeanWrapper {
     }
 
     private BeanMap initBeanMap(Object bean) {
-        BeanMap.Generator gen = new BeanMap.Generator();
-        gen.setBean(bean);
-        gen.setContextClass(bean.getClass());
-        gen.setNamingPolicy(FesodSheetNamingPolicy.INSTANCE);
-        return gen.create();
+        BeanMap beanMap = BEAN_MAP_CACHE.computeIfAbsent(bean.getClass(), clazz -> {
+            BeanMap.Generator gen = new BeanMap.Generator();
+            gen.setBeanClass(clazz);
+            gen.setContextClass(clazz);
+            gen.setNamingPolicy(FesodSheetNamingPolicy.INSTANCE);
+            return gen.create();
+        });
+
+        return beanMap.newInstance(bean);
     }
 
     @Override

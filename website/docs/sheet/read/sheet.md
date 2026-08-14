@@ -101,15 +101,15 @@ public void exceptionRead() {
 > through
 > the "Unhide" operation.
 
-##Reading Specific Columns
+## Reading Specific Columns
 
-###Overview
+### Overview
 
 By configuring `includeColumnIndexes`, you can specify which columns to read from a sheet. Unselected columns are skipped during parsing, and the target columns are remapped to contiguous zero-based indices.
 
 Note: This feature supports both modern `.xlsx` (OOXML) and legacy `.xls` (BIFF8 / Excel 97–2003) file formats.
 
-###Code Example
+### Code Example
 
 ```java
 @Test

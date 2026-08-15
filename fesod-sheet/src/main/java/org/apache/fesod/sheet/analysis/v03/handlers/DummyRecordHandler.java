@@ -26,7 +26,6 @@
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
@@ -59,17 +58,12 @@ public class DummyRecordHandler extends AbstractXlsRecordHandler implements Igno
             xlsReadSheetHolder.setTempRowType(RowTypeEnum.EMPTY);
         } else if (record instanceof MissingCellDummyRecord) {
             MissingCellDummyRecord mcdr = (MissingCellDummyRecord) record;
-            int originalColumnIndex = mcdr.getColumn();
-            List<Integer> includeColumnIndexes =
-                    xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
 
-            int targetColumnIndex = originalColumnIndex;
-            if (includeColumnIndexes != null) {
-                targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-                if (targetColumnIndex < 0) {
-                    return;
-                }
+            Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(mcdr.getColumn());
+            if (targetColumnIndex == null) {
+                return;
             }
+
             // Some abnormal XLS, in the case of data already exist, or there will be a "MissingCellDummyRecord"
             // records, so if the existing data, empty data is ignored
             xlsReadSheetHolder

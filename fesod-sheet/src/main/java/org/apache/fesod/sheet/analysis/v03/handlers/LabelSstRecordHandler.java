@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
-import java.util.List;
 import java.util.Map;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
@@ -46,17 +45,10 @@ public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements I
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelSSTRecord lsrec = (LabelSSTRecord) record;
-        int originalColumnIndex = lsrec.getColumn();
 
-        List<Integer> includeColumnIndexes =
-                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-
-        int targetColumnIndex = originalColumnIndex;
-        if (includeColumnIndexes != null) {
-            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex < 0) {
-                return;
-            }
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(lsrec.getColumn());
+        if (targetColumnIndex == null) {
+            return;
         }
 
         ReadCache readCache = xlsReadContext.readWorkbookHolder().getReadCache();

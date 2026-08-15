@@ -56,9 +56,9 @@ public class ReadSheet extends ReadBasicParameter {
     public Integer numRows;
 
     /**
-     * Specific columns to read (0-based indexes)
+     * Resolver for reading included columns.
      */
-    private List<Integer> columnIndexes;
+    private ColumnIndexResolver includeColumnIndexResolver = ColumnIndexResolver.PASS_THROUGH;
 
     public ReadSheet() {}
 
@@ -81,7 +81,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetNo = sheetNo;
         this.sheetName = sheetName;
         this.numRows = numRows;
-        this.columnIndexes = numCols;
+        this.includeColumnIndexResolver = ColumnIndexResolver.from(numCols);
     }
 
     public Integer getSheetNo() {
@@ -124,12 +124,16 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetVeryHidden = sheetVeryHidden;
     }
 
-    public List<Integer> getColumnIndexes() {
-        return this.columnIndexes;
+    public ColumnIndexResolver getIncludedColumnIndexResolver() {
+        return this.includeColumnIndexResolver;
     }
 
     public void setColumnIndexes(List<Integer> columnIndexes) {
-        this.columnIndexes = columnIndexes;
+        this.includeColumnIndexResolver = ColumnIndexResolver.from(columnIndexes);
+    }
+
+    public void setIncludedColumnIndexResolver(ColumnIndexResolver includeColumnIndexResolver) {
+        this.includeColumnIndexResolver = includeColumnIndexResolver;
     }
 
     public void copyBasicParameter(ReadSheet other) {
@@ -147,7 +151,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());
-        this.setColumnIndexes(other.getColumnIndexes());
+        this.setIncludedColumnIndexResolver(other.getIncludedColumnIndexResolver());
     }
 
     @Override

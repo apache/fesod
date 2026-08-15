@@ -46,6 +46,9 @@ public void indexOrNameRead() {
 }
 ```
 
+使用 includeColumnIndexes 时的注意事项：
+如果在读取器上配置了 includeColumnIndexes（例如选择原始列 [0, 2, 4]），解析后的列会被重新映射为连续的索引（0, 1, 2）。请确保 @ExcelProperty(index = ...) 中的索引对应的是重新映射后的列索引，而非原始文件中的列索引。
+
 ---
 
 ## 单元格对象

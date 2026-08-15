@@ -120,6 +120,13 @@ String fileName = "path/to/demo.xls";
     // Specify 0-based column indices to include (e.g., Column A, C, E)
     List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
 
+    // Option 1
+    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0, "Sheet1", targetColumns).build();
+        excelReader.read(readSheet);
+    }
+
+    // Option 2
     try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
         ReadSheet readSheet = FesodSheet.readSheet(0)
                 .head(DemoData.class)

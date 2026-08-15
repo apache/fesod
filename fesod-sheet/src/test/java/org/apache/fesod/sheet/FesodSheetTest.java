@@ -19,18 +19,6 @@
 
 package org.apache.fesod.sheet;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.read.builder.ExcelReaderSheetBuilder;
@@ -52,6 +40,19 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 @Tag(Tags.UNIT)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FesodSheet Unit Tests")
@@ -72,7 +73,8 @@ class FesodSheetTest {
     private File tempFile;
     private String tempFilePath;
 
-    private static class DemoData {}
+    private static class DemoData {
+    }
 
     private WriteWorkbook writeWorkbook(ExcelWriterBuilder builder) {
         try {
@@ -297,7 +299,7 @@ class FesodSheetTest {
 
         List<Integer> targetColumns = Arrays.asList(0, 2);
 
-        ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0, "Sheet1", targetColumns);
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0, "Sheet1", 100, targetColumns);
         ReadSheet configuredSheet = builder.build();
         List<Map<Integer, String>> readResults = FesodSheet.read(tempFile)
                 .sheet(0)

@@ -29,6 +29,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.write.handler.EscapeHexCellWriteHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,20 +42,26 @@ import org.junit.jupiter.api.Test;
 @Tag(Tags.ROUND_TRIP)
 class HexEscapeRoundTripTest extends AbstractExcelTest {
 
-    private static final String STX = String.valueOf((char) 0x02);
-
+    /**
+     * The handler is what puts a real escape in the cell, storing the literal as {@code Product_x005F_x0002_Code}.
+     * Taking it from the writer's own output instead would tie the expectation to a writer default, not to the
+     * reader under test.
+     */
     @Test
-    void readDecodesHexEscapeInCellText() throws IOException {
+    void escapedOnWrite_readsBackAsTheLiteral() throws IOException {
         SimpleData data = new SimpleData();
         data.setName("Product_x0002_Code");
         File file = createTempFile("hex-escape", ExcelFormat.XLSX);
-        FesodSheet.write(file, SimpleData.class).sheet().doWrite(Collections.singletonList(data));
+        FesodSheet.write(file, SimpleData.class)
+                .registerWriteHandler(new EscapeHexCellWriteHandler())
+                .sheet()
+                .doWrite(Collections.singletonList(data));
 
         CollectingReadListener<SimpleData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, SimpleData.class, listener).sheet().doRead();
         List<SimpleData> rows = listener.getRows();
 
         Assertions.assertEquals(1, rows.size());
-        Assertions.assertEquals("Product" + STX + "Code", rows.get(0).getName());
+        Assertions.assertEquals("Product_x0002_Code", rows.get(0).getName());
     }
 }

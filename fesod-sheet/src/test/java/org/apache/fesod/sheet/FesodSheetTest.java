@@ -297,7 +297,7 @@ class FesodSheetTest {
 
         List<Integer> targetColumns = Arrays.asList(0, 2);
 
-        ExcelReaderSheetBuilder builder = FesodSheet.readSheetWithColumns(0, "Sheet1", 100, targetColumns);
+        ExcelReaderSheetBuilder builder = FesodSheet.readSheet(0, "Sheet1", 100, targetColumns);
         ReadSheet configuredSheet = builder.build();
         List<Map<Integer, String>> readResults = FesodSheet.read(tempFile)
                 .sheet(0)

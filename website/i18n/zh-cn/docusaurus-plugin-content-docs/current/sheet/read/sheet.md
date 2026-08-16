@@ -99,6 +99,13 @@ public void readSpecificColumns() {
     // 指定需要读取的列索引（从 0 开始，例如 0, 2, 4 代表 A, C, E 列）
     List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
 
+    // 方案 1
+    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0, "Sheet1", targetColumns).build();
+        excelReader.read(readSheet);
+    }
+
+    // 方案 2
     try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
         ReadSheet readSheet = FesodSheet.readSheet(0)
                 .head(DemoData.class)

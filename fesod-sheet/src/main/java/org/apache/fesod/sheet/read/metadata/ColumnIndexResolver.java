@@ -54,6 +54,7 @@ public interface ColumnIndexResolver {
 
         DefaultIncludedColumnIndexResolver(List<Integer> columnIndexes) {
             Validate.notEmpty(columnIndexes, "The includeColumnIndexes must not be empty");
+            Validate.noNullElements(columnIndexes, "The includeColumnIndexes must not contain null elements");
 
             List<Integer> tmpColumnIndexes = new ArrayList<>(columnIndexes);
             this.indexMap = MapUtils.newHashMapWithExpectedSize(tmpColumnIndexes.size());

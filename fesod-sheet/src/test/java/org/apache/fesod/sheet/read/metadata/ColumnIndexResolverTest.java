@@ -38,6 +38,8 @@ class ColumnIndexResolverTest {
         Assertions.assertThrows(NullPointerException.class, () -> ColumnIndexResolver.fromInclude(null));
         Assertions.assertThrows(
                 IllegalArgumentException.class, () -> ColumnIndexResolver.fromInclude(Collections.emptyList()));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> ColumnIndexResolver.fromInclude(Arrays.asList(1, null)));
     }
 
     @Test

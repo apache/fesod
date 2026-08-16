@@ -38,8 +38,24 @@ import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 @Getter
 @AllArgsConstructor
 public class DateTimeFormatProperty {
-    private final String format;
-    private final Boolean use1904windowing;
+    private String format;
+    private Boolean use1904windowing;
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setUse1904windowing(Boolean use1904windowing) {
+        this.use1904windowing = use1904windowing;
+    }
 
     public static DateTimeFormatProperty build(DateTimeFormat dateTimeFormat) {
         if (dateTimeFormat == null) {

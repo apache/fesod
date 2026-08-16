@@ -36,22 +36,54 @@ public class SheetFreezePaneProperty {
     /**
      * Horizontal position of split.
      */
-    private final int colSplit;
+    private int colSplit;
 
     /**
      * Vertical position of split.
      */
-    private final int rowSplit;
+    private int rowSplit;
 
     /**
      * Left column visible in right pane.
      */
-    private final int leftmostColumn;
+    private int leftmostColumn;
 
     /**
      * Top row visible in bottom pane
      */
-    private final int topRow;
+    private int topRow;
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setColSplit(int colSplit) {
+        this.colSplit = colSplit;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setRowSplit(int rowSplit) {
+        this.rowSplit = rowSplit;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setLeftmostColumn(int leftmostColumn) {
+        this.leftmostColumn = leftmostColumn;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setTopRow(int topRow) {
+        this.topRow = topRow;
+    }
 
     public static SheetFreezePaneProperty build(FreezePane freezePane) {
         if (freezePane == null) {

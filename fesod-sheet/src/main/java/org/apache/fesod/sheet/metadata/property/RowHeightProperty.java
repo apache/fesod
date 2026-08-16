@@ -38,7 +38,15 @@ import org.apache.fesod.sheet.annotation.write.style.HeadRowHeight;
 @Getter
 @AllArgsConstructor
 public class RowHeightProperty {
-    private final Short height;
+    private Short height;
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setHeight(Short height) {
+        this.height = height;
+    }
 
     public static RowHeightProperty build(HeadRowHeight headRowHeight) {
         if (headRowHeight == null || headRowHeight.value() < 0) {

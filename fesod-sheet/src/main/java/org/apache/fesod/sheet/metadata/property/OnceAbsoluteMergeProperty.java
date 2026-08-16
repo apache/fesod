@@ -40,19 +40,51 @@ public class OnceAbsoluteMergeProperty {
     /**
      * First row
      */
-    private final int firstRowIndex;
+    private int firstRowIndex;
     /**
      * Last row
      */
-    private final int lastRowIndex;
+    private int lastRowIndex;
     /**
      * First column
      */
-    private final int firstColumnIndex;
+    private int firstColumnIndex;
     /**
      * Last row
      */
-    private final int lastColumnIndex;
+    private int lastColumnIndex;
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setFirstRowIndex(int firstRowIndex) {
+        this.firstRowIndex = firstRowIndex;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setLastRowIndex(int lastRowIndex) {
+        this.lastRowIndex = lastRowIndex;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setFirstColumnIndex(int firstColumnIndex) {
+        this.firstColumnIndex = firstColumnIndex;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setLastColumnIndex(int lastColumnIndex) {
+        this.lastColumnIndex = lastColumnIndex;
+    }
 
     public static OnceAbsoluteMergeProperty build(OnceAbsoluteMerge onceAbsoluteMerge) {
         if (onceAbsoluteMerge == null) {

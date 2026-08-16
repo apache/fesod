@@ -37,7 +37,15 @@ import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 @Getter
 @AllArgsConstructor
 public class ColumnWidthProperty {
-    private final Integer width;
+    private Integer width;
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
 
     public static ColumnWidthProperty build(ColumnWidth columnWidth) {
         if (columnWidth == null || columnWidth.value() < 0) {

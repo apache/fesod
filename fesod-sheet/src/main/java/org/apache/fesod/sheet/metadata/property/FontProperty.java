@@ -98,32 +98,104 @@ public class FontProperty {
      */
     private Boolean bold;
 
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setFontName(String fontName) {
+        this.fontName = fontName;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setFontHeightInPoints(Short fontHeightInPoints) {
+        this.fontHeightInPoints = fontHeightInPoints;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setItalic(Boolean italic) {
+        this.italic = italic;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setStrikeout(Boolean strikeout) {
+        this.strikeout = strikeout;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setColor(Short color) {
+        this.color = color;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setTypeOffset(Short typeOffset) {
+        this.typeOffset = typeOffset;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setUnderline(Byte underline) {
+        this.underline = underline;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setCharset(Integer charset) {
+        this.charset = charset;
+    }
+
+    /**
+     * @deprecated This setter will be removed in a future release to make the class immutable.
+     */
+    @Deprecated
+    public void setBold(Boolean bold) {
+        this.bold = bold;
+    }
+
     public static FontProperty build(HeadFontStyle headFontStyle) {
         if (headFontStyle == null) {
             return null;
         }
         FontProperty styleProperty = new FontProperty();
         if (StringUtils.isNotBlank(headFontStyle.fontName())) {
-            styleProperty.fontName = headFontStyle.fontName();
+            styleProperty.setFontName(headFontStyle.fontName());
         }
         if (headFontStyle.fontHeightInPoints() >= 0) {
-            styleProperty.fontHeightInPoints = headFontStyle.fontHeightInPoints();
+            styleProperty.setFontHeightInPoints(headFontStyle.fontHeightInPoints());
         }
-        styleProperty.italic = headFontStyle.italic().getBooleanValue();
-        styleProperty.strikeout = headFontStyle.strikeout().getBooleanValue();
+        styleProperty.setItalic(headFontStyle.italic().getBooleanValue());
+        styleProperty.setStrikeout(headFontStyle.strikeout().getBooleanValue());
         if (headFontStyle.color() >= 0) {
-            styleProperty.color = headFontStyle.color();
+            styleProperty.setColor(headFontStyle.color());
         }
         if (headFontStyle.typeOffset() >= 0) {
-            styleProperty.typeOffset = headFontStyle.typeOffset();
+            styleProperty.setTypeOffset(headFontStyle.typeOffset());
         }
         if (headFontStyle.underline() >= 0) {
-            styleProperty.underline = headFontStyle.underline();
+            styleProperty.setUnderline(headFontStyle.underline());
         }
         if (headFontStyle.charset() >= 0) {
-            styleProperty.charset = headFontStyle.charset();
+            styleProperty.setCharset(headFontStyle.charset());
         }
-        styleProperty.bold = headFontStyle.bold().getBooleanValue();
+        styleProperty.setBold(headFontStyle.bold().getBooleanValue());
         return styleProperty;
     }
 
@@ -133,26 +205,26 @@ public class FontProperty {
         }
         FontProperty styleProperty = new FontProperty();
         if (StringUtils.isNotBlank(contentFontStyle.fontName())) {
-            styleProperty.fontName = contentFontStyle.fontName();
+            styleProperty.setFontName(contentFontStyle.fontName());
         }
         if (contentFontStyle.fontHeightInPoints() >= 0) {
-            styleProperty.fontHeightInPoints = contentFontStyle.fontHeightInPoints();
+            styleProperty.setFontHeightInPoints(contentFontStyle.fontHeightInPoints());
         }
-        styleProperty.italic = contentFontStyle.italic().getBooleanValue();
-        styleProperty.strikeout = contentFontStyle.strikeout().getBooleanValue();
+        styleProperty.setItalic(contentFontStyle.italic().getBooleanValue());
+        styleProperty.setStrikeout(contentFontStyle.strikeout().getBooleanValue());
         if (contentFontStyle.color() >= 0) {
-            styleProperty.color = contentFontStyle.color();
+            styleProperty.setColor(contentFontStyle.color());
         }
         if (contentFontStyle.typeOffset() >= 0) {
-            styleProperty.typeOffset = contentFontStyle.typeOffset();
+            styleProperty.setTypeOffset(contentFontStyle.typeOffset());
         }
         if (contentFontStyle.underline() >= 0) {
-            styleProperty.underline = contentFontStyle.underline();
+            styleProperty.setUnderline(contentFontStyle.underline());
         }
         if (contentFontStyle.charset() >= 0) {
-            styleProperty.charset = contentFontStyle.charset();
+            styleProperty.setCharset(contentFontStyle.charset());
         }
-        styleProperty.bold = contentFontStyle.bold().getBooleanValue();
+        styleProperty.setBold(contentFontStyle.bold().getBooleanValue());
         return styleProperty;
     }
 }

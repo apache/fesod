@@ -19,6 +19,7 @@
 
 package org.apache.fesod.sheet.write.style;
 
+import org.apache.fesod.sheet.metadata.property.SheetFreezePaneProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
@@ -60,6 +61,13 @@ class SheetFreezePaneStrategyTest {
     @Test
     void constructor_acceptsPositiveValues() {
         Assertions.assertDoesNotThrow(() -> new SheetFreezePaneStrategy(2, 3, 4, 5));
+    }
+
+    @Test
+    void constructor_fromProperty_shouldNotThrowException() {
+        SheetFreezePaneProperty property = new SheetFreezePaneProperty(2, 3, 4, 5);
+
+        Assertions.assertDoesNotThrow(() -> new SheetFreezePaneStrategy(property));
     }
 
     @Test

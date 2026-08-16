@@ -49,6 +49,21 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
  */
 public class EscapeHexCellWriteHandler implements CellWriteHandler {
 
+    // ASCII hex digits only. Not Character.digit(c, 16), which also accepts non-ASCII
+    // digits such as U+0663 that OOXML never uses.
+    private static final boolean[] HEX_TABLE = new boolean[128];
+
+    static {
+        for (char c = '0'; c <= '9'; c++) HEX_TABLE[c] = true;
+        for (char c = 'A'; c <= 'F'; c++) HEX_TABLE[c] = true;
+        for (char c = 'a'; c <= 'f'; c++) HEX_TABLE[c] = true;
+    }
+
+    private static final String PREFIX = "_x";
+    private static final String ESCAPED_PREFIX = "_x005F" + PREFIX;
+    private static final int PREFIX_LENGTH = PREFIX.length();
+    private static final int HEX_DIGIT_COUNT = 4;
+
     @Override
     public void afterCellDataConverted(
             WriteSheetHolder writeSheetHolder,
@@ -68,101 +83,56 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
         }
     }
 
-    // Static hex lookup table for O(1) character validation
-    private static final boolean[] HEX_TABLE = new boolean[128];
-
-    static {
-        for (char c = '0'; c <= '9'; c++) HEX_TABLE[c] = true;
-        for (char c = 'A'; c <= 'F'; c++) HEX_TABLE[c] = true;
-        for (char c = 'a'; c <= 'f'; c++) HEX_TABLE[c] = true;
-    }
-
     /**
-     * Escapes hexadecimal-encoded strings with optimized performance Replaces _xHHHH_ with _x005F_xHHHH_ to prevent POI
-     * from decoding them
+     * Replaces every _xHHHH_ sequence with _x005F_xHHHH_ to prevent POI from decoding them.
      */
     private String escapeHex(String originalString) {
         int length = originalString.length();
 
-        // Fast path: if string is too short to contain pattern, return original
-        if (length < 7) {
-            return originalString;
-        }
-
-        // Fast path: search for first potential pattern
+        // Lazily allocated: stays null (no allocation) when no valid pattern is found
+        StringBuilder result = null;
+        int lastEnd = 0;
         int searchStart = 0;
         int patternIndex;
-        while ((patternIndex = originalString.indexOf("_x", searchStart)) != -1) {
-            // Check if we have enough characters for full pattern
-            if (patternIndex + 6 >= length) {
+        while ((patternIndex = originalString.indexOf(PREFIX, searchStart)) != -1) {
+            int hexStart = patternIndex + PREFIX_LENGTH;
+            int suffixIndex = hexStart + HEX_DIGIT_COUNT;
+            int patternEnd = suffixIndex + 1;
+            // Too few characters left for a full pattern, and any later match has even fewer
+            if (patternEnd > length) {
                 break;
             }
 
-            // Quick validation: check if it ends with '_' and has valid hex
-            if (originalString.charAt(patternIndex + 6) == '_' && isValidHexFast(originalString, patternIndex + 2)) {
-
-                // Found at least one pattern, proceed with full processing
-                return processWithPatterns(originalString, patternIndex);
+            if (originalString.charAt(suffixIndex) == '_' && isHexDigits(originalString, hexStart)) {
+                if (result == null) {
+                    result = new StringBuilder(length + 64);
+                }
+                // Append content since the previous match, then the escaped pattern
+                result.append(originalString, lastEnd, patternIndex);
+                result.append(ESCAPED_PREFIX);
+                result.append(originalString, hexStart, suffixIndex);
+                result.append('_');
+                lastEnd = patternEnd;
+                searchStart = patternEnd;
+            } else {
+                searchStart = hexStart;
             }
-
-            searchStart = patternIndex + 2;
         }
 
         // No valid patterns found
-        return originalString;
-    }
-
-    /**
-     * Process string when we know it contains at least one valid pattern
-     */
-    private String processWithPatterns(String originalString, int firstPatternIndex) {
-        int length = originalString.length();
-        StringBuilder result = new StringBuilder(length + 64); // More generous pre-allocation
-        int lastEnd;
-
-        // Process the first known pattern
-        result.append(originalString, 0, firstPatternIndex);
-        result.append("_x005F_x");
-        result.append(originalString, firstPatternIndex + 2, firstPatternIndex + 6);
-        result.append('_');
-        lastEnd = firstPatternIndex + 7;
-
-        // Continue searching for more patterns
-        int searchStart = firstPatternIndex + 7;
-        int patternIndex;
-        while ((patternIndex = originalString.indexOf("_x", searchStart)) != -1) {
-            if (patternIndex + 6 >= length) {
-                break;
-            }
-
-            if (originalString.charAt(patternIndex + 6) == '_' && isValidHexFast(originalString, patternIndex + 2)) {
-
-                // Append content between patterns
-                result.append(originalString, lastEnd, patternIndex);
-                // Append escaped pattern
-                result.append("_x005F_x");
-                result.append(originalString, patternIndex + 2, patternIndex + 6);
-                result.append('_');
-                lastEnd = patternIndex + 7;
-                searchStart = patternIndex + 7;
-            } else {
-                searchStart = patternIndex + 2;
-            }
+        if (result == null) {
+            return originalString;
         }
 
-        // Append remaining content
-        if (lastEnd < length) {
-            result.append(originalString, lastEnd, length);
-        }
-
+        result.append(originalString, lastEnd, length);
         return result.toString();
     }
 
     /**
-     * Fast hex validation using lookup table - O(1) per character
+     * Checks whether the four characters starting at {@code startIndex} are all ASCII hex digits.
      */
-    private static boolean isValidHexFast(String str, int startIndex) {
-        for (int i = 0; i < 4; i++) {
+    private static boolean isHexDigits(String str, int startIndex) {
+        for (int i = 0; i < HEX_DIGIT_COUNT; i++) {
             char c = str.charAt(startIndex + i);
             if (c >= 128 || !HEX_TABLE[c]) {
                 return false;

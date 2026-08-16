@@ -162,182 +162,6 @@ public class StyleProperty {
      */
     private Boolean shrinkToFit;
 
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setDataFormatData(DataFormatData dataFormatData) {
-        this.dataFormatData = dataFormatData;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setWriteFont(WriteFont writeFont) {
-        this.writeFont = writeFont;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setHidden(Boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setQuotePrefix(Boolean quotePrefix) {
-        this.quotePrefix = quotePrefix;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
-        this.horizontalAlignment = horizontalAlignment;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setWrapped(Boolean wrapped) {
-        this.wrapped = wrapped;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setVerticalAlignment(VerticalAlignment verticalAlignment) {
-        this.verticalAlignment = verticalAlignment;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setRotation(Short rotation) {
-        this.rotation = rotation;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setIndent(Short indent) {
-        this.indent = indent;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setBorderLeft(BorderStyle borderLeft) {
-        this.borderLeft = borderLeft;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setBorderRight(BorderStyle borderRight) {
-        this.borderRight = borderRight;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setBorderTop(BorderStyle borderTop) {
-        this.borderTop = borderTop;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setBorderBottom(BorderStyle borderBottom) {
-        this.borderBottom = borderBottom;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setLeftBorderColor(Short leftBorderColor) {
-        this.leftBorderColor = leftBorderColor;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setRightBorderColor(Short rightBorderColor) {
-        this.rightBorderColor = rightBorderColor;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setTopBorderColor(Short topBorderColor) {
-        this.topBorderColor = topBorderColor;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setBottomBorderColor(Short bottomBorderColor) {
-        this.bottomBorderColor = bottomBorderColor;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setFillPatternType(FillPatternType fillPatternType) {
-        this.fillPatternType = fillPatternType;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setFillBackgroundColor(Short fillBackgroundColor) {
-        this.fillBackgroundColor = fillBackgroundColor;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setFillForegroundColor(Short fillForegroundColor) {
-        this.fillForegroundColor = fillForegroundColor;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setShrinkToFit(Boolean shrinkToFit) {
-        this.shrinkToFit = shrinkToFit;
-    }
-
     public static StyleProperty build(HeadStyle headStyle) {
         if (headStyle == null) {
             return null;
@@ -346,44 +170,44 @@ public class StyleProperty {
         if (headStyle.dataFormat() >= 0) {
             DataFormatData dataFormatData = new DataFormatData();
             dataFormatData.setIndex(headStyle.dataFormat());
-            styleProperty.setDataFormatData(dataFormatData);
+            styleProperty.dataFormatData = dataFormatData;
         }
-        styleProperty.setHidden(headStyle.hidden().getBooleanValue());
-        styleProperty.setLocked(headStyle.locked().getBooleanValue());
-        styleProperty.setQuotePrefix(headStyle.quotePrefix().getBooleanValue());
-        styleProperty.setHorizontalAlignment(headStyle.horizontalAlignment().getPoiHorizontalAlignment());
-        styleProperty.setWrapped(headStyle.wrapped().getBooleanValue());
-        styleProperty.setVerticalAlignment(headStyle.verticalAlignment().getPoiVerticalAlignmentEnum());
+        styleProperty.hidden = headStyle.hidden().getBooleanValue();
+        styleProperty.locked = headStyle.locked().getBooleanValue();
+        styleProperty.quotePrefix = headStyle.quotePrefix().getBooleanValue();
+        styleProperty.horizontalAlignment = headStyle.horizontalAlignment().getPoiHorizontalAlignment();
+        styleProperty.wrapped = headStyle.wrapped().getBooleanValue();
+        styleProperty.verticalAlignment = headStyle.verticalAlignment().getPoiVerticalAlignmentEnum();
         if (headStyle.rotation() >= 0) {
-            styleProperty.setRotation(headStyle.rotation());
+            styleProperty.rotation = headStyle.rotation();
         }
         if (headStyle.indent() >= 0) {
-            styleProperty.setIndent(headStyle.indent());
+            styleProperty.indent = headStyle.indent();
         }
-        styleProperty.setBorderLeft(headStyle.borderLeft().getPoiBorderStyle());
-        styleProperty.setBorderRight(headStyle.borderRight().getPoiBorderStyle());
-        styleProperty.setBorderTop(headStyle.borderTop().getPoiBorderStyle());
-        styleProperty.setBorderBottom(headStyle.borderBottom().getPoiBorderStyle());
+        styleProperty.borderLeft = headStyle.borderLeft().getPoiBorderStyle();
+        styleProperty.borderRight = headStyle.borderRight().getPoiBorderStyle();
+        styleProperty.borderTop = headStyle.borderTop().getPoiBorderStyle();
+        styleProperty.borderBottom = headStyle.borderBottom().getPoiBorderStyle();
         if (headStyle.leftBorderColor() >= 0) {
-            styleProperty.setLeftBorderColor(headStyle.leftBorderColor());
+            styleProperty.leftBorderColor = headStyle.leftBorderColor();
         }
         if (headStyle.rightBorderColor() >= 0) {
-            styleProperty.setRightBorderColor(headStyle.rightBorderColor());
+            styleProperty.rightBorderColor = headStyle.rightBorderColor();
         }
         if (headStyle.topBorderColor() >= 0) {
-            styleProperty.setTopBorderColor(headStyle.topBorderColor());
+            styleProperty.topBorderColor = headStyle.topBorderColor();
         }
         if (headStyle.bottomBorderColor() >= 0) {
-            styleProperty.setBottomBorderColor(headStyle.bottomBorderColor());
+            styleProperty.bottomBorderColor = headStyle.bottomBorderColor();
         }
-        styleProperty.setFillPatternType(headStyle.fillPatternType().getPoiFillPatternType());
+        styleProperty.fillPatternType = headStyle.fillPatternType().getPoiFillPatternType();
         if (headStyle.fillBackgroundColor() >= 0) {
-            styleProperty.setFillBackgroundColor(headStyle.fillBackgroundColor());
+            styleProperty.fillBackgroundColor = headStyle.fillBackgroundColor();
         }
         if (headStyle.fillForegroundColor() >= 0) {
-            styleProperty.setFillForegroundColor(headStyle.fillForegroundColor());
+            styleProperty.fillForegroundColor = headStyle.fillForegroundColor();
         }
-        styleProperty.setShrinkToFit(headStyle.shrinkToFit().getBooleanValue());
+        styleProperty.shrinkToFit = headStyle.shrinkToFit().getBooleanValue();
         return styleProperty;
     }
 
@@ -395,44 +219,44 @@ public class StyleProperty {
         if (contentStyle.dataFormat() >= 0) {
             DataFormatData dataFormatData = new DataFormatData();
             dataFormatData.setIndex(contentStyle.dataFormat());
-            styleProperty.setDataFormatData(dataFormatData);
+            styleProperty.dataFormatData = dataFormatData;
         }
-        styleProperty.setHidden(contentStyle.hidden().getBooleanValue());
-        styleProperty.setLocked(contentStyle.locked().getBooleanValue());
-        styleProperty.setQuotePrefix(contentStyle.quotePrefix().getBooleanValue());
-        styleProperty.setHorizontalAlignment(contentStyle.horizontalAlignment().getPoiHorizontalAlignment());
-        styleProperty.setWrapped(contentStyle.wrapped().getBooleanValue());
-        styleProperty.setVerticalAlignment(contentStyle.verticalAlignment().getPoiVerticalAlignmentEnum());
+        styleProperty.hidden = contentStyle.hidden().getBooleanValue();
+        styleProperty.locked = contentStyle.locked().getBooleanValue();
+        styleProperty.quotePrefix = contentStyle.quotePrefix().getBooleanValue();
+        styleProperty.horizontalAlignment = contentStyle.horizontalAlignment().getPoiHorizontalAlignment();
+        styleProperty.wrapped = contentStyle.wrapped().getBooleanValue();
+        styleProperty.verticalAlignment = contentStyle.verticalAlignment().getPoiVerticalAlignmentEnum();
         if (contentStyle.rotation() >= 0) {
-            styleProperty.setRotation(contentStyle.rotation());
+            styleProperty.rotation = contentStyle.rotation();
         }
         if (contentStyle.indent() >= 0) {
-            styleProperty.setIndent(contentStyle.indent());
+            styleProperty.indent = contentStyle.indent();
         }
-        styleProperty.setBorderLeft(contentStyle.borderLeft().getPoiBorderStyle());
-        styleProperty.setBorderRight(contentStyle.borderRight().getPoiBorderStyle());
-        styleProperty.setBorderTop(contentStyle.borderTop().getPoiBorderStyle());
-        styleProperty.setBorderBottom(contentStyle.borderBottom().getPoiBorderStyle());
+        styleProperty.borderLeft = contentStyle.borderLeft().getPoiBorderStyle();
+        styleProperty.borderRight = contentStyle.borderRight().getPoiBorderStyle();
+        styleProperty.borderTop = contentStyle.borderTop().getPoiBorderStyle();
+        styleProperty.borderBottom = contentStyle.borderBottom().getPoiBorderStyle();
         if (contentStyle.leftBorderColor() >= 0) {
-            styleProperty.setLeftBorderColor(contentStyle.leftBorderColor());
+            styleProperty.leftBorderColor = contentStyle.leftBorderColor();
         }
         if (contentStyle.rightBorderColor() >= 0) {
-            styleProperty.setRightBorderColor(contentStyle.rightBorderColor());
+            styleProperty.rightBorderColor = contentStyle.rightBorderColor();
         }
         if (contentStyle.topBorderColor() >= 0) {
-            styleProperty.setTopBorderColor(contentStyle.topBorderColor());
+            styleProperty.topBorderColor = contentStyle.topBorderColor();
         }
         if (contentStyle.bottomBorderColor() >= 0) {
-            styleProperty.setBottomBorderColor(contentStyle.bottomBorderColor());
+            styleProperty.bottomBorderColor = contentStyle.bottomBorderColor();
         }
-        styleProperty.setFillPatternType(contentStyle.fillPatternType().getPoiFillPatternType());
+        styleProperty.fillPatternType = contentStyle.fillPatternType().getPoiFillPatternType();
         if (contentStyle.fillBackgroundColor() >= 0) {
-            styleProperty.setFillBackgroundColor(contentStyle.fillBackgroundColor());
+            styleProperty.fillBackgroundColor = contentStyle.fillBackgroundColor();
         }
         if (contentStyle.fillForegroundColor() >= 0) {
-            styleProperty.setFillForegroundColor(contentStyle.fillForegroundColor());
+            styleProperty.fillForegroundColor = contentStyle.fillForegroundColor();
         }
-        styleProperty.setShrinkToFit(contentStyle.shrinkToFit().getBooleanValue());
+        styleProperty.shrinkToFit = contentStyle.shrinkToFit().getBooleanValue();
         return styleProperty;
     }
 }

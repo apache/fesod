@@ -40,27 +40,11 @@ public class LoopMergeProperty {
     /**
      * Each row
      */
-    private int eachRow;
+    private final int eachRow;
     /**
      * Extend column
      */
-    private int columnExtend;
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setEachRow(int eachRow) {
-        this.eachRow = eachRow;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setColumnExtend(int columnExtend) {
-        this.columnExtend = columnExtend;
-    }
+    private final int columnExtend;
 
     public static LoopMergeProperty build(ContentLoopMerge contentLoopMerge) {
         if (contentLoopMerge == null) {

@@ -38,24 +38,8 @@ import org.apache.fesod.sheet.annotation.format.NumberFormat;
 @Getter
 @AllArgsConstructor
 public class NumberFormatProperty {
-    private String format;
-    private RoundingMode roundingMode;
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    /**
-     * @deprecated This setter will be removed in a future release to make the class immutable.
-     */
-    @Deprecated
-    public void setRoundingMode(RoundingMode roundingMode) {
-        this.roundingMode = roundingMode;
-    }
+    private final String format;
+    private final RoundingMode roundingMode;
 
     public static NumberFormatProperty build(NumberFormat numberFormat) {
         if (numberFormat == null) {

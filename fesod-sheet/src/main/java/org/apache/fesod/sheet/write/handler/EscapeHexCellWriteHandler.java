@@ -49,6 +49,7 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
     }
 
     private static final String PREFIX = "_x";
+    private static final String ESCAPED_PREFIX = "_x005F" + PREFIX;
     private static final int PREFIX_LENGTH = PREFIX.length();
     private static final int HEX_DIGIT_COUNT = 4;
 
@@ -97,7 +98,7 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
                 }
                 // Append content since the previous match, then the escaped pattern
                 result.append(originalString, lastEnd, patternIndex);
-                result.append("_x005F_x");
+                result.append(ESCAPED_PREFIX);
                 result.append(originalString, hexStart, suffixIndex);
                 result.append('_');
                 lastEnd = patternEnd;

@@ -56,9 +56,9 @@ public class ReadSheet extends ReadBasicParameter {
     public Integer numRows;
 
     /**
-     * Resolver for reading included columns.
+     * Resolver for column filtering and index remapping.
      */
-    private ColumnIndexResolver includeColumnIndexResolver = ColumnIndexResolver.PASS_THROUGH;
+    private ColumnIndexResolver columnIndexResolver = ColumnIndexResolver.PASS_THROUGH;
 
     public ReadSheet() {}
 
@@ -81,7 +81,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetNo = sheetNo;
         this.sheetName = sheetName;
         this.numRows = numRows;
-        this.includeColumnIndexResolver = ColumnIndexResolver.from(numCols);
+        this.columnIndexResolver = ColumnIndexResolver.fromInclude(numCols);
     }
 
     public Integer getSheetNo() {
@@ -124,16 +124,16 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetVeryHidden = sheetVeryHidden;
     }
 
-    public ColumnIndexResolver getIncludedColumnIndexResolver() {
-        return this.includeColumnIndexResolver;
+    public ColumnIndexResolver getColumnIndexResolver() {
+        return this.columnIndexResolver;
     }
 
-    public void setColumnIndexes(List<Integer> columnIndexes) {
-        this.includeColumnIndexResolver = ColumnIndexResolver.from(columnIndexes);
+    public void setIncludeColumnIndexes(List<Integer> columnIndexes) {
+        this.columnIndexResolver = ColumnIndexResolver.fromInclude(columnIndexes);
     }
 
-    public void setIncludedColumnIndexResolver(ColumnIndexResolver includeColumnIndexResolver) {
-        this.includeColumnIndexResolver = includeColumnIndexResolver;
+    public void setColumnIndexResolver(ColumnIndexResolver columnIndexResolver) {
+        this.columnIndexResolver = columnIndexResolver;
     }
 
     public void copyBasicParameter(ReadSheet other) {
@@ -151,7 +151,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());
-        this.setIncludedColumnIndexResolver(other.getIncludedColumnIndexResolver());
+        this.setColumnIndexResolver(other.getColumnIndexResolver());
     }
 
     @Override

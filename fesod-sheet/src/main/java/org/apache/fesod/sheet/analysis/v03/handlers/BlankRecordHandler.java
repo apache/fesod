@@ -40,7 +40,7 @@ public class BlankRecordHandler extends AbstractXlsRecordHandler implements Igno
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BlankRecord br = (BlankRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(br.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(br.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

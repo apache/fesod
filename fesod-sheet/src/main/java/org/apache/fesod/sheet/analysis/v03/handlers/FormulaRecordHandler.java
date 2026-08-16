@@ -54,7 +54,7 @@ public class FormulaRecordHandler extends AbstractXlsRecordHandler implements Ig
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         FormulaRecord frec = (FormulaRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(frec.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(frec.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

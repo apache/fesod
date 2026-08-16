@@ -44,7 +44,7 @@ public class NumberRecordHandler extends AbstractXlsRecordHandler implements Ign
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         NumberRecord nr = (NumberRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(nr.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(nr.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

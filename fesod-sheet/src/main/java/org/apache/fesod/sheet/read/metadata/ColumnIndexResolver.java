@@ -22,7 +22,7 @@ package org.apache.fesod.sheet.read.metadata;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.fesod.common.util.MapUtils;
 
 /**
@@ -44,23 +44,22 @@ public interface ColumnIndexResolver {
      */
     Integer resolve(int columnIndex);
 
-    static ColumnIndexResolver from(List<Integer> includeColumnIndexes) {
-        if (CollectionUtils.isEmpty(includeColumnIndexes)) {
-            return PASS_THROUGH;
-        }
-        return new DefaultColumnIndexResolver(includeColumnIndexes);
+    static ColumnIndexResolver fromInclude(List<Integer> columnIndexes) {
+        return new DefaultIncludedColumnIndexResolver(columnIndexes);
     }
 
-    class DefaultColumnIndexResolver implements ColumnIndexResolver {
+    class DefaultIncludedColumnIndexResolver implements ColumnIndexResolver {
 
         private final Map<Integer, Integer> indexMap;
 
-        DefaultColumnIndexResolver(List<Integer> includeColumnIndexes) {
-            List<Integer> columnIndexes = new ArrayList<>(includeColumnIndexes);
-            this.indexMap = MapUtils.newHashMapWithExpectedSize(columnIndexes.size());
+        DefaultIncludedColumnIndexResolver(List<Integer> columnIndexes) {
+            Validate.notEmpty(columnIndexes, "The includeColumnIndexes must not be empty");
 
-            for (int targetIndex = 0; targetIndex < columnIndexes.size(); targetIndex++) {
-                this.indexMap.put(columnIndexes.get(targetIndex), targetIndex);
+            List<Integer> tmpColumnIndexes = new ArrayList<>(columnIndexes);
+            this.indexMap = MapUtils.newHashMapWithExpectedSize(tmpColumnIndexes.size());
+
+            for (int targetIndex = 0; targetIndex < tmpColumnIndexes.size(); targetIndex++) {
+                this.indexMap.put(tmpColumnIndexes.get(targetIndex), targetIndex);
             }
         }
 

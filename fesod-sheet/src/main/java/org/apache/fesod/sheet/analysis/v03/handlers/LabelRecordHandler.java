@@ -42,7 +42,7 @@ public class LabelRecordHandler extends AbstractXlsRecordHandler implements Igno
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelRecord lrec = (LabelRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(lrec.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(lrec.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

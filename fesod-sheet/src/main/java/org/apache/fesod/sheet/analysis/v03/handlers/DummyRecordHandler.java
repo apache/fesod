@@ -59,7 +59,7 @@ public class DummyRecordHandler extends AbstractXlsRecordHandler implements Igno
         } else if (record instanceof MissingCellDummyRecord) {
             MissingCellDummyRecord mcdr = (MissingCellDummyRecord) record;
 
-            Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(mcdr.getColumn());
+            Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(mcdr.getColumn());
             if (targetColumnIndex == null) {
                 return;
             }

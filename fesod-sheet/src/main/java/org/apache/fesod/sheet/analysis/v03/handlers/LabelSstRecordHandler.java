@@ -46,7 +46,7 @@ public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements I
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelSSTRecord lsrec = (LabelSSTRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(lsrec.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(lsrec.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

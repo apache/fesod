@@ -87,7 +87,7 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         ReadCellData<?> tempCellData = xlsxReadSheetHolder.getTempCellData();
 
         Integer targetColumnIndex =
-                xlsxReadContext.readSheetHolder().determineIncludedColumnIndex(xlsxReadSheetHolder.getColumnIndex());
+                xlsxReadContext.readSheetHolder().determineTargetColumnIndex(xlsxReadSheetHolder.getColumnIndex());
         if (targetColumnIndex == null) {
             return;
         }

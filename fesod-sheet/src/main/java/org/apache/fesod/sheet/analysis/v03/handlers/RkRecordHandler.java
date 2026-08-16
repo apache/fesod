@@ -40,7 +40,7 @@ public class RkRecordHandler extends AbstractXlsRecordHandler implements Ignorab
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         RKRecord re = (RKRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(re.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(re.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

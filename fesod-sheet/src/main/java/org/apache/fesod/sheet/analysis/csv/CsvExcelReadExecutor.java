@@ -228,8 +228,7 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
             String cellString = cellIterator.next();
             int currentColumnIndex = columnIndex++;
 
-            Integer targetColumnIndex =
-                    csvReadContext.readSheetHolder().determineIncludedColumnIndex(currentColumnIndex);
+            Integer targetColumnIndex = csvReadContext.readSheetHolder().determineTargetColumnIndex(currentColumnIndex);
             if (targetColumnIndex == null) {
                 continue;
             }

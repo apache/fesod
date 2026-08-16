@@ -41,7 +41,7 @@ public class BoolErrRecordHandler extends AbstractXlsRecordHandler implements Ig
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BoolErrRecord ber = (BoolErrRecord) record;
 
-        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineIncludedColumnIndex(ber.getColumn());
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(ber.getColumn());
         if (targetColumnIndex == null) {
             return;
         }

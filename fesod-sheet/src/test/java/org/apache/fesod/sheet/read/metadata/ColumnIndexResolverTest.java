@@ -34,12 +34,10 @@ import org.junit.jupiter.api.Test;
 class ColumnIndexResolverTest {
 
     @Test
-    void shouldReturnPassThroughWhenListIsEmptyOrNull() {
-        ColumnIndexResolver resolverForNull = ColumnIndexResolver.from(null);
-        Assertions.assertSame(ColumnIndexResolver.PASS_THROUGH, resolverForNull);
-
-        ColumnIndexResolver resolverForEmpty = ColumnIndexResolver.from(Collections.emptyList());
-        Assertions.assertSame(ColumnIndexResolver.PASS_THROUGH, resolverForEmpty);
+    void shouldThrowWhenListIsEmptyOrNull() {
+        Assertions.assertThrows(NullPointerException.class, () -> ColumnIndexResolver.fromInclude(null));
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> ColumnIndexResolver.fromInclude(Collections.emptyList()));
     }
 
     @Test
@@ -54,7 +52,7 @@ class ColumnIndexResolverTest {
     @Test
     void defaultResolverShouldMapAndFilterColumns() {
         List<Integer> includeColumns = Arrays.asList(0, 2, 5);
-        ColumnIndexResolver resolver = ColumnIndexResolver.from(includeColumns);
+        ColumnIndexResolver resolver = ColumnIndexResolver.fromInclude(includeColumns);
 
         Assertions.assertNotSame(ColumnIndexResolver.PASS_THROUGH, resolver);
 
@@ -72,7 +70,7 @@ class ColumnIndexResolverTest {
     @Test
     void defaultResolverShouldPreserveCustomColumnOrder() {
         List<Integer> customOrderColumns = Arrays.asList(5, 2, 0);
-        ColumnIndexResolver resolver = ColumnIndexResolver.from(customOrderColumns);
+        ColumnIndexResolver resolver = ColumnIndexResolver.fromInclude(customOrderColumns);
 
         Assertions.assertEquals(0, resolver.resolve(5));
         Assertions.assertEquals(1, resolver.resolve(2));

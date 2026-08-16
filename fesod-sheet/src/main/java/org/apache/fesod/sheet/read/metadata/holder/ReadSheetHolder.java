@@ -120,7 +120,7 @@ public class ReadSheetHolder extends AbstractReadHolder {
         return HolderEnum.SHEET;
     }
 
-    public Integer determineIncludedColumnIndex(int columnIndex) {
-        return readSheet.getIncludedColumnIndexResolver().resolve(columnIndex);
+    public Integer determineTargetColumnIndex(int columnIndex) {
+        return readSheet.getColumnIndexResolver().resolve(columnIndex);
     }
 }

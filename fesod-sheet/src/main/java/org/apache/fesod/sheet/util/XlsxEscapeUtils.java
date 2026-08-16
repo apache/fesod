@@ -35,6 +35,13 @@ import java.util.regex.Pattern;
  * <p>
  * The convention escapes itself: text that is literally {@code _x0041_} is stored as {@code _x005F_x0041_}, since
  * {@code _x005F_} is the escape for the underscore. Decoding it yields the literal back, not {@code A}.
+ * <p>
+ * The write half of the same convention lives in
+ * {@link org.apache.fesod.sheet.write.handler.EscapeHexCellWriteHandler EscapeHexCellWriteHandler}, which produces
+ * that {@code _x005F_x} form. Both sides read {@code _xHHHH_} the same way, so a change to what counts as an escape
+ * belongs in both.
+ *
+ * @see org.apache.fesod.sheet.write.handler.EscapeHexCellWriteHandler
  */
 public class XlsxEscapeUtils {
 

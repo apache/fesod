@@ -23,14 +23,18 @@
  */
 
 .heroBanner {
+    --grid-size: 48px;
+    --grid-fade: 10px;
     padding: 6rem 0;
     text-align: center;
     position: relative;
     overflow: hidden;
+    isolation: isolate;
 }
 
 @media screen and (max-width: 996px) {
     .heroBanner {
+        --grid-size: 32px;
         padding: 2rem;
     }
 }
@@ -57,4 +61,61 @@
     margin-right: 8px;
     width: 20px;
     height: 20px;
+}
+
+.gridOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+}
+
+.colLabels,
+.rowLabels {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    display: flex;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.22);
+}
+
+.colLabels {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--grid-size);
+    padding-left: var(--grid-size);
+    mask-image: linear-gradient(to left, transparent, #000 var(--grid-fade));
+}
+
+.rowLabels {
+    top: 0;
+    left: 0;
+    flex-direction: column;
+    width: var(--grid-size);
+    height: 100%;
+    padding-top: var(--grid-size);
+    mask-image: linear-gradient(to top, transparent, #000 var(--grid-fade));
+}
+
+.colLabels span,
+.rowLabels span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--grid-size);
+    height: var(--grid-size);
+}
+
+@media screen and (max-width: 996px) {
+    .colLabels,
+    .rowLabels {
+        font-size: 0.6rem;
+    }
 }

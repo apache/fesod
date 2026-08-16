@@ -78,7 +78,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * Unit tests for individual converter implementations.
  */
 @Tag(Tags.UNIT)
-class ConverterTest {
+public class ConverterTest {
 
     private static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfiguration();
 

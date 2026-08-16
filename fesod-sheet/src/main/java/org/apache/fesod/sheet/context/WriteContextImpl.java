@@ -495,7 +495,9 @@ public class WriteContextImpl implements WriteContext {
         finished = true;
 
         // executes the callback after all sheets has been fully written.
-        Map<Integer, WriteSheetHolder> writeSheetHolderMap = writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
+        boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();
+        Map<Integer, WriteSheetHolder> writeSheetHolderMap =
+                shouldSkip ? null : writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
         if (MapUtils.isNotEmpty(writeSheetHolderMap)) {
             if (MapUtils.size(writeSheetHolderMap) == 1) {
                 SheetWriteHandlerContext sheetWriteHandlerContext =

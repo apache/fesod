@@ -39,7 +39,7 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 public class EscapeHexCellWriteHandler implements CellWriteHandler {
 
     // ASCII hex digits only. Not Character.digit(c, 16), which also accepts non-ASCII
-    // digits such as U+0663 that OOXML never encodes with.
+    // digits such as U+0663 that OOXML never uses.
     private static final boolean[] HEX_TABLE = new boolean[128];
 
     static {

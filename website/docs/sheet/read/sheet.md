@@ -35,7 +35,6 @@ You can read multiple sheets from a spreadsheet file, but the same sheet cannot 
 #### Reading All Sheets
 
 ```java
-
 @Test
 public void readAllSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -58,7 +57,6 @@ You can read a specific sheet from a spreadsheet file, supporting specification 
 ### Code Example
 
 ```java
-
 @Test
 public void readSingleSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -87,7 +85,6 @@ This supports both **"normal hidden"** and **"very hidden"** states.
 ### Code Example
 
 ```java
-
 @Test
 public void exceptionRead() {
     String fileName = "path/to/demo.xlsx";
@@ -103,3 +100,40 @@ public void exceptionRead() {
 > xlSheetVeryHidden)". Very hidden can be set through `VBA`, and in this case, the hidden sheet cannot be unhidden
 > through
 > the "Unhide" operation.
+
+## Reading Specific Columns
+
+### Overview
+
+By configuring `includeColumnIndexes`, you can specify which columns to read from a sheet. Unselected columns are skipped during parsing, and the target columns are remapped to contiguous zero-based indices.
+
+Note: This feature supports both modern `.xlsx` (OOXML) and legacy `.xls` (BIFF8 / Excel 97–2003) file formats.
+
+### Code Example
+
+```java
+@Test
+public void readSpecificColumns() {
+// Works with both demo.xlsx and demo.xls
+String fileName = "path/to/demo.xls";
+
+    // Specify 0-based column indices to include (e.g., Column A, C, E)
+    List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
+
+    // Option 1
+    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0, "Sheet1", targetColumns).build();
+        excelReader.read(readSheet);
+    }
+
+    // Option 2
+    try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0)
+                .head(DemoData.class)
+                .includeColumnIndexes(includeColumnIndexes)
+                .registerReadListener(new DemoDataListener())
+                .build();
+        excelReader.read(readSheet);
+    }
+}
+```

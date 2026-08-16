@@ -95,7 +95,6 @@ Set the background color to yellow and font color to blue for all content cells.
 Customise a `CellWriteHandler`
 
 ```java
-
 @Slf4j
 public class CustomCellStyleHandler implements CellWriteHandler {
 
@@ -124,7 +123,6 @@ public class CustomCellStyleHandler implements CellWriteHandler {
 Register and Use
 
 ```java
-
 @Test
 public void customCellStyleWrite() {
     String fileName = "customCellStyleWrite.xlsx";
@@ -143,7 +141,6 @@ Insert a comment for the first row, second column of the header.
 Customise a `RowWriteHandler`
 
 ```java
-
 @Slf4j
 public class CommentRowWriteHandler implements RowWriteHandler {
 
@@ -167,7 +164,6 @@ public class CommentRowWriteHandler implements RowWriteHandler {
 Register and Use
 
 ```java
-
 @Test
 public void commentWrite() {
     String fileName = "commentWrite.xlsx";
@@ -186,7 +182,6 @@ Add a dropdown list for the first column of the first two rows.
 Customise a  `SheetWriteHandler`
 
 ```java
-
 @Slf4j
 public class DropdownSheetWriteHandler implements SheetWriteHandler {
 
@@ -209,7 +204,6 @@ public class DropdownSheetWriteHandler implements SheetWriteHandler {
 Register and Use
 
 ```java
-
 @Test
 public void dropdownWrite() {
     String fileName = "dropdownWrite.xlsx";
@@ -265,7 +259,6 @@ core methods are as follows:
 Customise a `ReadListener`
 
 ```java
-
 @Slf4j
 public class DemoDataListener implements ReadListener<DemoData> {
 
@@ -301,7 +294,6 @@ public class DemoDataListener implements ReadListener<DemoData> {
 Use
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -317,7 +309,6 @@ public void simpleRead() {
 Customise a `ReadListener`
 
 ```java
-
 @Slf4j
 public class HeadDataListener implements ReadListener<DemoData> {
 
@@ -341,7 +332,6 @@ public class HeadDataListener implements ReadListener<DemoData> {
 Use
 
 ```java
-
 @Test
 public void readWithHead() {
     String fileName = "path/to/demo.xlsx";
@@ -357,7 +347,6 @@ public void readWithHead() {
 Customise a `ReadListener`
 
 ```java
-
 @Slf4j
 public class ExceptionHandlingListener implements ReadListener<DemoData> {
 
@@ -383,7 +372,6 @@ public class ExceptionHandlingListener implements ReadListener<DemoData> {
 Use
 
 ```java
-
 @Test
 public void readWithExceptionHandling() {
     String fileName = "path/to/demo.xlsx";
@@ -397,7 +385,6 @@ public void readWithExceptionHandling() {
 #### Pagination
 
 ```java
-
 @Test
 public void pageRead() {
     String fileName = "path/to/demo.xlsx";
@@ -471,7 +458,6 @@ Core Features:
 Inherit `AnalysisEventListener`
 
 ```java
-
 @Slf4j
 public class DemoDataListener extends AnalysisEventListener<DemoData> {
 
@@ -515,7 +501,6 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";
@@ -534,7 +519,6 @@ customising header data parsing.
 Inherit `AnalysisEventListener`
 
 ```java
-
 @Slf4j
 public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 
@@ -563,7 +547,6 @@ public class DemoDataListenerWithHead extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
-
 @Test
 public void readWithHead() {
     String fileName = "path/to/demo.xlsx";
@@ -582,7 +565,6 @@ errors, skip error lines, etc.).
 Inherit `AnalysisEventListener`
 
 ```java
-
 @Slf4j
 public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 
@@ -611,7 +593,6 @@ public class ExceptionHandlingListener extends AnalysisEventListener<DemoData> {
 Use
 
 ```java
-
 @Test
 public void readWithExceptionHandling() {
     String fileName = "path/to/demo.xlsx";
@@ -699,7 +680,6 @@ You can customise converters, but the types must not overlap with the default ty
 Implement `Converter`
 
 ```java
-
 @Slf4j
 public class TimestampNumberConverter implements Converter<Timestamp> {
     @Override
@@ -729,7 +709,6 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
 Use
 
 ```java
-
 @Test
 public void simpleRead() {
     String fileName = "path/to/demo.xlsx";

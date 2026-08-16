@@ -23,6 +23,7 @@ Fesod 通过不同的参数设计进行 CSV
 | `recordSeparator` | `CRLF`    | 记录（行）分隔符。根据操作系统不同而变化，例如 `CsvConstant.CRLF` (Windows) 或 `CsvConstant.LF` (Unix/Linux)。 |
 | `nullString`      | `null`    | 用于表示 `null` 值的字符串。注意这与空字符串 `""` 不同。                                                   |
 | `escape`          | `null`    | 转义字符，用于转义引用符号自身。                                                                      |
+| `includeColumnIndexes` | `null`    | 指定需要读取的列索引列表（从 0 开始）。未指定的列将被跳过，且读取的数据会被重新映射为从 0 开始的连续索引。                   |
 
 ---
 
@@ -39,7 +40,6 @@ Fesod 通过不同的参数设计进行 CSV
 如果 CSV 文件使用 `\u0000` 作为分隔符，可以如下设置：
 
 ```java
-
 @Test
 public void delimiterDemo() {
     String csvFile = "path/to/your.csv";
@@ -59,7 +59,6 @@ public void delimiterDemo() {
 #### 代码示例
 
 ```java
-
 @Test
 public void quoteDemo() {
     String csvFile = "path/to/your.csv";
@@ -77,7 +76,6 @@ public void quoteDemo() {
 #### 代码示例
 
 ```java
-
 @Test
 public void recordSeparatorDemo() {
     String csvFile = "path/to/your.csv";
@@ -95,7 +93,6 @@ public void recordSeparatorDemo() {
 #### 代码示例
 
 ```java
-
 @Test
 public void nullStringDemo() {
     String csvFile = "path/to/your.csv";
@@ -113,7 +110,6 @@ public void nullStringDemo() {
 #### 代码示例
 
 ```java
-
 @Test
 public void escapeDemo() {
     String csvFile = "path/to/your.csv";
@@ -121,6 +117,28 @@ public void escapeDemo() {
             .csv()
             .escape(CsvConstant.BACKSLASH)
             .doReadSync();
+}
+```
+
+### includeColumnIndexes
+
+`includeColumnIndexes` 用于指定只读取 CSV 文件中的某些列。未选中的列会在解析过程中被跳过，且解析出的列索引会被重新映射为从 0 开始的连续索引。
+
+#### 代码示例
+
+```java
+@Test
+public void includeColumnIndexesDemo() {
+        String csvFile = "path/to/your.csv";
+        // 指定读取第 0、2、4 列（例如第 1、3、5 列）
+        List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
+
+        try (ExcelReader excelReader = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener()).build()) {
+            ReadSheet readSheet = FesodSheet.readSheet(0)
+                                            .includeColumnIndexes(includeColumnIndexes)
+                                            .build();
+           excelReader.read(readSheet);
+        }
 }
 ```
 
@@ -132,7 +150,6 @@ public void escapeDemo() {
 ### 代码示例
 
 ```java
-
 @Test
 public void csvFormatDemo() {
 
@@ -146,7 +163,6 @@ public void csvFormatDemo() {
             CsvReadWorkbookHolder csvReadWorkbookHolder = (CsvReadWorkbookHolder) readWorkbookHolder;
             csvReadWorkbookHolder.setCsvFormat(csvFormat);
         }
-
         ReadSheet readSheet = FesodSheet.readSheet(0).build();
         excelReader.read(readSheet);
     }

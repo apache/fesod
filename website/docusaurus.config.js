@@ -69,7 +69,7 @@ const config = {
                     authorsMapPath: "authors.json"
                 },
                 theme: {
-                    customCss: './src/css/custom.css'
+                    customCss: ['./src/css/custom.css', './src/css/xl-sheet.css']
                 },
             }
         ],

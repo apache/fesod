@@ -27,13 +27,16 @@ import java.util.Base64;
 import java.util.Collections;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Unit tests for handling very old XLS (e.g., BIFF2) gracefully.
  */
+@Tag(Tags.READ)
 class ExcelAnalyserOldBiffTest {
 
     /**

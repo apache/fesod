@@ -35,37 +35,21 @@ import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.TestFileUtil;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class CustomConverterTest {
-
-    private static File converterCsvFile10;
-    private static File converterExcelFile11;
-    private static File converterExcelFile12;
-    private static File converterExcelFile13;
-    private static File converterCsvFile14;
-    private static File converterCsvFile15;
-
-    @BeforeAll
-    static void init() {
-        converterCsvFile10 = TestFileUtil.createNewFile("converter10.csv");
-        converterExcelFile11 = TestFileUtil.createNewFile("converter11.xls");
-        converterExcelFile12 = TestFileUtil.createNewFile("converter12.xlsx");
-        converterExcelFile13 = TestFileUtil.createNewFile("converter13.xlsx");
-        converterCsvFile14 = TestFileUtil.createNewFile("converter14.csv");
-        converterCsvFile15 = TestFileUtil.createNewFile("converter15.csv");
-    }
+@Tag(Tags.ROUND_TRIP)
+public class CustomConverterTest extends AbstractExcelTest {
 
     @Test
-    void t01ConverterMapTest() throws Exception {
+    void converterMapTest() {
+        File converterCsvFile10 = new File(tempDir, "converter10.csv");
         TimestampStringConverter timestampStringConverter = new TimestampStringConverter();
         TimestampNumberConverter timestampNumberConverter = new TimestampNumberConverter();
         ExcelWriter excelWriter = FesodSheet.write(converterCsvFile10)
@@ -83,22 +67,23 @@ public class CustomConverterTest {
     }
 
     @Test
-    void t02Write10() throws Exception {
-        writeFile(converterCsvFile10);
+    void writeCsv() throws Exception {
+        writeFile(new File(tempDir, "converter10.csv"));
     }
 
     @Test
-    void t03Write11() throws Exception {
-        writeFile(converterExcelFile11);
+    void writeXls() throws Exception {
+        writeFile(new File(tempDir, "converter11.xls"));
     }
 
     @Test
-    void t04Write12() throws Exception {
-        writeFile(converterExcelFile12);
+    void writeXlsx() throws Exception {
+        writeFile(new File(tempDir, "converter12.xlsx"));
     }
 
     @Test
-    void t05GlobalConverterInSheetHolder() throws Exception {
+    void globalConverterInSheetHolder() {
+        File converterExcelFile13 = new File(tempDir, "converter13.xlsx");
         TimestampStringConverter timestampStringConverter = new TimestampStringConverter();
         ExcelWriter excelWriter = FesodSheet.write(converterExcelFile13)
                 .registerConverter(timestampStringConverter)
@@ -112,15 +97,16 @@ public class CustomConverterTest {
     }
 
     @Test
-    void t06GlobalConverterWriteWithoutFieldLevelConverter() throws Exception {
-        FesodSheet.write(converterCsvFile14)
+    void globalConverterWriteWithoutFieldLevelConverter() throws Exception {
+        FesodSheet.write(new File(tempDir, "converter14.csv"))
                 .registerConverter(new TimestampStringConverter())
                 .sheet()
                 .doWrite(globalData());
     }
 
     @Test
-    void t07FieldLevelConverterTakesPrecedenceOverRegisteredConverter() throws Exception {
+    void fieldLevelConverterTakesPrecedenceOverRegisteredConverter() throws Exception {
+        File converterCsvFile15 = new File(tempDir, "converter15.csv");
         FieldLevelConverterWriteData writeData = new FieldLevelConverterWriteData();
         writeData.setFieldValue("value");
         writeData.setRegisteredValue("value");
@@ -136,7 +122,7 @@ public class CustomConverterTest {
         Assertions.assertTrue(csvContent.contains("field:value,registered:value"));
     }
 
-    private void writeFile(File file) throws Exception {
+    private void writeFile(File file) {
         FesodSheet.write(file)
                 .registerConverter(new TimestampNumberConverter())
                 .registerConverter(new TimestampStringConverter())
@@ -144,7 +130,7 @@ public class CustomConverterTest {
                 .doWrite(data());
     }
 
-    private List<GlobalConverterWriteData> globalData() throws Exception {
+    private List<GlobalConverterWriteData> globalData() {
         List<GlobalConverterWriteData> list = new ArrayList<>();
         GlobalConverterWriteData writeData = new GlobalConverterWriteData();
         writeData.setTimestampData(Timestamp.valueOf("2020-01-01 01:00:00"));
@@ -152,13 +138,8 @@ public class CustomConverterTest {
         return list;
     }
 
-    private List<CustomConverterWriteData> data() throws Exception {
-        List<CustomConverterWriteData> list = new ArrayList<>();
-        CustomConverterWriteData writeData = new CustomConverterWriteData();
-        writeData.setTimestampStringData(Timestamp.valueOf("2020-01-01 01:00:00"));
-        writeData.setTimestampNumberData(Timestamp.valueOf("2020-12-01 12:12:12"));
-        list.add(writeData);
-        return list;
+    private List<CustomConverterWriteData> data() {
+        return TestDataBuilder.customConverterWriteData();
     }
 
     public static class FieldLevelConverterWriteData {

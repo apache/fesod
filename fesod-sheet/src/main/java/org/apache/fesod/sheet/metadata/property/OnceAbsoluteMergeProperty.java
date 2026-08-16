@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
 
 /**
@@ -32,6 +34,8 @@ import org.apache.fesod.sheet.annotation.write.style.OnceAbsoluteMerge;
  *
  *
  */
+@Getter
+@Setter
 public class OnceAbsoluteMergeProperty {
     /**
      * First row
@@ -66,37 +70,5 @@ public class OnceAbsoluteMergeProperty {
                 onceAbsoluteMerge.lastRowIndex(),
                 onceAbsoluteMerge.firstColumnIndex(),
                 onceAbsoluteMerge.lastColumnIndex());
-    }
-
-    public int getFirstRowIndex() {
-        return firstRowIndex;
-    }
-
-    public void setFirstRowIndex(int firstRowIndex) {
-        this.firstRowIndex = firstRowIndex;
-    }
-
-    public int getLastRowIndex() {
-        return lastRowIndex;
-    }
-
-    public void setLastRowIndex(int lastRowIndex) {
-        this.lastRowIndex = lastRowIndex;
-    }
-
-    public int getFirstColumnIndex() {
-        return firstColumnIndex;
-    }
-
-    public void setFirstColumnIndex(int firstColumnIndex) {
-        this.firstColumnIndex = firstColumnIndex;
-    }
-
-    public int getLastColumnIndex() {
-        return lastColumnIndex;
-    }
-
-    public void setLastColumnIndex(int lastColumnIndex) {
-        this.lastColumnIndex = lastColumnIndex;
     }
 }

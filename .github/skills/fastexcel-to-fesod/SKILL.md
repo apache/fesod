@@ -69,7 +69,6 @@ with deprecation warnings. It is always safe to stop here first and run tests.
 In `pom.xml`, find the FastExcel dependency block:
 
 ```xml
-
 <dependency>
     <groupId>cn.idev.excel</groupId>
     <artifactId>fastexcel</artifactId>
@@ -80,7 +79,6 @@ In `pom.xml`, find the FastExcel dependency block:
 Replace it with:
 
 ```xml
-
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
@@ -91,7 +89,6 @@ Replace it with:
 Also remove the FastExcel version property if it exists, e.g.:
 
 ```xml
-
 <fastexcel.version>1.3.0</fastexcel.version>
 ```
 

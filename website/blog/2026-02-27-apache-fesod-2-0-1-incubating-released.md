@@ -3,7 +3,6 @@ title: "Apache Fesod (Incubating) 2.0.1-incubating Officially Released"
 description: "The Apache Fesod community is pleased to announce the official release of Apache Fesod (Incubating) 2.0.1-incubating."
 authors: [psxjoy]
 tags: [announcement, release]
-date: 2026-02-27T00:00:00.000Z
 ---
 
 **February 2026** — The Apache Fesod (Incubating) community is pleased to announce the official release of **Apache Fesod (Incubating) 2.0.1-incubating**.

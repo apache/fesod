@@ -18,7 +18,6 @@ title: 'Sheet'
 #### 读取全部 Sheet
 
 ```java
-
 @Test
 public void readAllSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -40,7 +39,6 @@ public void readAllSheet() {
 ### 代码示例
 
 ```java
-
 @Test
 public void readSingleSheet() {
     String fileName = "path/to/demo.xlsx";
@@ -66,7 +64,6 @@ public void readSingleSheet() {
 ### 代码示例
 
 ```java
-
 @Test
 public void exceptionRead() {
     String fileName = "path/to/demo.xlsx";
@@ -80,3 +77,42 @@ public void exceptionRead() {
 
 > 微软 Excel 中，Sheet 有“普通隐藏(xlSheetHidden)”和“绝对隐藏(xlSheetVeryHidden)”两种状态，绝对隐藏可通过 `VBA` 来设置，此时隐藏的
 > Sheet 无法通过“取消隐藏”的操作来取消。
+
+---
+
+## 读取指定列
+
+### 概述
+
+通过设置 `includeColumnIndexes` 参数，可以指定只读取 Sheet 中的某些列。未选中的列会在解析过程中被跳过，且目标列会被重新映射为从 0 开始的连续索引。
+
+> **注意：** 该功能同时支持 `.xlsx` (OOXML) 和 `.xls` (BIFF8 / Excel 97–2003) 文件格式。
+
+### 代码示例
+
+```java
+@Test
+public void readSpecificColumns() {
+    // 同时支持 .xlsx 和 .xls 格式
+    String fileName = "path/to/demo.xls";
+
+    // 指定需要读取的列索引（从 0 开始，例如 0, 2, 4 代表 A, C, E 列）
+    List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
+
+    // 方案 1
+    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0, "Sheet1", targetColumns).build();
+        excelReader.read(readSheet);
+    }
+
+    // 方案 2
+    try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0)
+                .head(DemoData.class)
+                .includeColumnIndexes(includeColumnIndexes)
+                .registerReadListener(new DemoDataListener())
+                .build();
+        excelReader.read(readSheet);
+    }
+}
+```

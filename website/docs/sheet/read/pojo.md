@@ -36,7 +36,6 @@ dynamically generated spreadsheet files more flexible.
 #### POJO Class
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -55,7 +54,6 @@ public class IndexOrNameData {
 #### Code Example
 
 ```java
-
 @Test
 public void indexOrNameRead() {
     String fileName = "path/to/demo.xlsx";
@@ -65,6 +63,9 @@ public void indexOrNameRead() {
             .doRead();
 }
 ```
+
+> **Note when using `includeColumnIndexes`:**  
+> If `includeColumnIndexes` is configured on the reader (e.g., selecting original columns `[0, 2, 4]`), the parsed columns are remapped to contiguous indices (`0, 1, 2`). Ensure `@ExcelProperty(index = ...)` matches the **remapped** index rather than the original file column index.
 
 ---
 
@@ -77,7 +78,6 @@ Use the `CellData` type to receive cell data to support formulas and various cel
 ### POJO Class
 
 ```java
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -92,7 +92,6 @@ public class CellDataReadDemoData {
 ### Code Example
 
 ```java
-
 @Test
 public void cellDataRead() {
     String fileName = "path/to/demo.xlsx";
@@ -116,7 +115,6 @@ directly.
 ### Data Listener
 
 ```java
-
 @Slf4j
 public class NoModelDataListener extends AnalysisEventListener<Map<Integer, String>> {
 

@@ -25,6 +25,7 @@ class BasicParameter {
 class ReadBasicParameter {
   - Integer headRowNumber
   - List~ReadListener~?~~ customReadListenerList
+  - Collection~Integer~ includeColumnIndexes
 }
 class ReadSheet {
   - Integer sheetNo
@@ -121,6 +122,7 @@ WriteWorkbook  --|>  WriteBasicParameter
 |------------------------|-----|----------------------------------|
 | customReadListenerList | 空   | 可以注册多个监听器，读取电子表格的时候会不断的回调监听器中的方法 |
 | headRowNumber          | 1   | 电子表格中头的行数，默认 1 行                 |
+| includeColumnIndexes         | 无             | 指定需要读取的列索引列表（从 0 开始）。未指定的列将在解析过程中被跳过，且目标列会被重新映射为从 0 开始的连续索引。 |
 
 ### ReadWorkbook 参数
 
@@ -154,6 +156,7 @@ WriteWorkbook  --|>  WriteBasicParameter
 | sheetHidden     | false | Sheet 页普通隐藏状态                      |
 | sheetVeryHidden | false | Sheet 页绝对隐藏状态                      |
 | numRows         | 0     | 读取指定的行数，0 表示不限制行数，即读取所有行           |
+| includeColumnIndexes         | 无             | 指定需要读取的列索引列表（从 0 开始）。未指定的列将在解析过程中被跳过，且目标列会被重新映射为从 0 开始的连续索引。 |
 
 ## 写操作
 

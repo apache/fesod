@@ -52,7 +52,7 @@
 }
 
 .hero {
-    background: radial-gradient(circle, #00b95f 20%, #69CD37 50%, #14824b 100%);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 100%) #14824b;
 }
 
 .header-github-link::before {

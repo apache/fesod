@@ -63,6 +63,9 @@ void main() {
 }
 ```
 
+> **Note when using `includeColumnIndexes`:**  
+> If `includeColumnIndexes` is configured on the reader (e.g., selecting original columns `[0, 2, 4]`), the parsed columns are remapped to contiguous indices (`0, 1, 2`). Ensure `@ExcelProperty(index = ...)` matches the **remapped** index rather than the original file column index.
+
 ---
 
 ## Cell Objects

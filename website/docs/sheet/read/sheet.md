@@ -97,3 +97,40 @@ void main() {
 > xlSheetVeryHidden)". Very hidden can be set through `VBA`, and in this case, the hidden sheet cannot be unhidden
 > through
 > the "Unhide" operation.
+
+## Reading Specific Columns
+
+### Overview
+
+By configuring `includeColumnIndexes`, you can specify which columns to read from a sheet. Unselected columns are skipped during parsing, and the target columns are remapped to contiguous zero-based indices.
+
+Note: This feature supports both modern `.xlsx` (OOXML) and legacy `.xls` (BIFF8 / Excel 97–2003) file formats.
+
+### Code Example
+
+```java
+@Test
+public void readSpecificColumns() {
+// Works with both demo.xlsx and demo.xls
+String fileName = "path/to/demo.xls";
+
+    // Specify 0-based column indices to include (e.g., Column A, C, E)
+    List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
+
+    // Option 1
+    try (ExcelReader excelReader = FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0, "Sheet1", targetColumns).build();
+        excelReader.read(readSheet);
+    }
+
+    // Option 2
+    try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
+        ReadSheet readSheet = FesodSheet.readSheet(0)
+                .head(DemoData.class)
+                .includeColumnIndexes(includeColumnIndexes)
+                .registerReadListener(new DemoDataListener())
+                .build();
+        excelReader.read(readSheet);
+    }
+}
+```

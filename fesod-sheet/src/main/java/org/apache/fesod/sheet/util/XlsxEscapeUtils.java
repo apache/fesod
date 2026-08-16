@@ -23,9 +23,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Escapes defined by the Office Open XML spec, section 3.18.9.
- *
- *
+ * The {@code _xHHHH_} escapes that xlsx uses for characters XML 1.0 forbids, defined by section 3.18.9 of the Office
+ * Open XML spec.
+ * <p>
+ * Every xlsx read path decodes them, whichever part carries the text:
+ * {@link org.apache.fesod.sheet.analysis.v07.handlers.sax.SharedStringsTableHandler SharedStringsTableHandler} for
+ * {@code sharedStrings.xml}, and
+ * {@link org.apache.fesod.sheet.analysis.v07.handlers.CellTagHandler CellTagHandler} for an inline or direct string
+ * held by the cell itself. POI decodes on both of its own read paths, the DOM {@code XSSFCell} and the streaming
+ * {@code XSSFSheetXMLHandler}.
+ * <p>
+ * The convention escapes itself: text that is literally {@code _x0041_} is stored as {@code _x005F_x0041_}, since
+ * {@code _x005F_} is the escape for the underscore. Decoding it yields the literal back, not {@code A}.
  */
 public class XlsxEscapeUtils {
 

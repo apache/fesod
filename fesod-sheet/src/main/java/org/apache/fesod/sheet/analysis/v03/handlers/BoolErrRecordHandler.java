@@ -25,6 +25,7 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
+import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
@@ -40,11 +41,22 @@ public class BoolErrRecordHandler extends AbstractXlsRecordHandler implements Ig
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BoolErrRecord ber = (BoolErrRecord) record;
+        int originalColumnIndex = ber.getColumn();
+        List<Integer> includeColumnIndexes =
+                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+
+        int targetColumnIndex = originalColumnIndex;
+        if (includeColumnIndexes != null) {
+            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
+            if (targetColumnIndex < 0) {
+                return;
+            }
+        }
         xlsReadContext
                 .xlsReadSheetHolder()
                 .getCellMap()
-                .put((int) ber.getColumn(), ReadCellData.newInstance(ber.getBooleanValue(), ber.getRow(), (int)
-                        ber.getColumn()));
+                .put(targetColumnIndex, ReadCellData.newInstance(ber.getBooleanValue(), ber.getRow(), (int)
+                        targetColumnIndex));
         xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
     }
 }

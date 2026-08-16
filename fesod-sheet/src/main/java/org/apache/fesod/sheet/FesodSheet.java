@@ -314,7 +314,7 @@ public class FesodSheet {
      * @return Excel sheet reader builder.
      */
     public static ExcelReaderSheetBuilder readSheet(Integer sheetNo, String sheetName) {
-        return readSheet(sheetNo, sheetName, null);
+        return readSheet(sheetNo, sheetName, null, null);
     }
 
     /**
@@ -326,25 +326,36 @@ public class FesodSheet {
      * @return
      */
     public static ExcelReaderSheetBuilder readSheet(Integer sheetNo, String sheetName, Integer numRows) {
-        return new ExcelReaderSheetBuilder()
-                .sheetNoIfNotNull(sheetNo)
-                .sheetNameIfNotNull(sheetName)
-                .numRowsIfNotNull(numRows);
+        return readSheet(sheetNo, sheetName, numRows, null);
     }
 
     /**
      * Build excel the 'readSheet' targeting specific column indexes.
      *
      * @param sheetNo       Index of sheet, 0 base.
+     * @param sheetName     The name of sheet.
      * @param columnIndexes Specific columns to read (e.g., [0, 2] for Column A and C).
      * @return Excel sheet reader builder.
      */
-    public static ExcelReaderSheetBuilder readSheetWithColumns(
+    public static ExcelReaderSheetBuilder readSheet(Integer sheetNo, String sheetName, List<Integer> columnIndexes) {
+        return readSheet(sheetNo, sheetName, null, columnIndexes);
+    }
+
+    /**
+     * Build excel the 'ReadSheet'.
+     *
+     * @param sheetNo       Index of sheet, 0 base.
+     * @param sheetName     The name of sheet.
+     * @param numRows       The number of rows to read, the default is all, start with 0.
+     * @param columnIndexes Specific columns to read (e.g., [0, 2] for Column A and C).
+     * @return Excel sheet reader builder.
+     */
+    public static ExcelReaderSheetBuilder readSheet(
             Integer sheetNo, String sheetName, Integer numRows, List<Integer> columnIndexes) {
         return new ExcelReaderSheetBuilder()
                 .sheetNoIfNotNull(sheetNo)
                 .sheetNameIfNotNull(sheetName)
                 .numRowsIfNotNull(numRows)
-                .includeColumnIndexes(columnIndexes);
+                .includeColumnIndexesIfNotNull(columnIndexes);
     }
 }

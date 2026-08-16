@@ -41,6 +41,7 @@ The main parameters are as follows:
 | `recordSeparator` | `CRLF`             | Record (line) separator. Varies by operating system, such as `CsvConstant.CRLF`(Windows) or `CsvConstant.LF`(Unix/Linux).                |
 | `nullString`      | `null`             | String used to represent `null` values. Note this is different from an empty string `""`.                                                |
 | `escape`          | `null`             | Escape character used to escape quote characters themselves.                                                                             |
+| `includeColumnIndexes` | `null`             | List of 0-based column indices to read. Excluded columns are skipped, and target columns are remapped to contiguous 0-based indices.     |
 
 ---
 
@@ -140,6 +141,29 @@ public void escapeDemo() {
             .escape(CsvConstant.BACKSLASH)
             .doReadSync();
 }
+```
+
+### includeColumnIndexes
+
+`includeColumnIndexes` specifies which columns to read from the CSV file. Unselected columns are skipped during parsing, and the resulting column indices are remapped to contiguous 0-based indices.
+
+#### Code Example
+
+```java
+@Test
+public void includeColumnIndexesDemo() {
+        String csvFile = "path/to/your.csv";
+        // Specify 0-based column indices to include (e.g., columns 0, 2, and 4)
+        List<Integer> includeColumnIndexes = Arrays.asList(0, 2, 4);
+
+        try (ExcelReader excelReader = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener()).build()) {
+           ReadSheet readSheet = FesodSheet.readSheet(0)
+                                           .includeColumnIndexes(includeColumnIndexes)
+                                           .build();
+           excelReader.read(readSheet);
+        }
+    }
+    
 ```
 
 ## CSVFormat Configuration Details and Examples

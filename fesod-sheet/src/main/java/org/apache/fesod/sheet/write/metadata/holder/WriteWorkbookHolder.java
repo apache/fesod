@@ -70,7 +70,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "workbookWriteHandlerContext")
 @Slf4j
 public class WriteWorkbookHolder extends AbstractWriteHolder {
     /***

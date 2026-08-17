@@ -230,8 +230,7 @@ public class WriteHandlerUtils {
         }
     }
 
-    public static void afterSheetDispose(WriteContext writeContext) {
-        SheetWriteHandlerContext context = WriteHandlerUtils.createSheetWriteHandlerContext(writeContext);
+    public static void afterSheetDispose(SheetWriteHandlerContext context) {
         SheetHandlerExecutionChain sheetHandlerExecutionChain = getSheetHandlerExecutionChain(context, false);
         if (sheetHandlerExecutionChain != null) {
             sheetHandlerExecutionChain.afterSheetDispose(context);

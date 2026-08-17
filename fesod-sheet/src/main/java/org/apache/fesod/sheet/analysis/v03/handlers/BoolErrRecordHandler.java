@@ -25,12 +25,15 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
+import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 
 /**
  * Record handler
@@ -40,11 +43,28 @@ public class BoolErrRecordHandler extends AbstractXlsRecordHandler implements Ig
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BoolErrRecord ber = (BoolErrRecord) record;
-        xlsReadContext
-                .xlsReadSheetHolder()
-                .getCellMap()
-                .put((int) ber.getColumn(), ReadCellData.newInstance(ber.getBooleanValue(), ber.getRow(), (int)
-                        ber.getColumn()));
+        int originalColumnIndex = ber.getColumn();
+        List<Integer> includeColumnIndexes =
+                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
+
+        int targetColumnIndex = originalColumnIndex;
+        if (includeColumnIndexes != null) {
+            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
+            if (targetColumnIndex < 0) {
+                return;
+            }
+        }
+        ReadCellData<?> cellData;
+        if (ber.isError()) {
+            // A BOOLERR record stores either a boolean or an error code; getBooleanValue() would
+            // report the error code as `code != 0`.
+            cellData = new ReadCellData<>(CellDataTypeEnum.ERROR, ErrorEval.getText(ber.getErrorValue()));
+            cellData.setRowIndex(ber.getRow());
+            cellData.setColumnIndex(targetColumnIndex);
+        } else {
+            cellData = ReadCellData.newInstance(ber.getBooleanValue(), ber.getRow(), targetColumnIndex);
+        }
+        xlsReadContext.xlsReadSheetHolder().getCellMap().put(targetColumnIndex, cellData);
         xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
     }
 }

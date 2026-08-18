@@ -70,11 +70,12 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
     public WriteCellData<?> convertToExcelData(
             Timestamp value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(
-                    BigDecimal.valueOf(DateUtil.getExcelDate(value, globalConfiguration.getUse1904windowing())));
+            return new WriteCellData<>(BigDecimal.valueOf(
+                    DateUtil.getExcelDate(value.toLocalDateTime(), globalConfiguration.getUse1904windowing())));
         } else {
             return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                    value, contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
+                    value.toLocalDateTime(),
+                    contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
         }
     }
 }

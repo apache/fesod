@@ -48,7 +48,7 @@ public class TimestampDateConverter implements Converter<Timestamp> {
     public WriteCellData<?> convertToExcelData(
             Timestamp value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws Exception {
-        WriteCellData<?> cellData = new WriteCellData<>(value);
+        WriteCellData<?> cellData = new WriteCellData<>(value.toLocalDateTime());
         String format = null;
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             format = contentProperty.getDateTimeFormatProperty().getFormat();

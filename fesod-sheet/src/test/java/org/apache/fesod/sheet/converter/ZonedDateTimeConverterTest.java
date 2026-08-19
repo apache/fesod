@@ -39,8 +39,11 @@ import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.UNIT)
 class ZonedDateTimeConverterTest {
     private static final ZonedDateTime VALUE = ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("UTC"));
 
@@ -84,6 +87,29 @@ class ZonedDateTimeConverterTest {
                 converter
                         .convertToExcelData(VALUE, property, globalConfiguration)
                         .getStringValue());
+    }
+
+    @Test
+    void stringConverterWithEmptyOrNullPatternFallsBackToIso() throws Exception {
+        ZonedDateTimeStringConverter converter = new ZonedDateTimeStringConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+
+        ExcelContentProperty emptyProperty = new ExcelContentProperty();
+        emptyProperty.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
+        WriteCellData<?> writtenEmpty = converter.convertToExcelData(VALUE, emptyProperty, globalConfiguration);
+        assertEquals(
+                VALUE,
+                converter.convertToJavaData(
+                        new ReadCellData<>(writtenEmpty.getStringValue()), emptyProperty, globalConfiguration));
+
+        ExcelContentProperty nullFormatProperty = new ExcelContentProperty();
+        nullFormatProperty.setDateTimeFormatProperty(new DateTimeFormatProperty(null, false));
+        WriteCellData<?> writtenNullFormat =
+                converter.convertToExcelData(VALUE, nullFormatProperty, globalConfiguration);
+        assertEquals(
+                VALUE,
+                converter.convertToJavaData(
+                        new ReadCellData<>(writtenNullFormat.getStringValue()), nullFormatProperty, globalConfiguration));
     }
 
     @Test

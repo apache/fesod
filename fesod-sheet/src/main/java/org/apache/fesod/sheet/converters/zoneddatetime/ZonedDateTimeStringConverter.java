@@ -31,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -68,7 +69,9 @@ public class ZonedDateTimeStringConverter implements Converter<ZonedDateTime> {
     }
 
     private DateTimeFormatter formatter(ExcelContentProperty contentProperty, Locale locale) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
+        if (contentProperty == null
+                || contentProperty.getDateTimeFormatProperty() == null
+                || StringUtils.isEmpty(contentProperty.getDateTimeFormatProperty().getFormat())) {
             return DateTimeFormatter.ISO_ZONED_DATE_TIME;
         }
         return DateTimeFormatter.ofPattern(

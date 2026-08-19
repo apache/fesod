@@ -71,7 +71,8 @@ public class ZonedDateTimeStringConverter implements Converter<ZonedDateTime> {
     private DateTimeFormatter formatter(ExcelContentProperty contentProperty, Locale locale) {
         if (contentProperty == null
                 || contentProperty.getDateTimeFormatProperty() == null
-                || StringUtils.isEmpty(contentProperty.getDateTimeFormatProperty().getFormat())) {
+                || StringUtils.isEmpty(
+                        contentProperty.getDateTimeFormatProperty().getFormat())) {
             return DateTimeFormatter.ISO_ZONED_DATE_TIME;
         }
         return DateTimeFormatter.ofPattern(

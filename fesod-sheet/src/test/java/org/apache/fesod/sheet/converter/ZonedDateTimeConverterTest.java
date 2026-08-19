@@ -109,7 +109,9 @@ class ZonedDateTimeConverterTest {
         assertEquals(
                 VALUE,
                 converter.convertToJavaData(
-                        new ReadCellData<>(writtenNullFormat.getStringValue()), nullFormatProperty, globalConfiguration));
+                        new ReadCellData<>(writtenNullFormat.getStringValue()),
+                        nullFormatProperty,
+                        globalConfiguration));
     }
 
     @Test

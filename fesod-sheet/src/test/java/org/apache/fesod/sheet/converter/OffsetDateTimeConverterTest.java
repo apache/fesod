@@ -26,6 +26,8 @@
 package org.apache.fesod.sheet.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -142,9 +144,16 @@ class OffsetDateTimeConverterTest {
     void numberConverterReturnsNullForInvalidExcelDate() {
         OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
-        assertEquals(
-                null,
-                converter.convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, globalConfiguration));
+        assertNull(converter.convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, globalConfiguration));
+    }
+
+    @Test
+    void numberConverterDefaultsNullUse1904windowingToFalse() {
+        OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setUse1904windowing(null);
+        WriteCellData<?> written = converter.convertToExcelData(VALUE, null, globalConfiguration);
+        assertNotNull(written.getNumberValue());
     }
 
     @Test

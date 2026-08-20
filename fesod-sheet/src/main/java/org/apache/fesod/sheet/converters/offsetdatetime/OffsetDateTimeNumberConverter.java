@@ -77,6 +77,7 @@ public class OffsetDateTimeNumberConverter implements Converter<OffsetDateTime> 
                 return propertyUse1904windowing;
             }
         }
-        return globalConfiguration.getUse1904windowing();
+        Boolean globalUse1904windowing = globalConfiguration.getUse1904windowing();
+        return globalUse1904windowing != null && globalUse1904windowing;
     }
 }

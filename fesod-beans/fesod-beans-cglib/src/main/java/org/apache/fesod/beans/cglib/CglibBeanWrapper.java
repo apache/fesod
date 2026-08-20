@@ -43,7 +43,7 @@ public final class CglibBeanWrapper implements BeanWrapper {
 
     private BeanMap initBeanMap(Object bean) {
         BeanMap beanMap = BEAN_MAP_CACHE.computeIfAbsent(bean.getClass(), clazz -> {
-            BeanMap.Generator gen = new BeanMap.Generator();
+            EnhancedBeanMapGenerator gen = new EnhancedBeanMapGenerator();
             gen.setBeanClass(clazz);
             gen.setContextClass(clazz);
             gen.setNamingPolicy(FesodSheetNamingPolicy.INSTANCE);

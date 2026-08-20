@@ -25,7 +25,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +44,16 @@ class CglibBeanWrapperTest {
         private String name;
         private int age;
         private boolean active;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(fluent = true)
+    static class FluentSampleBean {
+        private String name;
+        private int age;
     }
 
     @Test
@@ -169,6 +181,61 @@ class CglibBeanWrapperTest {
         bean.setName("Kendall");
 
         Assertions.assertThat(wrapper.getProperty("name")).isEqualTo("Kendall");
+    }
+
+    @Test
+    void shouldReadFluentAccessorProperties() {
+        BeanWrapper wrapper = new CglibBeanWrapper(new FluentSampleBean("Rose", 20));
+
+        Assertions.assertThat(wrapper.getProperty("name")).isEqualTo("Rose");
+        Assertions.assertThat(wrapper.getProperty("age")).isEqualTo(20);
+    }
+
+    @Test
+    void shouldWriteFluentAccessorProperties() {
+        FluentSampleBean bean = new FluentSampleBean();
+        BeanWrapper wrapper = new CglibBeanWrapper(bean);
+
+        wrapper.setProperty("name", "Lily");
+        wrapper.setProperty("age", 21);
+
+        Assertions.assertThat(bean.name()).isEqualTo("Lily");
+        Assertions.assertThat(bean.age()).isEqualTo(21);
+    }
+
+    @Test
+    void shouldReturnPreviousValueWhenPuttingFluentProperty() {
+        EnhancedBeanMapGenerator generator = new EnhancedBeanMapGenerator();
+        generator.setBeanClass(FluentSampleBean.class);
+        BeanMap map = generator.create().newInstance(new FluentSampleBean("Rose", 20));
+
+        Assertions.assertThat(map.put("name", "Lily")).isEqualTo("Rose");
+        Assertions.assertThat(map.put("age", 21)).isEqualTo(20);
+    }
+
+    @Test
+    void shouldExposeFluentAccessorPropertiesInMetadata() {
+        BeanWrapper wrapper = new CglibBeanWrapper(new FluentSampleBean());
+
+        Assertions.assertThat(wrapper.getPropertyNames()).contains("name", "age");
+        Assertions.assertThat(wrapper.containsProperty("name")).isTrue();
+        Assertions.assertThat(wrapper.containsProperty("nope")).isFalse();
+        Assertions.assertThat(wrapper.getPropertyType("name")).isEqualTo(String.class);
+    }
+
+    @Test
+    void shouldIsolateWrappersOfSameBeanClass() {
+        SampleBean first = new SampleBean("Rose", 20, true);
+        SampleBean second = new SampleBean("Jack", 40, false);
+
+        BeanWrapper firstWrapper = new CglibBeanWrapper(first);
+        BeanWrapper secondWrapper = new CglibBeanWrapper(second);
+        firstWrapper.setProperty("name", "Changed");
+
+        Assertions.assertThat(firstWrapper.getProperty("name")).isEqualTo("Changed");
+        Assertions.assertThat(secondWrapper.getProperty("name")).isEqualTo("Jack");
+        Assertions.assertThat(firstWrapper.unwrap()).isSameAs(first);
+        Assertions.assertThat(secondWrapper.unwrap()).isSameAs(second);
     }
 
     @Test

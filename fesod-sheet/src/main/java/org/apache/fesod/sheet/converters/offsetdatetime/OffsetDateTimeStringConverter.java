@@ -38,6 +38,7 @@ import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.util.DateUtils;
 
 /** OffsetDateTime and string converter. */
 public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> {
@@ -54,18 +55,24 @@ public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> 
     @Override
     public OffsetDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        DateTimeFormatter formatter = formatter(contentProperty, globalConfiguration.getLocale());
         String stringValue = cellData.getStringValue();
+        String format = format(contentProperty);
+        DateTimeFormatter formatter = formatter(contentProperty, globalConfiguration.getLocale());
         try {
             return OffsetDateTime.parse(stringValue, formatter);
         } catch (DateTimeParseException e) {
-            LocalDateTime localDateTime;
             try {
-                localDateTime = LocalDateTime.parse(stringValue, formatter);
-            } catch (DateTimeParseException inner) {
-                localDateTime = LocalDateTime.parse(stringValue, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                return DateUtils.parseLocalDateTime(stringValue, format, globalConfiguration.getLocale())
+                        .atZone(ZoneId.systemDefault())
+                        .toOffsetDateTime();
+            } catch (RuntimeException inner) {
+                if (StringUtils.isEmpty(format)) {
+                    return LocalDateTime.parse(stringValue, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                            .atZone(ZoneId.systemDefault())
+                            .toOffsetDateTime();
+                }
+                throw inner;
             }
-            return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
         }
     }
 
@@ -75,14 +82,21 @@ public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> 
         return new WriteCellData<>(value.format(formatter(contentProperty, globalConfiguration.getLocale())));
     }
 
+    private String format(ExcelContentProperty contentProperty) {
+        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
+            return null;
+        }
+        return contentProperty.getDateTimeFormatProperty().getFormat();
+    }
+
     private DateTimeFormatter formatter(ExcelContentProperty contentProperty, Locale locale) {
-        if (contentProperty == null
-                || contentProperty.getDateTimeFormatProperty() == null
-                || StringUtils.isEmpty(
-                        contentProperty.getDateTimeFormatProperty().getFormat())) {
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        String format = format(contentProperty);
+        if (StringUtils.isEmpty(format)) {
             return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         }
-        return DateTimeFormatter.ofPattern(
-                contentProperty.getDateTimeFormatProperty().getFormat(), locale);
+        return DateTimeFormatter.ofPattern(format, locale);
     }
 }

@@ -26,9 +26,12 @@
 package org.apache.fesod.sheet.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeDateConverter;
@@ -97,6 +100,51 @@ class OffsetDateTimeConverterTest {
         assertEquals(
                 VALUE.toLocalDateTime().atZone(ZoneId.systemDefault()).toOffsetDateTime(),
                 converter.convertToJavaData(cellData, null, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterParsesDefaultSpaceSeparatedFormat() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02 03:04:05");
+        assertEquals(
+                VALUE.toLocalDateTime().atZone(ZoneId.systemDefault()).toOffsetDateTime(),
+                converter.convertToJavaData(cellData, null, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterRejectsTextNotMatchingConfiguredPattern() {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy/MM/dd HH:mm:ss", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02T03:04:05");
+        assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(cellData, property, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterUsesDefaultLocaleWhenLocaleIsNull() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss Z", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setLocale(null);
+        assertEquals(
+                "2020-01-02 03:04:05 +0800",
+                converter
+                        .convertToExcelData(VALUE, property, globalConfiguration)
+                        .getStringValue());
+    }
+
+    @Test
+    void numberConverterReturnsNullForInvalidExcelDate() {
+        OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        assertEquals(
+                null,
+                converter.convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, globalConfiguration));
     }
 
     @Test

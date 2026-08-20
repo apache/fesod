@@ -26,6 +26,8 @@
 package org.apache.fesod.sheet.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
@@ -40,6 +42,7 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -64,6 +67,49 @@ class ZonedDateTimeConverterTest {
                 converter.convertToJavaData(new ReadCellData<>(written.getNumberValue()), null, globalConfiguration);
         assertEquals(VALUE.toLocalDateTime(), read.toLocalDateTime());
         assertEquals(ZoneId.systemDefault(), read.getZone());
+    }
+
+    @Test
+    void numberConverterSupports1904Windowing() {
+        ZonedDateTimeNumberConverter converter = new ZonedDateTimeNumberConverter();
+
+        // 1. Configured via GlobalConfiguration
+        GlobalConfiguration global1900 = new GlobalConfiguration();
+        GlobalConfiguration global1904 = new GlobalConfiguration();
+        global1904.setUse1904windowing(Boolean.TRUE);
+
+        WriteCellData<?> written1900 = converter.convertToExcelData(VALUE, null, global1900);
+        WriteCellData<?> written1904 = converter.convertToExcelData(VALUE, null, global1904);
+
+        assertEquals(
+                BigDecimal.valueOf(DateUtil.getExcelDate(VALUE.toLocalDateTime(), false)),
+                written1900.getNumberValue());
+        assertEquals(
+                BigDecimal.valueOf(DateUtil.getExcelDate(VALUE.toLocalDateTime(), true)), written1904.getNumberValue());
+        assertNotEquals(written1900.getNumberValue(), written1904.getNumberValue());
+
+        ZonedDateTime read1904 =
+                converter.convertToJavaData(new ReadCellData<>(written1904.getNumberValue()), null, global1904);
+        assertEquals(VALUE.toLocalDateTime(), read1904.toLocalDateTime());
+        assertEquals(ZoneId.systemDefault(), read1904.getZone());
+
+        ZonedDateTime read1904With1900 =
+                converter.convertToJavaData(new ReadCellData<>(written1904.getNumberValue()), null, global1900);
+        assertNotEquals(VALUE.toLocalDateTime(), read1904With1900.toLocalDateTime());
+
+        // 2. Configured via ExcelContentProperty
+        ExcelContentProperty property1904 = new ExcelContentProperty();
+        property1904.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss", true));
+
+        WriteCellData<?> writtenProperty1904 = converter.convertToExcelData(VALUE, property1904, global1900);
+        assertEquals(
+                BigDecimal.valueOf(DateUtil.getExcelDate(VALUE.toLocalDateTime(), true)),
+                writtenProperty1904.getNumberValue());
+
+        ZonedDateTime readProperty1904 = converter.convertToJavaData(
+                new ReadCellData<>(writtenProperty1904.getNumberValue()), property1904, global1900);
+        assertEquals(VALUE.toLocalDateTime(), readProperty1904.toLocalDateTime());
+        assertEquals(ZoneId.systemDefault(), readProperty1904.getZone());
     }
 
     @Test

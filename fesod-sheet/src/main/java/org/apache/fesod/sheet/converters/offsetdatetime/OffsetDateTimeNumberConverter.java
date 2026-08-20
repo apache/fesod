@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.converters.offsetdatetime;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import org.apache.fesod.sheet.converters.Converter;
@@ -52,23 +53,30 @@ public class OffsetDateTimeNumberConverter implements Converter<OffsetDateTime> 
     @Override
     public OffsetDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        boolean use1904windowing = globalConfiguration.getUse1904windowing();
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            use1904windowing = contentProperty.getDateTimeFormatProperty().getUse1904windowing();
+        LocalDateTime localDateTime = DateUtils.getLocalDateTime(
+                cellData.getNumberValue().doubleValue(), resolveUse1904windowing(contentProperty, globalConfiguration));
+        if (localDateTime == null) {
+            return null;
         }
-        return DateUtils.getLocalDateTime(cellData.getNumberValue().doubleValue(), use1904windowing)
-                .atZone(ZoneId.systemDefault())
-                .toOffsetDateTime();
+        return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             OffsetDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        boolean use1904windowing = globalConfiguration.getUse1904windowing();
+        return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
+                value.toLocalDateTime(), resolveUse1904windowing(contentProperty, globalConfiguration))));
+    }
+
+    private boolean resolveUse1904windowing(
+            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            use1904windowing = contentProperty.getDateTimeFormatProperty().getUse1904windowing();
+            Boolean propertyUse1904windowing =
+                    contentProperty.getDateTimeFormatProperty().getUse1904windowing();
+            if (propertyUse1904windowing != null) {
+                return propertyUse1904windowing;
+            }
         }
-        return new WriteCellData<>(
-                BigDecimal.valueOf(DateUtil.getExcelDate(value.toLocalDateTime(), use1904windowing)));
+        return globalConfiguration.getUse1904windowing();
     }
 }

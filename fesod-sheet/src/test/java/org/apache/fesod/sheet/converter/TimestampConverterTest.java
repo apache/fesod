@@ -122,18 +122,18 @@ public class TimestampConverterTest {
         Timestamp timestamp = Timestamp.valueOf("2020-01-01 01:01:01");
 
         ExcelContentProperty contentProperty = new ExcelContentProperty();
-        DateTimeFormatProperty dateTimeFormatProperty = new DateTimeFormatProperty("yyyy/MM/dd HH:mm:ss", null);
+        DateTimeFormatProperty dateTimeFormatProperty = new DateTimeFormatProperty("dd MMMM yyyy HH:mm:ss", null);
         contentProperty.setDateTimeFormatProperty(dateTimeFormatProperty);
 
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         globalConfiguration.setLocale(Locale.US);
 
         Timestamp javaData = converter.convertToJavaData(
-                new ReadCellData<>("2020/01/01 01:01:01"), contentProperty, globalConfiguration);
+                new ReadCellData<>("01 January 2020 01:01:01"), contentProperty, globalConfiguration);
         assertEquals(timestamp, javaData);
 
         WriteCellData<?> writeCellData = converter.convertToExcelData(timestamp, contentProperty, globalConfiguration);
-        assertEquals("2020/01/01 01:01:01", writeCellData.getStringValue());
+        assertEquals("01 January 2020 01:01:01", writeCellData.getStringValue());
     }
 
     @Test

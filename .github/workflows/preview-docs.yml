@@ -36,7 +36,7 @@ jobs:
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
 
@@ -53,7 +53,7 @@ jobs:
         run: pnpm build
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@4cbaf4c08f1a7bfa537d6113472ef4424e4eb654
+        uses: nwtgck/actions-netlify@d22a32a27c918fe470bbc562e984f80ec48c2668
         with:
           publish-dir: './website/build'
           production-deploy: false

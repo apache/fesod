@@ -76,7 +76,6 @@
         <module>fesod-bom</module>
         <module>fesod-common</module>
         <module>fesod-shaded</module>
-        <module>fesod-examples</module>
         <module>fesod-sheet</module>
     </modules>
 

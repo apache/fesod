@@ -27,6 +27,7 @@ package org.apache.fesod.sheet.converters.offsetdatetime;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -50,6 +51,9 @@ public class OffsetDateTimeDateConverter implements Converter<OffsetDateTime> {
         String format = null;
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             format = contentProperty.getDateTimeFormatProperty().getFormat();
+            if (StringUtils.isEmpty(format)) {
+                format = null;
+            }
         }
         WorkBookUtil.fillDataFormat(cellData, format, DateUtils.defaultDateFormat);
         return cellData;

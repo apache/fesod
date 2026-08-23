@@ -19,12 +19,15 @@
 
 package org.apache.fesod.sheet.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,19 +58,26 @@ class DateUtilsTest {
 
     @Test
     void test_switchDateFormat() {
-        Assertions.assertEquals(DateUtils.DATE_FORMAT_19, DateUtils.switchDateFormat("2026-01-01 12:00:00"));
-        Assertions.assertEquals(
-                DateUtils.DATE_FORMAT_19_FORWARD_SLASH, DateUtils.switchDateFormat("2026/01/01 12:00:00"));
+        assertEquals(DateUtils.DATE_FORMAT_19, DateUtils.switchDateFormat("2026-01-01 12:00:00"));
+        assertEquals(DateUtils.DATE_FORMAT_19_FORWARD_SLASH, DateUtils.switchDateFormat("2026/01/01 12:00:00"));
 
-        Assertions.assertEquals(DateUtils.DATE_FORMAT_16, DateUtils.switchDateFormat("2026-01-01 12:00"));
-        Assertions.assertEquals(DateUtils.DATE_FORMAT_16_FORWARD_SLASH, DateUtils.switchDateFormat("2026/01/01 12:00"));
+        assertEquals(DateUtils.DATE_FORMAT_16, DateUtils.switchDateFormat("2026-01-01 12:00"));
+        assertEquals(DateUtils.DATE_FORMAT_16_FORWARD_SLASH, DateUtils.switchDateFormat("2026/01/01 12:00"));
 
-        Assertions.assertEquals(DateUtils.DATE_FORMAT_17, DateUtils.switchDateFormat("20260101 12:00:00"));
-        Assertions.assertEquals(DateUtils.DATE_FORMAT_14, DateUtils.switchDateFormat("20260101120000"));
-        Assertions.assertEquals(DateUtils.DATE_FORMAT_10, DateUtils.switchDateFormat("2026-01-01"));
+        assertEquals(DateUtils.DATE_FORMAT_17, DateUtils.switchDateFormat("20260101 12:00:00"));
+        assertEquals(DateUtils.DATE_FORMAT_14, DateUtils.switchDateFormat("20260101120000"));
+        assertEquals(DateUtils.DATE_FORMAT_10, DateUtils.switchDateFormat("2026-01-01"));
 
-        Assertions.assertThrows(
-                IllegalArgumentException.class, () -> DateUtils.switchDateFormat("invalid_datestring_length"));
+        assertThrows(IllegalArgumentException.class, () -> DateUtils.switchDateFormat("invalid_datestring_length"));
+    }
+
+    @Test
+    void test_switchTimeFormat() {
+        assertEquals(DateUtils.TIME_FORMAT_8, DateUtils.switchTimeFormat("12:30:45"));
+        assertEquals(DateUtils.TIME_FORMAT_5, DateUtils.switchTimeFormat("12:30"));
+
+        assertThrows(IllegalArgumentException.class, () -> DateUtils.switchTimeFormat("12:30:45.123"));
+        assertThrows(IllegalArgumentException.class, () -> DateUtils.switchTimeFormat("invalid"));
     }
 
     @Test
@@ -77,17 +87,17 @@ class DateUtilsTest {
 
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(date1);
-        Assertions.assertEquals(2026, cal1.get(Calendar.YEAR));
-        Assertions.assertEquals(Calendar.OCTOBER, cal1.get(Calendar.MONTH));
-        Assertions.assertEquals(30, cal1.get(Calendar.MINUTE));
+        assertEquals(2026, cal1.get(Calendar.YEAR));
+        assertEquals(Calendar.OCTOBER, cal1.get(Calendar.MONTH));
+        assertEquals(30, cal1.get(Calendar.MINUTE));
 
         Date date2 = DateUtils.parseDate(dateStr, "");
 
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(date2);
-        Assertions.assertEquals(2026, cal2.get(Calendar.YEAR));
-        Assertions.assertEquals(Calendar.OCTOBER, cal2.get(Calendar.MONTH));
-        Assertions.assertEquals(30, cal2.get(Calendar.MINUTE));
+        assertEquals(2026, cal2.get(Calendar.YEAR));
+        assertEquals(Calendar.OCTOBER, cal2.get(Calendar.MONTH));
+        assertEquals(30, cal2.get(Calendar.MINUTE));
     }
 
     @Test
@@ -96,30 +106,30 @@ class DateUtilsTest {
         String format = "yyyy-MM-dd HH:mm:ss";
         LocalDateTime usResult = DateUtils.parseLocalDateTime(dateStr, format, Locale.US);
 
-        Assertions.assertEquals(2026, usResult.getYear());
-        Assertions.assertEquals(10, usResult.getMonthValue());
-        Assertions.assertEquals(1, usResult.getDayOfMonth());
-        Assertions.assertEquals(12, usResult.getHour());
-        Assertions.assertEquals(30, usResult.getMinute());
-        Assertions.assertEquals(45, usResult.getSecond());
+        assertEquals(2026, usResult.getYear());
+        assertEquals(10, usResult.getMonthValue());
+        assertEquals(1, usResult.getDayOfMonth());
+        assertEquals(12, usResult.getHour());
+        assertEquals(30, usResult.getMinute());
+        assertEquals(45, usResult.getSecond());
 
         LocalDateTime result = DateUtils.parseLocalDateTime(dateStr, format, null);
 
-        Assertions.assertEquals(2026, result.getYear());
-        Assertions.assertEquals(10, result.getMonthValue());
-        Assertions.assertEquals(1, result.getDayOfMonth());
-        Assertions.assertEquals(12, result.getHour());
-        Assertions.assertEquals(30, result.getMinute());
-        Assertions.assertEquals(45, result.getSecond());
+        assertEquals(2026, result.getYear());
+        assertEquals(10, result.getMonthValue());
+        assertEquals(1, result.getDayOfMonth());
+        assertEquals(12, result.getHour());
+        assertEquals(30, result.getMinute());
+        assertEquals(45, result.getSecond());
 
         LocalDateTime autoDetectFormatResult = DateUtils.parseLocalDateTime(dateStr, "", null);
 
-        Assertions.assertEquals(2026, autoDetectFormatResult.getYear());
-        Assertions.assertEquals(10, autoDetectFormatResult.getMonthValue());
-        Assertions.assertEquals(1, autoDetectFormatResult.getDayOfMonth());
-        Assertions.assertEquals(12, autoDetectFormatResult.getHour());
-        Assertions.assertEquals(30, autoDetectFormatResult.getMinute());
-        Assertions.assertEquals(45, autoDetectFormatResult.getSecond());
+        assertEquals(2026, autoDetectFormatResult.getYear());
+        assertEquals(10, autoDetectFormatResult.getMonthValue());
+        assertEquals(1, autoDetectFormatResult.getDayOfMonth());
+        assertEquals(12, autoDetectFormatResult.getHour());
+        assertEquals(30, autoDetectFormatResult.getMinute());
+        assertEquals(45, autoDetectFormatResult.getSecond());
     }
 
     @Test
@@ -128,21 +138,36 @@ class DateUtilsTest {
         String format = "yyyy-MM-dd";
         LocalDate usResult = DateUtils.parseLocalDate(dateStr, format, Locale.US);
 
-        Assertions.assertEquals(2026, usResult.getYear());
-        Assertions.assertEquals(10, usResult.getMonthValue());
-        Assertions.assertEquals(1, usResult.getDayOfMonth());
+        assertEquals(2026, usResult.getYear());
+        assertEquals(10, usResult.getMonthValue());
+        assertEquals(1, usResult.getDayOfMonth());
 
         LocalDate result = DateUtils.parseLocalDate(dateStr, format, null);
 
-        Assertions.assertEquals(2026, result.getYear());
-        Assertions.assertEquals(10, result.getMonthValue());
-        Assertions.assertEquals(1, result.getDayOfMonth());
+        assertEquals(2026, result.getYear());
+        assertEquals(10, result.getMonthValue());
+        assertEquals(1, result.getDayOfMonth());
 
         LocalDate autoDetectFormatResult = DateUtils.parseLocalDate(dateStr, "", null);
 
-        Assertions.assertEquals(2026, autoDetectFormatResult.getYear());
-        Assertions.assertEquals(10, autoDetectFormatResult.getMonthValue());
-        Assertions.assertEquals(1, autoDetectFormatResult.getDayOfMonth());
+        assertEquals(2026, autoDetectFormatResult.getYear());
+        assertEquals(10, autoDetectFormatResult.getMonthValue());
+        assertEquals(1, autoDetectFormatResult.getDayOfMonth());
+    }
+
+    @Test
+    void test_parseLocalTime() {
+        LocalTime usResult = DateUtils.parseLocalTime("12:30:45", DateUtils.TIME_FORMAT_8, Locale.US);
+        assertEquals(LocalTime.of(12, 30, 45), usResult);
+
+        LocalTime result = DateUtils.parseLocalTime("12:30:45", DateUtils.TIME_FORMAT_8, null);
+        assertEquals(LocalTime.of(12, 30, 45), result);
+
+        LocalTime autoDetectSeconds = DateUtils.parseLocalTime("12:30:45", "", null);
+        assertEquals(LocalTime.of(12, 30, 45), autoDetectSeconds);
+
+        LocalTime autoDetectMinutes = DateUtils.parseLocalTime("12:30", "", null);
+        assertEquals(LocalTime.of(12, 30), autoDetectMinutes);
     }
 
     @Test
@@ -151,7 +176,7 @@ class DateUtilsTest {
         String result = DateUtils.format(now);
         Assertions.assertNotNull(result);
         // yyyy-MM-dd HH:mm:ss
-        Assertions.assertEquals(19, result.length());
+        assertEquals(19, result.length());
 
         Assertions.assertNull(DateUtils.format(null));
     }
@@ -162,7 +187,7 @@ class DateUtilsTest {
         String format = "dd-MMM-yyyy";
 
         String usResult = DateUtils.format(ldt, format, Locale.US);
-        Assertions.assertEquals("01-Oct-2026", usResult);
+        assertEquals("01-Oct-2026", usResult);
 
         String cnResult = DateUtils.format(ldt, format, Locale.SIMPLIFIED_CHINESE);
         Assertions.assertNotNull(cnResult);
@@ -170,7 +195,7 @@ class DateUtilsTest {
         Assertions.assertNull(DateUtils.format((LocalDateTime) null, format, Locale.US));
 
         String defaultUSResult = DateUtils.format(ldt, "", Locale.US);
-        Assertions.assertEquals("2026-10-01 12:00:00", defaultUSResult);
+        assertEquals("2026-10-01 12:00:00", defaultUSResult);
     }
 
     @Test
@@ -179,7 +204,7 @@ class DateUtilsTest {
         String format = "dd-MMM-yyyy";
 
         String usResult = DateUtils.format(ld, format, Locale.US);
-        Assertions.assertEquals("01-Oct-2026", usResult);
+        assertEquals("01-Oct-2026", usResult);
 
         String cnResult = DateUtils.format(ld, format, Locale.SIMPLIFIED_CHINESE);
         Assertions.assertNotNull(cnResult);
@@ -187,13 +212,23 @@ class DateUtilsTest {
         Assertions.assertNull(DateUtils.format((LocalDate) null, format, Locale.US));
 
         String defaultUSResult = DateUtils.format(ld, "", Locale.US);
-        Assertions.assertEquals("2026-10-01", defaultUSResult);
+        assertEquals("2026-10-01", defaultUSResult);
 
         String defaultFormatResult = DateUtils.format(ld, "", null);
-        Assertions.assertEquals("2026-10-01", defaultFormatResult);
+        assertEquals("2026-10-01", defaultFormatResult);
 
         String defaultFormatResult2 = DateUtils.format(ld, "");
-        Assertions.assertEquals("2026-10-01", defaultFormatResult2);
+        assertEquals("2026-10-01", defaultFormatResult2);
+    }
+
+    @Test
+    void test_format_LocalTime() {
+        LocalTime time = LocalTime.of(12, 30, 45);
+
+        assertEquals("12:30:45", DateUtils.format(time, null, Locale.US));
+        assertEquals("12:30", DateUtils.format(time, DateUtils.TIME_FORMAT_5, Locale.US));
+        assertEquals("12:30:45", DateUtils.format(time, ""));
+        Assertions.assertNull(DateUtils.format((LocalTime) null, DateUtils.TIME_FORMAT_8, Locale.US));
     }
 
     @Test
@@ -208,8 +243,8 @@ class DateUtilsTest {
             String rootResult = DateUtils.format(date, format, Locale.ROOT);
             String defaultResult = DateUtils.format(date, format, null);
 
-            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.ROOT)), rootResult);
-            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.FRANCE)), defaultResult);
+            assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.ROOT)), rootResult);
+            assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.FRANCE)), defaultResult);
             Assertions.assertNotEquals(rootResult, defaultResult);
         } finally {
             Locale.setDefault(Locale.Category.FORMAT, originalLocale);
@@ -229,8 +264,8 @@ class DateUtilsTest {
             Locale.setDefault(Locale.Category.FORMAT, Locale.US);
             String usResult = DateUtils.format(date, format, null);
 
-            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.FRANCE)), franceResult);
-            Assertions.assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.US)), usResult);
+            assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.FRANCE)), franceResult);
+            assertEquals(date.format(DateTimeFormatter.ofPattern(format, Locale.US)), usResult);
             Assertions.assertNotEquals(franceResult, usResult);
         } finally {
             Locale.setDefault(Locale.Category.FORMAT, originalLocale);
@@ -253,12 +288,12 @@ class DateUtilsTest {
         ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>> threadLocal =
                 (ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>>) field.get(null);
         Map<Locale, Map<String, DateTimeFormatter>> localeCache = threadLocal.get();
-        Assertions.assertEquals(formatCap, localeCache.get(Locale.US).size());
+        assertEquals(formatCap, localeCache.get(Locale.US).size());
 
         for (int i = 0; i < localeCap + 2; i++) {
             DateUtils.format(date, "yyyy-MM-dd", new Locale("en", "X" + i));
         }
-        Assertions.assertEquals(localeCap, localeCache.size());
+        assertEquals(localeCap, localeCache.size());
     }
 
     private static int readIntConstant(String name) throws NoSuchFieldException, IllegalAccessException {
@@ -292,7 +327,7 @@ class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_19);
         sdf.setTimeZone(TimeZone.getDefault());
 
-        Assertions.assertEquals(expectedStr, sdf.format(date));
+        assertEquals(expectedStr, sdf.format(date));
     }
 
     @ParameterizedTest
@@ -303,7 +338,7 @@ class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_19);
         sdf.setTimeZone(TimeZone.getDefault());
 
-        Assertions.assertEquals(expectedStr, sdf.format(date));
+        assertEquals(expectedStr, sdf.format(date));
     }
 
     @ParameterizedTest
@@ -318,7 +353,7 @@ class DateUtilsTest {
         String formatted = date.atZone(TimeZone.getDefault().toZoneId())
                 .format(DateTimeFormatter.ofPattern(DateUtils.DATE_FORMAT_19));
 
-        Assertions.assertEquals(expectedStr, formatted);
+        assertEquals(expectedStr, formatted);
     }
 
     @ParameterizedTest
@@ -329,7 +364,7 @@ class DateUtilsTest {
         String formatted = date.atZone(TimeZone.getDefault().toZoneId())
                 .format(DateTimeFormatter.ofPattern(DateUtils.DATE_FORMAT_19));
 
-        Assertions.assertEquals(expectedStr, formatted);
+        assertEquals(expectedStr, formatted);
     }
 
     @ParameterizedTest
@@ -339,7 +374,7 @@ class DateUtilsTest {
         Assertions.assertNotNull(date);
 
         String formatted = date.format(DateTimeFormatter.ofPattern(DateUtils.DATE_FORMAT_10));
-        Assertions.assertEquals(expectedStr, formatted);
+        assertEquals(expectedStr, formatted);
     }
 
     @ParameterizedTest
@@ -349,7 +384,23 @@ class DateUtilsTest {
         Assertions.assertNotNull(date);
 
         String formatted = date.format(DateTimeFormatter.ofPattern(DateUtils.DATE_FORMAT_10));
-        Assertions.assertEquals(expectedStr, formatted);
+        assertEquals(expectedStr, formatted);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0.5, 12:00:00", "1.0, 00:00:00", "43831.5, 12:00:00"})
+    void test_getLocalTime_1900(double excelValue, String expectedStr) {
+        LocalTime time = DateUtils.getLocalTime(excelValue, false);
+        Assertions.assertNotNull(time);
+        assertEquals(expectedStr, time.format(DateTimeFormatter.ofPattern(DateUtils.TIME_FORMAT_8)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0.5, 12:00:00", "0.0, 00:00:00", "42369.5, 12:00:00"})
+    void test_getLocalTime_1904(double excelValue, String expectedStr) {
+        LocalTime time = DateUtils.getLocalTime(excelValue, true);
+        Assertions.assertNotNull(time);
+        assertEquals(expectedStr, time.format(DateTimeFormatter.ofPattern(DateUtils.TIME_FORMAT_8)));
     }
 
     @Test
@@ -366,9 +417,9 @@ class DateUtilsTest {
 
         Calendar cal = DateUtils.getJavaCalendar(base + halfDay, false, null, true);
         Assertions.assertNotNull(cal);
-        Assertions.assertEquals(12, cal.get(Calendar.HOUR_OF_DAY));
-        Assertions.assertEquals(0, cal.get(Calendar.SECOND));
-        Assertions.assertEquals(0, cal.get(Calendar.MILLISECOND));
+        assertEquals(12, cal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(0, cal.get(Calendar.SECOND));
+        assertEquals(0, cal.get(Calendar.MILLISECOND));
     }
 
     @ParameterizedTest

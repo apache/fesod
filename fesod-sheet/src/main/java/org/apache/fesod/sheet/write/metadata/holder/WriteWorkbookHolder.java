@@ -240,12 +240,15 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         }
 
         // init handler
-        initHandler(writeWorkbook, null);
-
         try {
+            initHandler(writeWorkbook, null);
             copyTemplate();
         } catch (IOException e) {
+            closeOutputStreamIfOwned();
             throw new ExcelGenerateException("Copy template failure.", e);
+        } catch (RuntimeException e) {
+            closeOutputStreamIfOwned();
+            throw e;
         }
         if (writeWorkbook.getMandatoryUseInputStream() == null) {
             this.mandatoryUseInputStream = Boolean.FALSE;
@@ -268,6 +271,21 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         this.cellStyleIndexMap = MapUtils.newHashMap();
         this.fontMap = MapUtils.newHashMap();
         this.dataFormatMap = MapUtils.newHashMap();
+    }
+
+    /**
+     * Close the output stream opened by this holder when initialization fails, so that the target file
+     * is not held open. Only streams opened from {@code file} are closed; streams passed in by the
+     * caller remain the caller's responsibility.
+     */
+    private void closeOutputStreamIfOwned() {
+        if (file != null && outputStream != null) {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                log.warn("Failed to close output stream after workbook initialization failure.", e);
+            }
+        }
     }
 
     private void copyTemplate() throws IOException {

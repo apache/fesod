@@ -244,10 +244,10 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
             initHandler(writeWorkbook, null);
             copyTemplate();
         } catch (IOException e) {
-            closeOutputStreamIfOwned();
+            closeOutputStreamOnFailure();
             throw new ExcelGenerateException("Copy template failure.", e);
         } catch (RuntimeException e) {
-            closeOutputStreamIfOwned();
+            closeOutputStreamOnFailure();
             throw e;
         }
         if (writeWorkbook.getMandatoryUseInputStream() == null) {
@@ -274,12 +274,13 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
     }
 
     /**
-     * Close the output stream opened by this holder when initialization fails, so that the target file
-     * is not held open. Only streams opened from {@code file} are closed; streams passed in by the
-     * caller remain the caller's responsibility.
+     * Close the output stream when initialization fails, so that the target file is not held open.
+     * Mirrors the close behavior of the success path, which is also gated by {@code autoCloseStream};
+     * callers that opt out of automatic closing via {@code autoCloseStream(false)} keep that behavior
+     * here as well.
      */
-    private void closeOutputStreamIfOwned() {
-        if (file != null && outputStream != null) {
+    private void closeOutputStreamOnFailure() {
+        if (autoCloseStream && outputStream != null) {
             try {
                 outputStream.close();
             } catch (IOException e) {

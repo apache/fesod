@@ -53,14 +53,15 @@ public class WriteWorkbookHolderOutputStreamTest {
     }
 
     @Test
-    void constructorDoesNotCloseCallerProvidedOutputStreamOnFailure() throws IOException {
+    void constructorDoesNotCloseCallerProvidedOutputStreamWhenAutoCloseDisabled() throws IOException {
         WriteWorkbook writeWorkbook = new WriteWorkbook();
+        writeWorkbook.setAutoCloseStream(false);
         writeWorkbook.setOutputStream(new ByteArrayOutputStream());
         writeWorkbook.setTemplateFile(tempDir.resolve("missing-template.xlsx").toFile());
 
         Assertions.assertThrows(ExcelGenerateException.class, () -> new WriteWorkbookHolder(writeWorkbook));
-        // Streams passed in by the caller remain the caller's responsibility, so the holder must
-        // not close them on failure.
+        // autoCloseStream(false) opts into manual stream management, so the holder must not close
+        // caller-provided streams — mirroring the success-path contract.
         Assertions.assertDoesNotThrow(() -> writeWorkbook.getOutputStream().write(1));
     }
 }

@@ -24,6 +24,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
@@ -55,6 +57,28 @@ class ModelBuildEventListenerTest extends AbstractExcelTest {
     public static class PrivateGetterOnlyData {
         @ExcelProperty("name")
         private String name;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+    public static class FluentSetterData {
+        @ExcelProperty("name")
+        private String name;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NonStandardSetterData {
+        @ExcelProperty("name")
+        private String name;
+
+        public String setName(String name) {
+            return this.name = name;
+        }
     }
 
     @ParameterizedTest
@@ -89,6 +113,28 @@ class ModelBuildEventListenerTest extends AbstractExcelTest {
                 createTempFile(format),
                 PrivateGetterOnlyData.class,
                 Collections.singletonList(new PrivateGetterOnlyData("hello")));
+
+        Assertions.assertEquals("hello", result.get(0).getName());
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource
+    void shouldAssignFieldValueWhenSetterIsFluent(ExcelFormat format) throws Exception {
+        List<FluentSetterData> result = RoundTripHelper.writeAndRead(
+                createTempFile(format),
+                FluentSetterData.class,
+                Collections.singletonList(new FluentSetterData("hello")));
+
+        Assertions.assertEquals("hello", result.get(0).getName());
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource
+    void shouldAssignFieldValueWhenSetterIsNonStandard(ExcelFormat format) throws Exception {
+        List<NonStandardSetterData> result = RoundTripHelper.writeAndRead(
+                createTempFile(format),
+                NonStandardSetterData.class,
+                Collections.singletonList(new NonStandardSetterData("hello")));
 
         Assertions.assertEquals("hello", result.get(0).getName());
     }

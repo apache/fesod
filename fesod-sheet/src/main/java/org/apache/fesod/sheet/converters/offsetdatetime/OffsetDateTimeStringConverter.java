@@ -31,6 +31,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.Map;
+import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -42,6 +44,12 @@ import org.apache.fesod.sheet.util.DateUtils;
 
 /** OffsetDateTime and string converter. */
 public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> {
+    /**
+     * Thread-local cache of {@link DateTimeFormatter} instances, keyed by pattern and locale, so
+     * the per-cell hot path does not rebuild formatters for every conversion.
+     */
+    private static final ThreadLocal<Map<String, DateTimeFormatter>> FORMATTER_CACHE = new ThreadLocal<>();
+
     @Override
     public Class<?> supportJavaTypeKey() {
         return OffsetDateTime.class;
@@ -97,6 +105,14 @@ public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> 
         if (StringUtils.isEmpty(format)) {
             return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         }
-        return DateTimeFormatter.ofPattern(format, locale);
+        final String pattern = format;
+        final Locale actualLocale = locale;
+        Map<String, DateTimeFormatter> cache = FORMATTER_CACHE.get();
+        if (cache == null) {
+            cache = MapUtils.newHashMap();
+            FORMATTER_CACHE.set(cache);
+        }
+        return cache.computeIfAbsent(
+                pattern + '\0' + actualLocale, key -> DateTimeFormatter.ofPattern(pattern, actualLocale));
     }
 }

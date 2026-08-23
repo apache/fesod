@@ -46,6 +46,7 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -145,6 +146,17 @@ class OffsetDateTimeConverterTest {
         OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         assertNull(converter.convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, globalConfiguration));
+    }
+
+    @Test
+    void dateConverterFallsBackToDefaultFormatForEmptyDateTimeFormat() throws Exception {
+        OffsetDateTimeDateConverter converter = new OffsetDateTimeDateConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
+        WriteCellData<?> result = converter.convertToExcelData(VALUE, property, new GlobalConfiguration());
+        assertEquals(
+                DateUtils.defaultDateFormat,
+                result.getWriteCellStyle().getDataFormatData().getFormat());
     }
 
     @Test

@@ -28,7 +28,6 @@ package org.apache.fesod.sheet.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +194,7 @@ public class FieldUtils {
      * @param cls the target {@link Class}, must not be {@code null}
      * @return a {@link List} containing all resolved fields, or an empty list if no fields are found
      */
-    public static List<Field> resolveFields(Class<?> cls) {
+    public static List<Field> resolveAllFields(Class<?> cls) {
         Validate.isTrue(cls != null, "The class must not be null");
 
         List<Field> result = new ArrayList<>();
@@ -213,6 +212,6 @@ public class FieldUtils {
             }
             tempClass = tempClass.getSuperclass();
         }
-        return Collections.unmodifiableList(result);
+        return result;
     }
 }

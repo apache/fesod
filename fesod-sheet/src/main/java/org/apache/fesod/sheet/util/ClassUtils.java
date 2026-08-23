@@ -224,7 +224,7 @@ public class ClassUtils {
         if (clazz == null) {
             return null;
         }
-        List<Field> tempFieldList = FieldUtils.resolveFields(clazz);
+        List<Field> tempFieldList = FieldUtils.resolveAllFields(clazz);
 
         ContentStyle parentContentStyle = clazz.getAnnotation(ContentStyle.class);
         ContentFontStyle parentContentFontStyle = clazz.getAnnotation(ContentFontStyle.class);
@@ -298,7 +298,7 @@ public class ClassUtils {
     }
 
     private static FieldCache doDeclaredFields(Class<?> clazz, ConfigurationHolder configurationHolder) {
-        List<Field> tempFieldList = FieldUtils.resolveFields(clazz);
+        List<Field> tempFieldList = FieldUtils.resolveAllFields(clazz);
 
         ExcelIgnoreUnannotated excelIgnoreUnannotated = clazz.getAnnotation(ExcelIgnoreUnannotated.class);
         Set<String> ignoreSet = new HashSet<>();

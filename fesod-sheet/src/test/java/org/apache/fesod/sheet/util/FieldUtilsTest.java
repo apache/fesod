@@ -261,20 +261,20 @@ class FieldUtilsTest {
     @Test
     void test_resolveFields_nullClass_throwsException() {
         IllegalArgumentException exception =
-                Assertions.assertThrows(IllegalArgumentException.class, () -> FieldUtils.resolveFields(null));
+                Assertions.assertThrows(IllegalArgumentException.class, () -> FieldUtils.resolveAllFields(null));
         Assertions.assertEquals("The class must not be null", exception.getMessage());
     }
 
     @Test
     void test_resolveFields_emptyClass_returnsEmptyList() {
-        List<Field> fields = FieldUtils.resolveFields(EmptyClass.class);
+        List<Field> fields = FieldUtils.resolveAllFields(EmptyClass.class);
         Assertions.assertNotNull(fields);
         Assertions.assertTrue(fields.isEmpty());
     }
 
     @Test
     void test_resolveFields_InheritanceAndShadowing_SubclassTakesPrecedence() {
-        List<Field> fields = FieldUtils.resolveFields(ChildClass.class);
+        List<Field> fields = FieldUtils.resolveAllFields(ChildClass.class);
 
         Assertions.assertEquals(3, fields.size());
 
@@ -292,17 +292,10 @@ class FieldUtilsTest {
 
     @Test
     void test_resolveFields_IgnoresStaticFields() {
-        List<Field> fields = FieldUtils.resolveFields(ChildClass.class);
+        List<Field> fields = FieldUtils.resolveAllFields(ChildClass.class);
 
         boolean hasStaticField = fields.stream().anyMatch(f -> f.getName().equals("STATIC_PARENT_FIELD"));
 
         Assertions.assertFalse(hasStaticField);
-    }
-
-    @Test
-    void test_resolveFields_returnsUnmodifiableList() {
-        List<Field> fields = FieldUtils.resolveFields(ChildClass.class);
-
-        Assertions.assertThrows(UnsupportedOperationException.class, fields::clear);
     }
 }

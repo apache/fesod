@@ -47,7 +47,7 @@ public class LocalTimeDateConverter implements Converter<LocalTime> {
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             format = contentProperty.getDateTimeFormatProperty().getFormat();
         }
-        WorkBookUtil.fillDataFormat(cellData, format, DateUtils.DEFAULT_LOCAL_TIME_FORMAT);
+        WorkBookUtil.fillDataFormat(cellData, format == null || format.isEmpty() ? null : format, DateUtils.DEFAULT_LOCAL_TIME_FORMAT);
         return cellData;
     }
 }

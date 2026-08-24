@@ -56,9 +56,9 @@ public class ReadSheet extends ReadBasicParameter {
     public Integer numRows;
 
     /**
-     * Specific columns to read (0-based indexes)
+     * Resolver for column filtering and index remapping.
      */
-    private List<Integer> columnIndexes;
+    private ColumnIndexResolver columnIndexResolver = ColumnIndexResolver.PASS_THROUGH;
 
     public ReadSheet() {}
 
@@ -77,11 +77,11 @@ public class ReadSheet extends ReadBasicParameter {
         this.numRows = numRows;
     }
 
-    public ReadSheet(Integer sheetNo, String sheetName, Integer numRows, List<Integer> numCols) {
+    public ReadSheet(Integer sheetNo, String sheetName, Integer numRows, ColumnIndexResolver columnIndexResolver) {
         this.sheetNo = sheetNo;
         this.sheetName = sheetName;
         this.numRows = numRows;
-        this.columnIndexes = numCols;
+        this.columnIndexResolver = columnIndexResolver;
     }
 
     public Integer getSheetNo() {
@@ -124,12 +124,16 @@ public class ReadSheet extends ReadBasicParameter {
         this.sheetVeryHidden = sheetVeryHidden;
     }
 
-    public List<Integer> getColumnIndexes() {
-        return this.columnIndexes;
+    public ColumnIndexResolver getColumnIndexResolver() {
+        return this.columnIndexResolver;
     }
 
-    public void setColumnIndexes(List<Integer> columnIndexes) {
-        this.columnIndexes = columnIndexes;
+    public void setIncludeColumnIndexes(List<Integer> columnIndexes) {
+        this.columnIndexResolver = ColumnIndexResolver.fromInclude(columnIndexes);
+    }
+
+    public void setColumnIndexResolver(ColumnIndexResolver columnIndexResolver) {
+        this.columnIndexResolver = columnIndexResolver;
     }
 
     public void copyBasicParameter(ReadSheet other) {
@@ -147,7 +151,7 @@ public class ReadSheet extends ReadBasicParameter {
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());
-        this.setColumnIndexes(other.getColumnIndexes());
+        this.setColumnIndexResolver(other.getColumnIndexResolver());
     }
 
     @Override

@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
-import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
@@ -40,18 +39,12 @@ public class BlankRecordHandler extends AbstractXlsRecordHandler implements Igno
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BlankRecord br = (BlankRecord) record;
-        int originalColumnIndex = br.getColumn();
 
-        List<Integer> includeColumnIndexes =
-                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-
-        int targetColumnIndex = originalColumnIndex;
-        if (includeColumnIndexes != null) {
-            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex < 0) {
-                return;
-            }
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(br.getColumn());
+        if (targetColumnIndex == null) {
+            return;
         }
+
         xlsReadContext
                 .xlsReadSheetHolder()
                 .getCellMap()

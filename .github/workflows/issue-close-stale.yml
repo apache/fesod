@@ -30,7 +30,7 @@ jobs:
     if: (github.event_name == 'schedule' && github.repository == 'apache/fesod') || (github.event_name != 'schedule')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v10
+      - uses: actions/stale@v11
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           only-issue-labels: 'waiting for feedback'

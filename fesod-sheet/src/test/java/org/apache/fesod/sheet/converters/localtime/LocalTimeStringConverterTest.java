@@ -139,6 +139,23 @@ class LocalTimeStringConverterTest {
     }
 
     @Test
+    void convertToExcelDataUsesLocaleSensitiveAmPmMarker() {
+        ExcelContentProperty contentProperty = contentProperty("hh:mm:ss a", Boolean.FALSE);
+        LocalTime time = LocalTime.of(12, 30, 45);
+
+        GlobalConfiguration us = new GlobalConfiguration();
+        us.setLocale(Locale.US);
+        GlobalConfiguration china = new GlobalConfiguration();
+        china.setLocale(Locale.CHINA);
+
+        WriteCellData<?> usWritten = converter.convertToExcelData(time, contentProperty, us);
+        WriteCellData<?> chinaWritten = converter.convertToExcelData(time, contentProperty, china);
+
+        Assertions.assertEquals("12:30:45 PM", usWritten.getStringValue());
+        Assertions.assertEquals("12:30:45 下午", chinaWritten.getStringValue());
+    }
+
+    @Test
     void convertToJavaDataRejectsUnknownPattern() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,

@@ -70,7 +70,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "workbookWriteHandlerContext")
 @Slf4j
 public class WriteWorkbookHolder extends AbstractWriteHolder {
     /***
@@ -240,12 +240,15 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         }
 
         // init handler
-        initHandler(writeWorkbook, null);
-
         try {
+            initHandler(writeWorkbook, null);
             copyTemplate();
         } catch (IOException e) {
+            closeOutputStreamOnFailure();
             throw new ExcelGenerateException("Copy template failure.", e);
+        } catch (RuntimeException e) {
+            closeOutputStreamOnFailure();
+            throw e;
         }
         if (writeWorkbook.getMandatoryUseInputStream() == null) {
             this.mandatoryUseInputStream = Boolean.FALSE;
@@ -268,6 +271,22 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         this.cellStyleIndexMap = MapUtils.newHashMap();
         this.fontMap = MapUtils.newHashMap();
         this.dataFormatMap = MapUtils.newHashMap();
+    }
+
+    /**
+     * Close the output stream when initialization fails, so that the target file is not held open.
+     * Mirrors the close behavior of the success path, which is also gated by {@code autoCloseStream};
+     * callers that opt out of automatic closing via {@code autoCloseStream(false)} keep that behavior
+     * here as well.
+     */
+    private void closeOutputStreamOnFailure() {
+        if (autoCloseStream && outputStream != null) {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                log.warn("Failed to close output stream after workbook initialization failure.", e);
+            }
+        }
     }
 
     private void copyTemplate() throws IOException {

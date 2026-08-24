@@ -64,6 +64,9 @@ import org.apache.fesod.sheet.converters.localdate.LocalDateStringConverter;
 import org.apache.fesod.sheet.converters.localdatetime.LocalDateTimeDateConverter;
 import org.apache.fesod.sheet.converters.localdatetime.LocalDateTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localdatetime.LocalDateTimeStringConverter;
+import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
+import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
+import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongBooleanConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongNumberConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongStringConverter;
@@ -117,6 +120,9 @@ public class DefaultConverterLoader {
         putAllConverter(new LocalDateTimeNumberConverter());
         putAllConverter(new LocalDateTimeStringConverter());
 
+        putAllConverter(new LocalTimeNumberConverter());
+        putAllConverter(new LocalTimeStringConverter());
+
         putAllConverter(new DoubleBooleanConverter());
         putAllConverter(new DoubleNumberConverter());
         putAllConverter(new DoubleStringConverter());
@@ -153,6 +159,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new DateDateConverter());
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
+        putWriteConverter(new LocalTimeDateConverter());
         putWriteConverter(new DoubleNumberConverter());
         putWriteConverter(new FloatNumberConverter());
         putWriteConverter(new IntegerNumberConverter());
@@ -173,6 +180,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new DateStringConverter());
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
+        putWriteStringConverter(new LocalTimeStringConverter());
         putWriteStringConverter(new DoubleStringConverter());
         putWriteStringConverter(new FloatStringConverter());
         putWriteStringConverter(new IntegerStringConverter());

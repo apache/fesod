@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -100,11 +101,15 @@ public class DateUtils {
     public static final String DATE_FORMAT_17 = "yyyyMMdd HH:mm:ss";
     public static final String DATE_FORMAT_19 = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT_19_FORWARD_SLASH = "yyyy/MM/dd HH:mm:ss";
+    public static final String TIME_FORMAT_5 = "HH:mm";
+    public static final String TIME_FORMAT_8 = "HH:mm:ss";
     private static final String MINUS = "-";
 
     public static String defaultDateFormat = DATE_FORMAT_19;
 
     public static String defaultLocalDateFormat = DATE_FORMAT_10;
+
+    public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int MINUTES_PER_HOUR = 60;
@@ -163,6 +168,21 @@ public class DateUtils {
     }
 
     /**
+     * convert string to time
+     *
+     * @param timeString
+     * @param timeFormat
+     * @param local
+     * @return
+     */
+    public static LocalTime parseLocalTime(String timeString, String timeFormat, Locale local) {
+        if (StringUtils.isEmpty(timeFormat)) {
+            timeFormat = switchTimeFormat(timeString);
+        }
+        return LocalTime.parse(timeString, getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
      * convert string to date
      *
      * @param dateString
@@ -202,6 +222,24 @@ public class DateUtils {
                 return DATE_FORMAT_10;
             default:
                 throw new IllegalArgumentException("can not find date format for：" + dateString);
+        }
+    }
+
+    /**
+     * switch time-only format
+     *
+     * @param timeString
+     * @return
+     */
+    public static String switchTimeFormat(String timeString) {
+        int length = timeString.length();
+        switch (length) {
+            case 8:
+                return TIME_FORMAT_8;
+            case 5:
+                return TIME_FORMAT_5;
+            default:
+                throw new IllegalArgumentException("can not find time format for：" + timeString);
         }
     }
 
@@ -277,6 +315,35 @@ public class DateUtils {
             dateFormat = defaultLocalDateFormat;
         }
         return date.format(getCacheDateTimeFormat(dateFormat, local));
+    }
+
+    /**
+     * Format time
+     *
+     * @param time  LocalTime
+     * @param timeFormat time format
+     * @return format string
+     */
+    public static String format(LocalTime time, String timeFormat) {
+        return format(time, timeFormat, null);
+    }
+
+    /**
+     * Format time
+     *
+     * @param time LocalTime
+     * @param timeFormat time format
+     * @param local local
+     * @return format string
+     */
+    public static String format(LocalTime time, String timeFormat, Locale local) {
+        if (time == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(timeFormat)) {
+            timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
+        }
+        return time.format(getCacheDateTimeFormat(timeFormat, local));
     }
 
     /**
@@ -456,6 +523,24 @@ public class DateUtils {
     public static LocalDate getLocalDate(double date, boolean use1904windowing) {
         LocalDateTime localDateTime = getLocalDateTime(date, use1904windowing);
         return localDateTime == null ? null : localDateTime.toLocalDate();
+    }
+
+    /**
+     * Given an Excel date with either 1900 or 1904 date windowing,
+     * converts it to a java.time.LocalTime.
+     *
+     * Excel Dates and Times are stored without any timezone
+     * information. The date component is discarded; only the
+     * wall-clock time of day is returned.
+     *
+     * @param date             The Excel date.
+     * @param use1904windowing true if date uses 1904 windowing,
+     *                         or false if using 1900 date windowing.
+     * @return Java representation of the time, or null if date is not a valid Excel date
+     */
+    public static LocalTime getLocalTime(double date, boolean use1904windowing) {
+        LocalDateTime localDateTime = getLocalDateTime(date, use1904windowing);
+        return localDateTime == null ? null : localDateTime.toLocalTime();
     }
 
     /**

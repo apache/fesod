@@ -73,6 +73,7 @@ class TestDataBuilderTest {
         Assertions.assertEquals(TestUtil.TEST_DATE, data.getDate());
         Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE, data.getLocalDate());
         Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE_TIME, data.getLocalDateTime());
+        Assertions.assertEquals(TestUtil.TEST_LOCAL_TIME, data.getLocalTime());
         Assertions.assertEquals(Boolean.TRUE, data.getBooleanData());
         Assertions.assertEquals(1, data.getBigDecimal().intValue());
         Assertions.assertEquals(1, data.getBigInteger().intValue());

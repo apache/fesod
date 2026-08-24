@@ -54,7 +54,7 @@ public class ExampleFileUtil {
         if (resource == null) {
             throw new IllegalStateException("Cannot find classpath root resource");
         }
-        return resource.getPath();
+        return toFilePath(resource);
     }
 
     /**
@@ -66,10 +66,27 @@ public class ExampleFileUtil {
     public static String getExamplePath(String fileName) {
         java.net.URL resource = ExampleFileUtil.class.getClassLoader().getResource(EXAMPLE + "/" + fileName);
         if (resource != null) {
-            return resource.getPath();
+            return toFilePath(resource);
         }
         // Fallback to classpath root + example path
         return getPath() + EXAMPLE + File.separator + fileName;
+    }
+
+    /**
+     * Convert a resource URL to a file path, decoding percent-encoded characters.
+     * <p>
+     * {@link java.net.URL#getPath()} returns the encoded path (e.g. {@code %5C} for a backslash on Windows),
+     * which is not usable with {@link java.io.File}. {@link java.net.URL#toURI()} decodes it correctly.
+     *
+     * @param resource the resource URL to convert
+     * @return the absolute file path
+     */
+    private static String toFilePath(java.net.URL resource) {
+        try {
+            return new File(resource.toURI()).getAbsolutePath();
+        } catch (java.net.URISyntaxException e) {
+            throw new IllegalStateException("Invalid resource URL: " + resource, e);
+        }
     }
 
     /**

@@ -45,7 +45,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Cache Local Maven Repository
         uses: actions/cache@v4
         with:
@@ -72,7 +72,7 @@ jobs:
 
     name: Test JDK ${{ matrix.java }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:

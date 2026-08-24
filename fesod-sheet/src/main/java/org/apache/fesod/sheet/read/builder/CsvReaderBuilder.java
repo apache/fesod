@@ -124,7 +124,7 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
      * @return
      */
     public CsvReaderBuilder includeColumnIndexes(List<Integer> columnIndexes) {
-        readSheet.setColumnIndexes(columnIndexes);
+        readSheet.setIncludeColumnIndexes(columnIndexes);
         return this;
     }
 

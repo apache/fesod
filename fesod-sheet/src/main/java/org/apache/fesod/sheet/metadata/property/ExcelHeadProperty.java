@@ -34,6 +34,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
@@ -122,6 +123,11 @@ public class ExcelHeadProperty {
             return;
         }
         FieldCache fieldCache = ClassUtils.declaredFields(headClazz, configurationHolder);
+
+        if (MapUtils.isEmpty(fieldCache.getSortedFieldMap())) {
+            throw new IllegalArgumentException(
+                    "The head class " + headClazz.getName() + " does not contain any valid fields");
+        }
 
         for (Map.Entry<Integer, FieldWrapper> entry :
                 fieldCache.getSortedFieldMap().entrySet()) {

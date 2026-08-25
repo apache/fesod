@@ -214,6 +214,8 @@ implementation 'org.apache.fesod:fesod-sheet:2.0.2-incubating'
 | `import cn.idev.excel.`          | `import org.apache.fesod.sheet.` |
 | `import org.apache.fesod.excel.` | `import org.apache.fesod.sheet.` |
 
+> **注意**：通配符规则**不适用于** `cn.idev.excel.util.*` 的导入。这些工具类迁移到了 `fesod-common` 模块，而不是 `org.apache.fesod.sheet` —— 请改为更新为 `org.apache.fesod.common.util`（参见步骤 4）。
+
 ### 步骤 3：重命名入口类（强烈建议）
 
 `FastExcel` 和 `FastExcelFactory` 在 Fesod 中仍然可以编译，但已被标记为 `@Deprecated` 弃用，
@@ -262,6 +264,43 @@ FastExcel 1.3 曾提供了 `FastExcelFactory` 作为第二个入口类，其 API
 此阶段仅适用于项目中包含**在运行时检查或断言生成的 CGLIB 类名**的代码，例如在单元测试或特定的序列化逻辑中。 搜索所有 `.java` 文件中的字符串 `ByFastExcelCGLIB`。
 如果找到，请替换为 `ByFesodCGLIB`。 在 Fesod 中，命名策略定义在 `org.apache.fesod.sheet.util.BeanMapUtils.FesodSheetNamingPolicy` 中，其 `getTag()`
 返回 `ByFesodCGLIB`。 如果没有文件引用 `ByFastExcelCGLIB`，请直接跳过此步骤。
+
+### 步骤 4：类名与模块变更（升级时按需检查）
+
+除了入口类之外，捐赠过程中部分辅助类被重命名或迁移到了其他模块，且 Fesod 还包含一些 FastExcel 1.3 没有的功能。请在代码库中搜索以下名称，仅更新你实际引用到的部分。
+
+#### 已重命名的辅助类
+
+| 修改前（FastExcel 1.3.0）                              | 修改后（Fesod）                                                   |
+|-------------------------------------------------------|-----------------------------------------------------------------|
+| `cn.idev.excel.constant.FastExcelConstants`            | `org.apache.fesod.sheet.constant.FesodSheetConstants`           |
+| `cn.idev.excel.util.FastExcelTempFileCreationStrategy` | `org.apache.fesod.sheet.util.FesodTempFileCreationStrategy`     |
+| `cn.idev.excel.util.BeanMapUtils.FastExcelNamingPolicy` | `org.apache.fesod.sheet.util.BeanMapUtils.FesodSheetNamingPolicy` |
+
+#### 迁移到 fesod-common 的工具类
+
+以下工具类已从 `cn.idev.excel.util` 迁移至 `org.apache.fesod.common.util`。如果你的代码直接引用了它们（例如在自定义转换器或策略中），请更新导入路径。如果你在步骤 2 中执行过通配符替换，请复查这些导入没有被误改为 `org.apache.fesod.sheet.util`：
+
+| 类             | 修改前                  | 修改后                          |
+|-----------------|-------------------------|---------------------------------|
+| `StringUtils`   | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `IoUtils`       | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `MapUtils`      | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `ListUtils`     | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `BooleanUtils`  | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `IntUtils`      | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `MemberUtils`   | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+| `PositionUtils` | `cn.idev.excel.util`    | `org.apache.fesod.common.util`  |
+
+#### Fesod 新增功能
+
+以下功能在 FastExcel 1.3.0 中不存在。迁移时值得了解，但除非你想使用它们，否则无需任何操作：
+
+- **`@FreezePane`**（`org.apache.fesod.sheet.annotation.write.style.FreezePane`）：类级注解，写入工作表时冻结行和/或列（`colSplit`、`rowSplit`、`leftmostColumn`、`topRow`）。
+- **URL 图片安全**（`org.apache.fesod.sheet.converters.url`）：`UrlImageFetchPolicy`（由 `SchemePolicy` 和 `CidrBlock` 构建）为内置的 URL 图片转换器提供 SSRF 防护。默认只允许 `http`/`https` 与公网地址；可通过白名单放行私网、主机和 CIDR，并可限制重定向次数（`maxRedirects`）与图片大小（`maxImageBytes`）。
+- **字符串图片转换器**（`org.apache.fesod.sheet.converters.string`）：`StringBase64ImageConverter`（base64 值，可选 `data:` 前缀）与 `StringPathnameImageConverter`（本地文件路径）将字符串转图片的转换显式化，兼容的 `StringImageConverter` 仍然保留。
+- **`HeadBuilder` / `DefaultHeadBuilder`**（`org.apache.fesod.sheet.metadata`）：无 Bean 模式下的流式表头构建，例如 `FesodSheet.write(pathname).head(builder -> builder.column("ID", 2).columns("User Info", sub -> sub.column("Name").column("Age")))`。
+- **`HeaderMergeStrategy`**（`org.apache.fesod.sheet.enums.HeaderMergeStrategy`）：显式控制表头合并——`NONE`、`HORIZONTAL_ONLY`、`VERTICAL_ONLY`、`FULL_RECTANGLE`、`AUTO`——通过写构建器上的 `headerMergeStrategy(...)` 设置，取代布尔开关 `automaticMergeHead`。
 
 ---
 

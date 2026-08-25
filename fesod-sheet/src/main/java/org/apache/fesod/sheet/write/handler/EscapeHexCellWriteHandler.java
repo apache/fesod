@@ -35,6 +35,17 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
  * <p>
  * To store the literal _xHHHH_ sequence without it being decoded by POI, we need to escape the initial underscore by
  * replacing _x with _x005F_x.
+ * <p>
+ * This handler is not registered by default. Without it the writer stores {@code _xHHHH_}-shaped text exactly as
+ * typed, and any reader that follows the convention - Fesod, POI or Excel - decodes it back to the character it
+ * names, so the literal does not survive a round trip. Register it on the write to keep such text intact.
+ * <p>
+ * The read half of the same convention lives in
+ * {@link org.apache.fesod.sheet.util.XlsxEscapeUtils#utfDecode(String) XlsxEscapeUtils.utfDecode}, which undoes what
+ * this handler writes. Both sides read {@code _xHHHH_} the same way, so a change to what counts as an escape belongs
+ * in both.
+ *
+ * @see org.apache.fesod.sheet.util.XlsxEscapeUtils#utfDecode(String)
  */
 public class EscapeHexCellWriteHandler implements CellWriteHandler {
 

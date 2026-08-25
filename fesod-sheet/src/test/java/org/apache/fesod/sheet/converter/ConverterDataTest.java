@@ -66,6 +66,7 @@ public class ConverterDataTest extends AbstractExcelTest {
         Assertions.assertEquals(TestUtil.TEST_DATE, row.getDate());
         Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE, row.getLocalDate());
         Assertions.assertEquals(TestUtil.TEST_LOCAL_DATE_TIME, row.getLocalDateTime());
+        Assertions.assertEquals(TestUtil.TEST_LOCAL_TIME, row.getLocalTime());
         Assertions.assertEquals(Boolean.TRUE, row.getBooleanData());
         Assertions.assertEquals(row.getBigDecimal().doubleValue(), BigDecimal.ONE.doubleValue(), 0.0);
         Assertions.assertEquals(row.getBigInteger().intValue(), BigInteger.ONE.intValue(), 0.0);

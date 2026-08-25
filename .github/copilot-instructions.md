@@ -15,7 +15,7 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 ./mvnw clean install -DskipTests
 
 # Run tests (must explicitly enable)
-./mvnw clean package -Dmaven.test.skip=false -pl fesod-common,fesod-shaded,fesod-sheet,fesod-examples/fesod-sheet-examples
+./mvnw clean package -Dmaven.test.skip=false -pl fesod-common,fesod-shaded,fesod-sheet
 
 # Format check / auto-format
 ./mvnw spotless:check
@@ -46,21 +46,21 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 ├── fesod-common/      # Zero-dependency utilities (org.apache.fesod.common.util)
 ├── fesod-shaded/      # Relocated Spring ASM/cglib (org.apache.fesod.shaded)
 ├── fesod-bom/         # BOM for downstream consumers
-├── fesod-sheet/       # Core library: read/write XLS/XLSX/CSV via POI
-│   ├── src/main/java/org/apache/fesod/sheet/
-│   │   ├── FesodSheet.java    # Main entry: FesodSheet.read() / FesodSheet.write()
-│   │   ├── analysis/          # Read pipeline (v03=XLS BIFF, v07=XLSX SAX, csv)
-│   │   ├── write/             # Write pipeline (builder, executor, handler chains)
-│   │   ├── metadata/          # Data models, builders, csv/ property/
-│   │   ├── converters/        # Type conversion framework (by Java type)
-│   │   └── util/              # DateUtils, NumberUtils, WorkBookUtil, etc.
-│   └── src/test/java/org/apache/fesod/sheet/
-│       └── testkit/           # Test infrastructure (NOT a separate module)
-│           ├── Tags.java      # @Tag constants: unit, round-trip, read, write, format, fuzz
-│           ├── base/          # AbstractExcelTest (round-trip base)
-│           ├── assertions/    # ExcelAssertions fluent API
-│           └── builders/      # TestDataBuilder
-└── fesod-examples/    # Usage examples
+└── fesod-sheet/       # Core library: read/write XLS/XLSX/CSV via POI
+    ├── src/main/java/org/apache/fesod/sheet/
+    │   ├── FesodSheet.java    # Main entry: FesodSheet.read() / FesodSheet.write()
+    │   ├── analysis/          # Read pipeline (v03=XLS BIFF, v07=XLSX SAX, csv)
+    │   ├── write/             # Write pipeline (builder, executor, handler chains)
+    │   ├── metadata/          # Data models, builders, csv/ property/
+    │   ├── converters/        # Type conversion framework (by Java type)
+    │   └── util/              # DateUtils, NumberUtils, WorkBookUtil, etc.
+    └── src/test/java/org/apache/fesod/sheet/
+        └── testkit/           # Test infrastructure (NOT a separate module)
+            ├── Tags.java      # @Tag constants: unit, round-trip, read, write, format, fuzz
+            ├── base/          # AbstractExcelTest (round-trip base)
+            ├── assertions/    # ExcelAssertions fluent API
+            └── builders/      # TestDataBuilder
+
 ```
 
 ## Testing Conventions

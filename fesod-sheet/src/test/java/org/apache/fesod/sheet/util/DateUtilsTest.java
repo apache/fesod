@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,6 +69,15 @@ class DateUtilsTest {
 
         Assertions.assertThrows(
                 IllegalArgumentException.class, () -> DateUtils.switchDateFormat("invalid_datestring_length"));
+    }
+
+    @Test
+    void test_switchTimeFormat() {
+        Assertions.assertEquals(DateUtils.TIME_FORMAT_8, DateUtils.switchTimeFormat("12:30:45"));
+        Assertions.assertEquals(DateUtils.TIME_FORMAT_5, DateUtils.switchTimeFormat("12:30"));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DateUtils.switchTimeFormat("12:30:45.123"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DateUtils.switchTimeFormat("invalid"));
     }
 
     @Test
@@ -146,6 +156,21 @@ class DateUtilsTest {
     }
 
     @Test
+    void test_parseLocalTime() {
+        LocalTime usResult = DateUtils.parseLocalTime("12:30:45", DateUtils.TIME_FORMAT_8, Locale.US);
+        Assertions.assertEquals(LocalTime.of(12, 30, 45), usResult);
+
+        LocalTime result = DateUtils.parseLocalTime("12:30:45", DateUtils.TIME_FORMAT_8, null);
+        Assertions.assertEquals(LocalTime.of(12, 30, 45), result);
+
+        LocalTime autoDetectSeconds = DateUtils.parseLocalTime("12:30:45", "", null);
+        Assertions.assertEquals(LocalTime.of(12, 30, 45), autoDetectSeconds);
+
+        LocalTime autoDetectMinutes = DateUtils.parseLocalTime("12:30", "", null);
+        Assertions.assertEquals(LocalTime.of(12, 30), autoDetectMinutes);
+    }
+
+    @Test
     void test_format_default() {
         Date now = new Date();
         String result = DateUtils.format(now);
@@ -194,6 +219,16 @@ class DateUtilsTest {
 
         String defaultFormatResult2 = DateUtils.format(ld, "");
         Assertions.assertEquals("2026-10-01", defaultFormatResult2);
+    }
+
+    @Test
+    void test_format_LocalTime() {
+        LocalTime time = LocalTime.of(12, 30, 45);
+
+        Assertions.assertEquals("12:30:45", DateUtils.format(time, null, Locale.US));
+        Assertions.assertEquals("12:30", DateUtils.format(time, DateUtils.TIME_FORMAT_5, Locale.US));
+        Assertions.assertEquals("12:30:45", DateUtils.format(time, ""));
+        Assertions.assertNull(DateUtils.format((LocalTime) null, DateUtils.TIME_FORMAT_8, Locale.US));
     }
 
     @Test
@@ -350,6 +385,22 @@ class DateUtilsTest {
 
         String formatted = date.format(DateTimeFormatter.ofPattern(DateUtils.DATE_FORMAT_10));
         Assertions.assertEquals(expectedStr, formatted);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0.5, 12:00:00", "1.0, 00:00:00", "43831.5, 12:00:00"})
+    void test_getLocalTime_1900(double excelValue, String expectedStr) {
+        LocalTime time = DateUtils.getLocalTime(excelValue, false);
+        Assertions.assertNotNull(time);
+        Assertions.assertEquals(expectedStr, time.format(DateTimeFormatter.ofPattern(DateUtils.TIME_FORMAT_8)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0.5, 12:00:00", "0.0, 00:00:00", "42369.5, 12:00:00"})
+    void test_getLocalTime_1904(double excelValue, String expectedStr) {
+        LocalTime time = DateUtils.getLocalTime(excelValue, true);
+        Assertions.assertNotNull(time);
+        Assertions.assertEquals(expectedStr, time.format(DateTimeFormatter.ofPattern(DateUtils.TIME_FORMAT_8)));
     }
 
     @Test

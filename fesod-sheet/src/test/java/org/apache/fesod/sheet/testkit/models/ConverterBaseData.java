@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,7 +31,7 @@ import lombok.Setter;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 
 /**
- * Abstract base class extracting the 13 common fields shared by
+ * Abstract base class extracting the 14 common fields shared by
  * {@code ConverterReadData} and {@code ConverterWriteData}.
  */
 @Getter
@@ -45,6 +46,9 @@ public abstract class ConverterBaseData {
 
     @ExcelProperty("Local Date Time")
     private LocalDateTime localDateTime;
+
+    @ExcelProperty("Local Time")
+    private LocalTime localTime;
 
     @ExcelProperty("Boolean")
     private Boolean booleanData;

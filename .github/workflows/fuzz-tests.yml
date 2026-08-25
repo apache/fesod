@@ -33,7 +33,7 @@ jobs:
       MAVEN_OPTS: '-Xmx2g -Xms2g -Dfile.encoding=UTF-8'
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -54,7 +54,7 @@ jobs:
 
       - name: Upload Jazzer artifacts (crashes, repros)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jazzer-artifacts
           path: ${{ runner.temp }}/jazzer-artifacts/

@@ -17,11 +17,7 @@
 
 [header]
 builtin = "Apache-2.0-ASF"
-keywords = ["copyright"]
 
 [files]
-includes = ["**/*.css", "**/*.java", "**/*.js", "**/*.jsx", "**/*.md", "**/*.svg", "**/*.ts", "**/*.tsx", "**/*.xml", "**/*.yml", "**/*.yaml", "**/*.toml"]
-excludes = ["generated/**"]
+includes = ["**/*.css", "**/*.java", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.xml", "**/*.yml", "**/*.yaml", "**/*.toml"]
 
-[props]
-inception_year = 2026

@@ -17,16 +17,11 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.converters.zoneddatetime;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -50,6 +45,9 @@ public class ZonedDateTimeDateConverter implements Converter<ZonedDateTime> {
         String format = null;
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             format = contentProperty.getDateTimeFormatProperty().getFormat();
+            if (StringUtils.isEmpty(format)) {
+                format = null;
+            }
         }
         WorkBookUtil.fillDataFormat(cellData, format, DateUtils.defaultDateFormat);
         return cellData;

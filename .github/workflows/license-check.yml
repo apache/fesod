@@ -29,4 +29,4 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Check License Header
-        uses: korandoru/hawkeye@v6
+        uses: korandoru/hawkeye@62ea202c0bea0074eda7b1dc9f1edbb9d40827f7 # v7

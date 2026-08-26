@@ -19,6 +19,21 @@
 
 package org.apache.fesod.sheet.write.handler;
 
+import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
+import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,21 +42,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.testkit.Tags;
-import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
-import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
-import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
-import org.apache.fesod.sheet.testkit.models.SimpleData;
-import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
-import org.apache.fesod.sheet.write.handler.impl.EscapeHexCellWriteHandler;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.streaming.SXSSFCell;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 
 @Tag(Tags.ROUND_TRIP)
 class EscapeHexCellWriteHandlerRoundTripTest extends AbstractExcelTest {
@@ -54,7 +54,6 @@ class EscapeHexCellWriteHandlerRoundTripTest extends AbstractExcelTest {
         FesodSheet.write(file)
                 .excelType(format.toExcelTypeEnum())
                 .head(Collections.singletonList(Collections.singletonList("value")))
-                .registerWriteHandler(new EscapeHexCellWriteHandler())
                 .sheet("escape")
                 .doWrite(rows);
         return file;

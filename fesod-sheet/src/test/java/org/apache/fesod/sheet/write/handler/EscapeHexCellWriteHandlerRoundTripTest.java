@@ -19,6 +19,14 @@
 
 package org.apache.fesod.sheet.write.handler;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
@@ -34,15 +42,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Tag(Tags.ROUND_TRIP)
 class EscapeHexCellWriteHandlerRoundTripTest extends AbstractExcelTest {
@@ -94,7 +93,8 @@ class EscapeHexCellWriteHandlerRoundTripTest extends AbstractExcelTest {
         File file = createTempFile("hex-escape", ExcelFormat.XLSX);
         FesodSheet.write(file, SimpleData.class)
                 .registerWriteHandler(new EscapeHexCellWriteHandler())
-                .sheet().doWrite(Collections.singletonList(data));
+                .sheet()
+                .doWrite(Collections.singletonList(data));
 
         CollectingReadListener<SimpleData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, SimpleData.class, listener).sheet().doRead();

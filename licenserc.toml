@@ -15,19 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-headerPath = "Apache-2.0-ASF.txt"
+[header]
+builtin = "Apache-2.0-ASF"
+keywords = ["copyright"]
 
-includes = [
-    '**/*.css',
-    '**/*.java',
-    '**/*.js',
-    '**/*.jsx',
-    '**/*.md',
-    '**/*.svg',
-    '**/*.ts',
-    '**/*.tsx',
-    '**/*.xml',
-    '**/*.yml',
-    '**/*.yaml',
-    '**/*.toml',
-]
+[files]
+includes = ["**/*.css", "**/*.java", "**/*.js", "**/*.jsx", "**/*.md", "**/*.svg", "**/*.ts", "**/*.tsx", "**/*.xml", "**/*.yml", "**/*.yaml", "**/*.toml"]
+excludes = ["generated/**"]
+
+[props]
+inception_year = 2026

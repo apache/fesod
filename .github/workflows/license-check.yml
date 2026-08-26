@@ -29,4 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Check License Header
-        uses: korandoru/hawkeye@v6
+        uses: taiki-e/install-action@v2
+        with:
+          tool: hawkeye@7.0.0
+      - run: hawkeye check

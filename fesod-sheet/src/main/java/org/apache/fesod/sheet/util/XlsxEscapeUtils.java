@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.fesod.sheet.write.handler.impl.EscapeHexCellWriteHandler;
 
 /**
  * The {@code _xHHHH_} escapes that xlsx uses for characters XML 1.0 forbids, defined by section 3.18.9 of the Office
@@ -37,11 +38,11 @@ import java.util.regex.Pattern;
  * {@code _x005F_} is the escape for the underscore. Decoding it yields the literal back, not {@code A}.
  * <p>
  * The write half of the same convention lives in
- * {@link org.apache.fesod.sheet.write.handler.EscapeHexCellWriteHandler EscapeHexCellWriteHandler}, which produces
+ * {@link EscapeHexCellWriteHandler EscapeHexCellWriteHandler}, which produces
  * that {@code _x005F_x} form. Both sides read {@code _xHHHH_} the same way, so a change to what counts as an escape
  * belongs in both.
  *
- * @see org.apache.fesod.sheet.write.handler.EscapeHexCellWriteHandler
+ * @see EscapeHexCellWriteHandler
  */
 public class XlsxEscapeUtils {
 

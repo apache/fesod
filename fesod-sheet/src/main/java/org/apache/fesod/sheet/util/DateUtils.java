@@ -373,7 +373,14 @@ public class DateUtils {
         return format(localDateTime, dateFormat);
     }
 
-    private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
+    /**
+     * Get a cached date-time formatter for the supplied pattern and locale.
+     *
+     * @param dateFormat date-time pattern
+     * @param locale locale used to resolve the pattern
+     * @return cached formatter
+     */
+    public static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
         Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
         Map<Locale, Map<String, DateTimeFormatter>> localeCache = DATE_TIME_FORMATTER_THREAD_LOCAL.get();
         if (localeCache == null) {

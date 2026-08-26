@@ -38,6 +38,7 @@ import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.util.DateUtils;
 
 /** ZonedDateTime and string converter. */
 public class ZonedDateTimeStringConverter implements Converter<ZonedDateTime> {
@@ -75,7 +76,7 @@ public class ZonedDateTimeStringConverter implements Converter<ZonedDateTime> {
                         contentProperty.getDateTimeFormatProperty().getFormat())) {
             return DateTimeFormatter.ISO_ZONED_DATE_TIME;
         }
-        return DateTimeFormatter.ofPattern(
+        return DateUtils.getCacheDateTimeFormat(
                 contentProperty.getDateTimeFormatProperty().getFormat(), locale);
     }
 }

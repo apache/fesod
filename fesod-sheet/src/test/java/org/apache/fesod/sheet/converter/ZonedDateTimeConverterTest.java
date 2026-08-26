@@ -42,6 +42,7 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,19 @@ class ZonedDateTimeConverterTest {
                 new ZonedDateTimeDateConverter().convertToExcelData(VALUE, null, new GlobalConfiguration());
         assertEquals(CellDataTypeEnum.DATE, result.getType());
         assertEquals(VALUE.toLocalDateTime(), result.getDateValue());
+    }
+
+    @Test
+    void dateConverterUsesDefaultFormatForEmptyPattern() throws Exception {
+        ZonedDateTimeDateConverter converter = new ZonedDateTimeDateConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
+
+        WriteCellData<?> result = converter.convertToExcelData(VALUE, property, new GlobalConfiguration());
+
+        assertEquals(
+                DateUtils.defaultDateFormat,
+                result.getWriteCellStyle().getDataFormatData().getFormat());
     }
 
     @Test

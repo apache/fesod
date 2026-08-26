@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.write.handler;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.write.handler.impl.EscapeHexCellWriteHandler;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.junit.jupiter.api.Assertions;

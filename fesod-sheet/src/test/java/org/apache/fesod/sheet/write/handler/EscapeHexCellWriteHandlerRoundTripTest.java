@@ -31,12 +31,16 @@ import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
+import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.write.handler.impl.EscapeHexCellWriteHandler;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
 @Tag(Tags.ROUND_TRIP)
@@ -80,5 +84,20 @@ class EscapeHexCellWriteHandlerRoundTripTest extends AbstractExcelTest {
     void registeredOnAWrite_keepsLiteralHexSequencesIntactAcrossFormats(ExcelFormat format) throws IOException {
         File file = writeEscapedWorkbook(format);
         Assertions.assertEquals("_xB9f0_ and _x1234_", readBackFirstDataValue(file, format));
+    }
+
+    @Test
+    void escapedOnWrite_readsBackAsTheLiteral() throws IOException {
+        SimpleData data = new SimpleData();
+        data.setName("Product_x0002_Code");
+        File file = createTempFile("hex-escape", ExcelFormat.XLSX);
+        FesodSheet.write(file, SimpleData.class).sheet().doWrite(Collections.singletonList(data));
+
+        CollectingReadListener<SimpleData> listener = new CollectingReadListener<>();
+        FesodSheet.read(file, SimpleData.class, listener).sheet().doRead();
+        List<SimpleData> rows = listener.getRows();
+
+        Assertions.assertEquals(1, rows.size());
+        Assertions.assertEquals("Product_x0002_Code", rows.get(0).getName());
     }
 }

@@ -43,7 +43,7 @@ export RC_VERSION={rc_version}
 Download the artifacts:
 
 ```shell
-# Option 1: SVN checkout (Recommended, includes KEYS file)
+# Option 1: SVN checkout (Recommended)
 svn co https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-${RC_VERSION}/ fesod-dist-dev
 
 # Option 2: Wget individual files
@@ -66,8 +66,8 @@ The uploaded artifacts must contain:
 **2.2.1 Import KEYS**
 
 ```shell
-# Download KEYS
-curl https://dist.apache.org/repos/dist/dev/incubator/fesod/KEYS > KEYS
+# Download KEYS (kept in the release directory)
+curl https://downloads.apache.org/incubator/fesod/KEYS > KEYS
 
 # Import KEYS locally
 gpg --import KEYS

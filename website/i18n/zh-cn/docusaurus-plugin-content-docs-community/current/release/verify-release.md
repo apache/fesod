@@ -43,7 +43,7 @@ export RC_VERSION={RC版本号}
 下载物料：
 
 ```shell
-# 方式一：如果本地有 SVN，直接 checkout (推荐，包含了 KEYS 文件)
+# 方式一：如果本地有 SVN，直接 checkout (推荐)
 svn co https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-${RC_VERSION}/ fesod-dist-dev
 
 # 方式二：使用 wget 直接下载特定文件
@@ -68,8 +68,8 @@ wget https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-$
 **2.2.1 导入 KEYS**
 
 ```shell
-# 从 SVN 仓库下载 KEYS (通常在版本目录或根目录)
-curl https://dist.apache.org/repos/dist/dev/incubator/fesod/KEYS > KEYS
+# 下载 KEYS（KEYS 在 release 目录维护，单一来源）
+curl https://downloads.apache.org/incubator/fesod/KEYS > KEYS
 
 # 导入 KEYS 到本地
 gpg --import KEYS

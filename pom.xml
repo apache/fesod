@@ -81,6 +81,9 @@ under the License.
     <properties>
         <revision>2.1.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Must dominate the parent `apache` POM's stale 2023 default: apache-jar-resource-bundle derives the
+             JAR NOTICE copyright end-year from this value, and a stale one yields an inverted "2025-2023" range. -->
+        <project.build.outputTimestamp>2026-08-27T07:40:31Z</project.build.outputTimestamp>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -123,7 +126,7 @@ under the License.
     </scm>
 
     <organization>
-        <name>Apache Software Foundation</name>
+        <name>The Apache Software Foundation</name>
         <url>https://www.apache.org</url>
     </organization>
 

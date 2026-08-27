@@ -81,9 +81,11 @@ under the License.
     <properties>
         <revision>2.1.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Must dominate the parent `apache` POM's stale 2023 default: apache-jar-resource-bundle derives the
-             JAR NOTICE copyright end-year from this value, and a stale one yields an inverted "2025-2023" range. -->
-        <project.build.outputTimestamp>2026-08-27T07:40:31Z</project.build.outputTimestamp>
+        <!-- Clear the parent `apache` POM's stale outputTimestamp (2023): apache-jar-resource-bundle derives the JAR
+             NOTICE copyright end-year from it, and a stale value yields an inverted "2025-2023" range. An empty value
+             falls back to the current build year, so the NOTICE stays correct without a hardcoded date. For a
+             reproducible release, set this to a fixed ISO-8601 commit timestamp (typically done at release pre). -->
+        <project.build.outputTimestamp></project.build.outputTimestamp>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>

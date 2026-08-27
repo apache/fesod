@@ -1,0 +1,8 @@
+# Line-ending normalization for release-critical wrapper/scripts.
+# Hermetic building on Linux/macOS requires LF in the source package.
+mvnw text eol=lf
+mvnw.cmd text eol=crlf
+.mvn/wrapper/maven-wrapper.properties text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf

@@ -243,8 +243,10 @@ jobs:
             cat "$REPORT_FILE"
           } > "$BODY_FILE"
 
-          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
-            gh release comment "$TAG" --repo "$GITHUB_REPOSITORY" --body-file "$BODY_FILE"
+          RELEASE_ID=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" -q .id 2>/dev/null || true)
+          if [ -n "$RELEASE_ID" ]; then
+            gh api -X POST "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/comments" \
+              -F body=@"$BODY_FILE" > /dev/null
             echo "Commented on release $TAG."
           elif gh issue create --repo "$GITHUB_REPOSITORY" \
               --title "🚨 Performance regression on tag ${TAG}" \

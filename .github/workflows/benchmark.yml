@@ -128,7 +128,9 @@ jobs:
         run: ./mvnw -B -ntp -pl fesod-benchmark -am package -DskipTests
 
       - name: Run baseline suite
-        run: java -cp fesod-benchmark/target/benchmarks.jar org.apache.fesod.sheet.benchmark.baseline.BaselineRunner
+        run: |
+          cd fesod-benchmark
+          java -cp target/benchmarks.jar org.apache.fesod.sheet.benchmark.baseline.BaselineRunner
 
       - name: Compare against baseline
         id: compare

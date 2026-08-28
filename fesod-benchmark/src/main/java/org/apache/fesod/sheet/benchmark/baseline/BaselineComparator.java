@@ -190,14 +190,23 @@ public final class BaselineComparator {
                 System.exit(2);
             }
             Map<String, Metric> current = index(readResults(currentFile));
+            String currentContract = readContract(currentFile);
 
             File baselineFile = new File(baselinePath);
             Map<String, Metric> baseline =
                     baselineFile.isFile() ? index(readResults(baselineFile)) : new TreeMap<String, Metric>();
+            String baselineContract = baselineFile.isFile() ? readContract(baselineFile) : null;
+            boolean contractDiffers = baselineContract != null && !baselineContract.equals(currentContract);
 
             BaselineComparator comparator = new BaselineComparator(warnPct, failPct, allowMissing);
             List<Row> rows = comparator.compare(baseline, current);
-            String report = comparator.renderReport(rows, baseline.isEmpty(), readMeta(new File(baselineMetaPath)));
+            String report = comparator.renderReport(
+                    rows,
+                    baseline.isEmpty(),
+                    readMeta(new File(baselineMetaPath)),
+                    baselineContract,
+                    currentContract,
+                    contractDiffers);
 
             System.out.println();
             System.out.println(report);
@@ -221,11 +230,37 @@ public final class BaselineComparator {
                             + " — time: " + row.timeDetail + ", alloc: " + row.allocDetail);
                 }
             }
+            printAnnotations(rows);
+            if (contractDiffers) {
+                System.err.println("NOTE: execution contract differs from baseline — refresh the baseline "
+                        + "for a strictly valid comparison.");
+            }
 
             System.exit(gateFailed ? 1 : 0);
         } catch (IOException e) {
             System.err.println("ERROR: " + e.getMessage());
             System.exit(2);
+        }
+    }
+
+    /**
+     * Emits GitHub Actions workflow commands so regressions surface as annotations on the
+     * run page (and any linked PR/release), not only in the log. No-op outside Actions.
+     */
+    private static void printAnnotations(List<Row> rows) {
+        if (!"true".equals(System.getenv("GITHUB_ACTIONS"))) {
+            return;
+        }
+        for (Row row : rows) {
+            String detail = (row.currentOrBaseline().displayName + " — time: " + row.timeDetail + ", alloc: "
+                            + row.allocDetail)
+                    .replace(UP + " ", "")
+                    .replace(DOWN + " ", "");
+            if (row.verdict == Verdict.FAIL || (row.verdict == Verdict.MISSING)) {
+                System.out.println("::error title=Performance regression::" + detail);
+            } else if (row.verdict == Verdict.WARN) {
+                System.out.println("::warning title=Performance warning::" + detail);
+            }
         }
     }
 
@@ -326,7 +361,13 @@ public final class BaselineComparator {
     // Report rendering
     // ------------------------------------------------------------------
 
-    private String renderReport(List<Row> rows, boolean bootstrap, JSONObject meta) {
+    private String renderReport(
+            List<Row> rows,
+            boolean bootstrap,
+            JSONObject meta,
+            String baselineContract,
+            String currentContract,
+            boolean contractDiffers) {
         StringBuilder sb = new StringBuilder();
 
         if (bootstrap) {
@@ -338,6 +379,15 @@ public final class BaselineComparator {
             sb.append("## :bar_chart: Performance vs baseline\n\n");
             sb.append(baselineHeader(meta));
             sb.append("\n\n");
+            if (contractDiffers) {
+                sb.append("> :warning: **Execution contract differs from the baseline** — baseline ran `")
+                        .append(baselineContract)
+                        .append("`, this run used `")
+                        .append(currentContract)
+                        .append("`.\n")
+                        .append("> Time deltas across different contracts are indicative only; refresh the ")
+                        .append("baseline to restore a strictly valid comparison.\n\n");
+            }
         }
 
         sb.append("| Benchmark | Mode | Baseline | Current | ");
@@ -475,7 +525,7 @@ public final class BaselineComparator {
                 + "statistical error bars (noisy CI runner) — human judgement required.\n"
                 + "- "
                 + FAIL
-                + ": slower beyond the fail threshold with non-overlapping error bars — blocks the pull request.\n"
+                + ": slower beyond the fail threshold with non-overlapping error bars — fails the CI run.\n"
                 + "- "
                 + NEW
                 + ": not tracked by the baseline yet; becomes tracked at the next baseline refresh. "
@@ -559,6 +609,28 @@ public final class BaselineComparator {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    /**
+     * Reads the JMH execution contract (forks, warmup, measurement) from the first result
+     * entry, e.g. {@code "3 forks, 3x1 s warmup, 5x2 s measurement"}. Comparisons are only
+     * strictly valid when the baseline and the current run share the same contract.
+     */
+    private static String readContract(File file) throws IOException {
+        JSONArray array = JSON.parseArray(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8));
+        if (array.isEmpty()) {
+            return null;
+        }
+        JSONObject entry = array.getJSONObject(0);
+        return String.format(
+                Locale.ROOT,
+                "%d fork%s, %dx%s warmup, %dx%s measurement",
+                entry.getIntValue("forks"),
+                entry.getIntValue("forks") == 1 ? "" : "s",
+                entry.getIntValue("warmupIterations"),
+                entry.getString("warmupTime"),
+                entry.getIntValue("measurementIterations"),
+                entry.getString("measurementTime"));
     }
 
     private static Map<String, Metric> index(List<Metric> metrics) {

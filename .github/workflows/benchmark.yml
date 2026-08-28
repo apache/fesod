@@ -17,38 +17,29 @@
 
 # Performance regression gate for Fesod.
 #
-# Runs the baseline benchmark suite (fesod-benchmark/baseline package) on every pull
-# request that touches production code, compares the results against the committed
-# baseline (fesod-benchmark/baseline/jmh-baseline.json) and:
-#   - posts a sticky PR comment with the full comparison report
-#   - appends the report to the job step summary
-#   - fails the job when a regression exceeds the fail threshold
+# Runs the baseline benchmark suite (fesod-benchmark/baseline package) on release tags
+# (e.g. 2.1.0-incubating) and on demand (workflow_dispatch), compares the results against
+# the committed baseline (fesod-benchmark/baseline/jmh-baseline.json) and:
+#   - appends the comparison report to the job step summary
+#   - emits ::error/::warning annotations for regressions (visible on the run page)
+#   - fails the job when a regression exceeds the fail threshold with non-overlapping
+#     JMH error bars (high-confidence regressions only — see benchmark.md for the
+#     rationale of the tiered gate)
 #
-# The baseline can only be regenerated on a GitHub runner (same hardware/JDK) via
-# workflow_dispatch with `update_baseline` checked, which opens a PR with the new
-# baseline files. Never commit a baseline generated on a local machine.
+# On tags with a regression, a follow-up job posts the report as a comment on the
+# matching GitHub Release (or opens an issue) so maintainers cannot miss it.
+# A passing tag run (or a dispatch with update_baseline) opens a PR that refreshes
+# the committed baseline — the baseline lifecycle follows releases.
+#
+# The baseline can only be regenerated on a GitHub runner (same hardware/JDK).
+# Never commit a baseline generated on a local machine.
 
 name: Benchmark
 
 on:
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'fesod-benchmark/**'
-      - 'fesod-common/**'
-      - 'fesod-shaded/**'
-      - 'fesod-sheet/**'
-      - 'pom.xml'
-      - '.github/workflows/benchmark.yml'
   push:
-    branches: [ main ]
-    paths:
-      - 'fesod-benchmark/**'
-      - 'fesod-common/**'
-      - 'fesod-shaded/**'
-      - 'fesod-sheet/**'
-      - 'pom.xml'
-      - '.github/workflows/benchmark.yml'
+    tags:
+      - '[0-9]+.*'
   workflow_dispatch:
     inputs:
       update_baseline:
@@ -65,8 +56,8 @@ on:
         default: 20
 
 concurrency:
-  group: benchmark-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -88,6 +79,9 @@ jobs:
     outputs:
       bootstrap: ${{ steps.baseline.outputs.exists != 'true' }}
       update_requested: ${{ github.event_name == 'workflow_dispatch' && inputs.update_baseline }}
+      is_tag: ${{ startsWith(github.ref, 'refs/tags/') }}
+      compare_outcome: ${{ steps.compare.outcome }}
+      tag: ${{ github.ref_name }}
       jdk: ${{ steps.env.outputs.jdk }}
       os: ${{ steps.env.outputs.os }}
     steps:
@@ -171,62 +165,105 @@ jobs:
             ${{ env.CURRENT_RESULT }}
             ${{ env.REPORT_FILE }}
 
-      - name: Comment report on pull request
-        if: github.event_name == 'pull_request' && always()
+      - name: Comment report on open PR (manual runs on a PR branch)
+        if: github.event_name == 'workflow_dispatch' && always()
         continue-on-error: true
-        uses: actions/github-script@v7
         env:
-          REPORT_FILE: ${{ env.REPORT_FILE }}
-        with:
-          script: |
-            const fs = require('fs');
-            const marker = '<!-- fesod-benchmark-report -->';
-            if (!fs.existsSync(process.env.REPORT_FILE)) {
-              core.info('No report file, skipping comment');
-              return;
-            }
-            const report = fs.readFileSync(process.env.REPORT_FILE, 'utf8');
-            const body = [
-              marker,
-              `### 📊 Performance vs baseline — run [${context.runId}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
-              '',
-              report
-            ].join('\n');
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              per_page: 100
-            });
-            const previous = comments.find(c => c.body.includes(marker));
-            if (previous) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: previous.id,
-                body: body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            }
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          [ -f "$REPORT_FILE" ] || { echo "No report file — skipping."; exit 0; }
+          PR_NUMBER=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open \
+            --json number -q '.[0].number' 2>/dev/null || true)
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR for branch '$BRANCH' — report is in the job summary only."
+            exit 0
+          fi
+          MARKER='<!-- fesod-benchmark-report -->'
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          BODY_FILE=$(mktemp)
+          {
+            echo "$MARKER"
+            echo "### 📊 Performance vs baseline — run [${{ github.run_id }}](${RUN_URL})"
+            echo
+            cat "$REPORT_FILE"
+          } > "$BODY_FILE"
+          EXISTING=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+            --paginate -q ".[] | select(.body | startswith(\"$MARKER\")) | .id" | head -n 1)
+          if [ -n "$EXISTING" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$EXISTING" \
+              -F body=@"$BODY_FILE" > /dev/null
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+              -F body=@"$BODY_FILE" > /dev/null
+          fi
+          echo "Report commented on PR #$PR_NUMBER."
 
       - name: Fail on regression
         if: steps.compare.outcome == 'failure' && !(github.event_name == 'workflow_dispatch' && inputs.update_baseline)
         run: |
-          echo "::error title=Performance regression::At least one benchmark regressed beyond the fail threshold. See the benchmark report in the job summary/PR comment."
+          echo "::error title=Performance regression::At least one benchmark regressed beyond the fail threshold. See the benchmark report in the job summary."
           exit 1
+
+  notify-regression:
+    name: Notify maintainers (tag regression)
+    needs: benchmark
+    if: >-
+      always() &&
+      !cancelled() &&
+      needs.benchmark.outputs.compare_outcome == 'failure' &&
+      needs.benchmark.outputs.is_tag == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results
+          path: fesod-benchmark/target/
+
+      - name: Post report on release (or open an issue)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.benchmark.outputs.tag }}
+        run: |
+          if [ ! -f "$REPORT_FILE" ]; then
+            echo "No report file — nothing to notify."
+            exit 0
+          fi
+          BODY_FILE=$(mktemp)
+          {
+            echo "## 🚨 Performance regression detected on tag \`${TAG}\`"
+            echo
+            echo "The [benchmark run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) found regressions beyond the fail threshold. The baseline was **not** advanced."
+            echo
+            cat "$REPORT_FILE"
+          } > "$BODY_FILE"
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release comment "$TAG" --repo "$GITHUB_REPOSITORY" --body-file "$BODY_FILE"
+            echo "Commented on release $TAG."
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "🚨 Performance regression on tag ${TAG}" \
+              --body-file "$BODY_FILE" --label "performance" || \
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "🚨 Performance regression on tag ${TAG}" \
+              --body-file "$BODY_FILE"
+          fi
 
   update-baseline:
     name: Refresh baseline (opens PR)
     needs: benchmark
     if: >-
+      !cancelled() &&
       needs.benchmark.result == 'success' &&
-      (needs.benchmark.outputs.update_requested == 'true' || needs.benchmark.outputs.bootstrap == 'true')
+      (needs.benchmark.outputs.update_requested == 'true' ||
+       needs.benchmark.outputs.bootstrap == 'true' ||
+       (needs.benchmark.outputs.is_tag == 'true' && needs.benchmark.outputs.compare_outcome == 'success'))
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -246,13 +283,14 @@ jobs:
         env:
           JDK_INFO: ${{ needs.benchmark.outputs.jdk }}
           OS_INFO: ${{ needs.benchmark.outputs.os }}
+          SOURCE_REF: ${{ needs.benchmark.outputs.is_tag == 'true' && needs.benchmark.outputs.tag || github.ref_name }}
         run: |
           mkdir -p fesod-benchmark/baseline
           cp "$CURRENT_RESULT" "$BASELINE_FILE"
           jq -n \
             --arg generatedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --arg gitSha "${{ github.sha }}" \
-            --arg gitRef "${{ github.ref_name }}" \
+            --arg gitRef "$SOURCE_REF" \
             --arg jdkVersion "$JDK_INFO" \
             --arg osName "$OS_INFO" \
             --arg runnerLabel "ubuntu-24.04" \
@@ -265,14 +303,15 @@ jobs:
       - name: Open baseline refresh PR
         env:
           GH_TOKEN: ${{ github.token }}
-          BASE_BRANCH: ${{ github.event.pull_request.base.ref || github.ref_name }}
+          BASE_BRANCH: ${{ needs.benchmark.outputs.is_tag == 'true' && 'main' || github.ref_name }}
+          REASON: ${{ needs.benchmark.outputs.is_tag == 'true' && format('release tag {0}', needs.benchmark.outputs.tag) || github.ref_name }}
         run: |
           BRANCH="benchmark/baseline-$(date -u +%Y%m%d%H%M%S)"
           PR_BODY_FILE=$(mktemp)
           {
             echo "## Performance baseline refresh"
             echo
-            echo "Regenerated from \`${{ github.sha }}\` on a \`ubuntu-24.04\` runner with JDK 17 (Temurin)"
+            echo "Regenerated from \`${{ github.sha }}\` (\`$REASON\`) on a \`ubuntu-24.04\` runner with JDK 17 (Temurin)"
             echo "by the [Benchmark workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
             echo
             if [ -f "$REPORT_FILE" ]; then

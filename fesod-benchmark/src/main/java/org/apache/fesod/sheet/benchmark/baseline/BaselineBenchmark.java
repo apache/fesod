@@ -78,14 +78,14 @@ import org.openjdk.jmh.infra.Blackhole;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(iterations = 3, time = 1)
-@Measurement(iterations = 5, time = 1)
+@Measurement(iterations = 5, time = 2)
 @Fork(
         value = BaselineBenchmark.CI_FORKS,
         jvmArgs = {"-Xms1g", "-Xmx1g", "-XX:+UseG1GC"})
 public class BaselineBenchmark {
 
     /** Fork count used when the suite is executed directly through the JMH launcher. */
-    public static final int CI_FORKS = 2;
+    public static final int CI_FORKS = 3;
 
     @Param({"SMALL", "MEDIUM"})
     private String datasetSize;

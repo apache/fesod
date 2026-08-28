@@ -62,11 +62,11 @@ public final class BaselineRunner {
     private BaselineRunner() {}
 
     public static void main(String[] args) throws RunnerException {
-        int forks = intProperty("benchmark.forks", 2);
+        int forks = intProperty("benchmark.forks", 3);
         int warmupIterations = intProperty("benchmark.warmup.iterations", 3);
         int warmupSeconds = intProperty("benchmark.warmup.seconds", 1);
         int measurementIterations = intProperty("benchmark.measurement.iterations", 5);
-        int measurementSeconds = intProperty("benchmark.measurement.seconds", 1);
+        int measurementSeconds = intProperty("benchmark.measurement.seconds", 2);
         String[] datasetSizes =
                 property("benchmark.datasetSizes", "SMALL,MEDIUM").split(",");
         String[] fileFormats = property("benchmark.fileFormats", "XLSX,CSV").split(",");

@@ -246,13 +246,15 @@ jobs:
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             gh release comment "$TAG" --repo "$GITHUB_REPOSITORY" --body-file "$BODY_FILE"
             echo "Commented on release $TAG."
+          elif gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "🚨 Performance regression on tag ${TAG}" \
+              --body-file "$BODY_FILE" --label "performance" 2>/dev/null \
+            || gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "🚨 Performance regression on tag ${TAG}" \
+              --body-file "$BODY_FILE"; then
+            echo "Opened a tracking issue."
           else
-            gh issue create --repo "$GITHUB_REPOSITORY" \
-              --title "🚨 Performance regression on tag ${TAG}" \
-              --body-file "$BODY_FILE" --label "performance" || \
-            gh issue create --repo "$GITHUB_REPOSITORY" \
-              --title "🚨 Performance regression on tag ${TAG}" \
-              --body-file "$BODY_FILE"
+            echo "::warning title=Regression notification::No release for '$TAG' and issue creation failed (issues disabled?). The report is in the job summary and run annotations."
           fi
 
   update-baseline:

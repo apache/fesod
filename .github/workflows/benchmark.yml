@@ -244,6 +244,10 @@ jobs:
           } > "$BODY_FILE"
 
           RELEASE_ID=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" -q .id 2>/dev/null || true)
+          # a failed lookup can leak the error body into the variable — keep numeric ids only
+          case "$RELEASE_ID" in
+            ''|*[!0-9]*) RELEASE_ID='' ;;
+          esac
           if [ -n "$RELEASE_ID" ]; then
             gh api -X POST "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/comments" \
               -F body=@"$BODY_FILE" > /dev/null

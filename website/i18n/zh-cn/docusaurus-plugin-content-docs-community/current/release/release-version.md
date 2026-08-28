@@ -343,7 +343,7 @@ mvn clean deploy -Papache-release -DskipTests -Dgpg.skip=false
 
 #### 3.3.3 打包源代码
 
-:::caution 注意
+:::warning
 请勿在日常工作目录中打包！
 :::
 

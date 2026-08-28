@@ -343,7 +343,7 @@ Log in to the ASF Nexus repository with your Apache ID, locate the released vers
 
 #### 3.3.3 Package Source Code
 
-:::caution Note
+:::warning
 Do not package in your daily working directory!
 :::
 

@@ -222,9 +222,8 @@ ${RELEASE_MANAGER}
 
 ### 3.1 KEYS File
 
-If you are a **first-time** release manager or your original key has expired, please **append** the **public key** to the **KEYS** files in the Apache SVN project repositories:
+If you are a **first-time** release manager or your original key has expired, please **append** the **public key** to the **KEYS** file in the Apache SVN project **release** repository. The KEYS file is maintained in a single authoritative location (the release directory) so that it stays consistent and is available on downloads.apache.org for signature verification:
 
-- Dev repository: <https://dist.apache.org/repos/dist/dev/incubator/fesod>
 - Release repository: <https://dist.apache.org/repos/dist/release/incubator/fesod>
 
 Steps:
@@ -246,6 +245,7 @@ svn ci -m "add gpg key for xxx"
 Notes:
 
 - Do not directly overwrite the `KEYS` file in the repository. Only **append** to it.
+- The `KEYS` file is maintained only in the **release** directory (single source of truth). Do **not** create a copy in the dev directory, as two copies tend to drift out of sync.
 - SVN repositories require PPMC permissions. A PPMC member can assist you with the upload.
 
 ### 3.2 POM Configuration

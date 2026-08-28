@@ -86,8 +86,10 @@ class UrlImageConverterTest {
     @Test
     void test_httpsOnlyPolicyRejectsHttpUrl() throws Exception {
         URL url = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
-        UrlImageConverter.setFetchPolicy(
-                UrlImageFetchPolicy.builder().allowedSchemes(SchemePolicy.HTTPS).build());
+        UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+                .allowedHosts(Collections.singleton("127.0.0.1"))
+                .allowedSchemes(SchemePolicy.HTTPS)
+                .build());
 
         IOException exception = Assertions.assertThrows(IOException.class, () -> convert(url));
 
@@ -96,19 +98,47 @@ class UrlImageConverterTest {
     }
 
     @Test
-    void test_rejectLoopbackByDefault() throws Exception {
+    void test_remoteFetchIsDisabledByDefault() throws Exception {
         URL url = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
 
         IOException exception = Assertions.assertThrows(IOException.class, () -> convert(url));
 
-        Assertions.assertTrue(exception.getMessage().contains("restricted address"));
+        Assertions.assertTrue(exception.getMessage().contains("disabled"));
         Assertions.assertEquals(0, requestCount.get());
     }
 
     @Test
-    void test_allowPrivateHostWhenExplicitlyAllowlisted() throws Exception {
+    void test_rejectNonAllowlistedHostBeforeConnection() throws Exception {
         URL url = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
         UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+                .allowedHosts(Collections.singleton("images.example.com"))
+                .build());
+
+        IOException exception = Assertions.assertThrows(IOException.class, () -> convert(url));
+
+        Assertions.assertTrue(exception.getMessage().contains("allowlisted"));
+        Assertions.assertEquals(0, requestCount.get());
+    }
+
+    @Test
+    void test_privateHostAllowlistDoesNotEnableRemoteFetching() throws Exception {
+        URL url = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
+        UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+                .allowPrivateNetwork(true)
+                .allowedPrivateHosts(Collections.singleton("127.0.0.1"))
+                .build());
+
+        IOException exception = Assertions.assertThrows(IOException.class, () -> convert(url));
+
+        Assertions.assertTrue(exception.getMessage().contains("disabled"));
+        Assertions.assertEquals(0, requestCount.get());
+    }
+
+    @Test
+    void test_allowPrivateHostOnAnyPortWhenExplicitlyAllowlisted() throws Exception {
+        URL url = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
+        UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+                .allowedHosts(Collections.singleton("127.0.0.1"))
                 .allowPrivateNetwork(true)
                 .allowedPrivateHosts(Collections.singleton("127.0.0.1"))
                 .build());
@@ -124,6 +154,7 @@ class UrlImageConverterTest {
     void test_allowPrivateCidrWhenExplicitlyAllowlisted() throws Exception {
         URL url = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
         UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+                .allowedHosts(Collections.singleton("127.0.0.1"))
                 .allowPrivateNetwork(true)
                 .allowedPrivateCidrs(Collections.singleton(CidrBlock.parse("127.0.0.0/8")))
                 .build());
@@ -132,6 +163,18 @@ class UrlImageConverterTest {
 
         Assertions.assertArrayEquals(
                 PNG_BYTES, cellData.getImageDataList().get(0).getImage());
+    }
+
+    @Test
+    void test_rejectUrlUserInfoBeforeConnection() throws Exception {
+        URL serverUrl = startServer(HttpStatus.OK, PNG_BYTES, "image/png");
+        URL url = new URL("http://user:password@127.0.0.1:" + serverUrl.getPort() + "/image.png");
+        UrlImageConverter.setFetchPolicy(allowLoopbackPolicy());
+
+        IOException exception = Assertions.assertThrows(IOException.class, () -> convert(url));
+
+        Assertions.assertTrue(exception.getMessage().contains("user info"));
+        Assertions.assertEquals(0, requestCount.get());
     }
 
     @Test
@@ -145,13 +188,13 @@ class UrlImageConverterTest {
     }
 
     @Test
-    void test_rejectRedirectToNonAllowlistedPrivateHost() throws Exception {
+    void test_rejectRedirectToNonAllowlistedHost() throws Exception {
         URL url = startRedirectServer("http://localhost:8080/image.png");
         UrlImageConverter.setFetchPolicy(allowLoopbackPolicy());
 
         IOException exception = Assertions.assertThrows(IOException.class, () -> convert(url));
 
-        Assertions.assertTrue(exception.getMessage().contains("restricted address"));
+        Assertions.assertTrue(exception.getMessage().contains("allowlisted"));
         Assertions.assertEquals(1, requestCount.get());
     }
 
@@ -160,6 +203,7 @@ class UrlImageConverterTest {
         byte[] body = Arrays.copyOf(PNG_BYTES, PNG_BYTES.length + 20);
         URL url = startServer(HttpStatus.OK, body, "image/png");
         UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+                .allowedHosts(Collections.singleton("127.0.0.1"))
                 .allowPrivateNetwork(true)
                 .allowedPrivateHosts(Collections.singleton("127.0.0.1"))
                 .maxImageBytes(PNG_BYTES.length)
@@ -172,6 +216,7 @@ class UrlImageConverterTest {
 
     private UrlImageFetchPolicy allowLoopbackPolicy() {
         return UrlImageFetchPolicy.builder()
+                .allowedHosts(Collections.singleton("127.0.0.1"))
                 .allowPrivateNetwork(true)
                 .allowedPrivateHosts(Collections.singleton("127.0.0.1"))
                 .build();

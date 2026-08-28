@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-08-28T10:22:34Z",
+  "gitSha": "44cd72ef87fd03d3a57326763d2fff01aa5fed2c",
+  "gitRef": "5/merge",
+  "jdkVersion": "openjdk version \"17.0.20.1\" 2026-08-18",
+  "osName": "Linux 6.17.0-1022-azure",
+  "runnerLabel": "ubuntu-24.04",
+  "benchmarkCount": 8
+}

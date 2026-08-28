@@ -43,6 +43,8 @@ import java.util.regex.Pattern;
 import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
+import org.apache.fesod.sheet.metadata.GlobalConfiguration;
+import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 
@@ -371,6 +373,27 @@ public class DateUtils {
         LocalDateTime localDateTime =
                 DateUtil.getLocalDateTime(date.doubleValue(), BooleanUtils.isTrue(use1904windowing), true);
         return format(localDateTime, dateFormat);
+    }
+
+    /**
+     * Resolve the 1904 windowing flag for a field: the annotation value wins when explicitly set, otherwise fall back
+     * to the global configuration (null-safe, defaults to false).
+     *
+     * @param contentProperty the field's content property, may be null
+     * @param globalConfiguration the global configuration
+     * @return true if dates use the 1904 windowing system
+     */
+    public static boolean resolveUse1904windowing(
+            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
+            Boolean propertyUse1904windowing =
+                    contentProperty.getDateTimeFormatProperty().getUse1904windowing();
+            if (propertyUse1904windowing != null) {
+                return propertyUse1904windowing;
+            }
+        }
+        Boolean globalUse1904windowing = globalConfiguration.getUse1904windowing();
+        return globalUse1904windowing != null && globalUse1904windowing;
     }
 
     private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {

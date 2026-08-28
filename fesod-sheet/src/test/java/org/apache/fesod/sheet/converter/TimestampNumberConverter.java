@@ -26,6 +26,7 @@ import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 public class TimestampNumberConverter implements Converter<Timestamp> {
@@ -42,12 +43,7 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
     @Override
     public WriteCellData<?> convertToExcelData(
             Timestamp value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(
-                    BigDecimal.valueOf(DateUtil.getExcelDate(value, globalConfiguration.getUse1904windowing())));
-        } else {
-            return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                    value, contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
-        }
+        return new WriteCellData<>(BigDecimal.valueOf(
+                DateUtil.getExcelDate(value, DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration))));
     }
 }

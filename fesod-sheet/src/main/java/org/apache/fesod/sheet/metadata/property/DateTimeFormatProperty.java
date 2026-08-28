@@ -28,7 +28,6 @@ package org.apache.fesod.sheet.metadata.property;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 
 /**
@@ -52,8 +51,9 @@ public class DateTimeFormatProperty {
         if (dateTimeFormat == null) {
             return null;
         }
+        // Keep DEFAULT as null so converters can fall back to the global configuration
+        // instead of collapsing it to false (see #1042).
         return new DateTimeFormatProperty(
-                dateTimeFormat.value(),
-                BooleanUtils.isTrue(dateTimeFormat.use1904windowing().getBooleanValue()));
+                dateTimeFormat.value(), dateTimeFormat.use1904windowing().getBooleanValue());
     }
 }

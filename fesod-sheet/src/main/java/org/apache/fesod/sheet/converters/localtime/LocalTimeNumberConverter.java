@@ -48,26 +48,16 @@ public class LocalTimeNumberConverter implements Converter<LocalTime> {
     @Override
     public LocalTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return DateUtils.getLocalTime(
-                    cellData.getNumberValue().doubleValue(), globalConfiguration.getUse1904windowing());
-        } else {
-            return DateUtils.getLocalTime(
-                    cellData.getNumberValue().doubleValue(),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing());
-        }
+        return DateUtils.getLocalTime(
+                cellData.getNumberValue().doubleValue(),
+                DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration));
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             LocalTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(BigDecimal.valueOf(
-                    DateUtil.getExcelDate(value.atDate(DateUtils.EPOCH), globalConfiguration.getUse1904windowing())));
-        } else {
-            return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                    value.atDate(DateUtils.EPOCH),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
-        }
+        return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
+                value.atDate(DateUtils.EPOCH),
+                DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration))));
     }
 }

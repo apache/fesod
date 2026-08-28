@@ -36,6 +36,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 
@@ -172,7 +173,7 @@ public class WriteCellData<T> extends CellData<T> {
         if (dateValue instanceof java.sql.Date) {
             this.dateValue = ((java.sql.Date) dateValue).toLocalDate().atStartOfDay();
         } else if (dateValue instanceof java.sql.Time) {
-            this.dateValue = ((java.sql.Time) dateValue).toLocalTime().atDate(java.time.LocalDate.of(1970, 1, 1));
+            this.dateValue = ((java.sql.Time) dateValue).toLocalTime().atDate(DateUtils.EPOCH);
         } else {
             this.dateValue = LocalDateTime.ofInstant(dateValue.toInstant(), ZoneId.systemDefault());
         }

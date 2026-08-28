@@ -19,8 +19,6 @@
 
 package org.apache.fesod.sheet.format;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +29,7 @@ import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.read.builder.CsvReaderBuilder;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +48,7 @@ class CsvBenignErrorToleranceTest extends AbstractExcelTest {
         ByteArrayInputStream in = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
 
         // When / Then: reading should complete without throwing any exception
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             CsvReaderBuilder builder = FesodSheet.read(in).csv();
             // Use sync read to drive the pipeline end-to-end
             List<Object> rows = builder.doReadSync();
@@ -91,7 +90,7 @@ class CsvBenignErrorToleranceTest extends AbstractExcelTest {
         };
 
         // When / Then: the pipeline should convert UncheckedIOException into ExcelAnalysisException
-        assertThrows(ExcelCommonException.class, () -> {
+        Assertions.assertThrows(ExcelCommonException.class, () -> {
             FesodSheet.read(throwing).csv().doReadSync();
         });
     }
@@ -100,7 +99,7 @@ class CsvBenignErrorToleranceTest extends AbstractExcelTest {
     void shouldReadWellFormedCsvNormally() {
         String csv = "a,b\n1,2\n3,4\n";
         ByteArrayInputStream in = new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
-        assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             CsvReaderBuilder builder = FesodSheet.read(in).csv();
             List<Object> rows = builder.doReadSync();
         });

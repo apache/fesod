@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -41,7 +39,10 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.poi.EncryptedDocumentException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
 /**
@@ -102,7 +103,39 @@ public class EncryptDataTest extends AbstractExcelTest {
 
         excelWriterBuilder.sheet().doWrite(TestDataBuilder.simpleData(10));
         List<SimpleData> dataList = readerBuilder.sheet().doReadSync();
-        assertEquals(10, dataList.size());
-        assertNotNull(dataList.get(0).getName());
+        Assertions.assertEquals(10, dataList.size());
+        Assertions.assertNotNull(dataList.get(0).getName());
+    }
+
+    /**
+     * Verifies that an XLS file written with a password is actually encrypted at the BIFF8 record level,
+     * not merely flagged as write-protected. Without the correct password, reading the file content
+     * must fail.
+     */
+    @Test
+    void xlsPasswordWrite_isActuallyEncrypted() throws Exception {
+        File file = createTempFile("enc-verify", ExcelFormat.XLS);
+
+        // Write an encrypted XLS file
+        FesodSheet.write(file, SimpleData.class)
+                .excelType(ExcelTypeEnum.XLS)
+                .password(PASSWORD)
+                .sheet()
+                .doWrite(TestDataBuilder.simpleData(10));
+
+        // Reading without the password must fail because the content is BIFF8-encrypted
+        Assertions.assertThrows(EncryptedDocumentException.class, () -> FesodSheet.read(
+                        file, SimpleData.class, new CollectingReadListener<SimpleData>())
+                .excelType(ExcelTypeEnum.XLS)
+                .sheet()
+                .doReadSync());
+
+        // Reading with the correct password must succeed
+        List<SimpleData> dataList = FesodSheet.read(file, SimpleData.class, new CollectingReadListener<SimpleData>())
+                .excelType(ExcelTypeEnum.XLS)
+                .password(PASSWORD)
+                .sheet()
+                .doReadSync();
+        Assertions.assertEquals(10, dataList.size());
     }
 }

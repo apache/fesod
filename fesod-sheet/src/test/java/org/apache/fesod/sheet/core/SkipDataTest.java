@@ -25,8 +25,6 @@
 
 package org.apache.fesod.sheet.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
@@ -43,6 +41,7 @@ import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -63,7 +62,7 @@ public class SkipDataTest extends AbstractExcelTest {
     @Test
     void readAndWriteCsvThrows() throws Exception {
         File file = createTempFile(ExcelFormat.CSV);
-        assertThrows(ExcelGenerateException.class, () -> readAndWriteImpl(file));
+        Assertions.assertThrows(ExcelGenerateException.class, () -> readAndWriteImpl(file));
     }
 
     private void readAndWriteImpl(File file) {
@@ -80,8 +79,8 @@ public class SkipDataTest extends AbstractExcelTest {
 
         List<SimpleData> list =
                 FesodSheet.read(file, SimpleData.class, null).sheet("Sheet2").doReadSync();
-        assertEquals(1, list.size());
-        assertEquals("name2", list.get(0).getName());
+        Assertions.assertEquals(1, list.size());
+        Assertions.assertEquals("name2", list.get(0).getName());
 
         SyncReadListener syncReadListener = new SyncReadListener();
         try (ExcelReader excelReader = FesodSheet.read(file, SimpleData.class, null)
@@ -91,9 +90,9 @@ public class SkipDataTest extends AbstractExcelTest {
             ReadSheet readSheet3 = FesodSheet.readSheet("Sheet4").build();
             excelReader.read(readSheet1, readSheet3);
             List<Object> syncList = syncReadListener.getList();
-            assertEquals(2, syncList.size());
-            assertEquals("name2", ((SimpleData) syncList.get(0)).getName());
-            assertEquals("name4", ((SimpleData) syncList.get(1)).getName());
+            Assertions.assertEquals(2, syncList.size());
+            Assertions.assertEquals("name2", ((SimpleData) syncList.get(0)).getName());
+            Assertions.assertEquals("name4", ((SimpleData) syncList.get(1)).getName());
         }
     }
 

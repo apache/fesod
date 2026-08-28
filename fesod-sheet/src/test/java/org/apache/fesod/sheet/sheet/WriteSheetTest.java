@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.sheet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +33,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -85,7 +85,7 @@ public class WriteSheetTest extends AbstractExcelTest {
                     .head(WriteSheetData.class)
                     .sheet(i)
                     .doReadSync();
-            assertEquals(dataMap.get(sheetNoList.get(i)), sheetDataList.size());
+            Assertions.assertEquals(dataMap.get(sheetNoList.get(i)), sheetDataList.size());
         }
     }
 
@@ -112,27 +112,31 @@ public class WriteSheetTest extends AbstractExcelTest {
             int sheetNo = 0;
             WriteSheet writeSheet = FesodSheet.writerSheet(sheetNo).build();
             excelWriter.write(TestDataBuilder.writeSheetData(dataMap.get(sheetNo)), writeSheet);
-            assertEquals(sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
+            Assertions.assertEquals(
+                    sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             sheetNo = 1;
             writeSheet = FesodSheet.writerSheet(sheetNameList.get(sheetNo)).build();
             excelWriter.write(TestDataBuilder.writeSheetData(dataMap.get(sheetNo)), writeSheet);
-            assertEquals(sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
+            Assertions.assertEquals(
+                    sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             sheetNo = 2;
             writeSheet =
                     FesodSheet.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(TestDataBuilder.writeSheetData(dataMap.get(sheetNo)), writeSheet);
-            assertEquals(sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
+            Assertions.assertEquals(
+                    sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
 
             sheetNo = 3;
             writeSheet =
                     FesodSheet.writerSheet(sheetNo, sheetNameList.get(sheetNo)).build();
             excelWriter.write(TestDataBuilder.writeSheetData(dataMap.get(sheetNo)), writeSheet);
-            assertEquals(
+            Assertions.assertEquals(
                     sheetNameList.get(sheetNo).substring(0, Workbook.MAX_SENSITIVE_SHEET_NAME_LEN),
                     excelWriter.writeContext().writeSheetHolder().getSheetName());
-            assertEquals(sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
+            Assertions.assertEquals(
+                    sheetNo, excelWriter.writeContext().writeSheetHolder().getSheetNo());
         }
 
         for (int i = 0; i < sheetNoList.size(); i++) {
@@ -141,7 +145,7 @@ public class WriteSheetTest extends AbstractExcelTest {
                     .head(WriteSheetData.class)
                     .sheet(i)
                     .doReadSync();
-            assertEquals(dataMap.get(sheetNoList.get(i)), sheetDataList.size());
+            Assertions.assertEquals(dataMap.get(sheetNoList.get(i)), sheetDataList.size());
         }
     }
 }

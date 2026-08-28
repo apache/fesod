@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.sheet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 import org.apache.fesod.sheet.ExcelReader;
@@ -32,6 +31,7 @@ import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.TitleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -63,10 +63,11 @@ public class HiddenSheetsTest extends AbstractExcelTest {
         try (ExcelReader excelReader = FesodSheet.read(file, TitleData.class, new CollectingReadListener<TitleData>())
                 .build()) {
             List<ReadSheet> allSheetList = excelReader.excelExecutor().sheetList();
-            assertEquals(2, allSheetList.stream().filter(ReadSheet::isHidden).count());
-            assertEquals(
+            Assertions.assertEquals(
+                    2, allSheetList.stream().filter(ReadSheet::isHidden).count());
+            Assertions.assertEquals(
                     1, allSheetList.stream().filter(ReadSheet::isVeryHidden).count());
-            assertEquals(
+            Assertions.assertEquals(
                     "Sheet5",
                     allSheetList.stream()
                             .filter(ReadSheet::isVeryHidden)
@@ -82,9 +83,9 @@ public class HiddenSheetsTest extends AbstractExcelTest {
                 .build()) {
             List<ReadSheet> sheets = excelReader.excelExecutor().sheetList();
             if (Boolean.TRUE.equals(ignoreHidden)) {
-                assertEquals(3, sheets.size());
+                Assertions.assertEquals(3, sheets.size());
             } else {
-                assertEquals(6, sheets.size());
+                Assertions.assertEquals(6, sheets.size());
             }
         }
     }
@@ -94,9 +95,9 @@ public class HiddenSheetsTest extends AbstractExcelTest {
                 .ignoreHiddenSheet(ignoreHidden)
                 .doReadAllSync();
         if (Boolean.TRUE.equals(ignoreHidden)) {
-            assertEquals(3, dataList.size());
+            Assertions.assertEquals(3, dataList.size());
         } else {
-            assertEquals(6, dataList.size());
+            Assertions.assertEquals(6, dataList.size());
         }
     }
 }

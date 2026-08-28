@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.head;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -54,12 +54,12 @@ public class ImmutableListHeadDataTest extends AbstractExcelTest {
 
         List<Map<Integer, String>> list =
                 FesodSheet.read(file).head(head()).sheet().doReadSync();
-        assertEquals(1, list.size());
+        Assertions.assertEquals(1, list.size());
         Map<Integer, String> row = list.get(0);
-        assertEquals("stringData", row.get(0));
-        assertEquals("1", row.get(1));
-        assertEquals("2025-10-31 01:01:01", row.get(2));
-        assertEquals("extraData", row.get(3));
+        Assertions.assertEquals("stringData", row.get(0));
+        Assertions.assertEquals("1", row.get(1));
+        Assertions.assertEquals("2025-10-31 01:01:01", row.get(2));
+        Assertions.assertEquals("extraData", row.get(3));
     }
 
     private List<List<String>> head() {

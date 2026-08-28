@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.format;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
@@ -39,6 +38,7 @@ import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -87,16 +87,16 @@ public class BomDataTest extends AbstractExcelTest {
                 .charset(charset)
                 .sheet()
                 .doRead();
-        assertEquals(10, listener.getRowCount());
-        assertEquals("Name0", listener.getFirstRow().getName());
-        assertEquals(0, (int) listener.getFirstRow().getAge());
+        Assertions.assertEquals(10, listener.getRowCount());
+        Assertions.assertEquals("Name0", listener.getFirstRow().getName());
+        Assertions.assertEquals(0, (int) listener.getFirstRow().getAge());
     }
 
     private void readCsvImpl(File file) {
         CollectingReadListener<SimpleData> listener = new CollectingReadListener<>();
         FesodSheet.read(file, SimpleData.class, listener).sheet().doRead();
-        assertEquals(10, listener.getRowCount());
-        assertEquals("姓名0", listener.getFirstRow().getName());
-        assertEquals(20, (int) listener.getFirstRow().getAge());
+        Assertions.assertEquals(10, listener.getRowCount());
+        Assertions.assertEquals("姓名0", listener.getFirstRow().getName());
+        Assertions.assertEquals(20, (int) listener.getFirstRow().getAge());
     }
 }

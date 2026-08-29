@@ -256,7 +256,35 @@ Then continue with the specific import mappings below.
 | `import cn.idev.excel.metadata.Head;`                          | `import org.apache.fesod.sheet.metadata.Head;`                          |
 | `import cn.idev.excel.metadata.property.ExcelContentProperty;` | `import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;` |
 
-### 2i. Wildcard catch-all (apply last)
+### 2i. Renamed helper classes (conditional)
+
+Only if the project references these classes directly (rare — they are
+mostly internal). Rename the type and update the import together:
+
+| Find (exact import string)                              | Replace with                                                     |
+|---------------------------------------------------------|------------------------------------------------------------------|
+| `import cn.idev.excel.constant.FastExcelConstants;`     | `import org.apache.fesod.sheet.constant.FesodSheetConstants;`    |
+| `import cn.idev.excel.util.FastExcelTempFileCreationStrategy;` | `import org.apache.fesod.sheet.util.FesodTempFileCreationStrategy;` |
+| `import cn.idev.excel.util.BeanMapUtils;`               | `import org.apache.fesod.sheet.util.BeanMapUtils;` + rename usages `BeanMapUtils.FastExcelNamingPolicy` → `BeanMapUtils.FesodSheetNamingPolicy` (the nested class was renamed; the import itself stays `BeanMapUtils`) |
+
+### 2j. Utility classes moved to fesod-common (conditional)
+
+FastExcel 1.3 kept these under `cn.idev.excel.util`; Fesod moved them to the
+`fesod-common` module. Only apply if the project imports them directly (e.g.
+custom converters or strategies):
+
+| Find                              | Replace with                        |
+|-----------------------------------|-------------------------------------|
+| `import cn.idev.excel.util.StringUtils;`   | `import org.apache.fesod.common.util.StringUtils;`   |
+| `import cn.idev.excel.util.IoUtils;`       | `import org.apache.fesod.common.util.IoUtils;`       |
+| `import cn.idev.excel.util.MapUtils;`      | `import org.apache.fesod.common.util.MapUtils;`      |
+| `import cn.idev.excel.util.ListUtils;`     | `import org.apache.fesod.common.util.ListUtils;`     |
+| `import cn.idev.excel.util.BooleanUtils;`  | `import org.apache.fesod.common.util.BooleanUtils;`  |
+| `import cn.idev.excel.util.IntUtils;`      | `import org.apache.fesod.common.util.IntUtils;`      |
+| `import cn.idev.excel.util.MemberUtils;`   | `import org.apache.fesod.common.util.MemberUtils;`   |
+| `import cn.idev.excel.util.PositionUtils;` | `import org.apache.fesod.common.util.PositionUtils;` |
+
+### 2k. Wildcard catch-all (apply LAST)
 
 After all specific replacements above, scan for any remaining wildcard imports:
 
@@ -265,7 +293,9 @@ After all specific replacements above, scan for any remaining wildcard imports:
 | `import cn.idev.excel.`          | `import org.apache.fesod.sheet.` |
 | `import org.apache.fesod.excel.` | `import org.apache.fesod.sheet.` |
 
-Apply this only after all the specific rules above, as a safety net.
+Apply this only after all the specific rules above (including 2i/2j), as a
+safety net. Do NOT let the wildcard rule rewrite `cn.idev.excel.util` to
+`org.apache.fesod.sheet.util` — those classes moved to fesod-common (rule 2j).
 
 ---
 
@@ -345,6 +375,20 @@ This phase prevents encoding-related breakage on Windows locales (for example GB
 
 ---
 
+## Phase 6 — New Fesod-only features (OPTIONAL, informational)
+
+Fesod ships features that did not exist in FastExcel 1.3.0. They are NOT part
+of the migration — mention them in the summary only if the developer's project
+could benefit, without rewriting any existing code:
+
+- `@FreezePane` (`org.apache.fesod.sheet.annotation.write.style`) — freeze rows/columns on write.
+- URL image security (`org.apache.fesod.sheet.converters.url`) — `UrlImageFetchPolicy` with `SchemePolicy` and `CidrBlock` guard the URL image converter against SSRF.
+- `StringBase64ImageConverter` / `StringPathnameImageConverter` (`org.apache.fesod.sheet.converters.string`) — explicit string-to-image conversion (base64 / file path), alongside the legacy `StringImageConverter`.
+- `HeadBuilder` / `DefaultHeadBuilder` (`org.apache.fesod.sheet.metadata`) — fluent No-Bean header construction via `.head(builder -> ...)`.
+- `HeaderMergeStrategy` (`org.apache.fesod.sheet.enums`) — `NONE` / `HORIZONTAL_ONLY` / `VERTICAL_ONLY` / `FULL_RECTANGLE` / `AUTO` via `headerMergeStrategy(...)`, superseding `automaticMergeHead`.
+
+---
+
 ## Verification
 
 After completing the desired phases, confirm the following:
@@ -354,6 +398,8 @@ After completing the desired phases, confirm the following:
 - No `.java` file contains `import cn.idev.excel.`
 - No `.java` file contains `import org.apache.fesod.excel.`
 - No `pom.xml` or `build.gradle` references `cn.idev.excel`
+- If 2i applied: no `.java` file references `FastExcelConstants`, `FastExcelTempFileCreationStrategy`, or `BeanMapUtils.FastExcelNamingPolicy`; check `.java` files for `FastExcelNamingPolicy` → renamed to `FesodSheetNamingPolicy`
+- If 2j applied: no `.java` file contains `cn.idev.excel.util.StringUtils` (or any of the 8 moved utils); check for `import cn.idev.excel.util.` — must be gone (wildcard rule 2k must not have rewritten these to `org.apache.fesod.sheet.util`)
 
 **Must be true after Phase 3 (additional):**
 

@@ -26,7 +26,7 @@ title: '品牌'
 
 ![logo](https://www.apache.org/logos/originals/fesod-3.svg)
 
-点击下载: [SVG](https://www.apache.org/logos/originals/fesod-3.svg) ｜ [PNG](https://www.apache.org/logos/originals/fesod-3.svg)
+Download: [SVG](https://www.apache.org/logos/originals/fesod-3.svg) ｜ [PNG](https://www.apache.org/logos/res/fesod/fesod-3.png)
 
 ## 品牌 Logo
 

@@ -26,7 +26,7 @@ All brand logos can be downloaded from the [Apache Project Logos](https://apache
 
 ![logo](https://www.apache.org/logos/originals/fesod-3.svg)
 
-Download: [SVG](https://www.apache.org/logos/originals/fesod-3.svg) ｜ [PNG](https://www.apache.org/logos/originals/fesod-3.svg)
+Download: [SVG](https://www.apache.org/logos/originals/fesod-3.svg) ｜ [PNG](https://www.apache.org/logos/res/fesod/fesod-3.png)
 
 ## Brand Logo
 

@@ -20,14 +20,16 @@ title: 'Brand'
 - limitations under the License.
 -->
 
+All brand logos can be downloaded from the [Apache Project Logos](https://apache.org/logos/?#fesod).
+
 ## Logo
 
-![logo](/img/logo/fesod-logo-icon.svg)
+![logo](https://www.apache.org/logos/originals/fesod-3.svg)
 
-Download: [SVG](/img/logo/fesod-logo-icon.svg) ｜ [PNG](/img/logo/fesod-logo-icon.png)
+Download: [SVG](https://www.apache.org/logos/originals/fesod-3.svg) ｜ [PNG](https://www.apache.org/logos/originals/fesod-3.svg)
 
 ## Brand Logo
 
-![logo](/img/logo/fesod-logo.svg)
+![logo](https://www.apache.org/logos/originals/fesod-1.svg)
 
-Download: [SVG](/img/logo/fesod-logo.svg) ｜ [PNG](/img/logo/fesod-logo.png)
+Download: [SVG](https://www.apache.org/logos/originals/fesod-1.svg) ｜ [PNG](https://www.apache.org/logos/res/fesod/fesod-1.png)

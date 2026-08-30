@@ -584,9 +584,8 @@ public class DateUtils {
         if (StringUtils.isEmpty(formatString)) {
             return false;
         }
-        String fs = formatString;
-        StringBuilder sb = sanitizeString(fs);
-        fs = sb.toString();
+
+        String fs = sanitizeString(formatString);
 
         // short-circuit if it indicates elapsed time: [h], [m] or [s]
         if (date_ptrn4.matcher(fs).matches()) {
@@ -626,23 +625,15 @@ public class DateUtils {
         return result;
     }
 
-    private static StringBuilder sanitizeString(String fs) {
+    private static String sanitizeString(String fs) {
         final int length = fs.length();
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             char c = fs.charAt(i);
             if (i < length - 1) {
                 char nc = fs.charAt(i + 1);
-                if (c == '\\') {
-                    switch (nc) {
-                        case '-':
-                        case ',':
-                        case '.':
-                        case ' ':
-                        case '\\':
-                            // skip current '\' and continue to the next char
-                            continue;
-                    }
+                if (c == '\\' && isEscapableChar(nc)) {
+                    continue;
                 } else if (c == ';' && nc == '@') {
                     i++;
                     // skip ";@" duplets
@@ -651,7 +642,11 @@ public class DateUtils {
             }
             sb.append(c);
         }
-        return sb;
+        return sb.toString();
+    }
+
+    private static boolean isEscapableChar(char c) {
+        return c == '-' || c == ',' || c == '.' || c == ' ' || c == '\\';
     }
 
     /**

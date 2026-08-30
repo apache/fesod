@@ -108,7 +108,6 @@ under the License.
         <jcl-over-slf4j.version>2.0.18</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>2.0.18</log4j-over-slf4j.version>
         <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
-        <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.15</jacoco.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
@@ -263,12 +262,6 @@ under the License.
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.mock-server</groupId>
-                <artifactId>mockserver-netty</artifactId>
-                <version>${mockserver.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit.version}</version>
@@ -378,25 +371,6 @@ under the License.
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-netty</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.code-intelligence</groupId>

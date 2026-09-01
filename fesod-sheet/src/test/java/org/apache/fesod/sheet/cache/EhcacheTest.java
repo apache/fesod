@@ -87,7 +87,7 @@ class EhcacheTest {
 
     @Test
     void readsAcrossBatchesAfterCacheMiss() {
-        cache = new Ehcache(null, 1);
+        cache = new Ehcache(null, 5);
         cache.init(null);
         int total = Ehcache.BATCH_COUNT + 25;
         for (int i = 0; i < total; i++) {

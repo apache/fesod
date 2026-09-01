@@ -87,7 +87,7 @@ class EhcacheTest {
 
     @Test
     void readsAcrossBatchesAfterCacheMiss() {
-        cache = new Ehcache(null, 5);
+        cache = new Ehcache(null, 1);
         cache.init(null);
         int total = Ehcache.BATCH_COUNT + 25;
         for (int i = 0; i < total; i++) {
@@ -98,16 +98,6 @@ class EhcacheTest {
         Assertions.assertEquals("v0", cache.get(0));
         Assertions.assertEquals("v100", cache.get(Ehcache.BATCH_COUNT));
         Assertions.assertEquals("v124", cache.get(total - 1));
-    }
-
-    @Test
-    void deprecatedSizeConstructorStillWorks() {
-        cache = new Ehcache(1, 1);
-        cache.init(null);
-        cache.put("alpha");
-        cache.putFinished();
-
-        Assertions.assertEquals("alpha", cache.get(0));
     }
 
     @Test

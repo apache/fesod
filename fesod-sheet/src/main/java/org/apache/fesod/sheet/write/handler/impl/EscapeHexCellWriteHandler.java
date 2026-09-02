@@ -17,11 +17,13 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.write.handler;
+package org.apache.fesod.sheet.write.handler.impl;
 
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.event.NotRepeatExecutor;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.write.handler.CellWriteHandler;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteTableHolder;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,18 +38,18 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
  * To store the literal _xHHHH_ sequence without it being decoded by POI, we need to escape the initial underscore by
  * replacing _x with _x005F_x.
  * <p>
- * This handler is not registered by default. Without it the writer stores {@code _xHHHH_}-shaped text exactly as
- * typed, and any reader that follows the convention - Fesod, POI or Excel - decodes it back to the character it
- * names, so the literal does not survive a round trip. Register it on the write to keep such text intact.
- * <p>
  * The read half of the same convention lives in
  * {@link org.apache.fesod.sheet.util.XlsxEscapeUtils#utfDecode(String) XlsxEscapeUtils.utfDecode}, which undoes what
  * this handler writes. Both sides read {@code _xHHHH_} the same way, so a change to what counts as an escape belongs
  * in both.
+ * <p>
+ * This handler implements {@link NotRepeatExecutor} so that it is only executed once. {@link #uniqueValue()} returns
+ * the fully qualified class name, which never collides with handlers from other classes even across different class
+ * loaders.
  *
  * @see org.apache.fesod.sheet.util.XlsxEscapeUtils#utfDecode(String)
  */
-public class EscapeHexCellWriteHandler implements CellWriteHandler {
+public class EscapeHexCellWriteHandler implements CellWriteHandler, NotRepeatExecutor {
 
     // ASCII hex digits only. Not Character.digit(c, 16), which also accepts non-ASCII
     // digits such as U+0663 that OOXML never uses.
@@ -63,6 +65,17 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler {
     private static final String ESCAPED_PREFIX = "_x005F" + PREFIX;
     private static final int PREFIX_LENGTH = PREFIX.length();
     private static final int HEX_DIGIT_COUNT = 4;
+
+    /**
+     * Returns the fully qualified class name as the unique identity of this handler.
+     * <p>
+     * This handler only needs to execute once. The fully qualified class name serves as the unique identity,
+     * which never collides with handlers from other classes even across different class loaders.
+     */
+    @Override
+    public String uniqueValue() {
+        return this.getClass().getName();
+    }
 
     @Override
     public void afterCellDataConverted(

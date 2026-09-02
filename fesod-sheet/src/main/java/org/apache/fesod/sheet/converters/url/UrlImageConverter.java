@@ -127,12 +127,21 @@ public class UrlImageConverter implements Converter<URL> {
         if (host == null || host.trim().isEmpty()) {
             throw new IOException("URL image host is required");
         }
+        if (value.getUserInfo() != null) {
+            throw new IOException("URL image user info is not allowed");
+        }
 
         String normalizedHost;
         try {
             normalizedHost = UrlImageFetchPolicy.normalizeHost(host);
         } catch (IllegalArgumentException e) {
             throw new IOException("URL image host is invalid", e);
+        }
+        if (policy.getAllowedHosts().isEmpty()) {
+            throw new IOException("Remote URL image fetching is disabled");
+        }
+        if (!policy.getAllowedHosts().contains(normalizedHost)) {
+            throw new IOException("URL image host is not allowlisted");
         }
 
         InetAddress[] addresses = InetAddress.getAllByName(normalizedHost);

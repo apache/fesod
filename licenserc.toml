@@ -15,17 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
-headerPath = "Apache-2.0-ASF.txt"
+[header]
+builtin = "Apache-2.0-ASF"
 
-includes = [
-    '**/*.css',
-    '**/*.java',
-    '**/*.js',
-    '**/*.jsx',
-    '**/*.ts',
-    '**/*.tsx',
-    '**/*.xml',
-    '**/*.yml',
-    '**/*.yaml',
-    '**/*.toml',
-]
+[files]
+includes = ["**/*.css", "**/*.java", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.xml", "**/*.yml", "**/*.yaml", "**/*.toml"]
+

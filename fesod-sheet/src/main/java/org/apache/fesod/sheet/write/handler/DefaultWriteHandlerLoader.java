@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.write.handler.impl.DefaultRowWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.DimensionWorkbookWriteHandler;
+import org.apache.fesod.sheet.write.handler.impl.EscapeHexCellWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.FillStyleCellWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.WriteSheetWorkbookWriteHandler;
 import org.apache.fesod.sheet.write.style.DefaultStyle;
@@ -60,6 +61,7 @@ public class DefaultWriteHandlerLoader {
             case XLSX:
                 handlerList.add(new DimensionWorkbookWriteHandler());
                 handlerList.add(new DefaultRowWriteHandler());
+                handlerList.add(new EscapeHexCellWriteHandler());
                 handlerList.add(new FillStyleCellWriteHandler());
                 handlerList.add(new WriteSheetWorkbookWriteHandler());
                 if (useDefaultStyle) {

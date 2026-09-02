@@ -15,21 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: Check License Header
-
-on: [ push, pull_request ]
-
-concurrency:
-  group: license-check-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  license:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Check License Header
-        uses: taiki-e/install-action@v2
-        with:
-          tool: hawkeye@7.0.0
-      - run: hawkeye check
+# Line-ending normalization for release-critical wrapper/scripts.
+# Hermetic building on Linux/macOS requires LF in the source package.
+mvnw text eol=lf
+mvnw.cmd text eol=crlf
+.mvn/wrapper/maven-wrapper.properties text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf

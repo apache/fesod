@@ -3,6 +3,23 @@ id: 'release-version'
 title: '如何发布版本'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 ## 1. 准备
 
 ### 1.1 版本发布指南
@@ -205,9 +222,8 @@ ${RELEASE_MANAGER}
 
 ### 3.1 KEYS 文件
 
-如果您是**第一次**作为发布者或原来的密钥已过期，请将**公钥**分别**追加**到 Apache SVN 项目仓库的 **KEYS** 文件中
+如果您是**第一次**作为发布者或原来的密钥已过期，请将**公钥**追加到 Apache SVN 项目 **release 仓库**的 **KEYS** 文件中。KEYS 文件在单独权威位置（release 目录）维护，以保证一致性，并可在 downloads.apache.org 上用于签名验证：
 
-- Dev 仓库：<https://dist.apache.org/repos/dist/dev/incubator/fesod>
 - Release 仓库：<https://dist.apache.org/repos/dist/release/incubator/fesod>
 
 操作步骤：
@@ -229,6 +245,7 @@ svn ci -m "add gpg key for xxx"
 注意事项：
 
 - 请不要直接覆盖仓库中 `KEYS`文件，只能**追加**
+- `KEYS` 文件只在 **release** 目录维护（单一权威来源），**不要**在 dev 目录再保留一份，否则两份内容容易不同步。
 - SVN 仓库需要 PPMC 权限，可由 PPMC 成员协助您上传。
 
 ### 3.2 POM 配置
@@ -326,7 +343,7 @@ mvn clean deploy -Papache-release -DskipTests -Dgpg.skip=false
 
 #### 3.3.3 打包源代码
 
-:::caution 注意
+:::warning
 请勿在日常工作目录中打包！
 :::
 

@@ -148,6 +148,9 @@ public class ReadSheet extends ReadBasicParameter {
         this.setAutoTrim(other.getAutoTrim());
         this.setAutoStrip(other.getAutoStrip());
         this.setUse1904windowing(other.getUse1904windowing());
+        this.setLocale(other.getLocale());
+        this.setUseScientificFormat(other.getUseScientificFormat());
+        this.setFiledCacheLocation(other.getFiledCacheLocation());
         this.setNumRows(other.getNumRows());
         this.setHidden(other.isHidden());
         this.setVeryHidden(other.isVeryHidden());

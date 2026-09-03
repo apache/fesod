@@ -26,7 +26,7 @@ For a detailed checklist, please refer to the official [Incubator Release Checkl
 
 > **Prerequisite:** Ensure you have `gpg` or `gpg2` installed.
 
-:::caution Note
+:::warning
 Downloading may take some time depending on your network connection.
 :::
 

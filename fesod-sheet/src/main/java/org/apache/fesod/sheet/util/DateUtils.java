@@ -606,32 +606,8 @@ public class DateUtils {
         if (StringUtils.isEmpty(formatString)) {
             return false;
         }
-        String fs = formatString;
-        final int length = fs.length();
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            char c = fs.charAt(i);
-            if (i < length - 1) {
-                char nc = fs.charAt(i + 1);
-                if (c == '\\') {
-                    switch (nc) {
-                        case '-':
-                        case ',':
-                        case '.':
-                        case ' ':
-                        case '\\':
-                            // skip current '\' and continue to the next char
-                            continue;
-                    }
-                } else if (c == ';' && nc == '@') {
-                    i++;
-                    // skip ";@" duplets
-                    continue;
-                }
-            }
-            sb.append(c);
-        }
-        fs = sb.toString();
+
+        String fs = sanitizeString(formatString);
 
         // short-circuit if it indicates elapsed time: [h], [m] or [s]
         if (date_ptrn4.matcher(fs).matches()) {
@@ -669,6 +645,30 @@ public class DateUtils {
         }
         result = date_ptrn6.matcher(fs).find();
         return result;
+    }
+
+    private static String sanitizeString(String fs) {
+        final int length = fs.length();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = fs.charAt(i);
+            if (i < length - 1) {
+                char nc = fs.charAt(i + 1);
+                if (c == '\\' && isEscapableChar(nc)) {
+                    continue;
+                } else if (c == ';' && nc == '@') {
+                    i++;
+                    // skip ";@" duplets
+                    continue;
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    private static boolean isEscapableChar(char c) {
+        return c == '-' || c == ',' || c == '.' || c == ' ' || c == '\\';
     }
 
     /**

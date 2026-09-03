@@ -214,6 +214,11 @@ After all specific replacements above, scan for any remaining wildcard imports:
 | `import cn.idev.excel.`          | `import org.apache.fesod.sheet.` |
 | `import org.apache.fesod.excel.` | `import org.apache.fesod.sheet.` |
 
+> **Note**: The wildcard rule must **not** be applied to `cn.idev.excel.util.*`
+> imports. Those utility classes moved to the `fesod-common` module, not to
+> `org.apache.fesod.sheet` — update them to `org.apache.fesod.common.util`
+> instead (see Step 4).
+
 ### Step 3: Entry class rename (STRONGLY RECOMMENDED)
 
 `FastExcel` and `FastExcelFactory` compile in Fesod but are `@Deprecated` and
@@ -272,6 +277,67 @@ In Fesod, the naming policy is defined in
 `getTag()` returns `ByFesodCGLIB`.
 
 If no file references `ByFastExcelCGLIB`, skip this phase entirely.
+
+### Step 4: Class and module changes (check when upgrading)
+
+Beyond the entry classes, a few helper classes were renamed or moved to another
+module during the donation, and Fesod ships features that FastExcel 1.3 does
+not have. Scan your codebase for the names below and update only the ones you
+actually reference.
+
+#### Renamed helper classes
+
+| Before (FastExcel 1.3.0)                              | After (Fesod)                                                   |
+|-------------------------------------------------------|-----------------------------------------------------------------|
+| `cn.idev.excel.constant.FastExcelConstants`            | `org.apache.fesod.sheet.constant.FesodSheetConstants`           |
+| `cn.idev.excel.util.FastExcelTempFileCreationStrategy` | `org.apache.fesod.sheet.util.FesodTempFileCreationStrategy`     |
+| `cn.idev.excel.util.BeanMapUtils.FastExcelNamingPolicy` | `org.apache.fesod.sheet.util.BeanMapUtils.FesodSheetNamingPolicy` |
+
+#### Utility classes moved to fesod-common
+
+The following utility classes moved from `cn.idev.excel.util` to
+`org.apache.fesod.common.util`. Update their imports if your code uses them
+directly (for example in custom converters or strategies). If you already
+applied the wildcard rule in Step 2, double-check that these imports were not
+rewritten to `org.apache.fesod.sheet.util`:
+
+| Class           | Before               | After                          |
+|-----------------|----------------------|--------------------------------|
+| `StringUtils`   | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `IoUtils`       | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `MapUtils`      | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `ListUtils`     | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `BooleanUtils`  | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `IntUtils`      | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `MemberUtils`   | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+| `PositionUtils` | `cn.idev.excel.util` | `org.apache.fesod.common.util` |
+
+#### New Fesod-only features
+
+The following features did not exist in FastExcel 1.3.0. They are worth knowing
+about when migrating, but require no action unless you want to use them:
+
+- **`@FreezePane`** (`org.apache.fesod.sheet.annotation.write.style.FreezePane`):
+  class-level annotation that freezes rows and/or columns when writing a sheet
+  (`colSplit`, `rowSplit`, `leftmostColumn`, `topRow`).
+- **URL image security** (`org.apache.fesod.sheet.converters.url`):
+  `UrlImageFetchPolicy` (built with `SchemePolicy` and `CidrBlock`) guards the
+  built-in URL image converter against SSRF. By default only `http`/`https` and
+  public network addresses are allowed; private networks, hosts and CIDRs can
+  be allowlisted, and redirects (`maxRedirects`) and image size (`maxImageBytes`)
+  are capped.
+- **String image converters** (`org.apache.fesod.sheet.converters.string`):
+  `StringBase64ImageConverter` (base64 values, optional `data:` prefix) and
+  `StringPathnameImageConverter` (local file path) make the string-to-image
+  conversion explicit, in addition to the legacy `StringImageConverter`.
+- **`HeadBuilder` / `DefaultHeadBuilder`** (`org.apache.fesod.sheet.metadata`):
+  fluent header construction for No-Bean mode, e.g.
+  `FesodSheet.write(pathname).head(builder -> builder.column("ID", 2).columns("User Info", sub -> sub.column("Name").column("Age")))`.
+- **`HeaderMergeStrategy`** (`org.apache.fesod.sheet.enums.HeaderMergeStrategy`):
+  explicit control over header merging — `NONE`, `HORIZONTAL_ONLY`,
+  `VERTICAL_ONLY`, `FULL_RECTANGLE`, `AUTO` — set via
+  `headerMergeStrategy(...)` on the write builder, superseding the boolean
+  `automaticMergeHead` switch.
 
 ---
 

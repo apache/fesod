@@ -40,6 +40,12 @@ import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 @EqualsAndHashCode
 public class DateTimeFormatProperty {
     private String format;
+
+    /**
+     * Whether dates use the 1904 windowing system. {@code null} represents the {@code DEFAULT} state, which means the
+     * field falls back to {@link org.apache.fesod.sheet.metadata.GlobalConfiguration}; {@code TRUE}/{@code FALSE}
+     * represent an explicit override (see #1042).
+     */
     private Boolean use1904windowing;
 
     public DateTimeFormatProperty(String format, Boolean use1904windowing) {

@@ -57,14 +57,13 @@ public class DateNumberConverter implements Converter<Date> {
     public Date convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return DateUtils.getJavaDate(
-                cellData.getNumberValue().doubleValue(),
-                DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration));
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             Date value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return new WriteCellData<>(BigDecimal.valueOf(
-                DateUtil.getExcelDate(value, DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration))));
+                DateUtil.getExcelDate(value, DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

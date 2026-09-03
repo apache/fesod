@@ -49,15 +49,13 @@ public class LocalTimeNumberConverter implements Converter<LocalTime> {
     public LocalTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return DateUtils.getLocalTime(
-                cellData.getNumberValue().doubleValue(),
-                DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration));
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             LocalTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                value.atDate(DateUtils.EPOCH),
-                DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration))));
+                value.atDate(DateUtils.EPOCH), DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

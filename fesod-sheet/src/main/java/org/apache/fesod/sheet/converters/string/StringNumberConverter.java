@@ -61,7 +61,7 @@ public class StringNumberConverter implements Converter<String> {
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             return DateUtils.format(
                     cellData.getNumberValue(),
-                    DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration),
+                    DateUtils.isDate1904(contentProperty, globalConfiguration),
                     contentProperty.getDateTimeFormatProperty().getFormat());
         }
         // If there are "NumberFormat", read as number

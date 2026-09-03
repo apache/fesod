@@ -44,6 +44,6 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
     public WriteCellData<?> convertToExcelData(
             Timestamp value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return new WriteCellData<>(BigDecimal.valueOf(
-                DateUtil.getExcelDate(value, DateUtils.resolveUse1904windowing(contentProperty, globalConfiguration))));
+                DateUtil.getExcelDate(value, DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

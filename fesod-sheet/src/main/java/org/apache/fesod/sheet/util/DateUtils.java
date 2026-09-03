@@ -376,15 +376,14 @@ public class DateUtils {
     }
 
     /**
-     * Resolve the 1904 windowing flag for a field: the annotation value wins when explicitly set, otherwise fall back
-     * to the global configuration (null-safe, defaults to false).
+     * Whether the 1904 windowing system applies to a field: the annotation value wins when explicitly set, otherwise
+     * fall back to the global configuration (null-safe, defaults to false).
      *
      * @param contentProperty the field's content property, may be null
      * @param globalConfiguration the global configuration
      * @return true if dates use the 1904 windowing system
      */
-    public static boolean resolveUse1904windowing(
-            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+    public static boolean isDate1904(ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             Boolean propertyUse1904windowing =
                     contentProperty.getDateTimeFormatProperty().getUse1904windowing();

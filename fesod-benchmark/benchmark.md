@@ -22,6 +22,16 @@ The benchmark module measures the performance of Fesod for spreadsheet operation
 
 The gate intentionally does **not** run per pull request: GitHub shared runners fluctuate too much for every-push gating to be worth the CI time. The tag is the release-time checkpoint; manual runs cover anything in between.
 
+### Alignment with Fesod's low-memory positioning
+
+Fesod's core promise is *streaming through large spreadsheets without OOM*, so the baseline suite is shaped to guard exactly that:
+
+- **LARGE (100K rows × 20 columns) is tracked**, not just small dev-feedback sizes: at 1K/10K rows even a non-streaming implementation looks fine, and a regression that accidentally buffers a whole sheet would go unnoticed. At 100K rows such a mistake moves allocation per op by orders of magnitude and is caught immediately by the (deterministic) alloc/op signal.
+- **Allocation per op is a first-class tracked metric.** It is the most direct quantitative expression of the memory-efficiency claim: streaming keeps it linear in rows and independent of file size. Its measured noise is ±0.1%, so it is the signal the hard gate trusts most.
+- **EXTRA_LARGE (1M rows) is intentionally excluded** from the CI baseline: a single 1M-row XLSX write takes tens of seconds per op, which does not fit a CI budget. It remains available in the manual analysis suites (`WriteBenchmark`/`ReadBenchmark` with `-p datasetSize=EXTRA_LARGE`).
+- **The forked JVM uses a fixed `-Xms1g -Xmx1g` heap** — deliberately generous and constant. This is a *measurement* choice (a stable, roomy heap removes GC-adaptivity noise from the timing signal), not a simulation of a memory-constrained user. The low-memory capability itself is guarded by alloc/op linearity above and by the existing unit/integration tests in `fesod-sheet`, not by squeezing the benchmark JVM.
+- Time-signal precision note: a LARGE XLSX write takes ~2.5s/op, so each 2s measurement iteration yields ~1 sample — LARGE time deltas come with wide JMH error bars and usually resolve as WARN rather than FAIL; regressions at this size are still caught reliably through the alloc signal and by the magnitude of the delta.
+
 ### The tiered gate
 
 Whether a regression should fail CI was evaluated against measured noise on real `ubuntu-24.04` runners (same code, consecutive runs):
@@ -73,7 +83,7 @@ Components (package `org.apache.fesod.sheet.benchmark.baseline`):
 
 | Component | Role |
 |---|---|
-| `BaselineBenchmark` | The tracked performance contract: `write` and `read` operations, XLSX and CSV formats, 1K/10K rows × 20 columns, average time per operation |
+| `BaselineBenchmark` | The tracked performance contract: `write` and `read` operations, XLSX and CSV formats, 1K/10K/100K rows × 20 columns, average time and allocation per operation |
 | `BaselineRunner` | Runs the suite with a fixed execution contract (3 forks, 3×1s warmup, 5×2s measurement, `-Xms1g -Xmx1g -XX:+UseG1GC`, gc profiler for allocation tracking) and writes JMH JSON |
 | `BaselineComparator` | Compares against the committed baseline, renders the Markdown report, returns the CI gate exit code |
 | `baseline/jmh-baseline.json` | The committed reference results — the only source of truth for "known good performance" |
@@ -85,10 +95,11 @@ Workflow: [`.github/workflows/benchmark.yml`](../.github/workflows/benchmark.yml
 
 Every run appends a report to the job step summary; a manual run on a branch with an open PR additionally updates a sticky PR comment. The report looks like this:
 
-| Benchmark | Mode | Baseline | Current | Δ time | Δ alloc | Verdict |
+| Benchmark | Mode | Baseline | Current | Δ time | Alloc/op (Δ) | Verdict |
 |---|:-:|---:|---:|---:|---:|:-:|
-| `read [datasetSize=MEDIUM, fileFormat=XLSX]` | avgt | 356 ms/op | 402 ms/op | 🔺 +12.9% | +0.4% | :warning: WARN |
-| `write [datasetSize=SMALL, fileFormat=CSV]` | avgt | 48.1 ms/op | 47.9 ms/op | −0.4% | +0.1% | :white_check_mark: OK |
+| `read [datasetSize=MEDIUM, fileFormat=XLSX]` | avgt | 356 ms/op | 402 ms/op | 🔺 +12.9% | 1.9 GB (+0.4%) | :warning: WARN |
+| `write [datasetSize=SMALL, fileFormat=CSV]` | avgt | 48.1 ms/op | 47.9 ms/op | −0.4% | 17.8 MB (+0.1%) | :white_check_mark: OK |
+| `write [datasetSize=LARGE, fileFormat=XLSX]` | avgt | 2.45 s/op | 2.51 s/op | +2.4% | 2.1 GB (+0.2%) | :white_check_mark: OK |
 
 Verdicts:
 
@@ -101,7 +112,7 @@ Verdicts:
 Two signals are tracked per benchmark:
 
 - **Δ time** — change in average time per operation (ms/op).
-- **Δ alloc** — change in `gc.alloc.rate.norm` (bytes allocated per operation). Allocation is nearly noise-free and often the earliest indicator of a regression, e.g. accidental object churn in a hot loop.
+- **Alloc/op (Δ)** — bytes allocated per operation (`gc.alloc.rate.norm`) and its change. This is the most direct signal for the library's *low-memory* positioning: streaming implementations keep allocation linear in rows and independent of file size, so an absolute value that suddenly jumps (e.g. 208 MB → 2 GB for the same 10K-row write) exposes accidental full-buffering immediately. Allocation is also nearly noise-free on CI runners (±0.1%), making it the trusted hard gate.
 
 The confidence-interval rule is what keeps CI usable on shared GitHub runners: a 30% "regression" whose error bars overlap the baseline is noise-ambiguous and only warns, while a consistent regression fails regardless of the threshold.
 
@@ -156,6 +167,16 @@ java -Dbenchmark.forks=1 -Dbenchmark.warmup.iterations=1 -Dbenchmark.measurement
 ```
 
 All knobs are system properties on `BaselineRunner` (`benchmark.forks`, `benchmark.warmup.iterations`, `benchmark.warmup.seconds`, `benchmark.measurement.iterations`, `benchmark.measurement.seconds`, `benchmark.datasetSizes`, `benchmark.fileFormats`, `benchmark.result`).
+
+### ASF compliance notes
+
+The workflow follows the [Apache GitHub Actions policy](https://infra.apache.org/github-actions-policy.html):
+
+- Only `actions/*` actions are used (no SHA pinning required for that namespace); job concurrency is 3; no `pull_request_target` with secrets.
+- The `update-baseline` job pushes only to a fresh `benchmark/baseline-*` branch and opens a PR — it never pushes to `main`, which is protected (squash-only, 1 review). Because merges are squash merges, the commit that actually lands on `main` is authored by the merging committer, and the bot-produced branch is discarded — the same pattern Dependabot already uses in Apache repositories.
+- The generated baseline JSON and metadata are convenience data, not release artifacts; they only enter the repository through maintainer-reviewed PRs.
+
+**If the organization's GitHub settings make the default token read-only or disallow Actions-created PRs**, the `update-baseline` job will fail at the push/PR step. The fallback is built in: the `benchmark-results` artifact of the run already contains `baseline-current.json` — download it from the run page, place it at `fesod-benchmark/baseline/jmh-baseline.json` (regenerate `baseline-meta.json` from the run's summary data), and commit it as a normal reviewed change.
 
 ## Running the Analysis Suites
 
@@ -214,7 +235,7 @@ mvn verify -f fesod-benchmark/pom.xml -P benchmark-test
 
 | Suite | Description | CI gate |
 |---|---|---|
-| **Baseline** | `BaselineBenchmark` — write/read, XLSX/CSV, 1K/10K rows | ✅ release tags + manual dispatch, blocks high-confidence regressions |
+| **Baseline** | `BaselineBenchmark` — write/read, XLSX/CSV, 1K/10K/100K rows | ✅ release tags + manual dispatch, blocks high-confidence regressions |
 | **Comparison** | Head-to-head comparison of Fesod vs Apache POI for read, write, and streaming operations | manual |
 | **Operations** | Focused benchmarks for read (`ReadBenchmark`), write (`WriteBenchmark`), and fill (`FillBenchmark`) operations | manual |
 

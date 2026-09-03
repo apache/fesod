@@ -41,7 +41,7 @@ import org.openjdk.jmh.runner.options.TimeValue;
  *   benchmark.warmup.seconds          (default 1)
  *   benchmark.measurement.iterations  (default 5)
  *   benchmark.measurement.seconds     (default 1)
- *   benchmark.datasetSizes            (default SMALL,MEDIUM)
+ *   benchmark.datasetSizes            (default SMALL,MEDIUM,LARGE)
  *   benchmark.fileFormats             (default XLSX,CSV)
  *   benchmark.result                  (default target/baseline-current.json)
  * </pre>
@@ -68,7 +68,7 @@ public final class BaselineRunner {
         int measurementIterations = intProperty("benchmark.measurement.iterations", 5);
         int measurementSeconds = intProperty("benchmark.measurement.seconds", 2);
         String[] datasetSizes =
-                property("benchmark.datasetSizes", "SMALL,MEDIUM").split(",");
+                property("benchmark.datasetSizes", "SMALL,MEDIUM,LARGE").split(",");
         String[] fileFormats = property("benchmark.fileFormats", "XLSX,CSV").split(",");
         String resultFile = property("benchmark.result", "target/baseline-current.json");
 

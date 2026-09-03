@@ -59,8 +59,11 @@ import org.openjdk.jmh.infra.Blackhole;
  * <ul>
  *   <li>Operations: {@link #write} and {@link #read} — the two hot paths of the library</li>
  *   <li>Formats: XLSX and CSV</li>
- *   <li>Dataset sizes: SMALL (1K rows) and MEDIUM (10K rows), 20 columns each</li>
- *   <li>Average time per operation (ms/op) plus allocation per op (via the gc profiler)</li>
+ *   <li>Dataset sizes: SMALL (1K), MEDIUM (10K) and LARGE (100K rows), 20 columns each — the
+ *       LARGE size guards the project's core promise of streaming through big files without
+ *       loading them fully into memory</li>
+ *   <li>Average time per operation (ms/op) plus allocation per op (via the gc profiler), the
+ *       most direct signal for the library's memory-efficiency characteristics</li>
  * </ul>
  *
  * <p>Guidelines when evolving this suite:
@@ -87,7 +90,7 @@ public class BaselineBenchmark {
     /** Fork count used when the suite is executed directly through the JMH launcher. */
     public static final int CI_FORKS = 3;
 
-    @Param({"SMALL", "MEDIUM"})
+    @Param({"SMALL", "MEDIUM", "LARGE"})
     private String datasetSize;
 
     @Param({"XLSX", "CSV"})

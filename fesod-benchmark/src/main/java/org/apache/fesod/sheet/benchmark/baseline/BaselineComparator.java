@@ -334,7 +334,12 @@ public final class BaselineComparator {
         if (base.allocScore == null || cur.allocScore == null || base.allocScore <= 0) {
             return "n/a";
         }
-        return changeDetail(cur.allocScore - base.allocScore, base.allocScore);
+        return formatBytes(cur.allocScore) + " (" + changeDetail(cur.allocScore - base.allocScore, base.allocScore)
+                + ")";
+    }
+
+    private static String allocAbsolute(Metric metric) {
+        return metric == null || metric.allocScore == null ? "—" : formatBytes(metric.allocScore);
     }
 
     private static String changeDetail(double delta, double base) {
@@ -391,7 +396,7 @@ public final class BaselineComparator {
         }
 
         sb.append("| Benchmark | Mode | Baseline | Current | ");
-        sb.append(bootstrap ? "Δ | Verdict |\n" : "Δ time | Δ alloc | Verdict |\n");
+        sb.append(bootstrap ? "Alloc/op | Verdict |\n" : "Δ time | Alloc/op (Δ) | Verdict |\n");
         sb.append(bootstrap ? "|---|:-:|---:|---:|---:|:-:|\n" : "|---|:-:|---:|---:|---:|---:|:-:|\n");
 
         for (Row row : rows) {
@@ -406,7 +411,7 @@ public final class BaselineComparator {
                     .append(row.current == null ? "—" : formatScore(row.current.score, row.current.scoreUnit))
                     .append(" | ");
             if (bootstrap) {
-                sb.append(row.current == null ? "—" : "new");
+                sb.append(allocAbsolute(row.current));
             } else {
                 sb.append(row.timeDetail).append(" | ").append(row.allocDetail);
             }
@@ -667,6 +672,20 @@ public final class BaselineComparator {
             return 0.0d;
         }
         return value;
+    }
+
+    /** Human-readable byte size for gc.alloc.rate.norm values (bytes per op). */
+    private static String formatBytes(double bytes) {
+        if (bytes >= 1024.0d * 1024.0d * 1024.0d) {
+            return String.format(Locale.ROOT, "%.1f GB", bytes / (1024.0d * 1024.0d * 1024.0d));
+        }
+        if (bytes >= 1024.0d * 1024.0d) {
+            return String.format(Locale.ROOT, "%.1f MB", bytes / (1024.0d * 1024.0d));
+        }
+        if (bytes >= 1024.0d) {
+            return String.format(Locale.ROOT, "%.0f KB", bytes / 1024.0d);
+        }
+        return String.format(Locale.ROOT, "%.0f B", bytes);
     }
 
     private static String formatScore(double score, String unit) {

@@ -25,9 +25,8 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 
@@ -37,16 +36,10 @@ import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
  *
  */
 @Getter
-@Setter
-@EqualsAndHashCode
+@AllArgsConstructor
 public class DateTimeFormatProperty {
-    private String format;
-    private Boolean use1904windowing;
-
-    public DateTimeFormatProperty(String format, Boolean use1904windowing) {
-        this.format = format;
-        this.use1904windowing = use1904windowing;
-    }
+    private final String format;
+    private final Boolean use1904windowing;
 
     public static DateTimeFormatProperty build(DateTimeFormat dateTimeFormat) {
         if (dateTimeFormat == null) {

@@ -109,10 +109,10 @@ class NumberDataFormatterUtilsTest {
 
     @Test
     void test_format_replacesCachedFormatterWhenUse1904WindowingChanges() {
-        String date1900 = NumberDataFormatterUtils.format(
-                BigDecimal.ONE, (short) 14, "yyyy-mm-dd", false, Locale.US, false);
-        String date1904 = NumberDataFormatterUtils.format(
-                BigDecimal.ONE, (short) 14, "yyyy-mm-dd", true, Locale.US, false);
+        String date1900 =
+                NumberDataFormatterUtils.format(BigDecimal.ONE, (short) 14, "yyyy-mm-dd", false, Locale.US, false);
+        String date1904 =
+                NumberDataFormatterUtils.format(BigDecimal.ONE, (short) 14, "yyyy-mm-dd", true, Locale.US, false);
 
         Assertions.assertEquals("1900-01-01", date1900);
         Assertions.assertEquals("1904-01-02", date1904);

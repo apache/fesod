@@ -108,10 +108,8 @@ public class NumberDataFormatterUtils {
         Locale resolvedLocale = locale == null ? Locale.getDefault() : locale;
         boolean resolvedUseScientificFormat = Boolean.TRUE.equals(useScientificFormat);
         DataFormatterCache cache = DATA_FORMATTER_THREAD_LOCAL.get();
-        if (cache == null
-                || !cache.matches(resolvedUse1904windowing, resolvedLocale, resolvedUseScientificFormat)) {
-            cache = new DataFormatterCache(
-                    resolvedUse1904windowing, resolvedLocale, resolvedUseScientificFormat);
+        if (cache == null || !cache.matches(resolvedUse1904windowing, resolvedLocale, resolvedUseScientificFormat)) {
+            cache = new DataFormatterCache(resolvedUse1904windowing, resolvedLocale, resolvedUseScientificFormat);
             DATA_FORMATTER_THREAD_LOCAL.set(cache);
         }
         return cache.dataFormatter.format(data, dataFormat, dataFormatString);

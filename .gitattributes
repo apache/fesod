@@ -26,7 +26,7 @@ mvnw.cmd text eol=crlf
 
 # Exclude non-source artifacts from `git archive`
 .idea/ export-ignore
-.mvn/maven-wrapper.jar export-ignore
+.mvn/wrapper/maven-wrapper.jar export-ignore
 .github/ export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore

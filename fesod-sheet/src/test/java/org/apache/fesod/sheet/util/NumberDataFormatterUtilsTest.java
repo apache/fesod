@@ -23,7 +23,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Locale;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
-import org.apache.fesod.sheet.metadata.format.DataFormatter;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -89,18 +88,55 @@ class NumberDataFormatterUtilsTest {
     }
 
     @Test
+    void test_format_replacesCachedFormatterWhenLocaleChanges() {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.KOREA);
+            String korean = NumberDataFormatterUtils.format(
+                    new BigDecimal("0.75"), (short) 18, "h:mm AM/PM", false, null, false);
+            String chinese = NumberDataFormatterUtils.format(
+                    new BigDecimal("0.75"), (short) 18, "h:mm AM/PM", false, Locale.CHINA, false);
+
+            Assertions.assertTrue(korean.endsWith("오후"));
+            Assertions.assertTrue(chinese.endsWith("下午"));
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
+    }
+
+    @Test
+    void test_format_replacesCachedFormatterWhenUse1904WindowingChanges() {
+        String date1900 = NumberDataFormatterUtils.format(
+                BigDecimal.ONE, (short) 14, "yyyy-mm-dd", false, Locale.US, false);
+        String date1904 = NumberDataFormatterUtils.format(
+                BigDecimal.ONE, (short) 14, "yyyy-mm-dd", true, Locale.US, false);
+
+        Assertions.assertEquals("1900-01-01", date1900);
+        Assertions.assertEquals("1904-01-02", date1904);
+    }
+
+    @Test
+    void test_format_replacesCachedFormatterWhenScientificFormatChanges() {
+        BigDecimal data = new BigDecimal("100000000000");
+        String plain = NumberDataFormatterUtils.format(data, null, "General", false, Locale.US, false);
+        String scientific = NumberDataFormatterUtils.format(data, null, "General", false, Locale.US, true);
+
+        Assertions.assertEquals("100000000000", plain);
+        Assertions.assertEquals("1E+11", scientific);
+    }
+
+    @Test
     void test_ThreadLocal_Cache_And_Remove() throws NoSuchFieldException, IllegalAccessException {
         Field field = NumberDataFormatterUtils.class.getDeclaredField("DATA_FORMATTER_THREAD_LOCAL");
         field.setAccessible(true);
 
-        @SuppressWarnings("unchecked")
-        ThreadLocal<DataFormatter> threadLocal = (ThreadLocal<DataFormatter>) field.get(null);
+        ThreadLocal<?> threadLocal = (ThreadLocal<?>) field.get(null);
 
         Assertions.assertNull(threadLocal.get());
 
         NumberDataFormatterUtils.format(new BigDecimal("1"), null, "0", false, Locale.US, false);
 
-        DataFormatter cachedFormatter = threadLocal.get();
+        Object cachedFormatter = threadLocal.get();
         Assertions.assertNotNull(cachedFormatter);
 
         NumberDataFormatterUtils.format(new BigDecimal("2"), null, "0", false, Locale.US, false);

@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -88,6 +90,7 @@ class NumberDataFormatterUtilsTest {
     }
 
     @Test
+    @ResourceLock(Resources.LOCALE)
     void test_format_replacesCachedFormatterWhenLocaleChanges() {
         Locale defaultLocale = Locale.getDefault();
         try {

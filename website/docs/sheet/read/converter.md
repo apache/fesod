@@ -78,11 +78,10 @@ public class CustomStringStringConverter implements Converter<String> {
 ### Code Example
 
 ```java
-@Test
-public void converterRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, ConverterData.class, new DemoDataListener())
+    FesodSheet.read(pathname, ConverterData.class, new DemoDataListener())
             .registerConverter(new CustomStringStringConverter()) // Register custom converter
             .sheet()
             .doRead();

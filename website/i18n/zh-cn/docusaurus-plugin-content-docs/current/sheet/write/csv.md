@@ -56,10 +56,10 @@ Fesod 通过不同的参数设计进行 CSV
 如果 CSV 文件使用 `\u0000` 作为分隔符，可以如下设置：
 
 ```java
-@Test
-public void delimiterDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .delimiter(CsvConstant.UNICODE_EMPTY)
             .doWrite(data());
@@ -74,10 +74,10 @@ public void delimiterDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void quoteDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .quote(CsvConstant.DOUBLE_QUOTE, QuoteMode.MINIMAL)
             .doWrite(data());
@@ -91,10 +91,10 @@ public void quoteDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void recordSeparatorDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .recordSeparator(CsvConstant.LF)
             .doWrite(data());
@@ -108,10 +108,10 @@ public void recordSeparatorDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void nullStringDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .nullString("N/A")
             .doWrite(data());
@@ -125,10 +125,10 @@ public void nullStringDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void escapeDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .escape(CsvConstant.BACKSLASH)
             .doWrite(data());
@@ -143,12 +143,12 @@ public void escapeDemo() {
 ### 代码示例
 
 ```java
-@Test
-public void csvFormatDemo() {
-    CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
-    String csvFile = "path/to/your.csv";
+void main() {
+    String pathname = "path/to/demo.csv";
 
-    try (ExcelWriter excelWriter = FesodSheet.write(csvFile, DemoData.class).excelType(ExcelTypeEnum.CSV).build()) {
+    CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
+
+    try (ExcelWriter excelWriter = FesodSheet.write(pathname, DemoData.class).excelType(ExcelTypeEnum.CSV).build()) {
         WriteWorkbookHolder writeWorkbookHolder = excelWriter.writeContext().writeWorkbookHolder();
         Workbook workbook = writeWorkbookHolder.getWorkbook();
         // 判断是否为CsvWorkbook实例

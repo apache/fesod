@@ -41,13 +41,12 @@ Listeners cannot be managed by Spring and must be re-instantiated each time a sp
 #### `Lambda` Expressions
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
+    FesodSheet.read(pathname, DemoData.class, new PageReadListener<>(dataList -> {
         for (DemoData demoData : dataList) {
-            log.info("Read one record: {}", JSON.toJSONString(demoData));
+            System.out.println("Read one record: " + JSON.toJSONString(demoData));
         }
     })).sheet().doRead();
 }
@@ -56,19 +55,18 @@ public void simpleRead() {
 #### Anonymous Inner Classes
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new ReadListener<DemoData>() {
+    FesodSheet.read(pathname, DemoData.class, new ReadListener<DemoData>() {
         @Override
         public void invoke(DemoData data, AnalysisContext context) {
-            log.info("Read one record: {}", JSON.toJSONString(data));
+            System.out.println("Read one record: " + JSON.toJSONString(data));
         }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {
-            log.info("All data reading completed!");
+            System.out.println("All data reading completed!");
         }
     }).sheet().doRead();
 }
@@ -77,11 +75,10 @@ public void simpleRead() {
 #### Data Listeners
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()
             .doRead();
 }
@@ -134,11 +131,10 @@ public class DemoDataListener implements ReadListener<DemoData> {
 ### Code Example
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()
             .doRead();
 }
@@ -200,18 +196,17 @@ public class DemoData {
 #### Reading as POJO Object List
 
 ```java
-@Test
-public void synchronousReadToObjectList() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // POJO Object List
-    List<DemoData> list = FesodSheet.read(fileName)
+    List<DemoData> list = FesodSheet.read(pathname)
             .head(DemoData.class)
             .sheet()
             .doReadSync();
 
     for (DemoData data : list) {
-        log.info("Read data: {}", JSON.toJSONString(data));
+        System.out.println("Read data: " + JSON.toJSONString(data));
     }
 }
 ```
@@ -222,17 +217,16 @@ When not using POJOs, each row can be read as a Map, where the key is the column
 content.
 
 ```java
-@Test
-public void synchronousReadToMapList() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // Map List
-    List<Map<Integer, String>> list = FesodSheet.read(fileName)
+    List<Map<Integer, String>> list = FesodSheet.read(pathname)
             .sheet()
             .doReadSync();
 
     for (Map<Integer, String> data : list) {
-        log.info("Read data: {}", JSON.toJSONString(data));
+        System.out.println("Read data: " + JSON.toJSONString(data));
     }
 }
 ```
@@ -246,14 +240,13 @@ By default, Fesod reads all columns from a sheet. If you only want to process sp
 When reading without a POJO template, the filtered columns are packed sequentially into the resulting `Map<Integer, String>`. The first targeted column is mapped to key `0`, the second to key `1`, and so on.
 
 ```java
-@Test
-public void readSpecificColumnsToMapList() {
-    String fileName = "path/to/demo.xlsx";
-    
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     // We only want to read Column A (Index 0) and Column C (Index 2)
     List<Integer> targetColumns = Arrays.asList(0, 2);
 
-    List<Map<Integer, String>> list = FesodSheet.read(fileName)
+    List<Map<Integer, String>> list = FesodSheet.read(pathname)
             .sheet()
             .includeColumnIndexes(targetColumns)
             .doReadSync();
@@ -264,7 +257,7 @@ public void readSpecificColumnsToMapList() {
         // Column Index 2 is mapped sequentially to key 1
         String age = data.get(1); 
         
-        log.info("ID: {}, Age: {}", id, age);
+        System.out.println("ID: " + id + ", Age: " + age);
     }
 }
 

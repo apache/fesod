@@ -41,13 +41,12 @@ Fesod 提供监听器机制，用于在读取电子表格文件时对每一行�
 #### `Lambda` 表达式
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new PageReadListener<>(dataList -> {
+    FesodSheet.read(pathname, DemoData.class, new PageReadListener<>(dataList -> {
         for (DemoData demoData : dataList) {
-            log.info("读取到一条数据: {}", JSON.toJSONString(demoData));
+            System.out.println("读取到一条数据: " + JSON.toJSONString(demoData));
         }
     })).sheet().doRead();
 }
@@ -56,19 +55,18 @@ public void simpleRead() {
 #### 匿名内部类
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new ReadListener<DemoData>() {
+    FesodSheet.read(pathname, DemoData.class, new ReadListener<DemoData>() {
         @Override
         public void invoke(DemoData data, AnalysisContext context) {
-            log.info("读取到一条数据: {}", JSON.toJSONString(data));
+            System.out.println("读取到一条数据: " + JSON.toJSONString(data));
         }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {
-            log.info("所有数据读取完成！");
+            System.out.println("所有数据读取完成！");
         }
     }).sheet().doRead();
 }
@@ -77,11 +75,10 @@ public void simpleRead() {
 #### 数据监听器
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()
             .doRead();
 }
@@ -133,11 +130,10 @@ public class DemoDataListener implements ReadListener<DemoData> {
 ### 代码示例
 
 ```java
-@Test
-public void simpleRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()
             .doRead();
 }
@@ -200,18 +196,17 @@ public class DemoData {
 #### 读取为 POJO 对象列表
 
 ```java
-@Test
-public void synchronousReadToObjectList() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // POJO 列表
-    List<DemoData> list = FesodSheet.read(fileName)
+    List<DemoData> list = FesodSheet.read(pathname)
             .head(DemoData.class)
             .sheet()
             .doReadSync();
 
     for (DemoData data : list) {
-        log.info("读取到的数据: {}", JSON.toJSONString(data));
+        System.out.println("读取到的数据: " + JSON.toJSONString(data));
     }
 }
 ```
@@ -221,17 +216,16 @@ public void synchronousReadToObjectList() {
 在不使用 POJO 情况下，可以将每一行读取为 Map，键为列索引，值为单元格内容。
 
 ```java
-@Test
-public void synchronousReadToMapList() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // Map 列表
-    List<Map<Integer, String>> list = FesodSheet.read(fileName)
+    List<Map<Integer, String>> list = FesodSheet.read(pathname)
             .sheet()
             .doReadSync();
 
     for (Map<Integer, String> data : list) {
-        log.info("读取到的数据: {}", JSON.toJSONString(data));
+        System.out.println("读取到的数据: " + JSON.toJSONString(data));
     }
 }
 ```

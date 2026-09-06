@@ -77,11 +77,10 @@ public class CustomStringStringConverter implements Converter<String> {
 ### 代码示例
 
 ```java
-@Test
-public void converterRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, ConverterData.class, new DemoDataListener())
+    FesodSheet.read(pathname, ConverterData.class, new DemoDataListener())
             .registerConverter(new CustomStringStringConverter()) // 注册自定义转换器
             .sheet()
             .doRead();

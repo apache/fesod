@@ -79,7 +79,7 @@ under the License.
     </modules>
 
     <properties>
-        <revision>2.1.0-SNAPSHOT</revision>
+        <revision>2.1.0-incubating</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Clear the parent `apache` POM's stale outputTimestamp (2023): apache-jar-resource-bundle derives the JAR
              NOTICE copyright end-year from it, and a stale value yields an inverted "2025-2023" range. An empty value

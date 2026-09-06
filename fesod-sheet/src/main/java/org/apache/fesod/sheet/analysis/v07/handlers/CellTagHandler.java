@@ -74,7 +74,13 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         if (StringUtils.isEmpty(dateFormatIndex)) {
             dateFormatIndexInteger = DEFAULT_FORMAT_INDEX;
         } else {
-            dateFormatIndexInteger = Integer.parseInt(dateFormatIndex);
+            try {
+                dateFormatIndexInteger = Integer.parseInt(dateFormatIndex);
+            } catch (NumberFormatException e) {
+                // A malformed style index (e.g. produced by third-party tools) must not abort the
+                // whole file read; fall back to the default format, matching POI's lenient behavior.
+                dateFormatIndexInteger = DEFAULT_FORMAT_INDEX;
+            }
         }
 
         xlsxReadSheetHolder

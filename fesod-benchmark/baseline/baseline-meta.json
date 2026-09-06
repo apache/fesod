@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-08-28T12:04:29Z",
+  "gitSha": "701d850a7d296434553d88076d891893abf0fcdb",
+  "gitRef": "feat/benchmark-comparison-workflow",
+  "jdkVersion": "openjdk version \"17.0.20.1\" 2026-08-18",
+  "osName": "Linux 6.17.0-1022-azure",
+  "runnerLabel": "ubuntu-24.04",
+  "benchmarkCount": 8
+}

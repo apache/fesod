@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([["6777"],{14337(e){e.exports=JSON.parse('{"tag":{"label":"fesod","permalink":"/blog/tags/fesod","allTagsPath":"/blog/tags","count":3,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/fesod","page":1,"postsPerPage":15,"totalPages":1,"totalCount":3,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

@@ -24,52 +24,29 @@ under the License.
 
     <parent>
         <groupId>org.apache.fesod</groupId>
-        <artifactId>fesod-parent</artifactId>
+        <artifactId>fesod-beans</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>fesod-sheet</artifactId>
+    <artifactId>fesod-beans-cglib</artifactId>
     <packaging>jar</packaging>
-    <name>Fesod Spreadsheet</name>
+    <name>Fesod Beans Cglib</name>
+
+    <properties>
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.fesod</groupId>
             <artifactId>fesod-common</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod-beans-cglib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-codec</artifactId>
-                    <groupId>commons-codec</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>fesod-shaded</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

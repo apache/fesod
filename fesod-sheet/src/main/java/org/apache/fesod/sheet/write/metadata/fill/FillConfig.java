@@ -31,6 +31,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.sheet.enums.FillMergeStrategy;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 
 /**
@@ -61,6 +62,20 @@ public class FillConfig {
      */
     private Boolean autoStyle;
 
+    /**
+     * Strategy for handle merged regions during loop filling.
+     * <p>
+     * This strategy applies <b>ONLY</b> when using {@link WriteDirectionEnum#VERTICAL} fill direction with
+     * collection-based data.
+     * </p>
+     * <p>
+     * If used with {@link WriteDirectionEnum#HORIZONTAL}, these strategies (except {@link FillMergeStrategy#NONE})
+     * will throw an exception.
+     * </p>
+     * Defaults {@link FillMergeStrategy#NONE}.
+     */
+    private FillMergeStrategy mergeStrategy;
+
     private boolean hasInit;
 
     public void init() {
@@ -76,6 +91,18 @@ public class FillConfig {
         if (autoStyle == null) {
             autoStyle = Boolean.TRUE;
         }
+        if (mergeStrategy == null) {
+            mergeStrategy = FillMergeStrategy.NONE;
+        }
+
+        validateConfigConstraint();
         hasInit = true;
+    }
+
+    private void validateConfigConstraint() {
+        if (direction == WriteDirectionEnum.HORIZONTAL && mergeStrategy != FillMergeStrategy.NONE) {
+            throw new IllegalArgumentException("Conflict detected: Multi-row merge strategy (" + mergeStrategy + ") "
+                    + "is NOT supported when fill direction is HORIZONTAL.");
+        }
     }
 }

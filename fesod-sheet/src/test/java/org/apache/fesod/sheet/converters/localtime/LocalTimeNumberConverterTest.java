@@ -126,6 +126,40 @@ class LocalTimeNumberConverterTest {
                 1e-8);
     }
 
+    @Test
+    void convertFallsBackToGlobal1904WindowingWhenAnnotationWindowingIsDefault() {
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setUse1904windowing(Boolean.TRUE);
+        ExcelContentProperty contentProperty = contentProperty("HH:mm:ss", null);
+
+        WriteCellData<?> written = converter.convertToExcelData(LocalTime.NOON, contentProperty, configuration);
+        LocalTime actual = converter.convertToJavaData(
+                new ReadCellData<>(written.getNumberValue()), contentProperty, configuration);
+
+        Assertions.assertEquals(LocalTime.NOON, actual);
+        Assertions.assertEquals(
+                DateUtil.getExcelDate(LocalTime.NOON.atDate(DateUtils.EPOCH), true),
+                written.getNumberValue().doubleValue(),
+                1e-8);
+    }
+
+    @Test
+    void convertPrefersExplicitFalseAnnotationWindowingOverGlobal1904() {
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setUse1904windowing(Boolean.TRUE);
+        ExcelContentProperty contentProperty = contentProperty("HH:mm:ss", Boolean.FALSE);
+
+        WriteCellData<?> written = converter.convertToExcelData(LocalTime.NOON, contentProperty, configuration);
+        LocalTime actual = converter.convertToJavaData(
+                new ReadCellData<>(written.getNumberValue()), contentProperty, configuration);
+
+        Assertions.assertEquals(LocalTime.NOON, actual);
+        Assertions.assertEquals(
+                DateUtil.getExcelDate(LocalTime.NOON.atDate(DateUtils.EPOCH), false),
+                written.getNumberValue().doubleValue(),
+                1e-8);
+    }
+
     static Stream<LocalTime> sampleTimes() {
         return Stream.of(LocalTime.MIDNIGHT, LocalTime.NOON, LocalTime.of(1, 1, 1), LocalTime.of(23, 59, 59));
     }

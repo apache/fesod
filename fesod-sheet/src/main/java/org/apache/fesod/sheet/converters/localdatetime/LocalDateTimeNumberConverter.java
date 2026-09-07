@@ -56,25 +56,14 @@ public class LocalDateTimeNumberConverter implements Converter<LocalDateTime> {
     @Override
     public LocalDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return DateUtils.getLocalDateTime(
-                    cellData.getNumberValue().doubleValue(), globalConfiguration.getUse1904windowing());
-        } else {
-            return DateUtils.getLocalDateTime(
-                    cellData.getNumberValue().doubleValue(),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing());
-        }
+        return DateUtils.getLocalDateTime(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             LocalDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(
-                    BigDecimal.valueOf(DateUtil.getExcelDate(value, globalConfiguration.getUse1904windowing())));
-        } else {
-            return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                    value, contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
-        }
+        return new WriteCellData<>(BigDecimal.valueOf(
+                DateUtil.getExcelDate(value, DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

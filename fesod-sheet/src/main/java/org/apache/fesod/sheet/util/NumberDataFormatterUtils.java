@@ -40,7 +40,28 @@ public class NumberDataFormatterUtils {
     /**
      * Cache DataFormatter.
      */
-    private static final ThreadLocal<DataFormatter> DATA_FORMATTER_THREAD_LOCAL = new ThreadLocal<DataFormatter>();
+    private static final ThreadLocal<DataFormatterCache> DATA_FORMATTER_THREAD_LOCAL =
+            new ThreadLocal<DataFormatterCache>();
+
+    private static final class DataFormatterCache {
+        private final boolean use1904windowing;
+        private final Locale locale;
+        private final boolean useScientificFormat;
+        private final DataFormatter dataFormatter;
+
+        private DataFormatterCache(boolean use1904windowing, Locale locale, boolean useScientificFormat) {
+            this.use1904windowing = use1904windowing;
+            this.locale = locale;
+            this.useScientificFormat = useScientificFormat;
+            this.dataFormatter = new DataFormatter(use1904windowing, locale, useScientificFormat);
+        }
+
+        private boolean matches(boolean use1904windowing, Locale locale, boolean useScientificFormat) {
+            return this.use1904windowing == use1904windowing
+                    && this.locale.equals(locale)
+                    && this.useScientificFormat == useScientificFormat;
+        }
+    }
 
     /**
      * Format number data.
@@ -83,12 +104,15 @@ public class NumberDataFormatterUtils {
             Boolean use1904windowing,
             Locale locale,
             Boolean useScientificFormat) {
-        DataFormatter dataFormatter = DATA_FORMATTER_THREAD_LOCAL.get();
-        if (dataFormatter == null) {
-            dataFormatter = new DataFormatter(use1904windowing, locale, useScientificFormat);
-            DATA_FORMATTER_THREAD_LOCAL.set(dataFormatter);
+        boolean resolvedUse1904windowing = Boolean.TRUE.equals(use1904windowing);
+        Locale resolvedLocale = locale == null ? Locale.getDefault() : locale;
+        boolean resolvedUseScientificFormat = Boolean.TRUE.equals(useScientificFormat);
+        DataFormatterCache cache = DATA_FORMATTER_THREAD_LOCAL.get();
+        if (cache == null || !cache.matches(resolvedUse1904windowing, resolvedLocale, resolvedUseScientificFormat)) {
+            cache = new DataFormatterCache(resolvedUse1904windowing, resolvedLocale, resolvedUseScientificFormat);
+            DATA_FORMATTER_THREAD_LOCAL.set(cache);
         }
-        return dataFormatter.format(data, dataFormat, dataFormatString);
+        return cache.dataFormatter.format(data, dataFormat, dataFormatString);
     }
 
     public static void removeThreadLocalCache() {

@@ -149,6 +149,7 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
             String sheetName = ite.getSheetName();
             CTSheet ctSheet = ctSheetMap.get(sheetName);
             if (ctSheet == null) {
+                closeSheetInputStream(inputStream, "sheetName=" + sheetName);
                 continue;
             }
             ReadSheet readSheet = new ReadSheet(index, sheetName);
@@ -204,14 +205,15 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         if (xlsxReadWorkbookHolder.getReadWorkbook().getUse1904windowing() != null) {
             return;
         }
-        InputStream workbookXml = xssfReader.getWorkbookData();
-        WorkbookDocument ctWorkbook = WorkbookDocument.Factory.parse(workbookXml);
-        CTWorkbook wb = ctWorkbook.getWorkbook();
-        CTWorkbookPr prefix = wb.getWorkbookPr();
-        if (prefix != null && prefix.getDate1904()) {
-            xlsxReadWorkbookHolder.getGlobalConfiguration().setUse1904windowing(Boolean.TRUE);
-        } else {
-            xlsxReadWorkbookHolder.getGlobalConfiguration().setUse1904windowing(Boolean.FALSE);
+        try (InputStream workbookXml = xssfReader.getWorkbookData()) {
+            WorkbookDocument ctWorkbook = WorkbookDocument.Factory.parse(workbookXml);
+            CTWorkbook wb = ctWorkbook.getWorkbook();
+            CTWorkbookPr prefix = wb.getWorkbookPr();
+            if (prefix != null && prefix.getDate1904()) {
+                xlsxReadWorkbookHolder.getGlobalConfiguration().setUse1904windowing(Boolean.TRUE);
+            } else {
+                xlsxReadWorkbookHolder.getGlobalConfiguration().setUse1904windowing(Boolean.FALSE);
+            }
         }
     }
 
@@ -224,13 +226,14 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
 
     private void analysisCtSheetMap(XSSFReader xssfReader, XlsxReadWorkbookHolder xlsxReadWorkbookHolder)
             throws Exception {
-        CTWorkbook wb =
-                WorkbookDocument.Factory.parse(xssfReader.getWorkbookData()).getWorkbook();
-        for (CTSheet ctSheet : wb.getSheets().getSheetList()) {
-            boolean isHidden =
-                    (ctSheet.getState() == STSheetState.HIDDEN) || (ctSheet.getState() == STSheetState.VERY_HIDDEN);
-            if (Boolean.FALSE.equals(xlsxReadWorkbookHolder.getIgnoreHiddenSheet()) || !isHidden) {
-                ctSheetMap.put(ctSheet.getName(), ctSheet);
+        try (InputStream workbookXml = xssfReader.getWorkbookData()) {
+            CTWorkbook wb = WorkbookDocument.Factory.parse(workbookXml).getWorkbook();
+            for (CTSheet ctSheet : wb.getSheets().getSheetList()) {
+                boolean isHidden =
+                        (ctSheet.getState() == STSheetState.HIDDEN) || (ctSheet.getState() == STSheetState.VERY_HIDDEN);
+                if (Boolean.FALSE.equals(xlsxReadWorkbookHolder.getIgnoreHiddenSheet()) || !isHidden) {
+                    ctSheetMap.put(ctSheet.getName(), ctSheet);
+                }
             }
         }
     }
@@ -312,22 +315,43 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
 
     @Override
     public void execute() {
-        for (ReadSheet readSheet : sheetList) {
-            readSheet = SheetUtils.match(readSheet, xlsxReadContext);
-            if (readSheet != null) {
-                try {
-                    xlsxReadContext.currentSheet(readSheet);
-                    parseXmlSource(sheetMap.get(readSheet.getSheetNo()), new XlsxRowHandler(xlsxReadContext));
-                    // Read comments
-                    readComments(readSheet);
-                } catch (ExcelAnalysisStopSheetException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Custom stop!", e);
+        try {
+            for (ReadSheet readSheet : sheetList) {
+                ReadSheet matchedSheet = SheetUtils.match(readSheet, xlsxReadContext);
+                if (matchedSheet != null) {
+                    try {
+                        xlsxReadContext.currentSheet(matchedSheet);
+                        parseXmlSource(sheetMap.get(matchedSheet.getSheetNo()), new XlsxRowHandler(xlsxReadContext));
+                        // Read comments
+                        readComments(matchedSheet);
+                    } catch (ExcelAnalysisStopSheetException e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Custom stop!", e);
+                        }
                     }
+                    // The last sheet is read
+                    xlsxReadContext.analysisEventProcessor().endSheet(xlsxReadContext);
                 }
-                // The last sheet is read
-                xlsxReadContext.analysisEventProcessor().endSheet(xlsxReadContext);
             }
+        } finally {
+            closeRemainingSheetStreams();
+        }
+    }
+
+    private void closeRemainingSheetStreams() {
+        for (Map.Entry<Integer, InputStream> entry : sheetMap.entrySet()) {
+            closeSheetInputStream(entry.getValue(), "sheetNo=" + entry.getKey());
+        }
+    }
+
+    private void closeSheetInputStream(InputStream inputStream, String description) {
+        if (inputStream == null) {
+            return;
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            log.warn("Failed to close sheet input stream, {}", description, e);
         }
     }
 

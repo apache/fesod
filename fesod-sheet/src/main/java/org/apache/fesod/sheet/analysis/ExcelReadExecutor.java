@@ -46,4 +46,12 @@ public interface ExcelReadExecutor {
      * Read the sheet.
      */
     void execute();
+
+    /**
+     * Release resources held by this executor. Invoked when the reader is finished.
+     *
+     * <p>XLSX sheet streams are opened up front and may be consumed across multiple
+     * {@link #execute()} calls, so leftover streams must not be closed until this method runs.
+     */
+    default void close() {}
 }

@@ -315,27 +315,28 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
 
     @Override
     public void execute() {
-        try {
-            for (ReadSheet readSheet : sheetList) {
-                ReadSheet matchedSheet = SheetUtils.match(readSheet, xlsxReadContext);
-                if (matchedSheet != null) {
-                    try {
-                        xlsxReadContext.currentSheet(matchedSheet);
-                        parseXmlSource(sheetMap.get(matchedSheet.getSheetNo()), new XlsxRowHandler(xlsxReadContext));
-                        // Read comments
-                        readComments(matchedSheet);
-                    } catch (ExcelAnalysisStopSheetException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Custom stop!", e);
-                        }
+        for (ReadSheet readSheet : sheetList) {
+            ReadSheet matchedSheet = SheetUtils.match(readSheet, xlsxReadContext);
+            if (matchedSheet != null) {
+                try {
+                    xlsxReadContext.currentSheet(matchedSheet);
+                    parseXmlSource(sheetMap.get(matchedSheet.getSheetNo()), new XlsxRowHandler(xlsxReadContext));
+                    // Read comments
+                    readComments(matchedSheet);
+                } catch (ExcelAnalysisStopSheetException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Custom stop!", e);
                     }
-                    // The last sheet is read
-                    xlsxReadContext.analysisEventProcessor().endSheet(xlsxReadContext);
                 }
+                // The last sheet is read
+                xlsxReadContext.analysisEventProcessor().endSheet(xlsxReadContext);
             }
-        } finally {
-            closeRemainingSheetStreams();
         }
+    }
+
+    @Override
+    public void close() {
+        closeRemainingSheetStreams();
     }
 
     private void closeRemainingSheetStreams() {

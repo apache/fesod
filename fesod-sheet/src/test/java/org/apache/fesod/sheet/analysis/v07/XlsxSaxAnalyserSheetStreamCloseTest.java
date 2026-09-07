@@ -54,9 +54,10 @@ import org.junit.jupiter.api.Test;
 class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
 
     @Test
-    void execute_closesUnreadSheetStreams() throws Exception {
+    void execute_keepsUnreadSheetStreamsOpen_untilReaderCloses() throws Exception {
         File file = writeThreeSheets();
         CollectingReadListener<SimpleData> listener = new CollectingReadListener<SimpleData>();
+        Map<Integer, CloseTrackingInputStream> tracked = null;
 
         try (ExcelReader excelReader =
                 FesodSheet.read(file, SimpleData.class, listener).build()) {
@@ -64,13 +65,23 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
             Map<Integer, InputStream> sheetMap = sheetMap(analyser);
             Assertions.assertEquals(3, sheetMap.size());
 
-            Map<Integer, CloseTrackingInputStream> tracked = wrapSheetStreams(sheetMap);
+            tracked = wrapSheetStreams(sheetMap);
             excelReader.read(FesodSheet.readSheet(0).build());
 
             Assertions.assertEquals(1, listener.getRowCount());
             Assertions.assertEquals("sheet1", listener.getFirstRow().getName());
-            assertAllClosed(tracked);
+            Assertions.assertTrue(tracked.get(0).isClosed());
+            Assertions.assertFalse(tracked.get(1).isClosed());
+            Assertions.assertFalse(tracked.get(2).isClosed());
+
+            excelReader.read(FesodSheet.readSheet(1).build());
+            Assertions.assertEquals(2, listener.getRowCount());
+            Assertions.assertTrue(tracked.get(1).isClosed());
+            Assertions.assertFalse(tracked.get(2).isClosed());
         }
+
+        Assertions.assertNotNull(tracked);
+        assertAllClosed(tracked);
     }
 
     @Test
@@ -94,6 +105,24 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
             Assertions.assertThrows(IllegalStateException.class, excelReader::readAll);
             assertAllClosed(tracked);
         }
+    }
+
+    @Test
+    void sequentialSheetReads_doNotCloseLaterSheetsEarly() throws Exception {
+        File file = writeThreeSheets();
+        CollectingReadListener<SimpleData> listener = new CollectingReadListener<SimpleData>();
+
+        try (ExcelReader excelReader =
+                FesodSheet.read(file, SimpleData.class, listener).build()) {
+            excelReader.read(FesodSheet.readSheet(0).build());
+            excelReader.read(FesodSheet.readSheet(1).build());
+            excelReader.read(FesodSheet.readSheet(2).build());
+        }
+
+        Assertions.assertEquals(3, listener.getRowCount());
+        Assertions.assertEquals("sheet1", listener.getRows().get(0).getName());
+        Assertions.assertEquals("sheet2", listener.getRows().get(1).getName());
+        Assertions.assertEquals("sheet3", listener.getRows().get(2).getName());
     }
 
     @Test

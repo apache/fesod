@@ -48,7 +48,7 @@ public class OffsetDateTimeNumberConverter implements Converter<OffsetDateTime> 
     public OffsetDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         LocalDateTime localDateTime = DateUtils.getLocalDateTime(
-                cellData.getNumberValue().doubleValue(), resolveUse1904windowing(contentProperty, globalConfiguration));
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
         if (localDateTime == null) {
             return null;
         }
@@ -59,19 +59,6 @@ public class OffsetDateTimeNumberConverter implements Converter<OffsetDateTime> 
     public WriteCellData<?> convertToExcelData(
             OffsetDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                value.toLocalDateTime(), resolveUse1904windowing(contentProperty, globalConfiguration))));
-    }
-
-    private boolean resolveUse1904windowing(
-            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            Boolean propertyUse1904windowing =
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing();
-            if (propertyUse1904windowing != null) {
-                return propertyUse1904windowing;
-            }
-        }
-        Boolean globalUse1904windowing = globalConfiguration.getUse1904windowing();
-        return globalUse1904windowing != null && globalUse1904windowing;
+                value.toLocalDateTime(), DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

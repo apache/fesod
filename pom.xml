@@ -105,7 +105,7 @@ under the License.
         <fastjson2.version>2.0.64</fastjson2.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>2.0.18</slf4j-simple.version>
-        <jcl-over-slf4j.version>2.0.18</jcl-over-slf4j.version>
+        <jcl-over-slf4j.version>2.0.19</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>2.0.18</log4j-over-slf4j.version>
         <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
         <jacoco.version>0.8.15</jacoco.version>

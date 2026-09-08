@@ -24,37 +24,24 @@ import java.util.Locale;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 @Tag(Tags.UNIT)
 class DataFormatterTest {
 
     private static final BigDecimal LARGE_NUMBER = new BigDecimal("100000000000");
 
-    @Test
-    void test_format_defaultsNullScientificFormatToFalse() {
-        DataFormatter formatter = new DataFormatter(false, Locale.US, null);
+    @ParameterizedTest(name = "windowing={0}, scientific={1} -> {2}")
+    @CsvSource(
+            nullValues = "null",
+            value = {"false, null, 100000000000", "null, true, 1E+11", "null, false, 100000000000"})
+    void test_format_honorsScientificFormatWithNullableOptions(
+            Boolean use1904windowing, Boolean useScientificFormat, String expected) {
+        DataFormatter formatter = new DataFormatter(use1904windowing, Locale.US, useScientificFormat);
 
         String result = formatter.format(LARGE_NUMBER, null, "General");
 
-        Assertions.assertEquals("100000000000", result);
-    }
-
-    @Test
-    void test_format_honorsScientificFormatWhenWindowingIsNull() {
-        DataFormatter formatter = new DataFormatter(null, Locale.US, true);
-
-        String result = formatter.format(LARGE_NUMBER, null, "General");
-
-        Assertions.assertEquals("1E+11", result);
-    }
-
-    @Test
-    void test_format_honorsDisabledScientificFormatWhenWindowingIsNull() {
-        DataFormatter formatter = new DataFormatter(null, Locale.US, false);
-
-        String result = formatter.format(LARGE_NUMBER, null, "General");
-
-        Assertions.assertEquals("100000000000", result);
+        Assertions.assertEquals(expected, result);
     }
 }

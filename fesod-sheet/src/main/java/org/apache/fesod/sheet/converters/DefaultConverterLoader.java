@@ -44,6 +44,7 @@ import org.apache.fesod.sheet.converters.bytearray.ByteArrayImageConverter;
 import org.apache.fesod.sheet.converters.byteconverter.ByteBooleanConverter;
 import org.apache.fesod.sheet.converters.byteconverter.ByteNumberConverter;
 import org.apache.fesod.sheet.converters.byteconverter.ByteStringConverter;
+import org.apache.fesod.sheet.converters.charconverter.CharacterStringConverter;
 import org.apache.fesod.sheet.converters.date.DateDateConverter;
 import org.apache.fesod.sheet.converters.date.DateNumberConverter;
 import org.apache.fesod.sheet.converters.date.DateStringConverter;
@@ -78,6 +79,7 @@ import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
+import org.apache.fesod.sheet.converters.year.YearStringConverter;
 
 /**
  * Load default handler
@@ -110,6 +112,8 @@ public class DefaultConverterLoader {
         putAllConverter(new ByteBooleanConverter());
         putAllConverter(new ByteNumberConverter());
         putAllConverter(new ByteStringConverter());
+
+        putAllConverter(new CharacterStringConverter());
 
         putAllConverter(new DateNumberConverter());
         putAllConverter(new DateStringConverter());
@@ -147,6 +151,8 @@ public class DefaultConverterLoader {
         putAllConverter(new StringNumberConverter());
         putAllConverter(new StringStringConverter());
         putAllConverter(new StringErrorConverter());
+
+        putAllConverter(new YearStringConverter());
         allConverter = Collections.unmodifiableMap(allConverter);
     }
 
@@ -156,6 +162,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new BigIntegerNumberConverter());
         putWriteConverter(new BooleanBooleanConverter());
         putWriteConverter(new ByteNumberConverter());
+        putWriteConverter(new CharacterStringConverter());
         putWriteConverter(new DateDateConverter());
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
@@ -177,6 +184,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new BigIntegerStringConverter());
         putWriteStringConverter(new BooleanStringConverter());
         putWriteStringConverter(new ByteStringConverter());
+        putWriteStringConverter(new CharacterStringConverter());
         putWriteStringConverter(new DateStringConverter());
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
@@ -187,6 +195,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LongStringConverter());
         putWriteStringConverter(new ShortStringConverter());
         putWriteStringConverter(new StringStringConverter());
+        putWriteStringConverter(new YearStringConverter());
         defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
     }
 

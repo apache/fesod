@@ -26,6 +26,9 @@ import org.apache.fesod.common.util.StringUtils;
 
 /**
  * Internal helper used by {@link DateUtils} for detecting date-related spreadsheet format strings.
+ * <p>
+ * Not intended for direct use; use {@link DateUtils} as the primary entry point instead.
+ * </p>
  */
 class ExcelDateFormatDetector {
 

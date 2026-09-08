@@ -345,7 +345,10 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
-    private void closeSheetInputStream(InputStream inputStream, String description) {
+    /**
+     * Package-private so tests can assert skipped-sheet streams are closed.
+     */
+    void closeSheetInputStream(InputStream inputStream, String description) {
         if (inputStream == null) {
             return;
         }

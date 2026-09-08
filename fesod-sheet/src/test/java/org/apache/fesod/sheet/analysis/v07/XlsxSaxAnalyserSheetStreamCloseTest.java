@@ -25,6 +25,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +33,19 @@ import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
+import org.apache.fesod.sheet.context.xlsx.DefaultXlsxReadContext;
+import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
+import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
+import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
+import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
@@ -56,7 +62,7 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
     @Test
     void execute_keepsUnreadSheetStreamsOpen_untilReaderCloses() throws Exception {
         File file = writeThreeSheets();
-        CollectingReadListener<SimpleData> listener = new CollectingReadListener<SimpleData>();
+        CollectingReadListener<SimpleData> listener = new CollectingReadListener<>();
         Map<Integer, CloseTrackingInputStream> tracked = null;
 
         try (ExcelReader excelReader =
@@ -94,7 +100,9 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
             }
 
             @Override
-            public void doAfterAllAnalysed(AnalysisContext context) {}
+            public void doAfterAllAnalysed(AnalysisContext context) {
+                // ignore code
+            }
         };
 
         try (ExcelReader excelReader =
@@ -108,9 +116,9 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
     }
 
     @Test
-    void sequentialSheetReads_doNotCloseLaterSheetsEarly() throws Exception {
+    void sequentialSheetReads_doNotCloseLaterSheetsEarly() {
         File file = writeThreeSheets();
-        CollectingReadListener<SimpleData> listener = new CollectingReadListener<SimpleData>();
+        CollectingReadListener<SimpleData> listener = new CollectingReadListener<>();
 
         try (ExcelReader excelReader =
                 FesodSheet.read(file, SimpleData.class, listener).build()) {
@@ -147,8 +155,40 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
         }
     }
 
+    @Test
+    void constructor_closesSkippedHiddenSheetStream_whenIgnoreHiddenSheet() throws Exception {
+        File file = writeWorkbookWithHiddenSheet();
+        ReadWorkbook readWorkbook = new ReadWorkbook();
+        readWorkbook.setFile(file);
+        readWorkbook.setIgnoreHiddenSheet(Boolean.TRUE);
+        XlsxReadContext context = new DefaultXlsxReadContext(readWorkbook, ExcelTypeEnum.XLSX);
+        TrackingXlsxSaxAnalyser analyser = new TrackingXlsxSaxAnalyser(context);
+        try {
+            Assertions.assertFalse(containsSheetName(analyser.sheetList(), "Hidden"));
+            boolean hiddenClosed = false;
+            for (String description : analyser.closedDescriptions()) {
+                if (description != null && description.contains("Hidden")) {
+                    hiddenClosed = true;
+                    break;
+                }
+            }
+            Assertions.assertTrue(hiddenClosed, "Skipped hidden sheet stream should be closed during construction");
+        } finally {
+            analyser.close();
+            if (context.xlsxReadWorkbookHolder().getOpcPackage() != null) {
+                context.xlsxReadWorkbookHolder().getOpcPackage().revert();
+            }
+            if (context.xlsxReadWorkbookHolder().getReadCache() != null) {
+                context.xlsxReadWorkbookHolder().getReadCache().destroy();
+            }
+            if (context.xlsxReadWorkbookHolder().getTempFile() != null) {
+                FileUtils.delete(context.xlsxReadWorkbookHolder().getTempFile());
+            }
+        }
+    }
+
     private File writeThreeSheets() {
-        File file = createTempFileUnchecked(ExcelFormat.XLSX);
+        File file = createTempFileUnchecked();
         try (ExcelWriter excelWriter = FesodSheet.write(file, SimpleData.class).build()) {
             WriteSheet sheet1 = FesodSheet.writerSheet(0, "Sheet1").build();
             WriteSheet sheet2 = FesodSheet.writerSheet(1, "Sheet2").build();
@@ -161,7 +201,7 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
     }
 
     private File writeWorkbookWithHiddenSheet() throws IOException {
-        File file = createTempFileUnchecked(ExcelFormat.XLSX);
+        File file = createTempFileUnchecked();
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             workbook.createSheet("Visible1").createRow(0).createCell(0).setCellValue("a");
             workbook.createSheet("Hidden").createRow(0).createCell(0).setCellValue("b");
@@ -174,9 +214,9 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
         return file;
     }
 
-    private File createTempFileUnchecked(ExcelFormat format) {
+    private File createTempFileUnchecked() {
         try {
-            return createTempFile(format);
+            return createTempFile(ExcelFormat.XLSX);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -205,7 +245,7 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
     }
 
     private static Map<Integer, CloseTrackingInputStream> wrapSheetStreams(Map<Integer, InputStream> sheetMap) {
-        Map<Integer, CloseTrackingInputStream> tracked = new HashMap<Integer, CloseTrackingInputStream>();
+        Map<Integer, CloseTrackingInputStream> tracked = new HashMap<>();
         for (Map.Entry<Integer, InputStream> entry : sheetMap.entrySet()) {
             CloseTrackingInputStream wrapped = new CloseTrackingInputStream(entry.getValue());
             tracked.put(entry.getKey(), wrapped);
@@ -237,6 +277,27 @@ class XlsxSaxAnalyserSheetStreamCloseTest extends AbstractExcelTest {
 
         private boolean isClosed() {
             return closed;
+        }
+    }
+
+    private static final class TrackingXlsxSaxAnalyser extends XlsxSaxAnalyser {
+        private List<String> closedDescriptions;
+
+        private TrackingXlsxSaxAnalyser(XlsxReadContext xlsxReadContext) throws Exception {
+            super(xlsxReadContext, null);
+        }
+
+        private List<String> closedDescriptions() {
+            if (closedDescriptions == null) {
+                closedDescriptions = new ArrayList<>();
+            }
+            return closedDescriptions;
+        }
+
+        @Override
+        void closeSheetInputStream(InputStream inputStream, String description) {
+            closedDescriptions().add(description);
+            super.closeSheetInputStream(inputStream, description);
         }
     }
 }

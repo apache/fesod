@@ -88,35 +88,39 @@ class OffsetDateTimeConverterTest {
     }
 
     @Test
-    void stringConverterFallsBackToLocalDateTimeWhenOffsetIsMissing() throws Exception {
+    void stringConverterRejectsTextWithoutOffset() {
         OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
-        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02T03:04:05");
-        Assertions.assertEquals(
-                VALUE.toLocalDateTime().atZone(ZoneId.systemDefault()).toOffsetDateTime(),
-                converter.convertToJavaData(cellData, null, globalConfiguration));
-    }
-
-    @Test
-    void stringConverterParsesDefaultSpaceSeparatedFormat() throws Exception {
-        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
-        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
-        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02 03:04:05");
-        Assertions.assertEquals(
-                VALUE.toLocalDateTime().atZone(ZoneId.systemDefault()).toOffsetDateTime(),
-                converter.convertToJavaData(cellData, null, globalConfiguration));
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(
+                        new ReadCellData<>("2020-01-02T03:04:05"), null, globalConfiguration));
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(
+                        new ReadCellData<>("2020-01-02 03:04:05"), null, globalConfiguration));
     }
 
     @Test
     void stringConverterRejectsTextNotMatchingConfiguredPattern() {
         OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
         ExcelContentProperty property = new ExcelContentProperty();
-        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy/MM/dd HH:mm:ss", false));
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy/MM/dd HH:mm:ss XXX", false));
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         ReadCellData<String> cellData = new ReadCellData<>("2020-01-02T03:04:05");
         Assertions.assertThrows(
                 DateTimeParseException.class,
                 () -> converter.convertToJavaData(cellData, property, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterReadsBackConfiguredPatternWithOffset() {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss Z", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02 03:04:05 +0800");
+        Assertions.assertEquals(VALUE, converter.convertToJavaData(cellData, property, globalConfiguration));
     }
 
     @Test

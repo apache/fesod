@@ -19,15 +19,7 @@
 
 package org.apache.fesod.sheet.converters.offsetdatetime;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Locale;
-import java.util.Map;
-import org.apache.fesod.common.util.MapUtils;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -38,12 +30,6 @@ import org.apache.fesod.sheet.util.DateUtils;
 
 /** OffsetDateTime and string converter. */
 public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> {
-    /**
-     * Thread-local cache of {@link DateTimeFormatter} instances, keyed by pattern and locale, so
-     * the per-cell hot path does not rebuild formatters for every conversion.
-     */
-    private static final ThreadLocal<Map<String, DateTimeFormatter>> FORMATTER_CACHE = new ThreadLocal<>();
-
     @Override
     public Class<?> supportJavaTypeKey() {
         return OffsetDateTime.class;
@@ -57,31 +43,14 @@ public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> 
     @Override
     public OffsetDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        String stringValue = cellData.getStringValue();
-        String format = format(contentProperty);
-        DateTimeFormatter formatter = formatter(contentProperty, globalConfiguration.getLocale());
-        try {
-            return OffsetDateTime.parse(stringValue, formatter);
-        } catch (DateTimeParseException e) {
-            try {
-                return DateUtils.parseLocalDateTime(stringValue, format, globalConfiguration.getLocale())
-                        .atZone(ZoneId.systemDefault())
-                        .toOffsetDateTime();
-            } catch (RuntimeException inner) {
-                if (StringUtils.isEmpty(format)) {
-                    return LocalDateTime.parse(stringValue, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                            .atZone(ZoneId.systemDefault())
-                            .toOffsetDateTime();
-                }
-                throw inner;
-            }
-        }
+        return DateUtils.parseOffsetDateTime(
+                cellData.getStringValue(), format(contentProperty), globalConfiguration.getLocale());
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             OffsetDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return new WriteCellData<>(value.format(formatter(contentProperty, globalConfiguration.getLocale())));
+        return new WriteCellData<>(DateUtils.format(value, format(contentProperty), globalConfiguration.getLocale()));
     }
 
     private String format(ExcelContentProperty contentProperty) {
@@ -89,24 +58,5 @@ public class OffsetDateTimeStringConverter implements Converter<OffsetDateTime> 
             return null;
         }
         return contentProperty.getDateTimeFormatProperty().getFormat();
-    }
-
-    private DateTimeFormatter formatter(ExcelContentProperty contentProperty, Locale locale) {
-        if (locale == null) {
-            locale = Locale.getDefault();
-        }
-        String format = format(contentProperty);
-        if (StringUtils.isEmpty(format)) {
-            return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        }
-        final String pattern = format;
-        final Locale actualLocale = locale;
-        Map<String, DateTimeFormatter> cache = FORMATTER_CACHE.get();
-        if (cache == null) {
-            cache = MapUtils.newHashMap();
-            FORMATTER_CACHE.set(cache);
-        }
-        return cache.computeIfAbsent(
-                pattern + '\0' + actualLocale, key -> DateTimeFormatter.ofPattern(pattern, actualLocale));
     }
 }

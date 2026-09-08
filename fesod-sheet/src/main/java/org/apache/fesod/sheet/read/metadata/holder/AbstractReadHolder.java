@@ -35,6 +35,7 @@ import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.HolderEnum;
 import org.apache.fesod.sheet.metadata.AbstractHolder;
 import org.apache.fesod.sheet.read.listener.ModelBuildEventListener;
@@ -127,11 +128,25 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
         if (readBasicParameter.getCustomConverterList() != null
                 && !readBasicParameter.getCustomConverterList().isEmpty()) {
             for (Converter<?> converter : readBasicParameter.getCustomConverterList()) {
-                getConverterMap()
-                        .put(
-                                ConverterKeyBuild.buildKey(
-                                        converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                converter);
+                registerCustomConverter(converter);
+            }
+        }
+    }
+
+    private void registerCustomConverter(Converter<?> converter) {
+        getConverterMap()
+                .put(
+                        ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
+                        converter);
+        if (converter.supportExcelTypeKey() == null) {
+            // Read lookups use the concrete cell type as key (see ConverterUtils), so a converter
+            // registered with supportExcelTypeKey() == null must also be present under each
+            // concrete key to honor its "matches every cell data type" contract.
+            for (CellDataTypeEnum cellDataType : CellDataTypeEnum.values()) {
+                if (cellDataType != CellDataTypeEnum.EMPTY) {
+                    getConverterMap()
+                            .put(ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), cellDataType), converter);
+                }
             }
         }
     }

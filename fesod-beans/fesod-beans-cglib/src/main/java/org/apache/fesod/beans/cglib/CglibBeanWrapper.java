@@ -24,16 +24,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.fesod.common.beans.BeanWrapper;
 import org.apache.fesod.common.util.ValidateUtils;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.shaded.cglib.core.DefaultNamingPolicy;
 
 /**
- * A {@link BeanWrapper} implementation backed by CGLIB's {@link BeanMap}.
+ * A {@link BeanWrapper} implementation backed by CGLIB's {@link EnhancedBeanMap}.
  */
 public final class CglibBeanWrapper implements BeanWrapper {
 
-    private static final Map<Class<?>, BeanMap> BEAN_MAP_CACHE = new ConcurrentHashMap<>();
-    private final BeanMap delegate;
+    private static final Map<Class<?>, EnhancedBeanMap> BEAN_MAP_CACHE = new ConcurrentHashMap<>();
+    private final EnhancedBeanMap delegate;
 
     public CglibBeanWrapper(Object bean) {
         ValidateUtils.notNull(bean, "The bean instance must not be null");
@@ -41,8 +40,8 @@ public final class CglibBeanWrapper implements BeanWrapper {
         this.delegate = initBeanMap(bean);
     }
 
-    private BeanMap initBeanMap(Object bean) {
-        BeanMap beanMap = BEAN_MAP_CACHE.computeIfAbsent(bean.getClass(), clazz -> {
+    private EnhancedBeanMap initBeanMap(Object bean) {
+        EnhancedBeanMap beanMap = BEAN_MAP_CACHE.computeIfAbsent(bean.getClass(), clazz -> {
             EnhancedBeanMapGenerator gen = new EnhancedBeanMapGenerator();
             gen.setBeanClass(clazz);
             gen.setContextClass(clazz);
@@ -60,12 +59,14 @@ public final class CglibBeanWrapper implements BeanWrapper {
 
     @Override
     public void setProperty(String propertyName, Object value) {
-        delegate.put(propertyName, value);
+        delegate.set(propertyName, value);
     }
 
     @Override
     public void setProperties(Map<String, Object> properties) {
-        delegate.putAll(properties);
+        if (properties != null && !properties.isEmpty()) {
+            delegate.setAll(properties);
+        }
     }
 
     @SuppressWarnings("unchecked")

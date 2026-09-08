@@ -39,19 +39,27 @@ import org.apache.fesod.shaded.cglib.core.Signature;
 import org.apache.fesod.shaded.cglib.core.TypeUtils;
 
 /**
- * Copied from {@link org.apache.fesod.shaded.cglib.beans.BeanMapEmitter},
- * with only the property-discovery logic enhanced via {@link BeanPropertyScanner}.
+ * Copied from {@link org.apache.fesod.shaded.cglib.beans.BeanMapEmitter}.
+ *
+ * <p>Key enhancements:</p>
+ * <ul>
+ *     <li>Integrates with {@link BeanPropertyScanner} to inspect and support fluent-style accessors.</li>
+ *     <li>Emits a dedicated {@code void set(Object bean, Object key, Object value)} method that bypasses getter invocations, providing a write-only operation.</li>
+ * </ul>
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 class EnhancedBeanMapEmitter extends ClassEmitter {
     // APACHE FESOD PATCH BEGIN
-    private static final Type BEAN_MAP = Type.getType(BeanMap.class);
+    private static final Type BEAN_MAP = Type.getType(EnhancedBeanMap.class);
     private static final Type FIXED_KEY_SET = Type.getType(FixedKeySet.class);
     // APACHE FESOD PATCH END
     private static final Signature CSTRUCT_OBJECT = TypeUtils.parseConstructor("Object");
     private static final Signature CSTRUCT_STRING_ARRAY = TypeUtils.parseConstructor("String[]");
     private static final Signature BEAN_MAP_GET = TypeUtils.parseSignature("Object get(Object, Object)");
     private static final Signature BEAN_MAP_PUT = TypeUtils.parseSignature("Object put(Object, Object, Object)");
+    // APACHE FESOD PATCH BEGIN
+    private static final Signature BEAN_MAP_SET = TypeUtils.parseSignature("void set(Object, Object, Object)");
+    // APACHE FESOD PATCH END
     private static final Signature KEY_SET = TypeUtils.parseSignature("java.util.Set keySet()");
     private static final Signature NEW_INSTANCE =
             new Signature("newInstance", BEAN_MAP, new Type[] {Constants.TYPE_OBJECT});
@@ -88,6 +96,7 @@ class EnhancedBeanMapEmitter extends ClassEmitter {
         }
         generateGet(type, getters);
         generatePut(type, setters);
+        generateSet(type, setters);
 
         String[] allNames = getNames(allProps);
         generateKeySet(allNames);
@@ -181,6 +190,38 @@ class EnhancedBeanMapEmitter extends ClassEmitter {
         e.return_value();
         e.end_method();
     }
+
+    // APACHE FESOD PATCH BEGIN
+    private void generateSet(Class type, final Map setters) {
+        final CodeEmitter e = begin_method(Constants.ACC_PUBLIC, BEAN_MAP_SET, null);
+        e.load_arg(0);
+        e.checkcast(Type.getType(type));
+        e.load_arg(1);
+        e.checkcast(Constants.TYPE_STRING);
+        EmitUtils.string_switch(e, getNames(setters), Constants.SWITCH_STYLE_HASH, new ObjectSwitchCallback() {
+            @Override
+            public void processCase(Object key, Label end) {
+                PropertyDescriptor pd = (PropertyDescriptor) setters.get(key);
+                e.load_arg(2); // new value
+                MethodInfo write = ReflectUtils.getMethodInfo(pd.getWriteMethod());
+                e.unbox(write.getSignature().getArgumentTypes()[0]);
+                e.invoke(write);
+                if (pd.getWriteMethod().getReturnType() != void.class) {
+                    e.pop();
+                }
+                e.return_value();
+            }
+
+            @Override
+            public void processDefault() {
+                // fall-through
+            }
+        });
+        e.pop();
+        e.return_value();
+        e.end_method();
+    }
+    // APACHE FESOD PATCH END
 
     private void generateKeySet(String[] allNames) {
         // static initializer

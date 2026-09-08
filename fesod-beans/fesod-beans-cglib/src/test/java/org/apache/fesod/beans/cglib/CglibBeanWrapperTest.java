@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.fesod.common.beans.BeanWrapper;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -207,10 +206,22 @@ class CglibBeanWrapperTest {
     void shouldReturnPreviousValueWhenPuttingFluentProperty() {
         EnhancedBeanMapGenerator generator = new EnhancedBeanMapGenerator();
         generator.setBeanClass(FluentSampleBean.class);
-        BeanMap map = generator.create().newInstance(new FluentSampleBean("Rose", 20));
+        EnhancedBeanMap map = generator.create().newInstance(new FluentSampleBean("Rose", 20));
 
         Assertions.assertThat(map.put("name", "Lily")).isEqualTo("Rose");
         Assertions.assertThat(map.put("age", 21)).isEqualTo(20);
+    }
+
+    @Test
+    void shouldIgnoreSetOfUnknownProperty() {
+        FluentSampleBean bean = new FluentSampleBean("Rose", 20);
+        EnhancedBeanMapGenerator generator = new EnhancedBeanMapGenerator();
+        generator.setBeanClass(FluentSampleBean.class);
+        EnhancedBeanMap map = generator.create().newInstance(bean);
+
+        map.set("nope", "Lily");
+
+        Assertions.assertThat(bean.name()).isEqualTo("Rose");
     }
 
     @Test

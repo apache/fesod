@@ -31,7 +31,7 @@ import org.apache.fesod.shaded.cglib.core.ReflectUtils;
  * with only the class generation delegated to {@link EnhancedBeanMapEmitter}.
  */
 class EnhancedBeanMapGenerator extends AbstractClassGenerator {
-    private static final Source SOURCE = new Source(BeanMap.class.getName());
+    private static final Source SOURCE = new Source(EnhancedBeanMap.class.getName());
 
     private static final BeanMapKey KEY_FACTORY =
             (BeanMapKey) KeyFactory.create(BeanMapKey.class, KeyFactory.CLASS_BY_NAME);
@@ -100,12 +100,12 @@ class EnhancedBeanMapGenerator extends AbstractClassGenerator {
      * Create a new instance of the <code>BeanMap</code>. An existing
      * generated class will be reused if possible.
      */
-    public BeanMap create() {
+    public EnhancedBeanMap create() {
         if (beanClass == null) {
             throw new IllegalArgumentException("Class of bean unknown");
         }
         setNamePrefix(beanClass.getName());
-        return (BeanMap) super.create(KEY_FACTORY.newInstance(beanClass, require));
+        return (EnhancedBeanMap) super.create(KEY_FACTORY.newInstance(beanClass, require));
     }
 
     @Override
@@ -117,11 +117,11 @@ class EnhancedBeanMapGenerator extends AbstractClassGenerator {
 
     @Override
     protected Object firstInstance(Class type) {
-        return ((BeanMap) ReflectUtils.newInstance(type)).newInstance(bean);
+        return ((EnhancedBeanMap) ReflectUtils.newInstance(type)).newInstance(bean);
     }
 
     @Override
     protected Object nextInstance(Object instance) {
-        return ((BeanMap) instance).newInstance(bean);
+        return ((EnhancedBeanMap) instance).newInstance(bean);
     }
 }

@@ -25,10 +25,7 @@ import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
 
 /**
- * Extracted from {@link DateUtils}.
- * <p>
- * Package-private: to keep {@link DateUtils} the sole public entry point.
- * </p>
+ * Internal helper used by {@link DateUtils} for detecting date-related spreadsheet format strings.
  */
 class ExcelDateFormatDetector {
 

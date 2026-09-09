@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.common.beans.MapBeanWrapper;
 import org.apache.fesod.sheet.metadata.NullObject;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
@@ -44,34 +45,38 @@ class FieldUtilsTest {
 
     @Test
     void test_getFieldClass_normalValue() {
-        Class<?> clazz = FieldUtils.getFieldClass(null, "any", "StringValue");
+        Class<?> clazz1 = FieldUtils.getFieldClass((Map) null, "any", "StringValue");
+        Class<?> clazz2 = FieldUtils.getFieldClass((BeanWrapper) null, "any", "StringValue");
 
-        Assertions.assertEquals(String.class, clazz);
+        Assertions.assertEquals(String.class, clazz1);
+        Assertions.assertEquals(String.class, clazz2);
     }
 
     @Test
     void test_getFieldClass_nullValue() {
-        Class<?> clazz = FieldUtils.getFieldClass(null, "any", null);
+        Class<?> clazz1 = FieldUtils.getFieldClass((Map) null, "any", null);
+        Class<?> clazz2 = FieldUtils.getFieldClass((BeanWrapper) null, "any", null);
 
-        Assertions.assertEquals(NullObject.class, clazz);
+        Assertions.assertEquals(NullObject.class, clazz1);
+        Assertions.assertEquals(NullObject.class, clazz2);
     }
 
     @Test
-    void test_getFieldClass_BeanMap() {
-        BeanMap mockBeanMap = Mockito.mock(BeanMap.class);
-        Mockito.when(mockBeanMap.getPropertyType("name")).thenReturn(Integer.class);
+    void test_getFieldClass_BeanWrapper() {
+        BeanWrapper mockBeanWrapper = Mockito.mock(BeanWrapper.class);
+        Mockito.doReturn(Integer.class).when(mockBeanWrapper).getPropertyType("name");
 
-        Class<?> clazz = FieldUtils.getFieldClass(mockBeanMap, "name", "123");
+        Class<?> clazz = FieldUtils.getFieldClass(mockBeanWrapper, "name", "123");
 
         Assertions.assertEquals(Integer.class, clazz);
     }
 
     @Test
-    void test_getFieldClass_BeanMap_fallback() {
-        BeanMap mockBeanMap = Mockito.mock(BeanMap.class);
-        Mockito.when(mockBeanMap.getPropertyType("unknown")).thenReturn(null);
+    void test_getFieldClass_BeanWrapper_fallback() {
+        BeanWrapper mockBeanWrapper = Mockito.mock(BeanWrapper.class);
+        Mockito.when(mockBeanWrapper.getPropertyType("unknown")).thenReturn(null);
 
-        Class<?> clazz = FieldUtils.getFieldClass(mockBeanMap, "unknown", "Value");
+        Class<?> clazz = FieldUtils.getFieldClass(mockBeanWrapper, "unknown", "Value");
 
         Assertions.assertEquals(String.class, clazz);
     }
@@ -80,6 +85,14 @@ class FieldUtilsTest {
     void test_getFieldClass_normalMap() {
         Map<String, Object> map = new HashMap<>();
         Class<?> clazz = FieldUtils.getFieldClass(map, "any", 100L);
+
+        Assertions.assertEquals(Long.class, clazz);
+    }
+
+    @Test
+    void test_getFieldClass_normalBeanWrapper() {
+        MapBeanWrapper beanWrapper = new MapBeanWrapper(new HashMap<>());
+        Class<?> clazz = FieldUtils.getFieldClass(beanWrapper, "any", 100L);
 
         Assertions.assertEquals(Long.class, clazz);
     }

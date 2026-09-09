@@ -75,6 +75,7 @@ under the License.
         <module>fesod-bom</module>
         <module>fesod-common</module>
         <module>fesod-shaded</module>
+        <module>fesod-beans</module>
         <module>fesod-sheet</module>
     </modules>
 

@@ -28,9 +28,11 @@ package org.apache.fesod.sheet.cache;
 import org.apache.fesod.sheet.context.AnalysisContext;
 
 /**
- * Read cache
+ * Shared-string (and similar) read cache.
  *
- *
+ * <p>{@link #get(Integer)} is the only required method. Lifecycle hooks and {@link #put(String)}
+ * default to no-ops so implementations that wrap an existing store (for example {@link XlsCache})
+ * do not need empty method bodies.
  */
 public interface ReadCache {
 
@@ -40,7 +42,7 @@ public interface ReadCache {
      * @param analysisContext
      *            A context is the main anchorage point of a excel reader.
      */
-    void init(AnalysisContext analysisContext);
+    default void init(AnalysisContext analysisContext) {}
 
     /**
      * Automatically generate the key and put it in the cache.Key start from 0
@@ -48,7 +50,7 @@ public interface ReadCache {
      * @param value
      *            Cache value
      */
-    void put(String value);
+    default void put(String value) {}
 
     /**
      * Get value
@@ -62,10 +64,10 @@ public interface ReadCache {
     /**
      * It's called when all the values are put in
      */
-    void putFinished();
+    default void putFinished() {}
 
     /**
-     * Called when the excel read is complete
+     * Called when the Excel read is complete
      */
-    void destroy();
+    default void destroy() {}
 }

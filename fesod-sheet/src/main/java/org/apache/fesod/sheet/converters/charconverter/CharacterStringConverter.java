@@ -57,6 +57,6 @@ public class CharacterStringConverter implements Converter<Character> {
     @Override
     public WriteCellData<?> convertToExcelData(
             Character value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return new WriteCellData<>(String.valueOf(value));
+        return new WriteCellData<>(value.toString());
     }
 }

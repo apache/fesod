@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -105,6 +106,7 @@ public class DateUtils {
     public static final String DATE_FORMAT_19_FORWARD_SLASH = "yyyy/MM/dd HH:mm:ss";
     public static final String TIME_FORMAT_5 = "HH:mm";
     public static final String TIME_FORMAT_8 = "HH:mm:ss";
+    public static final String DEFAULT_YEAR_FORMAT = "yyyy";
     private static final String MINUS = "-";
 
     public static String defaultDateFormat = DATE_FORMAT_19;
@@ -346,6 +348,39 @@ public class DateUtils {
             timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
         }
         return time.format(getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * convert string to year
+     *
+     * @param yearString
+     * @param yearFormat
+     * @param local
+     * @return
+     */
+    public static Year parseYear(String yearString, String yearFormat, Locale local) {
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = DEFAULT_YEAR_FORMAT;
+        }
+        return Year.parse(yearString, getCacheDateTimeFormat(yearFormat, local));
+    }
+
+    /**
+     * Format year
+     *
+     * @param year Year
+     * @param yearFormat year format
+     * @param local local
+     * @return format string
+     */
+    public static String format(Year year, String yearFormat, Locale local) {
+        if (year == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = DEFAULT_YEAR_FORMAT;
+        }
+        return year.format(getCacheDateTimeFormat(yearFormat, local));
     }
 
     /**

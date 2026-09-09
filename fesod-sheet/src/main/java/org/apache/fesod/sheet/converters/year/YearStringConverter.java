@@ -20,21 +20,18 @@
 package org.apache.fesod.sheet.converters.year;
 
 import java.time.Year;
-import java.time.format.DateTimeFormatter;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.util.DateUtils;
 
 /**
  * Year and string converter
  */
 public class YearStringConverter implements Converter<Year> {
-
-    private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("uuuu");
-
     @Override
     public Class<?> supportJavaTypeKey() {
         return Year.class;
@@ -48,21 +45,21 @@ public class YearStringConverter implements Converter<Year> {
     @Override
     public Year convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return Year.parse(cellData.getStringValue(), getFormatter(contentProperty, globalConfiguration));
+        return DateUtils.parseYear(
+                cellData.getStringValue(), getYearFormat(contentProperty), globalConfiguration.getLocale());
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             Year value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return new WriteCellData<>(value.format(getFormatter(contentProperty, globalConfiguration)));
+        return new WriteCellData<>(
+                DateUtils.format(value, getYearFormat(contentProperty), globalConfiguration.getLocale()));
     }
 
-    private static DateTimeFormatter getFormatter(
-            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+    private static String getYearFormat(ExcelContentProperty contentProperty) {
         if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return DEFAULT_FORMATTER;
+            return null;
         }
-        return DateTimeFormatter.ofPattern(
-                contentProperty.getDateTimeFormatProperty().getFormat(), globalConfiguration.getLocale());
+        return contentProperty.getDateTimeFormatProperty().getFormat();
     }
 }

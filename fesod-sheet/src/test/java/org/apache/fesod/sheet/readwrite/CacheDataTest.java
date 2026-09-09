@@ -27,11 +27,12 @@ package org.apache.fesod.sheet.readwrite;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Map;
 import lombok.Getter;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.annotation.AnnotatedElementUtils;
+import org.apache.fesod.sheet.annotation.AnnotationAttributes;
+import org.apache.fesod.sheet.annotation.AnnotationAttributesTestSupport;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
@@ -126,12 +127,9 @@ public class CacheDataTest extends AbstractExcelTest {
 
     private void setNameHeader(String nameHeader) throws Exception {
         Field name = FieldUtils.getField(CacheData.class, "name", true);
-        ExcelProperty annotation = name.getAnnotation(ExcelProperty.class);
-        InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
-        Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
-        memberValues.setAccessible(true);
-        Map map = (Map) memberValues.get(invocationHandler);
-        map.put("value", new String[] {nameHeader});
+        AnnotationAttributes attributes =
+                AnnotatedElementUtils.getMergedAnnotationAttributes(name, ExcelProperty.class);
+        AnnotationAttributesTestSupport.put(attributes, "value", new String[] {nameHeader});
     }
 
     @Getter

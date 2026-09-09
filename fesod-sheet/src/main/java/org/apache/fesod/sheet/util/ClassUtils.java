@@ -47,6 +47,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.sheet.annotation.AnnotatedElementUtils;
 import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
@@ -226,14 +227,15 @@ public class ClassUtils {
         }
         List<Field> tempFieldList = FieldUtils.resolveAllFields(clazz);
 
-        ContentStyle parentContentStyle = clazz.getAnnotation(ContentStyle.class);
-        ContentFontStyle parentContentFontStyle = clazz.getAnnotation(ContentFontStyle.class);
+        ContentStyle parentContentStyle = AnnotatedElementUtils.getMergedAnnotation(clazz, ContentStyle.class);
+        ContentFontStyle parentContentFontStyle =
+                AnnotatedElementUtils.getMergedAnnotation(clazz, ContentFontStyle.class);
         Map<String, ExcelContentProperty> fieldContentMap = MapUtils.newHashMapWithExpectedSize(tempFieldList.size());
         for (Field field : tempFieldList) {
             ExcelContentProperty excelContentProperty = new ExcelContentProperty();
             excelContentProperty.setField(field);
 
-            ExcelProperty excelProperty = field.getAnnotation(ExcelProperty.class);
+            ExcelProperty excelProperty = AnnotatedElementUtils.getMergedAnnotation(field, ExcelProperty.class);
             if (excelProperty != null) {
                 Class<? extends Converter<?>> convertClazz = excelProperty.converter();
                 if (convertClazz != AutoConverter.class) {
@@ -247,22 +249,23 @@ public class ClassUtils {
                 }
             }
 
-            ContentStyle contentStyle = field.getAnnotation(ContentStyle.class);
+            ContentStyle contentStyle = AnnotatedElementUtils.getMergedAnnotation(field, ContentStyle.class);
             if (contentStyle == null) {
                 contentStyle = parentContentStyle;
             }
             excelContentProperty.setContentStyleProperty(StyleProperty.build(contentStyle));
 
-            ContentFontStyle contentFontStyle = field.getAnnotation(ContentFontStyle.class);
+            ContentFontStyle contentFontStyle =
+                    AnnotatedElementUtils.getMergedAnnotation(field, ContentFontStyle.class);
             if (contentFontStyle == null) {
                 contentFontStyle = parentContentFontStyle;
             }
             excelContentProperty.setContentFontProperty(FontProperty.build(contentFontStyle));
 
-            excelContentProperty.setDateTimeFormatProperty(
-                    DateTimeFormatProperty.build(field.getAnnotation(DateTimeFormat.class)));
+            excelContentProperty.setDateTimeFormatProperty(DateTimeFormatProperty.build(
+                    AnnotatedElementUtils.getMergedAnnotation(field, DateTimeFormat.class)));
             excelContentProperty.setNumberFormatProperty(
-                    NumberFormatProperty.build(field.getAnnotation(NumberFormat.class)));
+                    NumberFormatProperty.build(AnnotatedElementUtils.getMergedAnnotation(field, NumberFormat.class)));
 
             fieldContentMap.put(field.getName(), excelContentProperty);
         }
@@ -300,11 +303,11 @@ public class ClassUtils {
     private static FieldCache doDeclaredFields(Class<?> clazz, ConfigurationHolder configurationHolder) {
         List<Field> tempFieldList = FieldUtils.resolveAllFields(clazz);
 
-        ExcelIgnoreUnannotated excelIgnoreUnannotated = clazz.getAnnotation(ExcelIgnoreUnannotated.class);
+        boolean isIgnoreUnannotated = AnnotatedElementUtils.isAnnotated(clazz, ExcelIgnoreUnannotated.class);
         Set<String> ignoreSet = new HashSet<>();
         // First collect all field names annotated with ExcelIgnore (including subclass overrides)
         for (Field field : tempFieldList) {
-            if (field.getAnnotation(ExcelIgnore.class) != null) {
+            if (AnnotatedElementUtils.isAnnotated(field, ExcelIgnore.class)) {
                 ignoreSet.add(FieldUtils.resolveCglibFieldName(field));
             }
         }
@@ -316,7 +319,7 @@ public class ClassUtils {
             if (ignoreSet.contains(fieldName)) {
                 continue;
             }
-            declaredOneField(field, orderFieldMap, indexFieldMap, ignoreSet, excelIgnoreUnannotated);
+            declaredOneField(field, orderFieldMap, indexFieldMap, ignoreSet, isIgnoreUnannotated);
         }
         Map<Integer, FieldWrapper> sortedFieldMap = buildSortedAllFieldMap(orderFieldMap, indexFieldMap);
         FieldCache fieldCache = new FieldCache(sortedFieldMap, indexFieldMap);
@@ -459,7 +462,7 @@ public class ClassUtils {
             Map<Integer, List<FieldWrapper>> orderFieldMap,
             Map<Integer, FieldWrapper> indexFieldMap,
             Set<String> ignoreSet,
-            ExcelIgnoreUnannotated excelIgnoreUnannotated) {
+            boolean isIgnoreUnannotated) {
         String fieldName = FieldUtils.resolveCglibFieldName(field);
         // skip if the field is in ignoreSet
         if (ignoreSet.contains(fieldName)) {
@@ -469,8 +472,8 @@ public class ClassUtils {
         fieldWrapper.setField(field);
         fieldWrapper.setFieldName(fieldName);
 
-        ExcelProperty excelProperty = field.getAnnotation(ExcelProperty.class);
-        boolean noExcelProperty = excelProperty == null && excelIgnoreUnannotated != null;
+        ExcelProperty excelProperty = AnnotatedElementUtils.getMergedAnnotation(field, ExcelProperty.class);
+        boolean noExcelProperty = excelProperty == null && isIgnoreUnannotated;
         boolean isStaticFinalOrTransient =
                 (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()))
                         || Modifier.isTransient(field.getModifiers());

@@ -28,7 +28,7 @@ Below is an example of reading a spreadsheet document:
 
 ```java
 // Implement the ReadListener interface to set up operations for reading data
-public class DemoDataListener implements ReadListener<DemoData> {
+class DemoDataListener implements ReadListener<DemoData> {
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
         System.out.println("Parsed a data entry" + JSON.toJSONString(data));
@@ -40,10 +40,11 @@ public class DemoDataListener implements ReadListener<DemoData> {
     }
 }
 
-public static void main(String[] args) {
-    String fileName = "demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     // Read file
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).sheet().doRead();
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).sheet().doRead();
 }
 ```
 
@@ -53,7 +54,7 @@ Below is a simple example of creating a spreadsheet document:
 
 ```java
 // Sample data class
-public class DemoData {
+class DemoData {
     @ExcelProperty("String Title")
     private String string;
     @ExcelProperty("Date Title")
@@ -65,7 +66,7 @@ public class DemoData {
 }
 
 // Prepare data to write
-private static List<DemoData> data() {
+List<DemoData> data() {
     List<DemoData> list = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
         DemoData data = new DemoData();
@@ -77,9 +78,10 @@ private static List<DemoData> data() {
     return list;
 }
 
-public static void main(String[] args) {
-    String fileName = "demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
     // Create a "Template" sheet and write data
-    FesodSheet.write(fileName, DemoData.class).sheet("Template").doWrite(data());
+    FesodSheet.write(pathname, DemoData.class).sheet("Template").doWrite(data());
 }
 ```

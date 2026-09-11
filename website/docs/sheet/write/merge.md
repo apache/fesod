@@ -56,10 +56,10 @@ public class DemoMergeData {
 ### Code Example
 
 ```java
-@Test
-public void annotationMergeWrite() {
-    String fileName = "annotationMergeWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, DemoMergeData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, DemoMergeData.class)
         .sheet()
         .doWrite(data());
 }
@@ -91,13 +91,12 @@ Register a `LoopMergeStrategy(eachRow, columnIndex)` as a write handler. More fl
 ### Code Example
 
 ```java
-@Test
-public void strategyMergeWrite() {
-    String fileName = "strategyMergeWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     // Merge every 2 rows in column 0
     LoopMergeStrategy strategy = new LoopMergeStrategy(2, 0);
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .registerWriteHandler(strategy)
         .sheet()
         .doWrite(data());
@@ -131,10 +130,10 @@ public class CustomMergeStrategy extends AbstractMergeStrategy {
 Usage:
 
 ```java
-@Test
-public void customMergeWrite() {
-    String fileName = "customMergeWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, DemoData.class)
         .registerWriteHandler(new CustomMergeStrategy())
         .sheet()
         .doWrite(data());

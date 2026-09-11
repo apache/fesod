@@ -55,11 +55,10 @@ public class DemoExceptionListener extends AnalysisEventListener<ExceptionDemoDa
 ## 代码示例
 
 ```java
-@Test
-public void exceptionRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, ExceptionDemoData.class, new DemoExceptionListener())
+    FesodSheet.read(pathname, ExceptionDemoData.class, new DemoExceptionListener())
             .sheet()
             .doRead();
 }

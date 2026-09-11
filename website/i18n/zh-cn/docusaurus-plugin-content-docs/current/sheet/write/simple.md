@@ -73,11 +73,10 @@ Fesod 提供了多种写入方式，包括 `Lambda` 表达式、数据列表、`
 #### `Lambda` 表达式
 
 ```java
-@Test
-public void simpleWrite() {
-    String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .sheet("Sheet1")
             .doWrite(() -> data());
 }
@@ -86,11 +85,10 @@ public void simpleWrite() {
 #### 数据列表
 
 ```java
-@Test
-public void simpleWrite() {
-    String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
             .sheet("Sheet1")
             .doWrite(data());
 }
@@ -99,11 +97,10 @@ public void simpleWrite() {
 #### `ExcelWriter` 对象
 
 ```java
-@Test
-public void simpleWrite() {
-    String fileName = "simpleWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter excelWriter = FesodSheet.write(fileName, DemoData.class).build()) {
+    try (ExcelWriter excelWriter = FesodSheet.write(pathname, DemoData.class).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet("Sheet1").build();
         excelWriter.write(data(), writeSheet);
     }

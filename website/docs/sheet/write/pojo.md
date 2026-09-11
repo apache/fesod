@@ -41,12 +41,11 @@ The collection holds **POJO field names**, not header titles. Both examples belo
 Everything except the listed fields is written:
 
 ```java
-@Test
-public void excludeColumnWrite() {
-    String fileName = "excludeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> excludeColumns = Collections.singleton("date");
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .excludeColumnFieldNames(excludeColumns)
         .sheet()
         .doWrite(data());
@@ -76,12 +75,11 @@ The `date` field is gone, the other two remain:
 Only the listed fields are written:
 
 ```java
-@Test
-public void includeColumnWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> includeColumns = Collections.singleton("date");
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .includeColumnFieldNames(includeColumns)
         .sheet()
         .doWrite(data());
@@ -137,10 +135,10 @@ public class IndexData {
 Using the `index` attribute of the `@ExcelProperty` annotation.
 
 ```java
-@Test
-public void indexWrite() {
-    String fileName = "indexWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, IndexData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, IndexData.class)
         .sheet()
         .doWrite(data());
 }
@@ -174,12 +172,11 @@ The columns come out in the POJO's order, not the collection's. Listing `doubleD
 `string` first, because that is the order the fields are declared in:
 
 ```java
-@Test
-public void includeColumnOrderWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .includeColumnFieldNames(includeColumns)
         .sheet()
         .doWrite(data());
@@ -204,12 +201,11 @@ public void includeColumnOrderWrite() {
 Add `.orderByIncludeColumn(true)` to follow the collection's order instead:
 
 ```java
-@Test
-public void orderByIncludeColumnWrite() {
-    String fileName = "includeColumnFieldWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     Set<String> includeColumns = new LinkedHashSet<>(Arrays.asList("doubleData", "string"));
-    FesodSheet.write(fileName, DemoData.class)
+    FesodSheet.write(pathname, DemoData.class)
         .includeColumnFieldNames(includeColumns)
         .orderByIncludeColumn(true)
         .sheet()
@@ -243,24 +239,23 @@ Write data directly using `List<List<String>>` to define headers and data withou
 ### Code Example
 
 ```java
-@Test
-public void noModelWrite() {
-    String fileName = "noModelWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
         .head(head()) // Dynamic headers
         .sheet("Write Without Object")
         .doWrite(dataList());
 }
 
-private List<List<String>> head() {
+List<List<String>> head() {
     return Arrays.asList(
         Collections.singletonList("String Title"),
         Collections.singletonList("Number Title"),
         Collections.singletonList("Date Title"));
 }
 
-private List<List<Object>> dataList() {
+List<List<Object>> dataList() {
     List<List<Object>> list = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
         list.add(Arrays.asList("String" + i, 0.56, new Date()));

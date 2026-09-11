@@ -57,10 +57,10 @@ Fesod 通过不同的参数设计进行 CSV
 如果 CSV 文件使用 `\u0000` 作为分隔符，可以如下设置：
 
 ```java
-@Test
-public void delimiterDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .delimiter(CsvConstant.UNICODE_EMPTY)
             .doReadSync();
@@ -76,10 +76,10 @@ public void delimiterDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void quoteDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .quote(CsvConstant.DOUBLE_QUOTE, QuoteMode.MINIMAL)
             .doReadSync();
@@ -93,10 +93,10 @@ public void quoteDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void recordSeparatorDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .recordSeparator(CsvConstant.LF)
             .doReadSync();
@@ -110,10 +110,10 @@ public void recordSeparatorDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void nullStringDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .nullString("N/A")
             .doReadSync();
@@ -127,10 +127,10 @@ public void nullStringDemo() {
 #### 代码示例
 
 ```java
-@Test
-public void escapeDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .escape(CsvConstant.BACKSLASH)
             .doReadSync();
@@ -167,13 +167,12 @@ public void includeColumnIndexesDemo() {
 ### 代码示例
 
 ```java
-@Test
-public void csvFormatDemo() {
+void main() {
+    String pathname = "path/to/demo.csv";
 
     CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
-    String csvFile = "path/to/your.csv";
 
-    try (ExcelReader excelReader = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener()).build()) {
+    try (ExcelReader excelReader = FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).build()) {
         ReadWorkbookHolder readWorkbookHolder = excelReader.analysisContext().readWorkbookHolder();
         // 判断是否为CsvReadWorkbookHolder实例
         if (readWorkbookHolder instanceof CsvReadWorkbookHolder) {

@@ -316,6 +316,7 @@ svn ci -m "add gpg key for xxx"
 
 - 创建一个新分支`2.0.0-incubating`作为发布分支
 - 修改 `pom.xml` 中的版本号为 `2.0.0-incubating`
+- 将 `pom.xml` 中的 `project.build.outputTimestamp` 设置为固定的 ISO-8601 时间戳（例如发布分支的创建时间），以保证[可复现构建](https://maven.org.cn/guides/mini/guide-reproducible-builds.html)。如果留空，每次构建的时间戳都会不同，不满足可复现构建的要求
 - 推送 RC(Release Candidates) 版本标签
 
 ```bash
@@ -327,6 +328,15 @@ git tag -s 2.0.0-incubating-rc1 -m "release: release for 2.0.0-incubating RC1"
 
 # 推送 Tag 到远程仓库
 git push origin 2.0.0-incubating-rc1
+```
+
+同时设置固定的构建时间戳：
+
+```bash
+# 设置固定构建时间戳，保证每次构建产物一致
+mvn versions:set-property -Dproperty=project.build.outputTimestamp -DnewVersion=2026-09-10T00:00:00Z
+# 或直接在 pom.xml 中设置：
+#   <project.build.outputTimestamp>2026-09-10T00:00:00Z</project.build.outputTimestamp>
 ```
 
 #### 3.3.2 推送二进制包

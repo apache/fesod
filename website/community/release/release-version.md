@@ -316,7 +316,7 @@ For example, to release version `2.0.0-incubating`, follow these steps:
 
 - Create a new branch `2.0.0-incubating` as the release branch.
 - Update the version number in `pom.xml` to `2.0.0-incubating`.
-- Set the `project.build.outputTimestamp` in `pom.xml` to a fixed ISO-8601 timestamp (e.g., the release branch creation time) to ensure [reproducible builds](https://maven.org.cn/guides/mini/guide-reproducible-builds.html). If it is left empty, every build records a different timestamp, which does not satisfy reproducible-build requirements.
+- Set a fixed `project.build.outputTimestamp` in `pom.xml` to ensure [reproducible builds](https://maven.apache.org/guides/mini/guide-reproducible-builds.html).
 - Push the RC (Release Candidate) version tag.
 
 ```bash

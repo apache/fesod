@@ -1,0 +1,5 @@
+# Canonical author identities for Apache Fesod (Incubating).
+# Maps personal addresses used in earlier commits onto the corresponding
+# ASF identity. See gitmailmap(5); applies to git log / shortlog / blame
+# and to the GitHub contributors view. No history is rewritten.
+Zhang Zhe <zhangzhe@apache.org> ian zhang <ian.zhangzhe@gmail.com>

@@ -316,7 +316,7 @@ svn ci -m "add gpg key for xxx"
 
 - 创建一个新分支`2.0.0-incubating`作为发布分支
 - 修改 `pom.xml` 中的版本号为 `2.0.0-incubating`
-- 在 `pom.xml` 中设置固定的 `project.build.outputTimestamp`，以保证[可复现构建](https://maven.org.cn/guides/mini/guide-reproducible-builds.html)
+- 在 `pom.xml` 中设置固定的 `project.build.outputTimestamp`，以保证[可复现构建](https://maven.apache.org/guides/mini/guide-reproducible-builds.html)
 - 推送 RC(Release Candidates) 版本标签
 
 ```bash

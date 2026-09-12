@@ -27,7 +27,11 @@ import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
 /**
- * Where one kind of metadata is cached, one implementation per {@link CacheLocationEnum} constant.
+ * Internal helper used by {@link SheetHeadFieldResolver} and {@link SheetContentPropertyResolver} for
+ * caching resolved metadata, one implementation per {@link CacheLocationEnum} constant.
+ * <p>
+ * Not intended for direct use; use {@link ClassUtils} as the primary entry point instead.
+ * </p>
  *
  * @param <K> the cache key
  * @param <V> the cached metadata

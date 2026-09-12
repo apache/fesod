@@ -43,7 +43,11 @@ import org.apache.fesod.sheet.util.ClassUtils.FieldCacheKey;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
 
 /**
- * Resolves which declared fields of a class become spreadsheet columns, and in which order.
+ * Internal helper used by {@link ClassUtils} for resolving which declared fields of a class become
+ * spreadsheet columns, and in which order.
+ * <p>
+ * Not intended for direct use; use {@link ClassUtils} as the primary entry point instead.
+ * </p>
  */
 final class SheetHeadFieldResolver {
 

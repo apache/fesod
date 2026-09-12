@@ -43,8 +43,11 @@ import org.apache.fesod.sheet.metadata.property.StyleProperty;
 import org.apache.fesod.sheet.util.ClassUtils.ContentPropertyKey;
 
 /**
- * Resolves the converter, format and style of a single field, merged from the head class and the
- * runtime class of the data.
+ * Internal helper used by {@link ClassUtils} for resolving the converter, format and style of a
+ * single field, merged from the head class and the runtime class of the data.
+ * <p>
+ * Not intended for direct use; use {@link ClassUtils} as the primary entry point instead.
+ * </p>
  */
 final class SheetContentPropertyResolver {
 

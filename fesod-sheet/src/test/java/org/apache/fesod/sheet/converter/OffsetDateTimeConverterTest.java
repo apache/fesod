@@ -24,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeDateConverter;
@@ -37,6 +38,7 @@ import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,11 @@ import org.junit.jupiter.api.Test;
 @Tag(Tags.UNIT)
 class OffsetDateTimeConverterTest {
     private static final OffsetDateTime VALUE = OffsetDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneOffset.ofHours(8));
+
+    @AfterEach
+    void tearDown() {
+        DateUtils.removeThreadLocalCache();
+    }
 
     @Test
     void dateConverterDropsOffsetWhilePreservingLocalDateTime() throws Exception {
@@ -135,6 +142,21 @@ class OffsetDateTimeConverterTest {
                 converter
                         .convertToExcelData(VALUE, property, globalConfiguration)
                         .getStringValue());
+    }
+
+    @Test
+    void stringConverterHonoursConfiguredLocale() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("dd MMMM yyyy HH:mm:ss XXX", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setLocale(Locale.GERMAN);
+        WriteCellData<?> written = converter.convertToExcelData(VALUE, property, globalConfiguration);
+        Assertions.assertEquals("02 Januar 2020 03:04:05 +08:00", written.getStringValue());
+        Assertions.assertEquals(
+                VALUE,
+                converter.convertToJavaData(
+                        new ReadCellData<>(written.getStringValue()), property, globalConfiguration));
     }
 
     @Test

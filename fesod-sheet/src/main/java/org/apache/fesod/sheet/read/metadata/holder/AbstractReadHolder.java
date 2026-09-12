@@ -142,7 +142,10 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
             // A converter registered with supportExcelTypeKey() == null matches every cell type,
             // and read lookups use the concrete cell type as key (see ConverterUtils), so expand
             // each wildcard registration under every concrete key — overwriting built-in defaults
-            // while keeping the explicit registrations above in priority.
+            // while keeping the explicit registrations above in priority. Note this deliberately
+            // differs from the write side (#1069 expands to STRING only): write lookups see null
+            // targets for xlsx and force STRING only on the CSV/fill paths, while read lookups hit
+            // the actual cell type of every cell.
             for (Converter<?> converter : readBasicParameter.getCustomConverterList()) {
                 if (converter.supportExcelTypeKey() != null) {
                     continue;

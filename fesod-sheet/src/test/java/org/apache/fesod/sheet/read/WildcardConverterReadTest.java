@@ -133,6 +133,62 @@ public class WildcardConverterReadTest extends AbstractExcelTest {
         Assertions.assertEquals(Boolean.FALSE, rows.get(1).getFlag());
     }
 
+    @Test
+    void testWildcardStringConverterAppliesToDataCells() throws Exception {
+        File file = createTempFile(ExcelFormat.XLSX);
+        FesodSheet.write(file, StringWriteData.class).sheet().doWrite(dataList());
+
+        // Index-based matching keeps the header path out of the equation here; the header-cell
+        // interaction of wildcard String converters is tracked separately in #1098.
+        List<IndexStringReadData> rows = FesodSheet.read(file, IndexStringReadData.class, new IndexStringReadListener())
+                .registerConverter(new UpperCaseStringConverter())
+                .sheet()
+                .doReadSync();
+
+        Assertions.assertEquals(2, rows.size());
+        Assertions.assertEquals("YES", rows.get(0).getFlag());
+        Assertions.assertEquals("NO", rows.get(1).getFlag());
+    }
+
+    public static class UpperCaseStringConverter implements Converter<String> {
+
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return String.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return null;
+        }
+
+        @Override
+        public String convertToJavaData(
+                ReadCellData<?> cellData,
+                ExcelContentProperty contentProperty,
+                GlobalConfiguration globalConfiguration) {
+            String value = cellData.getStringValue();
+            return value == null ? null : value.toUpperCase();
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class IndexStringReadData {
+
+        @ExcelProperty(index = 0)
+        private String flag;
+    }
+
+    public static class IndexStringReadListener extends AnalysisEventListener<IndexStringReadData> {
+
+        @Override
+        public void invoke(IndexStringReadData data, AnalysisContext context) {}
+
+        @Override
+        public void doAfterAllAnalysed(AnalysisContext context) {}
+    }
+
     public static class AlwaysFalseReadConverter implements Converter<Boolean> {
 
         @Override

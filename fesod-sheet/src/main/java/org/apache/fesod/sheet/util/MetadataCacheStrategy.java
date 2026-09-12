@@ -46,7 +46,7 @@ interface MetadataCacheStrategy<K, V> {
     static <K, V> Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> byLocation(
             Map<K, V> memoryCache, ThreadLocal<Map<K, V>> threadLocalCache) {
         Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> strategies = new EnumMap<>(CacheLocationEnum.class);
-        strategies.put(CacheLocationEnum.MEMORY, new MemoryCache<>(memoryCache));
+        strategies.put(CacheLocationEnum.MEMORY, new InMemoryCache<>(memoryCache));
         strategies.put(CacheLocationEnum.THREAD_LOCAL, new ThreadLocalCache<>(threadLocalCache));
         strategies.put(CacheLocationEnum.NONE, new NoOpCache<>());
         return Collections.unmodifiableMap(strategies);
@@ -68,11 +68,11 @@ interface MetadataCacheStrategy<K, V> {
     /**
      * The cache will not be cleared unless the app is stopped.
      */
-    class MemoryCache<K, V> implements MetadataCacheStrategy<K, V> {
+    class InMemoryCache<K, V> implements MetadataCacheStrategy<K, V> {
 
         private final Map<K, V> cache;
 
-        MemoryCache(Map<K, V> cache) {
+        InMemoryCache(Map<K, V> cache) {
             this.cache = cache;
         }
 

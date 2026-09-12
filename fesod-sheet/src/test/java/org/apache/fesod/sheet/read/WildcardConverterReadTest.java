@@ -115,6 +115,45 @@ public class WildcardConverterReadTest extends AbstractExcelTest {
         }
     }
 
+    @Test
+    void testExplicitStringKeyConverterWinsOverLaterWildcardRegistration() throws Exception {
+        File file = createTempFile(ExcelFormat.XLSX);
+        FesodSheet.write(file, StringWriteData.class).sheet().doWrite(dataList());
+
+        List<BooleanReadData> rows = FesodSheet.read(file, BooleanReadData.class, new BooleanReadListener())
+                // explicit STRING key first, wildcard second: the explicit registration must keep
+                // handling STRING cells regardless of registration order
+                .registerConverter(new BooleanYesNoReadConverter(CellDataTypeEnum.STRING))
+                .registerConverter(new AlwaysFalseReadConverter())
+                .sheet()
+                .doReadSync();
+
+        Assertions.assertEquals(2, rows.size());
+        Assertions.assertEquals(Boolean.TRUE, rows.get(0).getFlag());
+        Assertions.assertEquals(Boolean.FALSE, rows.get(1).getFlag());
+    }
+
+    public static class AlwaysFalseReadConverter implements Converter<Boolean> {
+
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return Boolean.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return null;
+        }
+
+        @Override
+        public Boolean convertToJavaData(
+                ReadCellData<?> cellData,
+                ExcelContentProperty contentProperty,
+                GlobalConfiguration globalConfiguration) {
+            return Boolean.FALSE;
+        }
+    }
+
     @Getter
     @Setter
     public static class StringWriteData {

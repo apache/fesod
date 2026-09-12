@@ -26,7 +26,9 @@
 package org.apache.fesod.sheet.read.metadata.holder;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +36,7 @@ import lombok.Setter;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.HolderEnum;
@@ -127,25 +130,31 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
         }
         if (readBasicParameter.getCustomConverterList() != null
                 && !readBasicParameter.getCustomConverterList().isEmpty()) {
+            // Register explicit (JavaType, CellDataType) keys first so that wildcard expansion
+            // below cannot shadow them, regardless of registration order.
+            Set<ConverterKey> explicitKeys = new HashSet<>();
             for (Converter<?> converter : readBasicParameter.getCustomConverterList()) {
-                registerCustomConverter(converter);
+                ConverterKey explicitKey =
+                        ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey());
+                getConverterMap().put(explicitKey, converter);
+                explicitKeys.add(explicitKey);
             }
-        }
-    }
-
-    private void registerCustomConverter(Converter<?> converter) {
-        getConverterMap()
-                .put(
-                        ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                        converter);
-        if (converter.supportExcelTypeKey() == null) {
-            // Read lookups use the concrete cell type as key (see ConverterUtils), so a converter
-            // registered with supportExcelTypeKey() == null must also be present under each
-            // concrete key to honor its "matches every cell data type" contract.
-            for (CellDataTypeEnum cellDataType : CellDataTypeEnum.values()) {
-                if (cellDataType != CellDataTypeEnum.EMPTY) {
-                    getConverterMap()
-                            .put(ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), cellDataType), converter);
+            // A converter registered with supportExcelTypeKey() == null matches every cell type,
+            // and read lookups use the concrete cell type as key (see ConverterUtils), so expand
+            // each wildcard registration under every concrete key — overwriting built-in defaults
+            // while keeping the explicit registrations above in priority.
+            for (Converter<?> converter : readBasicParameter.getCustomConverterList()) {
+                if (converter.supportExcelTypeKey() != null) {
+                    continue;
+                }
+                for (CellDataTypeEnum cellDataType : CellDataTypeEnum.values()) {
+                    if (cellDataType == CellDataTypeEnum.EMPTY) {
+                        continue;
+                    }
+                    ConverterKey expandedKey = ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), cellDataType);
+                    if (!explicitKeys.contains(expandedKey)) {
+                        getConverterMap().put(expandedKey, converter);
+                    }
                 }
             }
         }

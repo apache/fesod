@@ -74,9 +74,7 @@ class ClassUtilsTest {
     @AfterEach
     void tearDown() {
         ClassUtils.removeThreadLocalCache();
-        ClassUtils.FIELD_CACHE.clear();
-        ClassUtils.CONTENT_CACHE.clear();
-        ClassUtils.CLASS_CONTENT_CACHE.clear();
+        ClassUtils.removeInMemoryCache();
     }
 
     private static class SimpleEntity {
@@ -121,10 +119,23 @@ class ClassUtilsTest {
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
 
-        Assertions.assertFalse(ClassUtils.FIELD_CACHE.isEmpty());
+        Assertions.assertFalse(ClassUtils.getFieldCache().isEmpty());
 
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertSame(cache1, cache2);
+    }
+
+    @Test
+    void test_getFieldCache_immutableViewOfTheLiveCache() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
+        ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
+
+        Map<?, ?> fieldCache = ClassUtils.getFieldCache();
+        Assertions.assertFalse(fieldCache.isEmpty());
+        Assertions.assertThrows(UnsupportedOperationException.class, fieldCache::clear);
+
+        ClassUtils.removeInMemoryCache();
+        Assertions.assertTrue(fieldCache.isEmpty());
     }
 
     @Test
@@ -134,7 +145,7 @@ class ClassUtilsTest {
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
 
-        Assertions.assertTrue(ClassUtils.FIELD_CACHE.isEmpty());
+        Assertions.assertTrue(ClassUtils.getFieldCache().isEmpty());
 
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertSame(cache1, cache2);
@@ -148,7 +159,7 @@ class ClassUtilsTest {
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
 
         Assertions.assertNotSame(cache1, cache2);
-        Assertions.assertTrue(ClassUtils.FIELD_CACHE.isEmpty());
+        Assertions.assertTrue(ClassUtils.getFieldCache().isEmpty());
     }
 
     @Test

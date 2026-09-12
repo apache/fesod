@@ -36,13 +36,11 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
-import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.read.listener.PageReadListener;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
-import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -57,9 +55,7 @@ public class CacheDataTest extends AbstractExcelTest {
     @Test
     void clearsThreadLocalFieldCacheAfterRead() throws Exception {
         File file07 = createTempFile("cache", ExcelFormat.XLSX);
-        Field field = FieldUtils.getField(ClassUtils.class, "FIELD_THREAD_LOCAL", true);
-        ThreadLocal<Map<Class<?>, FieldCache>> fieldThreadLocal =
-                (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(ClassUtils.class.newInstance());
+        ThreadLocal<?> fieldThreadLocal = headFieldThreadLocal();
         Assertions.assertNull(fieldThreadLocal.get());
         FesodSheet.write(file07, CacheData.class).sheet().doWrite(TestDataBuilder.cacheData(10));
         FesodSheet.read(file07, CacheData.class, new PageReadListener<CacheData>(dataList -> {
@@ -68,6 +64,13 @@ public class CacheDataTest extends AbstractExcelTest {
                 .sheet()
                 .doRead();
         Assertions.assertNull(fieldThreadLocal.get());
+    }
+
+    private static ThreadLocal<?> headFieldThreadLocal() throws Exception {
+        Class<?> resolver = Class.forName("org.apache.fesod.sheet.util.SheetHeadFieldResolver");
+        Object caches = FieldUtils.getField(resolver, "FIELD_CACHES", true).get(null);
+        Field threadLocalCache = FieldUtils.getField(caches.getClass(), "threadLocalCache", true);
+        return (ThreadLocal<?>) threadLocalCache.get(caches);
     }
 
     @Test

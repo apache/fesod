@@ -19,16 +19,14 @@
 
 package org.apache.fesod.sheet.util;
 
-import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
 /**
- * Internal helper used by {@link SheetHeadFieldResolver} and {@link SheetContentPropertyResolver} for
- * caching resolved metadata, one implementation per {@link CacheLocationEnum} constant.
+ * Internal helper used by {@link MetadataCaches} for caching resolved metadata, one implementation per
+ * {@link CacheLocationEnum} constant.
  * <p>
  * Not intended for direct use; use {@link ClassUtils} as the primary entry point instead.
  * </p>
@@ -39,31 +37,6 @@ import org.apache.fesod.sheet.enums.CacheLocationEnum;
 interface MetadataCacheStrategy<K, V> {
 
     V get(K key, Function<K, V> mappingFunction);
-
-    /**
-     * The strategy for every {@link CacheLocationEnum} constant, over the two caches that back them.
-     */
-    static <K, V> Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> byLocation(
-            Map<K, V> memoryCache, ThreadLocal<Map<K, V>> threadLocalCache) {
-        Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> strategies = new EnumMap<>(CacheLocationEnum.class);
-        strategies.put(CacheLocationEnum.MEMORY, new InMemoryCache<>(memoryCache));
-        strategies.put(CacheLocationEnum.THREAD_LOCAL, new ThreadLocalCache<>(threadLocalCache));
-        strategies.put(CacheLocationEnum.NONE, new NoOpCache<>());
-        return Collections.unmodifiableMap(strategies);
-    }
-
-    /**
-     * Looks up the strategy configured for {@code cacheLocation}, failing loudly when a
-     * {@link CacheLocationEnum} constant has no strategy registered for it.
-     */
-    static <K, V> MetadataCacheStrategy<K, V> select(
-            Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> strategies, CacheLocationEnum cacheLocation) {
-        MetadataCacheStrategy<K, V> strategy = strategies.get(cacheLocation);
-        if (strategy == null) {
-            throw new UnsupportedOperationException("unsupported enum");
-        }
-        return strategy;
-    }
 
     /**
      * The cache will not be cleared unless the app is stopped.

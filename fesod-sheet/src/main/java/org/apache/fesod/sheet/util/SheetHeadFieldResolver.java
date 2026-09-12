@@ -34,7 +34,6 @@ import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
-import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.FieldCache;
@@ -56,8 +55,8 @@ final class SheetHeadFieldResolver {
      */
     private static final ThreadLocal<Map<FieldCacheKey, FieldCache>> FIELD_THREAD_LOCAL = new ThreadLocal<>();
 
-    private static final Map<CacheLocationEnum, MetadataCacheStrategy<FieldCacheKey, FieldCache>> STRATEGIES =
-            MetadataCacheStrategy.byLocation(ClassUtils.FIELD_CACHE, FIELD_THREAD_LOCAL);
+    private static final MetadataCaches<FieldCacheKey, FieldCache> FIELD_CACHES =
+            new MetadataCaches<>(ClassUtils.FIELD_CACHE, FIELD_THREAD_LOCAL);
 
     private SheetHeadFieldResolver() {}
 
@@ -68,9 +67,10 @@ final class SheetHeadFieldResolver {
      * @param configurationHolder configuration
      */
     static FieldCache resolve(Class<?> clazz, ConfigurationHolder configurationHolder) {
-        return MetadataCacheStrategy.select(
-                        STRATEGIES, configurationHolder.globalConfiguration().getFiledCacheLocation())
-                .get(new FieldCacheKey(clazz, configurationHolder), key -> doResolve(clazz, configurationHolder));
+        return FIELD_CACHES.get(
+                configurationHolder,
+                new FieldCacheKey(clazz, configurationHolder),
+                key -> doResolve(clazz, configurationHolder));
     }
 
     static void removeThreadLocalCache() {

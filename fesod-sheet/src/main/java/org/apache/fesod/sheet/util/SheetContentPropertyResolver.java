@@ -32,7 +32,6 @@ import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
 import org.apache.fesod.sheet.converters.AutoConverter;
 import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
@@ -63,12 +62,11 @@ final class SheetContentPropertyResolver {
     private static final ThreadLocal<Map<ContentPropertyKey, ExcelContentProperty>> CONTENT_THREAD_LOCAL =
             new ThreadLocal<>();
 
-    private static final Map<CacheLocationEnum, MetadataCacheStrategy<ContentPropertyKey, ExcelContentProperty>>
-            CONTENT_STRATEGIES = MetadataCacheStrategy.byLocation(ClassUtils.CONTENT_CACHE, CONTENT_THREAD_LOCAL);
+    private static final MetadataCaches<ContentPropertyKey, ExcelContentProperty> CONTENT_CACHES =
+            new MetadataCaches<>(ClassUtils.CONTENT_CACHE, CONTENT_THREAD_LOCAL);
 
-    private static final Map<CacheLocationEnum, MetadataCacheStrategy<Class<?>, Map<String, ExcelContentProperty>>>
-            CLASS_CONTENT_STRATEGIES =
-                    MetadataCacheStrategy.byLocation(ClassUtils.CLASS_CONTENT_CACHE, CLASS_CONTENT_THREAD_LOCAL);
+    private static final MetadataCaches<Class<?>, Map<String, ExcelContentProperty>> CLASS_CONTENT_CACHES =
+            new MetadataCaches<>(ClassUtils.CLASS_CONTENT_CACHE, CLASS_CONTENT_THREAD_LOCAL);
 
     private SheetContentPropertyResolver() {}
 
@@ -99,12 +97,10 @@ final class SheetContentPropertyResolver {
 
     private static ExcelContentProperty getExcelContentProperty(
             Class<?> clazz, Class<?> headClass, String fieldName, ConfigurationHolder configurationHolder) {
-        return MetadataCacheStrategy.select(
-                        CONTENT_STRATEGIES,
-                        configurationHolder.globalConfiguration().getFiledCacheLocation())
-                .get(
-                        buildKey(clazz, headClass, fieldName),
-                        key -> doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder));
+        return CONTENT_CACHES.get(
+                configurationHolder,
+                buildKey(clazz, headClass, fieldName),
+                key -> doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder));
     }
 
     private static ExcelContentProperty doGetExcelContentProperty(
@@ -160,10 +156,7 @@ final class SheetContentPropertyResolver {
         if (clazz == null) {
             return null;
         }
-        return MetadataCacheStrategy.select(
-                        CLASS_CONTENT_STRATEGIES,
-                        configurationHolder.globalConfiguration().getFiledCacheLocation())
-                .get(clazz, key -> doDeclaredFieldContentMap(clazz));
+        return CLASS_CONTENT_CACHES.get(configurationHolder, clazz, key -> doDeclaredFieldContentMap(clazz));
     }
 
     private static Map<String, ExcelContentProperty> doDeclaredFieldContentMap(Class<?> clazz) {

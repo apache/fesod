@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.util;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
@@ -38,9 +39,13 @@ import org.apache.fesod.sheet.metadata.ConfigurationHolder;
  */
 final class MetadataCaches<K, V> {
 
+    private final ConcurrentHashMap<K, V> memoryCache = new ConcurrentHashMap<>();
+
+    private final ThreadLocal<Map<K, V>> threadLocalCache = new ThreadLocal<>();
+
     private final Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> byLocation;
 
-    MetadataCaches(Map<K, V> memoryCache, ThreadLocal<Map<K, V>> threadLocalCache) {
+    MetadataCaches() {
         Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> strategies = new EnumMap<>(CacheLocationEnum.class);
         strategies.put(CacheLocationEnum.MEMORY, new MetadataCacheStrategy.InMemoryCache<>(memoryCache));
         strategies.put(CacheLocationEnum.THREAD_LOCAL, new MetadataCacheStrategy.ThreadLocalCache<>(threadLocalCache));
@@ -49,16 +54,39 @@ final class MetadataCaches<K, V> {
     }
 
     /**
-     * Caches in the tier {@code configurationHolder} is configured for, failing loudly when a
-     * {@link CacheLocationEnum} constant has no strategy registered for it.
+     * The map backing {@link CacheLocationEnum#MEMORY}, so {@link ClassUtils} can keep publishing it
+     * without owning it.
+     */
+    ConcurrentHashMap<K, V> memoryCache() {
+        return memoryCache;
+    }
+
+    /**
+     * Caches in the tier {@code configurationHolder} is configured for.
      */
     V get(ConfigurationHolder configurationHolder, K key, Function<K, V> mappingFunction) {
         CacheLocationEnum cacheLocation =
                 configurationHolder.globalConfiguration().getFiledCacheLocation();
+        return at(cacheLocation).get(key, mappingFunction);
+    }
+
+    void clearThreadLocal() {
+        at(CacheLocationEnum.THREAD_LOCAL).clear();
+    }
+
+    void clearInMemory() {
+        at(CacheLocationEnum.MEMORY).clear();
+    }
+
+    /**
+     * Looks up the strategy configured for {@code cacheLocation}, failing loudly when a
+     * {@link CacheLocationEnum} constant has no strategy registered for it.
+     */
+    private MetadataCacheStrategy<K, V> at(CacheLocationEnum cacheLocation) {
         MetadataCacheStrategy<K, V> strategy = byLocation.get(cacheLocation);
         if (strategy == null) {
             throw new UnsupportedOperationException("unsupported enum");
         }
-        return strategy.get(key, mappingFunction);
+        return strategy;
     }
 }

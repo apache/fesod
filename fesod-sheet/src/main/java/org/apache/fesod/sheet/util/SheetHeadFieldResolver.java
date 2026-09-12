@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.MapUtils;
@@ -50,13 +51,7 @@ import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
  */
 final class SheetHeadFieldResolver {
 
-    /**
-     * thread local cache
-     */
-    private static final ThreadLocal<Map<FieldCacheKey, FieldCache>> FIELD_THREAD_LOCAL = new ThreadLocal<>();
-
-    private static final MetadataCaches<FieldCacheKey, FieldCache> FIELD_CACHES =
-            new MetadataCaches<>(ClassUtils.FIELD_CACHE, FIELD_THREAD_LOCAL);
+    private static final MetadataCaches<FieldCacheKey, FieldCache> FIELD_CACHES = new MetadataCaches<>();
 
     private SheetHeadFieldResolver() {}
 
@@ -73,8 +68,16 @@ final class SheetHeadFieldResolver {
                 key -> doResolve(clazz, configurationHolder));
     }
 
-    static void removeThreadLocalCache() {
-        FIELD_THREAD_LOCAL.remove();
+    static ConcurrentHashMap<FieldCacheKey, FieldCache> fieldCache() {
+        return FIELD_CACHES.memoryCache();
+    }
+
+    static void clearThreadLocalCache() {
+        FIELD_CACHES.clearThreadLocal();
+    }
+
+    static void clearInMemoryCache() {
+        FIELD_CACHES.clearInMemory();
     }
 
     private static FieldCache doResolve(Class<?> clazz, ConfigurationHolder configurationHolder) {

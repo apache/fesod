@@ -39,6 +39,13 @@ interface MetadataCacheStrategy<K, V> {
     V get(K key, Function<K, V> mappingFunction);
 
     /**
+     * Drops the cached entries. {@code ThreadLocal}-backed implementations must detach the entry from
+     * the thread ({@link ThreadLocal#remove()}) rather than merely empty the map they hold, otherwise
+     * pooled threads keep the entry forever.
+     */
+    void clear();
+
+    /**
      * The cache will not be cleared unless the app is stopped.
      */
     class InMemoryCache<K, V> implements MetadataCacheStrategy<K, V> {
@@ -52,6 +59,11 @@ interface MetadataCacheStrategy<K, V> {
         @Override
         public V get(K key, Function<K, V> mappingFunction) {
             return cache.computeIfAbsent(key, mappingFunction);
+        }
+
+        @Override
+        public void clear() {
+            cache.clear();
         }
     }
 
@@ -76,6 +88,11 @@ interface MetadataCacheStrategy<K, V> {
             }
             return cacheMap.computeIfAbsent(key, mappingFunction);
         }
+
+        @Override
+        public void clear() {
+            cache.remove();
+        }
     }
 
     /**
@@ -86,6 +103,11 @@ interface MetadataCacheStrategy<K, V> {
         @Override
         public V get(K key, Function<K, V> mappingFunction) {
             return mappingFunction.apply(key);
+        }
+
+        @Override
+        public void clear() {
+            // nothing is cached
         }
     }
 }

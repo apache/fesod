@@ -27,6 +27,7 @@ package org.apache.fesod.sheet.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,20 +47,57 @@ public class ClassUtils {
 
     /**
      * memory cache
+     * This field is deprecated; use {@link #getFieldCache()} and {@link #removeInMemoryCache()} instead.
+     * <p>
+     * This field will be removed in future versions.
+     * </p>
      */
-    public static final Map<FieldCacheKey, FieldCache> FIELD_CACHE = new ConcurrentHashMap<>();
+    @Deprecated
+    public static final Map<FieldCacheKey, FieldCache> FIELD_CACHE = SheetHeadFieldResolver.fieldCache();
 
     /**
      * The cache configuration information for each of the class
+     * This field is deprecated; use {@link #getClassContentCache()} and {@link #removeInMemoryCache()}
+     * instead.
+     * <p>
+     * This field will be removed in future versions.
+     * </p>
      */
+    @Deprecated
     public static final ConcurrentHashMap<Class<?>, Map<String, ExcelContentProperty>> CLASS_CONTENT_CACHE =
-            new ConcurrentHashMap<>();
+            SheetContentPropertyResolver.classContentCache();
 
     /**
      * The cache configuration information for each of the class
+     * This field is deprecated; use {@link #getContentCache()} and {@link #removeInMemoryCache()} instead.
+     * <p>
+     * This field will be removed in future versions.
+     * </p>
      */
+    @Deprecated
     public static final ConcurrentHashMap<ContentPropertyKey, ExcelContentProperty> CONTENT_CACHE =
-            new ConcurrentHashMap<>();
+            SheetContentPropertyResolver.contentCache();
+
+    /**
+     * An immutable view of the memory cache of parsed fields.
+     */
+    public static Map<FieldCacheKey, FieldCache> getFieldCache() {
+        return Collections.unmodifiableMap(SheetHeadFieldResolver.fieldCache());
+    }
+
+    /**
+     * An immutable view of the memory cache of the configuration information for each of the class.
+     */
+    public static Map<Class<?>, Map<String, ExcelContentProperty>> getClassContentCache() {
+        return Collections.unmodifiableMap(SheetContentPropertyResolver.classContentCache());
+    }
+
+    /**
+     * An immutable view of the memory cache of the configuration information for each of the field.
+     */
+    public static Map<ContentPropertyKey, ExcelContentProperty> getContentCache() {
+        return Collections.unmodifiableMap(SheetContentPropertyResolver.contentCache());
+    }
 
     /**
      * Calculate the configuration information for the class
@@ -164,7 +202,12 @@ public class ClassUtils {
     }
 
     public static void removeThreadLocalCache() {
-        SheetHeadFieldResolver.removeThreadLocalCache();
-        SheetContentPropertyResolver.removeThreadLocalCache();
+        SheetHeadFieldResolver.clearThreadLocalCache();
+        SheetContentPropertyResolver.clearThreadLocalCache();
+    }
+
+    public static void removeInMemoryCache() {
+        SheetHeadFieldResolver.clearInMemoryCache();
+        SheetContentPropertyResolver.clearInMemoryCache();
     }
 }

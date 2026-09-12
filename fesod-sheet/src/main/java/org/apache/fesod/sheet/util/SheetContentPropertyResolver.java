@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
@@ -50,23 +51,11 @@ import org.apache.fesod.sheet.util.ClassUtils.ContentPropertyKey;
  */
 final class SheetContentPropertyResolver {
 
-    /**
-     * The cache configuration information for each of the class
-     */
-    private static final ThreadLocal<Map<Class<?>, Map<String, ExcelContentProperty>>> CLASS_CONTENT_THREAD_LOCAL =
-            new ThreadLocal<>();
-
-    /**
-     * The cache configuration information for each of the class
-     */
-    private static final ThreadLocal<Map<ContentPropertyKey, ExcelContentProperty>> CONTENT_THREAD_LOCAL =
-            new ThreadLocal<>();
-
     private static final MetadataCaches<ContentPropertyKey, ExcelContentProperty> CONTENT_CACHES =
-            new MetadataCaches<>(ClassUtils.CONTENT_CACHE, CONTENT_THREAD_LOCAL);
+            new MetadataCaches<>();
 
     private static final MetadataCaches<Class<?>, Map<String, ExcelContentProperty>> CLASS_CONTENT_CACHES =
-            new MetadataCaches<>(ClassUtils.CLASS_CONTENT_CACHE, CLASS_CONTENT_THREAD_LOCAL);
+            new MetadataCaches<>();
 
     private SheetContentPropertyResolver() {}
 
@@ -90,9 +79,22 @@ final class SheetContentPropertyResolver {
         return getExcelContentProperty(clazz, headClazz, fieldName, configurationHolder);
     }
 
-    static void removeThreadLocalCache() {
-        CLASS_CONTENT_THREAD_LOCAL.remove();
-        CONTENT_THREAD_LOCAL.remove();
+    static ConcurrentHashMap<ContentPropertyKey, ExcelContentProperty> contentCache() {
+        return CONTENT_CACHES.memoryCache();
+    }
+
+    static ConcurrentHashMap<Class<?>, Map<String, ExcelContentProperty>> classContentCache() {
+        return CLASS_CONTENT_CACHES.memoryCache();
+    }
+
+    static void clearThreadLocalCache() {
+        CLASS_CONTENT_CACHES.clearThreadLocal();
+        CONTENT_CACHES.clearThreadLocal();
+    }
+
+    static void clearInMemoryCache() {
+        CLASS_CONTENT_CACHES.clearInMemory();
+        CONTENT_CACHES.clearInMemory();
     }
 
     private static ExcelContentProperty getExcelContentProperty(

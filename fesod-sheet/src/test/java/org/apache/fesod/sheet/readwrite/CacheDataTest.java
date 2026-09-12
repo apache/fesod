@@ -42,7 +42,6 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
-import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -57,9 +56,10 @@ public class CacheDataTest extends AbstractExcelTest {
     @Test
     void clearsThreadLocalFieldCacheAfterRead() throws Exception {
         File file07 = createTempFile("cache", ExcelFormat.XLSX);
-        Field field = FieldUtils.getField(ClassUtils.class, "FIELD_THREAD_LOCAL", true);
+        Class<?> resolver = Class.forName("org.apache.fesod.sheet.util.SheetHeadFieldResolver");
+        Field field = FieldUtils.getField(resolver, "FIELD_THREAD_LOCAL", true);
         ThreadLocal<Map<Class<?>, FieldCache>> fieldThreadLocal =
-                (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(ClassUtils.class.newInstance());
+                (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(null);
         Assertions.assertNull(fieldThreadLocal.get());
         FesodSheet.write(file07, CacheData.class).sheet().doWrite(TestDataBuilder.cacheData(10));
         FesodSheet.read(file07, CacheData.class, new PageReadListener<CacheData>(dataList -> {

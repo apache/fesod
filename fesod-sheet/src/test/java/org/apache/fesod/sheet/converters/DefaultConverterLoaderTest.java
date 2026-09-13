@@ -19,9 +19,11 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Map;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.instant.InstantStringConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
@@ -65,6 +67,21 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 LocalTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersInstantStringConverter() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                InstantStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Instant.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                InstantStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Instant.class)));
+        Assertions.assertInstanceOf(
+                InstantStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(Instant.class, CellDataTypeEnum.STRING)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

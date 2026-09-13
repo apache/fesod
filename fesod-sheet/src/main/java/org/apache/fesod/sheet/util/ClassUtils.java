@@ -47,7 +47,9 @@ public class ClassUtils {
 
     /**
      * memory cache
+     * <p>
      * This field is deprecated; use {@link #getFieldCache()} and {@link #removeInMemoryCache()} instead.
+     * </p>
      * <p>
      * This field will be removed in future versions.
      * </p>
@@ -57,8 +59,10 @@ public class ClassUtils {
 
     /**
      * The cache configuration information for each of the class
+     * <p>
      * This field is deprecated; use {@link #getClassContentCache()} and {@link #removeInMemoryCache()}
      * instead.
+     * </p>
      * <p>
      * This field will be removed in future versions.
      * </p>
@@ -69,7 +73,9 @@ public class ClassUtils {
 
     /**
      * The cache configuration information for each of the class
+     * <p>
      * This field is deprecated; use {@link #getContentCache()} and {@link #removeInMemoryCache()} instead.
+     * </p>
      * <p>
      * This field will be removed in future versions.
      * </p>

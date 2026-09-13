@@ -28,9 +28,7 @@ import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 
 /**
- * Date and date converter
- *
- *
+ * Converter for {@link java.sql.Date} and Excel date cells.
  */
 public class SqlDateDateConverter implements Converter<Date> {
     @Override

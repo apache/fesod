@@ -28,6 +28,8 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,11 +40,27 @@ import org.junit.jupiter.api.Test;
 @Tag(Tags.UNIT)
 class SqlDateConverterTest {
 
+    @AfterEach
+    void tearDown() {
+        DateUtils.removeThreadLocalCache();
+    }
+
     @Test
     void dateConverterSupportsSqlDate() {
         SqlDateDateConverter converter = new SqlDateDateConverter();
 
         Assertions.assertEquals(Date.class, converter.supportJavaTypeKey());
+    }
+
+    @Test
+    void dateConverterConvertsToExcelData() throws Exception {
+        SqlDateDateConverter converter = new SqlDateDateConverter();
+        ExcelContentProperty contentProperty = contentProperty("yyyy-MM-dd");
+        Date value = Date.valueOf("2026-09-06");
+
+        WriteCellData<?> actual = converter.convertToExcelData(value, contentProperty, new GlobalConfiguration());
+
+        Assertions.assertEquals(value.toLocalDate().atStartOfDay(), actual.getDateValue());
     }
 
     @Test
@@ -55,6 +73,30 @@ class SqlDateConverterTest {
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(Date.class, actual.getClass());
         Assertions.assertEquals(CellDataTypeEnum.NUMBER, converter.supportExcelTypeKey());
+    }
+
+    @Test
+    void numberConverterUses1904Windowing() {
+        SqlDateNumberConverter converter = new SqlDateNumberConverter();
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setUse1904windowing(Boolean.TRUE);
+        ReadCellData<?> cellData = new ReadCellData<>(BigDecimal.ONE);
+
+        Date actual = converter.convertToJavaData(cellData, null, configuration);
+
+        Assertions.assertEquals(new Date(DateUtils.getJavaDate(1, true).getTime()), actual);
+    }
+
+    @Test
+    void numberConverterPrefersExplicitWindowingOverGlobal() {
+        SqlDateNumberConverter converter = new SqlDateNumberConverter();
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setUse1904windowing(Boolean.TRUE);
+        ExcelContentProperty contentProperty = contentProperty("yyyy-MM-dd", Boolean.FALSE);
+
+        Date actual = converter.convertToJavaData(new ReadCellData<>(BigDecimal.ONE), contentProperty, configuration);
+
+        Assertions.assertEquals(new Date(DateUtils.getJavaDate(1, false).getTime()), actual);
     }
 
     @Test
@@ -81,8 +123,12 @@ class SqlDateConverterTest {
     }
 
     private static ExcelContentProperty contentProperty(String format) {
+        return contentProperty(format, null);
+    }
+
+    private static ExcelContentProperty contentProperty(String format, Boolean use1904windowing) {
         ExcelContentProperty contentProperty = new ExcelContentProperty();
-        contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty(format, null));
+        contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty(format, use1904windowing));
         return contentProperty;
     }
 }

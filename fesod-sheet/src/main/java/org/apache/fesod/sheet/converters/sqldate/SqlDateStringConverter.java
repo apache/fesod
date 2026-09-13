@@ -30,9 +30,7 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.DateUtils;
 
 /**
- * Date and string converter
- *
- *
+ * Converter for {@link java.sql.Date} and Excel string cells.
  */
 public class SqlDateStringConverter implements Converter<Date> {
     @Override

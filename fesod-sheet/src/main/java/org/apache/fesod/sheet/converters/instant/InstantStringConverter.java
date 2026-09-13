@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.converters.instant;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -46,7 +47,12 @@ public class InstantStringConverter implements Converter<Instant> {
     @Override
     public Instant convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return OffsetDateTime.parse(cellData.getStringValue()).toInstant();
+        String value = cellData.getStringValue();
+        OffsetDateTime offsetDateTime = OffsetDateTime.parse(value);
+        if (offsetDateTime.getOffset().getTotalSeconds() != 0) {
+            throw new DateTimeParseException("Instant value must use a UTC offset", value, 0);
+        }
+        return offsetDateTime.toInstant();
     }
 
     @Override

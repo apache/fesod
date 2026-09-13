@@ -51,12 +51,20 @@ class InstantStringConverterTest {
     @CsvSource({
         "1970-01-01T00:00:00Z, 1970-01-01T00:00:00Z",
         "2026-09-08T12:34:56.123456789Z, 2026-09-08T12:34:56.123456789Z",
-        "2026-09-08T20:34:56+08:00, 2026-09-08T12:34:56Z"
+        "2026-09-08T12:34:56+00:00, 2026-09-08T12:34:56Z"
     })
-    void convertToJavaDataParsesIso8601(String value, String expected) {
+    void convertToJavaDataParsesUtcIso8601(String value, String expected) {
         Instant actual = converter.convertToJavaData(new ReadCellData<>(value), null, GLOBAL_CONFIGURATION);
 
         Assertions.assertEquals(Instant.parse(expected), actual);
+    }
+
+    @Test
+    void convertToJavaDataRejectsNonUtcOffset() {
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(
+                        new ReadCellData<>("2026-09-08T20:34:56+08:00"), null, GLOBAL_CONFIGURATION));
     }
 
     @Test

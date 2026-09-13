@@ -21,10 +21,13 @@ package org.apache.fesod.sheet.converters.year;
 
 import java.time.DateTimeException;
 import java.time.Year;
+import java.util.Locale;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
+import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -64,5 +67,30 @@ class YearStringConverterTest {
         WriteCellData<?> cellData = converter.convertToExcelData(Year.of(2026), null, GLOBAL_CONFIGURATION);
         Assertions.assertEquals(CellDataTypeEnum.STRING, cellData.getType());
         Assertions.assertEquals("2026", cellData.getStringValue());
+    }
+
+    @Test
+    void convertToExcelDataUsesCustomFormat() {
+        ExcelContentProperty contentProperty = new ExcelContentProperty();
+        contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty("'Y'yyyy", null));
+        WriteCellData<?> cellData = converter.convertToExcelData(Year.of(2026), contentProperty, GLOBAL_CONFIGURATION);
+        Assertions.assertEquals("Y2026", cellData.getStringValue());
+    }
+
+    @Test
+    void convertToExcelDataRespectsLocaleForEraPatterns() {
+        GlobalConfiguration chinaConfiguration = new GlobalConfiguration();
+        chinaConfiguration.setLocale(Locale.CHINA);
+        GlobalConfiguration usConfiguration = new GlobalConfiguration();
+        usConfiguration.setLocale(Locale.US);
+        ExcelContentProperty contentProperty = new ExcelContentProperty();
+        contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty("G y", null));
+
+        WriteCellData<?> chinaCellData =
+                converter.convertToExcelData(Year.of(2026), contentProperty, chinaConfiguration);
+        Assertions.assertEquals("公元 2026", chinaCellData.getStringValue());
+
+        WriteCellData<?> usCellData = converter.convertToExcelData(Year.of(2026), contentProperty, usConfiguration);
+        Assertions.assertEquals("AD 2026", usCellData.getStringValue());
     }
 }

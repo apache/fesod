@@ -19,7 +19,9 @@
 
 package org.apache.fesod.sheet.util;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
@@ -52,6 +54,14 @@ interface MetadataCacheStrategy<K, V> {
 
         private final Map<K, V> cache;
 
+        InMemoryCache() {
+            this(new ConcurrentHashMap<>());
+        }
+
+        /**
+         * Backs this cache with {@code cache}, to allow map types other than the default
+         * {@link ConcurrentHashMap}.
+         */
         InMemoryCache(Map<K, V> cache) {
             this.cache = cache;
         }
@@ -65,6 +75,27 @@ interface MetadataCacheStrategy<K, V> {
         public void clear() {
             cache.clear();
         }
+
+        /**
+         * Read-only view of the cached entries.
+         */
+        Map<K, V> view() {
+            return Collections.unmodifiableMap(cache);
+        }
+
+        /**
+         * The live map, only for the deprecated public cache fields on {@link ClassUtils}; remove with them.
+         * Those fields are declared as {@link ConcurrentHashMap}, so while they exist this cache must be
+         * backed by one.
+         */
+        ConcurrentHashMap<K, V> backingMap() {
+            if (!(cache instanceof ConcurrentHashMap)) {
+                throw new IllegalStateException(
+                        "The deprecated ClassUtils cache fields require a ConcurrentHashMap, but got "
+                                + cache.getClass().getName());
+            }
+            return (ConcurrentHashMap<K, V>) cache;
+        }
     }
 
     /**
@@ -73,11 +104,7 @@ interface MetadataCacheStrategy<K, V> {
      */
     class ThreadLocalCache<K, V> implements MetadataCacheStrategy<K, V> {
 
-        private final ThreadLocal<Map<K, V>> cache;
-
-        ThreadLocalCache(ThreadLocal<Map<K, V>> cache) {
-            this.cache = cache;
-        }
+        private final ThreadLocal<Map<K, V>> cache = new ThreadLocal<>();
 
         @Override
         public V get(K key, Function<K, V> mappingFunction) {

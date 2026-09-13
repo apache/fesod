@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -88,21 +87,21 @@ public class ClassUtils {
      * An immutable view of the memory cache of parsed fields.
      */
     public static Map<FieldCacheKey, FieldCache> getFieldCache() {
-        return Collections.unmodifiableMap(SheetHeadFieldResolver.fieldCache());
+        return SheetHeadFieldResolver.fieldCacheView();
     }
 
     /**
      * An immutable view of the memory cache of the configuration information for each of the class.
      */
     public static Map<Class<?>, Map<String, ExcelContentProperty>> getClassContentCache() {
-        return Collections.unmodifiableMap(SheetContentPropertyResolver.classContentCache());
+        return SheetContentPropertyResolver.classContentCacheView();
     }
 
     /**
      * An immutable view of the memory cache of the configuration information for each of the field.
      */
     public static Map<ContentPropertyKey, ExcelContentProperty> getContentCache() {
-        return Collections.unmodifiableMap(SheetContentPropertyResolver.contentCache());
+        return SheetContentPropertyResolver.contentCacheView();
     }
 
     /**

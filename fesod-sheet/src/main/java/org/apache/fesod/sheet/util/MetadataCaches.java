@@ -39,26 +39,31 @@ import org.apache.fesod.sheet.metadata.ConfigurationHolder;
  */
 final class MetadataCaches<K, V> {
 
-    private final ConcurrentHashMap<K, V> memoryCache = new ConcurrentHashMap<>();
-
-    private final ThreadLocal<Map<K, V>> threadLocalCache = new ThreadLocal<>();
+    private final MetadataCacheStrategy.InMemoryCache<K, V> inMemoryCache = new MetadataCacheStrategy.InMemoryCache<>();
 
     private final Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> byLocation;
 
     MetadataCaches() {
         Map<CacheLocationEnum, MetadataCacheStrategy<K, V>> strategies = new EnumMap<>(CacheLocationEnum.class);
-        strategies.put(CacheLocationEnum.MEMORY, new MetadataCacheStrategy.InMemoryCache<>(memoryCache));
-        strategies.put(CacheLocationEnum.THREAD_LOCAL, new MetadataCacheStrategy.ThreadLocalCache<>(threadLocalCache));
+        strategies.put(CacheLocationEnum.MEMORY, inMemoryCache);
+        strategies.put(CacheLocationEnum.THREAD_LOCAL, new MetadataCacheStrategy.ThreadLocalCache<>());
         strategies.put(CacheLocationEnum.NONE, new MetadataCacheStrategy.NoOpCache<>());
         this.byLocation = Collections.unmodifiableMap(strategies);
     }
 
     /**
-     * The map backing {@link CacheLocationEnum#MEMORY}, so {@link ClassUtils} can keep publishing it
-     * without owning it.
+     * Read-only view of the {@link CacheLocationEnum#MEMORY} cache.
      */
-    ConcurrentHashMap<K, V> memoryCache() {
-        return memoryCache;
+    Map<K, V> memoryView() {
+        return inMemoryCache.view();
+    }
+
+    /**
+     * The live {@link CacheLocationEnum#MEMORY} map, only for the deprecated public cache fields on
+     * {@link ClassUtils}; remove with them.
+     */
+    ConcurrentHashMap<K, V> memoryBackingMap() {
+        return inMemoryCache.backingMap();
     }
 
     /**

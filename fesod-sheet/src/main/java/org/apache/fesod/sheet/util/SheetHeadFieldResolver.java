@@ -68,8 +68,15 @@ final class SheetHeadFieldResolver {
                 key -> doResolve(clazz, configurationHolder));
     }
 
+    static Map<FieldCacheKey, FieldCache> fieldCacheView() {
+        return FIELD_CACHES.memoryView();
+    }
+
+    /**
+     * Only for the deprecated {@link ClassUtils#FIELD_CACHE}; remove with it.
+     */
     static ConcurrentHashMap<FieldCacheKey, FieldCache> fieldCache() {
-        return FIELD_CACHES.memoryCache();
+        return FIELD_CACHES.memoryBackingMap();
     }
 
     static void clearThreadLocalCache() {

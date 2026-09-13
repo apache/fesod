@@ -69,8 +69,11 @@ public class CacheDataTest extends AbstractExcelTest {
     private static ThreadLocal<?> headFieldThreadLocal() throws Exception {
         Class<?> resolver = Class.forName("org.apache.fesod.sheet.util.SheetHeadFieldResolver");
         Object caches = FieldUtils.getField(resolver, "FIELD_CACHES", true).get(null);
-        Field threadLocalCache = FieldUtils.getField(caches.getClass(), "threadLocalCache", true);
-        return (ThreadLocal<?>) threadLocalCache.get(caches);
+        Map<?, ?> byLocation = (Map<?, ?>)
+                FieldUtils.getField(caches.getClass(), "byLocation", true).get(caches);
+        Object threadLocalCache = byLocation.get(CacheLocationEnum.THREAD_LOCAL);
+        return (ThreadLocal<?>)
+                FieldUtils.getField(threadLocalCache.getClass(), "cache", true).get(threadLocalCache);
     }
 
     @Test

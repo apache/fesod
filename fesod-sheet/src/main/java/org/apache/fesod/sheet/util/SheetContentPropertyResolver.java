@@ -79,12 +79,26 @@ final class SheetContentPropertyResolver {
         return getExcelContentProperty(clazz, headClazz, fieldName, configurationHolder);
     }
 
-    static ConcurrentHashMap<ContentPropertyKey, ExcelContentProperty> contentCache() {
-        return CONTENT_CACHES.memoryCache();
+    static Map<ContentPropertyKey, ExcelContentProperty> contentCacheView() {
+        return CONTENT_CACHES.memoryView();
     }
 
+    static Map<Class<?>, Map<String, ExcelContentProperty>> classContentCacheView() {
+        return CLASS_CONTENT_CACHES.memoryView();
+    }
+
+    /**
+     * Only for the deprecated {@link ClassUtils#CONTENT_CACHE}; remove with it.
+     */
+    static ConcurrentHashMap<ContentPropertyKey, ExcelContentProperty> contentCache() {
+        return CONTENT_CACHES.memoryBackingMap();
+    }
+
+    /**
+     * Only for the deprecated {@link ClassUtils#CLASS_CONTENT_CACHE}; remove with it.
+     */
     static ConcurrentHashMap<Class<?>, Map<String, ExcelContentProperty>> classContentCache() {
-        return CLASS_CONTENT_CACHES.memoryCache();
+        return CLASS_CONTENT_CACHES.memoryBackingMap();
     }
 
     static void clearThreadLocalCache() {

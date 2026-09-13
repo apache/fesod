@@ -463,7 +463,7 @@ class DateUtilsTest {
         boolean res1 = DateUtils.isADateFormat(formatId, formatStr);
         Assertions.assertTrue(res1);
 
-        Field threadLocalField = DateUtils.class.getDeclaredField("DATE_THREAD_LOCAL");
+        Field threadLocalField = ExcelDateFormatDetector.class.getDeclaredField("DATE_THREAD_LOCAL");
         threadLocalField.setAccessible(true);
         ThreadLocal<Map<Short, Boolean>> tl = (ThreadLocal<Map<Short, Boolean>>) threadLocalField.get(null);
 
@@ -482,7 +482,7 @@ class DateUtilsTest {
         DateUtils.format(LocalDate.of(2026, 7, 13), "MMMM", Locale.US);
         DateUtils.isADateFormat((short) 100, "yyyy-MM-dd");
 
-        Field f1 = DateUtils.class.getDeclaredField("DATE_THREAD_LOCAL");
+        Field f1 = ExcelDateFormatDetector.class.getDeclaredField("DATE_THREAD_LOCAL");
         Field f2 = DateUtils.class.getDeclaredField("DATE_FORMAT_THREAD_LOCAL");
         Field f3 = DateUtils.class.getDeclaredField("DATE_TIME_FORMATTER_THREAD_LOCAL");
         f1.setAccessible(true);

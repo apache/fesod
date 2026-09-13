@@ -76,7 +76,7 @@ final class SheetContentPropertyResolver {
                 clazz = bean.getClass();
             }
         }
-        return getExcelContentProperty(clazz, headClazz, fieldName, configurationHolder);
+        return resolve(clazz, headClazz, fieldName, configurationHolder);
     }
 
     static Map<ContentPropertyKey, ExcelContentProperty> contentCacheView() {
@@ -111,22 +111,21 @@ final class SheetContentPropertyResolver {
         CONTENT_CACHES.clearInMemory();
     }
 
-    private static ExcelContentProperty getExcelContentProperty(
+    private static ExcelContentProperty resolve(
             Class<?> clazz, Class<?> headClass, String fieldName, ConfigurationHolder configurationHolder) {
         return CONTENT_CACHES.get(
                 configurationHolder,
                 buildKey(clazz, headClass, fieldName),
-                key -> doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder));
+                key -> doResolve(clazz, headClass, fieldName, configurationHolder));
     }
 
-    private static ExcelContentProperty doGetExcelContentProperty(
+    private static ExcelContentProperty doResolve(
             Class<?> clazz, Class<?> headClass, String fieldName, ConfigurationHolder configurationHolder) {
-        ExcelContentProperty excelContentProperty = Optional.ofNullable(
-                        declaredFieldContentMap(clazz, configurationHolder))
+        ExcelContentProperty excelContentProperty = Optional.ofNullable(resolveClassContent(clazz, configurationHolder))
                 .map(map -> map.get(fieldName))
                 .orElse(null);
         ExcelContentProperty headExcelContentProperty = Optional.ofNullable(
-                        declaredFieldContentMap(headClass, configurationHolder))
+                        resolveClassContent(headClass, configurationHolder))
                 .map(map -> map.get(fieldName))
                 .orElse(null);
         ExcelContentProperty combineExcelContentProperty = new ExcelContentProperty();
@@ -167,15 +166,15 @@ final class SheetContentPropertyResolver {
         return new ContentPropertyKey(clazz, headClass, fieldName);
     }
 
-    private static Map<String, ExcelContentProperty> declaredFieldContentMap(
+    private static Map<String, ExcelContentProperty> resolveClassContent(
             Class<?> clazz, ConfigurationHolder configurationHolder) {
         if (clazz == null) {
             return null;
         }
-        return CLASS_CONTENT_CACHES.get(configurationHolder, clazz, key -> doDeclaredFieldContentMap(clazz));
+        return CLASS_CONTENT_CACHES.get(configurationHolder, clazz, key -> doResolveClassContent(clazz));
     }
 
-    private static Map<String, ExcelContentProperty> doDeclaredFieldContentMap(Class<?> clazz) {
+    private static Map<String, ExcelContentProperty> doResolveClassContent(Class<?> clazz) {
         if (clazz == null) {
             return null;
         }

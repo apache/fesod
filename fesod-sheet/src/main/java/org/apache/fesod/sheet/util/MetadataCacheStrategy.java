@@ -42,7 +42,8 @@ interface MetadataCacheStrategy<K, V> {
     V get(K key, Function<K, V> mappingFunction);
 
     /**
-     * Drops the cached entries. {@code ThreadLocal}-backed implementations must detach the entry from
+     * Drops the cached entries visible to the calling thread: every entry for a shared cache, only the
+     * calling thread's own for a per-thread one. {@code ThreadLocal}-backed implementations must detach the entry from
      * the thread ({@link ThreadLocal#remove()}) rather than merely empty the map they hold, otherwise
      * pooled threads keep the entry forever.
      */

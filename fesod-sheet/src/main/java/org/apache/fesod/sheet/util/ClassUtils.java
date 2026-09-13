@@ -37,6 +37,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
@@ -84,21 +85,24 @@ public class ClassUtils {
             SheetContentPropertyResolver.contentCache();
 
     /**
-     * An immutable view of the memory cache of parsed fields.
+     * An unmodifiable, live view of the memory cache of parsed fields.
+     * The cached values are shared and must not be modified.
      */
     public static Map<FieldCacheKey, FieldCache> getFieldCache() {
         return SheetHeadFieldResolver.fieldCacheView();
     }
 
     /**
-     * An immutable view of the memory cache of the configuration information for each of the class.
+     * An unmodifiable, live view of the memory cache of the configuration information for each of the class.
+     * The inner maps and their values are shared and must not be modified.
      */
     public static Map<Class<?>, Map<String, ExcelContentProperty>> getClassContentCache() {
         return SheetContentPropertyResolver.classContentCacheView();
     }
 
     /**
-     * An immutable view of the memory cache of the configuration information for each of the field.
+     * An unmodifiable, live view of the memory cache of the configuration information for each of the field.
+     * The cached values are shared and must not be modified.
      */
     public static Map<ContentPropertyKey, ExcelContentProperty> getContentCache() {
         return SheetContentPropertyResolver.contentCacheView();
@@ -211,6 +215,10 @@ public class ClassUtils {
         SheetContentPropertyResolver.clearThreadLocalCache();
     }
 
+    /**
+     * Clears the {@link CacheLocationEnum#MEMORY} caches of parsed fields and content properties.
+     * The {@code ThreadLocal} caches are left untouched; use {@link #removeThreadLocalCache()} for them.
+     */
     public static void removeInMemoryCache() {
         SheetHeadFieldResolver.clearInMemoryCache();
         SheetContentPropertyResolver.clearInMemoryCache();

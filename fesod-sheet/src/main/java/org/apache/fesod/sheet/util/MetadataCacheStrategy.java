@@ -49,7 +49,7 @@ interface MetadataCacheStrategy<K, V> {
     void clear();
 
     /**
-     * The cache will not be cleared unless the app is stopped.
+     * The cache is kept until the app is stopped or {@link #clear()} is called.
      */
     class InMemoryCache<K, V> implements MetadataCacheStrategy<K, V> {
 
@@ -138,7 +138,7 @@ interface MetadataCacheStrategy<K, V> {
     }
 
     /**
-     * No caching.It may lose some of performance.
+     * No caching. It may lose some of performance.
      */
     class NoOpCache<K, V> implements MetadataCacheStrategy<K, V> {
 

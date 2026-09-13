@@ -126,7 +126,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void test_getFieldCache_immutableViewOfTheLiveCache() {
+    void test_getFieldCache_unmodifiableViewOfTheLiveCache() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
         ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
 

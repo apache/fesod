@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
@@ -106,11 +107,25 @@ interface MetadataCacheStrategy<K, V> {
 
         private final ThreadLocal<Map<K, V>> cache = new ThreadLocal<>();
 
+        private final Supplier<Map<K, V>> mapFactory;
+
+        ThreadLocalCache() {
+            this(MapUtils::newHashMap);
+        }
+
+        /**
+         * Creates each thread's map with {@code mapFactory}, to allow map types other than the default
+         * {@link java.util.HashMap}. The factory must return a new map on every call.
+         */
+        ThreadLocalCache(Supplier<Map<K, V>> mapFactory) {
+            this.mapFactory = mapFactory;
+        }
+
         @Override
         public V get(K key, Function<K, V> mappingFunction) {
             Map<K, V> cacheMap = cache.get();
             if (cacheMap == null) {
-                cacheMap = MapUtils.newHashMap();
+                cacheMap = mapFactory.get();
                 cache.set(cacheMap);
             }
             return cacheMap.computeIfAbsent(key, mappingFunction);

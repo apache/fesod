@@ -80,7 +80,7 @@ final class MetadataCaches<K, V> {
     }
 
     void clearInMemory() {
-        at(CacheLocationEnum.MEMORY).clear();
+        inMemoryCache.clear();
     }
 
     /**

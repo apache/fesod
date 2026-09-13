@@ -56,6 +56,8 @@ interface MetadataCacheStrategy<K, V> {
 
         private final Map<K, V> cache;
 
+        private final Map<K, V> view;
+
         InMemoryCache() {
             this(new ConcurrentHashMap<>());
         }
@@ -66,6 +68,7 @@ interface MetadataCacheStrategy<K, V> {
          */
         InMemoryCache(Map<K, V> cache) {
             this.cache = cache;
+            this.view = Collections.unmodifiableMap(cache);
         }
 
         @Override
@@ -82,7 +85,7 @@ interface MetadataCacheStrategy<K, V> {
          * Read-only view of the cached entries.
          */
         Map<K, V> view() {
-            return Collections.unmodifiableMap(cache);
+            return view;
         }
 
         /**

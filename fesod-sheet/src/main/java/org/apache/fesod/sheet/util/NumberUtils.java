@@ -118,9 +118,9 @@ public class NumberUtils {
      */
     public static Short parseShort(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).shortValue();
+            return toShort(new BigDecimal(string));
         }
-        return parse(string, contentProperty).shortValue();
+        return toShort(new BigDecimal(parse(string, contentProperty).toString()));
     }
 
     /**
@@ -132,9 +132,9 @@ public class NumberUtils {
      */
     public static Long parseLong(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).longValue();
+            return toLong(new BigDecimal(string));
         }
-        return parse(string, contentProperty).longValue();
+        return toLong(new BigDecimal(parse(string, contentProperty).toString()));
     }
 
     /**
@@ -146,9 +146,9 @@ public class NumberUtils {
      */
     public static Integer parseInteger(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).intValue();
+            return toInt(new BigDecimal(string));
         }
-        return parse(string, contentProperty).intValue();
+        return toInt(new BigDecimal(parse(string, contentProperty).toString()));
     }
 
     /**
@@ -189,9 +189,52 @@ public class NumberUtils {
      */
     public static Byte parseByte(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).byteValue();
+            return toByte(new BigDecimal(string));
         }
-        return parse(string, contentProperty).byteValue();
+        return toByte(new BigDecimal(parse(string, contentProperty).toString()));
+    }
+
+    /**
+     * Truncates towards zero like {@link BigDecimal#byteValue()}, but throws instead of wrapping around.
+     *
+     * @throws ArithmeticException if the integral part is out of range for {@code byte}
+     */
+    public static byte toByte(BigDecimal value) {
+        return checkRange(value, IntegralRange.BYTE).byteValue();
+    }
+
+    /**
+     * Truncates towards zero like {@link BigDecimal#shortValue()}, but throws instead of wrapping around.
+     *
+     * @throws ArithmeticException if the integral part is out of range for {@code short}
+     */
+    public static short toShort(BigDecimal value) {
+        return checkRange(value, IntegralRange.SHORT).shortValue();
+    }
+
+    /**
+     * Truncates towards zero like {@link BigDecimal#intValue()}, but throws instead of wrapping around.
+     *
+     * @throws ArithmeticException if the integral part is out of range for {@code int}
+     */
+    public static int toInt(BigDecimal value) {
+        return checkRange(value, IntegralRange.INTEGER).intValue();
+    }
+
+    /**
+     * Truncates towards zero like {@link BigDecimal#longValue()}, but throws instead of wrapping around.
+     *
+     * @throws ArithmeticException if the integral part is out of range for {@code long}
+     */
+    public static long toLong(BigDecimal value) {
+        return checkRange(value, IntegralRange.LONG).longValue();
+    }
+
+    private static BigDecimal checkRange(BigDecimal value, IntegralRange range) {
+        if (value.compareTo(range.lower) <= 0 || value.compareTo(range.upper) >= 0) {
+            throw new ArithmeticException(value + " is out of range for " + range.type);
+        }
+        return value;
     }
 
     /**
@@ -256,5 +299,25 @@ public class NumberUtils {
 
     public static void removeThreadLocalCache() {
         DECIMAL_FORMAT_THREAD_LOCAL.remove();
+    }
+
+    /**
+     * Exclusive bounds: a value strictly between them truncates towards zero into the target type's range.
+     */
+    private enum IntegralRange {
+        BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE, "Byte"),
+        SHORT(Short.MIN_VALUE, Short.MAX_VALUE, "Short"),
+        INTEGER(Integer.MIN_VALUE, Integer.MAX_VALUE, "Integer"),
+        LONG(Long.MIN_VALUE, Long.MAX_VALUE, "Long");
+
+        private final BigDecimal lower;
+        private final BigDecimal upper;
+        private final String type;
+
+        IntegralRange(long min, long max, String type) {
+            this.lower = BigDecimal.valueOf(min).subtract(BigDecimal.ONE);
+            this.upper = BigDecimal.valueOf(max).add(BigDecimal.ONE);
+            this.type = type;
+        }
     }
 }

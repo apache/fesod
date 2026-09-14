@@ -117,10 +117,7 @@ public class NumberUtils {
      * @return
      */
     public static Short parseShort(String string, ExcelContentProperty contentProperty) throws ParseException {
-        if (!hasFormat(contentProperty)) {
-            return toShort(new BigDecimal(string));
-        }
-        return toShort(new BigDecimal(parse(string, contentProperty).toString()));
+        return toShort(parseBigDecimal(string, contentProperty));
     }
 
     /**
@@ -131,10 +128,7 @@ public class NumberUtils {
      * @return
      */
     public static Long parseLong(String string, ExcelContentProperty contentProperty) throws ParseException {
-        if (!hasFormat(contentProperty)) {
-            return toLong(new BigDecimal(string));
-        }
-        return toLong(new BigDecimal(parse(string, contentProperty).toString()));
+        return toLong(parseBigDecimal(string, contentProperty));
     }
 
     /**
@@ -145,10 +139,7 @@ public class NumberUtils {
      * @return An integer converted from a string
      */
     public static Integer parseInteger(String string, ExcelContentProperty contentProperty) throws ParseException {
-        if (!hasFormat(contentProperty)) {
-            return toInt(new BigDecimal(string));
-        }
-        return toInt(new BigDecimal(parse(string, contentProperty).toString()));
+        return toInt(parseBigDecimal(string, contentProperty));
     }
 
     /**
@@ -188,10 +179,7 @@ public class NumberUtils {
      * @return
      */
     public static Byte parseByte(String string, ExcelContentProperty contentProperty) throws ParseException {
-        if (!hasFormat(contentProperty)) {
-            return toByte(new BigDecimal(string));
-        }
-        return toByte(new BigDecimal(parse(string, contentProperty).toString()));
+        return toByte(parseBigDecimal(string, contentProperty));
     }
 
     /**

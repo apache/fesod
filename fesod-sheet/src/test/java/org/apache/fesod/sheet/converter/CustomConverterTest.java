@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converter;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Timestamp;
@@ -40,6 +41,8 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -102,6 +105,28 @@ public class CustomConverterTest extends AbstractExcelTest {
                 .registerConverter(new TimestampStringConverter())
                 .sheet()
                 .doWrite(globalData());
+    }
+
+    @Test
+    void registeredConverterOverridesBuiltInConverterOnXlsxWrite() throws Exception {
+        File file = new File(tempDir, "converter16.xlsx");
+        RegisteredIntegerData writeData = new RegisteredIntegerData();
+        writeData.setValue(42);
+        List<RegisteredIntegerData> list = new ArrayList<>();
+        list.add(writeData);
+
+        FesodSheet.write(file, RegisteredIntegerData.class)
+                .registerConverter(new NegatingIntegerConverter())
+                .sheet()
+                .doWrite(list);
+
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            double written = workbook.getSheetAt(0).getRow(1).getCell(0).getNumericCellValue();
+            Assertions.assertEquals(
+                    -42.0,
+                    written,
+                    "registered converter must be used instead of the built-in Integer converter");
+        }
     }
 
     @Test
@@ -199,6 +224,41 @@ public class CustomConverterTest extends AbstractExcelTest {
         public WriteCellData<?> convertToExcelData(
                 String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
             return new WriteCellData<>("registered:" + value);
+        }
+    }
+
+    public static class RegisteredIntegerData {
+        @ExcelProperty("value")
+        private Integer value;
+
+        public Integer getValue() {
+            return value;
+        }
+
+        public void setValue(Integer value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * Deliberately writes the negated value instead of the real one, so a test can tell at a glance whether
+     * this converter ran (negative) or the built-in Integer converter ran instead (positive, the real value).
+     */
+    public static class NegatingIntegerConverter implements Converter<Integer> {
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return Integer.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return CellDataTypeEnum.NUMBER;
+        }
+
+        @Override
+        public WriteCellData<?> convertToExcelData(
+                Integer value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+            return new WriteCellData<>(BigDecimal.valueOf(-value));
         }
     }
 }

@@ -173,6 +173,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LongNumberConverter());
         putWriteConverter(new ShortNumberConverter());
         putWriteConverter(new StringStringConverter());
+        putWriteConverter(new YearStringConverter());
         putWriteConverter(new FileImageConverter());
         putWriteConverter(new InputStreamImageConverter());
         putWriteConverter(new ByteArrayImageConverter());

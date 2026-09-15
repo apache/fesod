@@ -273,11 +273,7 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
             setConverterMap(new HashMap<>(parentAbstractWriteHolder.getConverterMap()));
             if (CollectionUtils.isNotEmpty(parentAbstractWriteHolder.getCustomConverterList())) {
                 for (Converter<?> converter : parentAbstractWriteHolder.getCustomConverterList()) {
-                    getConverterMap()
-                            .put(
-                                    ConverterKeyBuild.buildKey(
-                                            converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                    converter);
+                    putCustomWriteConverter(converter);
                 }
             }
         }
@@ -285,13 +281,30 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
                 && !writeBasicParameter.getCustomConverterList().isEmpty()) {
             this.customConverterList = writeBasicParameter.getCustomConverterList();
             for (Converter<?> converter : writeBasicParameter.getCustomConverterList()) {
-                getConverterMap()
-                        .put(
-                                ConverterKeyBuild.buildKey(
-                                        converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                converter);
+                putCustomWriteConverter(converter);
             }
         }
+    }
+
+    /**
+     * Registers a custom write converter under every key the write lookup might actually use.
+     *
+     * <p>Default write converters are keyed by Java type only (see
+     * {@code DefaultConverterLoader#putWriteConverter}), because the target Excel cell type isn't known at
+     * write-lookup time: {@code AbstractExcelWriteExecutor#doConvert} looks up
+     * {@code buildKey(fieldClass, targetCellDataType)}, and {@code targetCellDataType} stays {@code null} except
+     * for CSV writes, which force it to {@code STRING}. Registering a custom converter only under
+     * {@code buildKey(javaType, converter.supportExcelTypeKey())} (as before) means it is never found by that
+     * lookup and the built-in converter — or none, if no built-in exists — is silently used instead. Registering
+     * it under the Java-type-only key as well fixes normal (non-CSV) writes; the original key is kept too so the
+     * converter still applies when a target cell type is explicitly forced (e.g. CSV's STRING).
+     */
+    private void putCustomWriteConverter(Converter<?> converter) {
+        getConverterMap().put(ConverterKeyBuild.buildKey(converter.supportJavaTypeKey()), converter);
+        getConverterMap()
+                .put(
+                        ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
+                        converter);
     }
 
     protected void initHandler(WriteBasicParameter writeBasicParameter, AbstractWriteHolder parentAbstractWriteHolder) {

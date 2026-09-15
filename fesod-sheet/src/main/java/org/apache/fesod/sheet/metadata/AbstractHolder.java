@@ -132,10 +132,14 @@ public abstract class AbstractHolder implements ConfigurationHolder {
      * register default converters
      */
     protected void initDefaultConverters(ExcelTypeEnum excelTypeEnum, boolean readable) {
+        if (readable) {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultReadConverter());
+            return;
+        }
         if (ExcelTypeEnum.CSV.equals(excelTypeEnum)) {
-            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultStringConverter(readable));
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultWriteStringConverter());
         } else {
-            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadAllConverter(readable));
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultWriteConverter());
         }
     }
 

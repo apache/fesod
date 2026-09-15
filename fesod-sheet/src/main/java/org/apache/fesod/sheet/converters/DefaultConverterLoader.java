@@ -78,7 +78,6 @@ import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
-import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 
 /**
  * Load default handler
@@ -88,7 +87,6 @@ import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 public class DefaultConverterLoader {
     private static Map<ConverterKey, Converter<?>> defaultWriteConverter;
     private static Map<ConverterKey, Converter<?>> defaultWriteStringConverter;
-    private static Map<ConverterKey, Converter<?>> defaultReadStringConverter;
     private static Map<ConverterKey, Converter<?>> allConverter;
 
     static {
@@ -98,7 +96,6 @@ public class DefaultConverterLoader {
 
     private static void initAllConverter() {
         allConverter = MapUtils.newHashMapWithExpectedSize(40);
-        defaultReadStringConverter = MapUtils.newHashMapWithExpectedSize(40);
         putAllConverter(new BigDecimalBooleanConverter());
         putAllConverter(new BigDecimalNumberConverter());
         putAllConverter(new BigDecimalStringConverter());
@@ -152,7 +149,6 @@ public class DefaultConverterLoader {
         putAllConverter(new StringStringConverter());
         putAllConverter(new StringErrorConverter());
         allConverter = Collections.unmodifiableMap(allConverter);
-        defaultReadStringConverter = Collections.unmodifiableMap(defaultReadStringConverter);
     }
 
     private static void initDefaultWriteConverter() {
@@ -178,7 +174,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new UrlImageConverter());
         defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
 
-        // In some cases, it must be converted to string (for CSV)
+        // In some cases, it must be converted to string
         defaultWriteStringConverter = MapUtils.newHashMapWithExpectedSize(40);
         putWriteStringConverter(new BigDecimalStringConverter());
         putWriteStringConverter(new BigIntegerStringConverter());
@@ -239,10 +235,6 @@ public class DefaultConverterLoader {
         return loadAllConverter();
     }
 
-    public static Map<ConverterKey, Converter<?>> loadDefaultReadStringConverter() {
-        return defaultReadStringConverter;
-    }
-
     /**
      * Copy default read converter
      *
@@ -270,22 +262,8 @@ public class DefaultConverterLoader {
         return new HashMap<>(loadAllConverter());
     }
 
-    public static Map<ConverterKey, Converter<?>> loadDefaultStringConverter(boolean readable) {
-        return readable ? loadDefaultReadStringConverter() : loadDefaultWriteStringConverter();
-    }
-
-    public static Map<ConverterKey, Converter<?>> loadAllConverter(boolean readable) {
-        return readable ? loadAllConverter() : loadDefaultWriteConverter();
-    }
-
     private static void putAllConverter(Converter<?> converter) {
         allConverter.put(
                 ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()), converter);
-
-        if (CellDataTypeEnum.STRING.equals(converter.supportExcelTypeKey())) {
-            defaultReadStringConverter.put(
-                    ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                    converter);
-        }
     }
 }

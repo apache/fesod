@@ -289,9 +289,6 @@ public class NumberUtils {
         DECIMAL_FORMAT_THREAD_LOCAL.remove();
     }
 
-    /**
-     * Exclusive bounds: a value strictly between them truncates towards zero into the target type's range.
-     */
     private enum IntegralRange {
         BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE, "Byte"),
         SHORT(Short.MIN_VALUE, Short.MAX_VALUE, "Short"),

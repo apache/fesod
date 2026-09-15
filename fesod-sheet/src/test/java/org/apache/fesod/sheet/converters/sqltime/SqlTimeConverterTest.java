@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.converters.sqltime;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.Locale;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -82,5 +83,24 @@ class SqlTimeConverterTest {
                 DateUtil.getExcelDate(time.toLocalTime().atDate(org.apache.fesod.sheet.util.DateUtils.EPOCH), true),
                 numeric.getNumberValue().doubleValue(),
                 1e-8);
+    }
+
+    @Test
+    void stringConverterUsesLocaleSensitiveAmPmMarker() {
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("HH:mm:ss a", Boolean.FALSE));
+        Time time = Time.valueOf("12:30:45");
+        SqlTimeStringConverter converter = new SqlTimeStringConverter();
+
+        GlobalConfiguration us = new GlobalConfiguration();
+        us.setLocale(Locale.US);
+        GlobalConfiguration china = new GlobalConfiguration();
+        china.setLocale(Locale.CHINA);
+
+        WriteCellData<?> usWritten = converter.convertToExcelData(time, property, us);
+        WriteCellData<?> chinaWritten = converter.convertToExcelData(time, property, china);
+
+        Assertions.assertEquals("12:30:45 PM", usWritten.getStringValue());
+        Assertions.assertEquals("12:30:45 下午", chinaWritten.getStringValue());
     }
 }

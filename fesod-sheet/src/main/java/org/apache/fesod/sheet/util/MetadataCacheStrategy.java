@@ -84,8 +84,8 @@ interface MetadataCacheStrategy<K, V> {
     }
 
     /**
-     * The cache will be stored in {@code ThreadLocal}, and will be cleared when the excel read and
-     * write is completed.
+     * The cache will be stored in {@code ThreadLocal}, and will be cleared when the spreadsheet
+     * read and write is completed.
      */
     class ThreadLocalCache<K, V> implements MetadataCacheStrategy<K, V> {
 

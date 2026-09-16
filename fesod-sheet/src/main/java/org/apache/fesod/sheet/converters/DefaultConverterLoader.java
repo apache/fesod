@@ -78,7 +78,7 @@ import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
-import org.apache.fesod.sheet.converters.uuid.UuidStringConverter;
+import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 
 /**
  * Load default handler
@@ -148,7 +148,7 @@ public class DefaultConverterLoader {
         putAllConverter(new StringNumberConverter());
         putAllConverter(new StringStringConverter());
         putAllConverter(new StringErrorConverter());
-        putAllConverter(new UuidStringConverter());
+        putAllConverter(new UUIDStringConverter());
         allConverter = Collections.unmodifiableMap(allConverter);
     }
 
@@ -173,7 +173,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new ByteArrayImageConverter());
         putWriteConverter(new BoxingByteArrayImageConverter());
         putWriteConverter(new UrlImageConverter());
-        putWriteConverter(new UuidStringConverter());
+        putWriteConverter(new UUIDStringConverter());
 
         // In some cases, it must be converted to string
         putWriteStringConverter(new BigDecimalStringConverter());
@@ -190,7 +190,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LongStringConverter());
         putWriteStringConverter(new ShortStringConverter());
         putWriteStringConverter(new StringStringConverter());
-        putWriteStringConverter(new UuidStringConverter());
+        putWriteStringConverter(new UUIDStringConverter());
         defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
     }
 

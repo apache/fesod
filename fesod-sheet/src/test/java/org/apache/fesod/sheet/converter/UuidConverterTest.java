@@ -28,7 +28,7 @@ import java.util.UUID;
 import lombok.Data;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
-import org.apache.fesod.sheet.converters.uuid.UuidStringConverter;
+import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelDataConvertException;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -43,13 +43,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @Tag(Tags.ROUND_TRIP)
 class UuidConverterTest extends AbstractExcelTest {
 
     private static final String TEXT = "123e4567-e89b-12d3-a456-426614174000";
-    private final UuidStringConverter converter = new UuidStringConverter();
+    private final UUIDStringConverter converter = new UUIDStringConverter();
     private final GlobalConfiguration configuration = new GlobalConfiguration();
 
     @Test
@@ -57,14 +58,14 @@ class UuidConverterTest extends AbstractExcelTest {
         Assertions.assertEquals(UUID.class, converter.supportJavaTypeKey());
         Assertions.assertEquals(CellDataTypeEnum.STRING, converter.supportExcelTypeKey());
         Assertions.assertInstanceOf(
-                UuidStringConverter.class,
+                UUIDStringConverter.class,
                 DefaultConverterLoader.loadDefaultReadConverter()
                         .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
         Assertions.assertInstanceOf(
-                UuidStringConverter.class,
+                UUIDStringConverter.class,
                 DefaultConverterLoader.loadDefaultWriteConverter().get(ConverterKeyBuild.buildKey(UUID.class)));
         Assertions.assertInstanceOf(
-                UuidStringConverter.class,
+                UUIDStringConverter.class,
                 DefaultConverterLoader.loadDefaultWriteConverter()
                         .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
     }
@@ -85,16 +86,34 @@ class UuidConverterTest extends AbstractExcelTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"not-a-uuid", "123e4567-e89b-12d3-a456-42661417400g", "123e4567e89b12d3a456426614174000"})
+    @ValueSource(
+            strings = {
+                "not-a-uuid",
+                "123e4567-e89b-12d3-a456-42661417400g",
+                "123e4567e89b12d3a456426614174000",
+                "  not-a-uuid\t",
+                "123e4567-e89b-12d3-a456-42661417 4000"
+            })
     void rejectsInvalidInput(String input) {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> converter.convertToJavaData(new ReadCellData<>(input), null, configuration));
     }
 
-    @Test
-    void readsEmptyStringAsMissingValue() {
-        Assertions.assertNull(converter.convertToJavaData(new ReadCellData<>(""), null, configuration));
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", " ", "\t\r\n", "\u2003"})
+    void readsBlankStringAsMissingValue(String input) {
+        ReadCellData<String> cell = new ReadCellData<>();
+        cell.setStringValue(input);
+        Assertions.assertNull(converter.convertToJavaData(cell, null, configuration));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" " + TEXT, TEXT + " ", "\t" + TEXT + "\r\n"})
+    void trimsWhitespaceBeforeParsing(String input) {
+        Assertions.assertEquals(
+                UUID.fromString(TEXT), converter.convertToJavaData(new ReadCellData<>(input), null, configuration));
     }
 
     @ParameterizedTest
@@ -122,11 +141,19 @@ class UuidConverterTest extends AbstractExcelTest {
         StringData second = new StringData();
         second.setId("");
         second.setLabel("blank UUID");
-        RoundTripHelper.write(file, StringData.class, Arrays.asList(first, second));
+        StringData padded = new StringData();
+        padded.setId(" \t" + TEXT + "\r\n");
+        padded.setLabel("padded UUID");
+        StringData whitespace = new StringData();
+        whitespace.setId(" \t ");
+        whitespace.setLabel("whitespace UUID");
+        RoundTripHelper.write(file, StringData.class, Arrays.asList(first, second, padded, whitespace));
         List<UuidData> rows = RoundTripHelper.read(file, UuidData.class);
-        Assertions.assertEquals(2, rows.size());
+        Assertions.assertEquals(4, rows.size());
         Assertions.assertEquals(UUID.fromString(TEXT), rows.get(0).getId());
         Assertions.assertNull(rows.get(1).getId());
+        Assertions.assertEquals(UUID.fromString(TEXT), rows.get(2).getId());
+        Assertions.assertNull(rows.get(3).getId());
     }
 
     @ParameterizedTest

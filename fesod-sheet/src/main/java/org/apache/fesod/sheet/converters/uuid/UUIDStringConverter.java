@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converters.uuid;
 
 import java.util.UUID;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -29,9 +30,9 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 
 /**
  * Converts UUID values to canonical lowercase strings and reads strings using {@link UUID#fromString(String)}.
- * Empty strings are treated as missing values, like blank cells.
+ * Blank strings are treated as missing values, like blank cells. Leading and trailing whitespace is trimmed before parsing.
  */
-public class UuidStringConverter implements Converter<UUID> {
+public class UUIDStringConverter implements Converter<UUID> {
 
     @Override
     public Class<UUID> supportJavaTypeKey() {
@@ -47,7 +48,7 @@ public class UuidStringConverter implements Converter<UUID> {
     public UUID convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         String value = cellData.getStringValue();
-        return value == null || value.isEmpty() ? null : UUID.fromString(value);
+        return StringUtils.isBlank(value) ? null : UUID.fromString(value.trim());
     }
 
     @Override

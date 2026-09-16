@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import lombok.Data;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
@@ -33,15 +34,18 @@ import org.apache.fesod.sheet.exception.ExcelDataConvertException;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@Tag(Tags.ROUND_TRIP)
 class UuidConverterTest extends AbstractExcelTest {
 
     private static final String TEXT = "123e4567-e89b-12d3-a456-426614174000";
@@ -77,7 +81,7 @@ class UuidConverterTest extends AbstractExcelTest {
         UUID value = converter.convertToJavaData(new ReadCellData<>(input), null, configuration);
         WriteCellData<?> cell = converter.convertToExcelData(value, null, configuration);
         Assertions.assertEquals(CellDataTypeEnum.STRING, cell.getType());
-        Assertions.assertEquals(input.toLowerCase(java.util.Locale.ROOT), cell.getStringValue());
+        Assertions.assertEquals(input.toLowerCase(Locale.ROOT), cell.getStringValue());
     }
 
     @ParameterizedTest
@@ -113,7 +117,7 @@ class UuidConverterTest extends AbstractExcelTest {
     void readsUppercaseAndBlankCells(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         StringData first = new StringData();
-        first.setId(TEXT.toUpperCase(java.util.Locale.ROOT));
+        first.setId(TEXT.toUpperCase(Locale.ROOT));
         first.setLabel("uppercase");
         StringData second = new StringData();
         second.setId("");

@@ -31,10 +31,13 @@ import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(Tags.UNIT)
 class SqlTimeConverterTest {
     private final GlobalConfiguration config = new GlobalConfiguration();
 
@@ -69,6 +72,12 @@ class SqlTimeConverterTest {
                                 DateUtil.getExcelDate(LocalDate.of(2020, 1, 1).atTime(time.toLocalTime()), false))),
                         null,
                         config));
+    }
+
+    @Test
+    void invalidNumberReturnsNull() {
+        Assertions.assertNull(new SqlTimeNumberConverter()
+                .convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, config));
     }
 
     @Test

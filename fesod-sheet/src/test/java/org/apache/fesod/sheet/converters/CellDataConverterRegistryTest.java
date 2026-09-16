@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
@@ -95,6 +96,33 @@ class CellDataConverterRegistryTest {
         registry.addCustomWriteConverter(second);
 
         Assertions.assertSame(second, registry.findWriteConverter(String.class));
+    }
+
+    @Test
+    void shouldResolveCustomWriteConverterEvenWhenDefaultingToString() {
+        // the to-string default tier must never shadow a custom converter (no-bean fill invariant)
+        CellDataConverterRegistry registry = new CellDataConverterRegistry();
+        StubConverter custom = new StubConverter("custom", String.class);
+        registry.addCustomWriteConverter(custom);
+
+        Assertions.assertSame(custom, registry.findWriteConverter(String.class, null, true));
+    }
+
+    @Test
+    void shouldReturnNullInsteadOfNaturalDefaultWhenDefaultingToString() {
+        // types without a to-string sibling resolve to null rather than falling back to the natural default
+        StubConverter natural = new StubConverter("natural", Object.class);
+        CellDataConverterRegistry registry = new CellDataConverterRegistry();
+        addDefaultConverterTo(registry, Object.class, null, natural);
+
+        Assertions.assertSame(natural, registry.findWriteConverter(Object.class, null, false));
+        Assertions.assertNull(registry.findWriteConverter(Object.class, null, true));
+    }
+
+    @Test
+    void shouldDefaultToBuiltInStringConverterFamily() {
+        CellDataConverterRegistry registry = new CellDataConverterRegistry();
+        Assertions.assertInstanceOf(StringStringConverter.class, registry.findWriteConverter(String.class, 0, true));
     }
 
     @Test

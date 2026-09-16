@@ -41,6 +41,9 @@ public class CellDataConverterRegistry {
      */
     private final CellDataConverterRegistry parent;
 
+    private static final Map<ConverterKeyBuild.ConverterKey, Converter<?>> TO_STRING_CONVERTERS =
+            DefaultConverterLoader.loadDefaultWriteStringConverter();
+
     private final Map<ConverterKeyBuild.ConverterKey, Deque<WriteConverter<?>>> customWriteConverters =
             new LinkedHashMap<>();
     private final Map<ConverterKeyBuild.ConverterKey, Deque<ReadConverter<?>>> customReadConverters =
@@ -122,17 +125,29 @@ public class CellDataConverterRegistry {
      * @return the matched write converter or {@code null} if not found
      */
     public WriteConverter<?> findWriteConverter(Class<?> sourceType, Integer column) {
+        return findWriteConverter(sourceType, column, false);
+    }
+
+    /**
+     * Retrieves the write converter for the specified Java type and target column index, and default fallback strategy.
+     *
+     * @param sourceType      the source Java type
+     * @param column          optional target cell column index (0-based)
+     * @param defaultToString {@code true} to default to the string converter set when no custom converter matches
+     * @return the matched write converter or {@code null} if not found
+     */
+    public WriteConverter<?> findWriteConverter(Class<?> sourceType, Integer column, boolean defaultToString) {
         if (sourceType == null) {
             return null;
         }
 
-        WriteCacheKey cacheKey = new WriteCacheKey(sourceType, column);
+        WriteCacheKey cacheKey = new WriteCacheKey(sourceType, column, defaultToString);
         ConverterHolder<WriteConverter<?>> cachedHolder = writeConvertersCache.get(cacheKey);
         if (cachedHolder != null) {
             return cachedHolder.isNull() ? null : cachedHolder.converter;
         }
 
-        WriteConverter<?> result = resolveWriteConverter(sourceType, column);
+        WriteConverter<?> result = resolveWriteConverter(sourceType, column, defaultToString);
         writeConvertersCache.put(cacheKey, new ConverterHolder<>(result));
         return result;
     }
@@ -145,11 +160,12 @@ public class CellDataConverterRegistry {
      * then parent registry, and finally default converters.
      * </p>
      *
-     * @param sourceType the source Java type
-     * @param column     optional target cell column index (0-based)
+     * @param sourceType      the source Java type
+     * @param column          optional target cell column index (0-based)
+     * @param defaultToString {@code true} to default to the string converter set when no custom converter matches
      * @return the matched write converter or {@code null} if not found
      */
-    private WriteConverter<?> resolveWriteConverter(Class<?> sourceType, Integer column) {
+    private WriteConverter<?> resolveWriteConverter(Class<?> sourceType, Integer column, boolean defaultToString) {
         ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(sourceType);
 
         WriteConverter<?> localSelected = selectConverter(customWriteConverters.get(key), column);
@@ -159,9 +175,9 @@ public class CellDataConverterRegistry {
         }
 
         if (parent != null) {
-            return parent.findWriteConverter(sourceType, column);
+            return parent.findWriteConverter(sourceType, column, defaultToString);
         }
-        return defaultConverters.get(key);
+        return defaultToString ? TO_STRING_CONVERTERS.get(key) : defaultConverters.get(key);
     }
 
     /**
@@ -274,6 +290,7 @@ public class CellDataConverterRegistry {
     private static class WriteCacheKey {
         private final Class<?> javaType;
         private final Integer column;
+        private final boolean defaultToString;
     }
 
     @EqualsAndHashCode

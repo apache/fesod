@@ -347,7 +347,9 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                     .currentWriteHolder()
                     .converterRegistry()
                     .findWriteConverter(
-                            cellWriteHandlerContext.getOriginalFieldClass(), cellWriteHandlerContext.getColumnIndex());
+                            cellWriteHandlerContext.getOriginalFieldClass(),
+                            cellWriteHandlerContext.getColumnIndex(),
+                            CellDataTypeEnum.STRING.equals(cellWriteHandlerContext.getTargetCellDataType()));
         }
         if (cellWriteHandlerContext.getOriginalValue() == null && !(converter instanceof NullableObjectConverter)) {
             return new WriteCellData<>(CellDataTypeEnum.EMPTY);

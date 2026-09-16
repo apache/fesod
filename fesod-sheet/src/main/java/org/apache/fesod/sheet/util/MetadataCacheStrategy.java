@@ -54,22 +54,9 @@ interface MetadataCacheStrategy<K, V> {
      */
     class InMemoryCache<K, V> implements MetadataCacheStrategy<K, V> {
 
-        private final Map<K, V> cache;
+        private final ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<>();
 
-        private final Map<K, V> view;
-
-        InMemoryCache() {
-            this(new ConcurrentHashMap<>());
-        }
-
-        /**
-         * Backs this cache with {@code cache}, to allow map types other than the default
-         * {@link ConcurrentHashMap}.
-         */
-        InMemoryCache(Map<K, V> cache) {
-            this.cache = cache;
-            this.view = Collections.unmodifiableMap(cache);
-        }
+        private final Map<K, V> view = Collections.unmodifiableMap(cache);
 
         @Override
         public V get(K key, Function<K, V> mappingFunction) {
@@ -90,16 +77,9 @@ interface MetadataCacheStrategy<K, V> {
 
         /**
          * The live map, only for the deprecated public cache fields on {@link ClassUtils}; remove with them.
-         * Those fields are declared as {@link ConcurrentHashMap}, so while they exist this cache must be
-         * backed by one.
          */
         ConcurrentHashMap<K, V> backingMap() {
-            if (!(cache instanceof ConcurrentHashMap)) {
-                throw new IllegalStateException(
-                        "The deprecated ClassUtils cache fields require a ConcurrentHashMap, but got "
-                                + cache.getClass().getName());
-            }
-            return (ConcurrentHashMap<K, V>) cache;
+            return cache;
         }
     }
 

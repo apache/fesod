@@ -89,9 +89,7 @@ interface MetadataCacheStrategy<K, V> {
      */
     class ThreadLocalCache<K, V> implements MetadataCacheStrategy<K, V> {
 
-        private final ThreadLocal<Map<K, V>> cache = new ThreadLocal<>();
-
-        private final Supplier<Map<K, V>> mapFactory;
+        private final ThreadLocal<Map<K, V>> cache;
 
         ThreadLocalCache() {
             this(MapUtils::newHashMap);
@@ -102,17 +100,12 @@ interface MetadataCacheStrategy<K, V> {
          * {@link java.util.HashMap}. The factory must return a new map on every call.
          */
         ThreadLocalCache(Supplier<Map<K, V>> mapFactory) {
-            this.mapFactory = mapFactory;
+            this.cache = ThreadLocal.withInitial(mapFactory);
         }
 
         @Override
         public V get(K key, Function<K, V> mappingFunction) {
-            Map<K, V> cacheMap = cache.get();
-            if (cacheMap == null) {
-                cacheMap = mapFactory.get();
-                cache.set(cacheMap);
-            }
-            return cacheMap.computeIfAbsent(key, mappingFunction);
+            return cache.get().computeIfAbsent(key, mappingFunction);
         }
 
         @Override

@@ -121,11 +121,12 @@ final class SheetContentPropertyResolver {
 
     private static ExcelContentProperty doResolve(
             Class<?> clazz, Class<?> headClass, String fieldName, ConfigurationHolder configurationHolder) {
-        ExcelContentProperty excelContentProperty = Optional.ofNullable(resolveClassContent(clazz, configurationHolder))
+        ExcelContentProperty excelContentProperty = Optional.ofNullable(
+                        resolveContentPropertyMap(clazz, configurationHolder))
                 .map(map -> map.get(fieldName))
                 .orElse(null);
         ExcelContentProperty headExcelContentProperty = Optional.ofNullable(
-                        resolveClassContent(headClass, configurationHolder))
+                        resolveContentPropertyMap(headClass, configurationHolder))
                 .map(map -> map.get(fieldName))
                 .orElse(null);
         ExcelContentProperty combineExcelContentProperty = new ExcelContentProperty();
@@ -166,15 +167,15 @@ final class SheetContentPropertyResolver {
         return new ContentPropertyKey(clazz, headClass, fieldName);
     }
 
-    private static Map<String, ExcelContentProperty> resolveClassContent(
+    private static Map<String, ExcelContentProperty> resolveContentPropertyMap(
             Class<?> clazz, ConfigurationHolder configurationHolder) {
         if (clazz == null) {
             return null;
         }
-        return CLASS_CONTENT_CACHES.get(configurationHolder, clazz, key -> doResolveClassContent(clazz));
+        return CLASS_CONTENT_CACHES.get(configurationHolder, clazz, key -> doResolveContentPropertyMap(clazz));
     }
 
-    private static Map<String, ExcelContentProperty> doResolveClassContent(Class<?> clazz) {
+    private static Map<String, ExcelContentProperty> doResolveContentPropertyMap(Class<?> clazz) {
         if (clazz == null) {
             return null;
         }

@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.converters.sqltime;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalTime;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -45,8 +46,9 @@ public class SqlTimeNumberConverter implements Converter<Time> {
     @Override
     public Time convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return Time.valueOf(DateUtils.getLocalTime(
-                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration)));
+        LocalTime localTime = DateUtils.getLocalTime(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
+        return localTime == null ? null : Time.valueOf(localTime);
     }
 
     @Override

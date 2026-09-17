@@ -441,7 +441,8 @@ class DateUtilsTest {
                 "yyyy/mm/dd;@",
                 "[h]:mm:ss",
                 "mm:ss.0",
-                "yyyy-MM-dd HH:mm:ss"
+                "yyyy-MM-dd HH:mm:ss",
+                "hh:mm:ss.000 AM/PM"
             })
     void test_isADateFormat_true(String formatString) {
         Assertions.assertTrue(DateUtils.isADateFormat((short) 100, formatString));

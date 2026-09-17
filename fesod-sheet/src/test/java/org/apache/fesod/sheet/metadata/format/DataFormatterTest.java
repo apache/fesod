@@ -116,6 +116,27 @@ class DataFormatterTest {
     @CsvSource(
             delimiter = '|',
             value = {
+                // each trailing comma divides by a further 1000
+                "   1234567 | #,##0,     | 1,235",
+                "   1234567 | 0,         | 1235",
+                "1234567890 | #,##0,,    | 1,235",
+                "   1234567 | #,##0.0,   | 1,234.6",
+                "   1234567 | #,##0.00,, | 1.23",
+                // a decimal point escaped or quoted as literal text does not start a decimal part
+                "   1234567 | 0\\.0,     | 123.5",
+                "      9234 | 0\\.0,     | 0.9",
+                "   1234567 | 0\".\"0,   | 123.5",
+                "   1234567 | 0\\.00,,   | 0.01",
+                "   1234567 | 0\\.000,   | 1.235",
+            })
+    void scalesByTrailingCommas(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
                 "1234.5 | [Red]0.00         | 1234.50",
                 "1234.5 | [$$-1009]#,##0.00 | $1,234.50",
                 "1234.5 | [$-1009]#,##0.00  | 1,234.50",

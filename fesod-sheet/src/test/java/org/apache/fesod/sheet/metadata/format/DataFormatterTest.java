@@ -214,6 +214,18 @@ class DataFormatterTest {
         Assertions.assertEquals(expected, format(data, dataFormat, pattern));
     }
 
+    @ParameterizedTest(name = DATE_PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                "               -1 | 14 | yyyy-mm-dd                   | -1",
+                "-123456.789012345 | 14 | yyyy-mm-dd                   | -123456.789",
+                "               -1 | 14 | [>=1]yyyy-mm-dd;\"negative\" | -1",
+            })
+    void fallsBackToGeneralForNegativeDateSerials(String data, short dataFormat, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, dataFormat, pattern));
+    }
+
     @ParameterizedTest(name = "[{index}] {0} -> {1}")
     @CsvSource(
             delimiter = '|',

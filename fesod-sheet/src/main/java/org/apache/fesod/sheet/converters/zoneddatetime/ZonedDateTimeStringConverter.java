@@ -19,13 +19,7 @@
 
 package org.apache.fesod.sheet.converters.zoneddatetime;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Locale;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -49,28 +43,21 @@ public class ZonedDateTimeStringConverter implements Converter<ZonedDateTime> {
     @Override
     public ZonedDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        DateTimeFormatter formatter = formatter(contentProperty, globalConfiguration.getLocale());
-        try {
-            return ZonedDateTime.parse(cellData.getStringValue(), formatter);
-        } catch (DateTimeParseException e) {
-            return LocalDateTime.parse(cellData.getStringValue(), formatter).atZone(ZoneId.systemDefault());
-        }
+        return DateUtils.parseZonedDateTime(
+                cellData.getStringValue(), dateTimeFormat(contentProperty), globalConfiguration.getLocale());
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             ZonedDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return new WriteCellData<>(value.format(formatter(contentProperty, globalConfiguration.getLocale())));
+        return new WriteCellData<>(
+                DateUtils.format(value, dateTimeFormat(contentProperty), globalConfiguration.getLocale()));
     }
 
-    private DateTimeFormatter formatter(ExcelContentProperty contentProperty, Locale locale) {
-        if (contentProperty == null
-                || contentProperty.getDateTimeFormatProperty() == null
-                || StringUtils.isEmpty(
-                        contentProperty.getDateTimeFormatProperty().getFormat())) {
-            return DateTimeFormatter.ISO_ZONED_DATE_TIME;
+    private String dateTimeFormat(ExcelContentProperty contentProperty) {
+        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
+            return null;
         }
-        return DateUtils.getCacheDateTimeFormat(
-                contentProperty.getDateTimeFormatProperty().getFormat(), locale);
+        return contentProperty.getDateTimeFormatProperty().getFormat();
     }
 }

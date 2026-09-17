@@ -253,7 +253,7 @@ public class DataFormatter {
     }
 
     private Format createFormat(Short dataFormat, String dataFormatString) {
-        String formatStr = dataFormatString;
+        String formatStr = quoteEscapedPercent(dataFormatString);
 
         Format format = checkSpecialConverter(formatStr);
         if (format != null) {
@@ -473,6 +473,10 @@ public class DataFormatter {
             // so fall back to the default number format
             return getDefaultFormat();
         }
+    }
+
+    private static String quoteEscapedPercent(String formatStr) {
+        return formatStr.contains("\\%") ? formatStr.replace("\\%", "'%'") : formatStr;
     }
 
     private String cleanFormatForNumber(String formatStr) {

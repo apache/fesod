@@ -140,6 +140,22 @@ class DataFormatterTest {
     @CsvSource(
             delimiter = '|',
             value = {
+                "   5 | 0%              | 500%",
+                "   5 | 0\\%            | 5%",
+                "0.05 | 0\\%            | 0%",
+                "  -5 | 0\\%            | -5%",
+                "   5 | 0.00\\%         | 5.00%",
+                "   5 | 0\\%;[Red]0\\%  | 5%",
+                "   5 | 0\\%;-0\\%;0\\% | 5%",
+            })
+    void doesNotScaleEscapedPercent(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
                 "12345.678 | 0.00E00  | 1.23E+04",
                 " 0.000123 | 0.00E+00 | 1.23E-04",
             })

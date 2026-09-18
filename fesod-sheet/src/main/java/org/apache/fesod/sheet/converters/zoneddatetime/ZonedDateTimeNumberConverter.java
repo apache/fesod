@@ -46,22 +46,16 @@ public class ZonedDateTimeNumberConverter implements Converter<ZonedDateTime> {
     @Override
     public ZonedDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        boolean use1904windowing = globalConfiguration.getUse1904windowing();
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            use1904windowing = contentProperty.getDateTimeFormatProperty().getUse1904windowing();
-        }
-        return DateUtils.getLocalDateTime(cellData.getNumberValue().doubleValue(), use1904windowing)
+        return DateUtils.getLocalDateTime(
+                        cellData.getNumberValue().doubleValue(),
+                        DateUtils.isDate1904(contentProperty, globalConfiguration))
                 .atZone(ZoneId.systemDefault());
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             ZonedDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        boolean use1904windowing = globalConfiguration.getUse1904windowing();
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            use1904windowing = contentProperty.getDateTimeFormatProperty().getUse1904windowing();
-        }
-        return new WriteCellData<>(
-                BigDecimal.valueOf(DateUtil.getExcelDate(value.toLocalDateTime(), use1904windowing)));
+        return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
+                value.toLocalDateTime(), DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

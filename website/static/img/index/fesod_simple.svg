@@ -1,0 +1,30 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img">
+  <rect x="20" y="30" width="380" height="260" rx="28" fill="#F1F5F2"/>
+  <rect x="72" y="84" width="190" height="124" rx="18" fill="#FFFFFF" stroke="#E2EAE4" stroke-width="2"/>
+  <rect x="72" y="84" width="190" height="34" rx="18" fill="#EAF3EC"/>
+  <text x="92" y="107" fill="#14824B" font-family="Consolas,monospace" font-size="16" font-weight="bold">&lt;fesod /&gt;</text>
+  <g stroke="#E4EBE6" stroke-width="4" stroke-linecap="round">
+    <line x1="92" y1="140" x2="208" y2="140"/>
+    <line x1="92" y1="160" x2="170" y2="160"/>
+  </g>
+  <circle cx="322" cy="196" r="52" fill="#00B95F"/>
+  <path d="M 301 196 L 317 214 L 345 174" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

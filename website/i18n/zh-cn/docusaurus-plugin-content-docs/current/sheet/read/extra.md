@@ -56,11 +56,10 @@ public class DemoCommentExtraListener implements ReadListener<DemoData> {
 ### 代码示例
 
 ```java
-@Test
-public void extraRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoCommentExtraListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoCommentExtraListener())
             .extraRead(CellExtraTypeEnum.COMMENT)
             .sheet()
             .doRead();
@@ -101,11 +100,10 @@ public class DemoHyperLinkExtraListener implements ReadListener<DemoData> {
 ### 代码示例
 
 ```java
-@Test
-public void extraRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoHyperLinkExtraListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoHyperLinkExtraListener())
             .extraRead(CellExtraTypeEnum.HYPERLINK)
             .sheet()
             .doRead();
@@ -146,11 +144,10 @@ public class DemoMergeExtraListener implements ReadListener<DemoData> {
 ### 代码示例
 
 ```java
-@Test
-public void extraRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoMergeExtraListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoMergeExtraListener())
             .extraRead(CellExtraTypeEnum.MERGE)
             .sheet()
             .doRead();

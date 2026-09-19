@@ -58,10 +58,10 @@ provides constants in `CsvConstant` to simplify usage.
 If the CSV file uses `\u0000` as the separator, you can configure it as follows:
 
 ```java
-@Test
-public void delimiterDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .delimiter(CsvConstant.UNICODE_EMPTY)
             .doWrite(data());
@@ -78,10 +78,10 @@ field content contains delimiters or line breaks.
 #### Code Example
 
 ```java
-@Test
-public void quoteDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .quote(CsvConstant.DOUBLE_QUOTE, QuoteMode.MINIMAL)
             .doWrite(data());
@@ -96,10 +96,10 @@ separators (for example, Windows uses `CRLF`, while Unix/Linux uses `LF`).
 #### Code Example
 
 ```java
-@Test
-public void recordSeparatorDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .recordSeparator(CsvConstant.LF)
             .doWrite(data());
@@ -114,10 +114,10 @@ For example, you can replace `null` objects with the string `"N/A"`.
 #### Code Example
 
 ```java
-@Test
-public void nullStringDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .nullString("N/A")
             .doWrite(data());
@@ -131,10 +131,10 @@ public void nullStringDemo() {
 #### Code Example
 
 ```java
-@Test
-public void escapeDemo() {
-    String csvFile = "path/to/your.csv";
-    FesodSheet.write(csvFile, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    FesodSheet.write(pathname, DemoData.class)
             .csv()
             .escape(CsvConstant.BACKSLASH)
             .doWrite(data());
@@ -149,12 +149,12 @@ Supports directly building a `CSVFormat` object.
 ### Code Example
 
 ```java
-@Test
-public void csvFormatDemo() {
-    CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
-    String csvFile = "path/to/your.csv";
+void main() {
+    String pathname = "path/to/demo.csv";
 
-    try (ExcelWriter excelWriter = FesodSheet.write(csvFile, DemoData.class).excelType(ExcelTypeEnum.CSV).build()) {
+    CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
+
+    try (ExcelWriter excelWriter = FesodSheet.write(pathname, DemoData.class).excelType(ExcelTypeEnum.CSV).build()) {
         WriteWorkbookHolder writeWorkbookHolder = excelWriter.writeContext().writeWorkbookHolder();
         Workbook workbook = writeWorkbookHolder.getWorkbook();
         // Check if it's an instance of CsvWorkbook

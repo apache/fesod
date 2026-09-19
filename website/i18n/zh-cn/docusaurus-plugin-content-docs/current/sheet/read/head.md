@@ -53,11 +53,10 @@ public class DemoHeadDataListener extends AnalysisEventListener<DemoData> {
 ### 代码示例
 
 ```java
-@Test
-public void headerRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoHeadDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoHeadDataListener())
             .sheet()
             .doRead();
 }
@@ -74,11 +73,10 @@ public void headerRead() {
 ### 代码示例
 
 ```java
-@Test
-public void complexHeaderRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .sheet()
             // 设置多行表头的行数，默认为 1
             .headRowNumber(2)
@@ -97,11 +95,10 @@ public void complexHeaderRead() {
 ### 代码示例
 
 ```java
-@Test
-public void headerPojoRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, new DemoDataListener())
+    FesodSheet.read(pathname, new DemoDataListener())
             .head(DemoData.class)
             .sheet()
             .doRead();

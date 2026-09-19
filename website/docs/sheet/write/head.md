@@ -49,10 +49,10 @@ public class ComplexHeadData {
 ### Code Example
 
 ```java
-@Test
-public void complexHeadWrite() {
-    String fileName = "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, ComplexHeadData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, ComplexHeadData.class)
             .sheet()
             .doWrite(data());
 }
@@ -86,16 +86,15 @@ Generate dynamic headers in real-time, suitable for scenarios where header conte
 ### Code Example
 
 ```java
-@Test
-public void dynamicHeadWrite() {
-    String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     List<List<String>> head = Arrays.asList(
             Collections.singletonList("Dynamic String Title"),
             Collections.singletonList("Dynamic Number Title"),
             Collections.singletonList("Dynamic Date Title"));
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
             .head(head)
             .sheet()
             .doWrite(data());
@@ -141,9 +140,8 @@ cells. The example below uses a three-level header where names repeat in both di
 ### Code Example
 
 ```java
-@Test
-public void dynamicHeadWriteWithStrategy() {
-    String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
     List<List<String>> head = Arrays.asList(
         Arrays.asList("Main Title", "ID", "ID"),
@@ -152,7 +150,7 @@ public void dynamicHeadWriteWithStrategy() {
         Arrays.asList("Main Title", "Group B", "Name"),
         Arrays.asList("Main Title", "Group B", "Age"));
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
         .head(head)
         .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
         .sheet()
@@ -264,11 +262,15 @@ So if a column title that repeats down the levels should become one tall cell, c
 **Disable merging**: Use `NONE` to completely disable automatic merging:
 
 ```java
-FesodSheet.write(fileName)
-    .head(head)
-    .headerMergeStrategy(HeaderMergeStrategy.NONE)
-    .sheet()
-    .doWrite(data());
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname)
+        .head(head)
+        .headerMergeStrategy(HeaderMergeStrategy.NONE)
+        .sheet()
+        .doWrite(data());
+}
 ```
 
 **Note**: The old `automaticMergeHead` parameter is still supported for backward compatibility. When `headerMergeStrategy` is not set, the behavior is determined by `automaticMergeHead` (`true` → `AUTO`, `false` → `NONE`).

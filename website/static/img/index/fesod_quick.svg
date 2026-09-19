@@ -17,10 +17,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img">
-  <rect x="20" y="30" width="380" height="260" rx="28" fill="#F1F5F2"/>
-  <circle cx="210" cy="160" r="96" fill="#69CD37" opacity="0.10"/>
-  <circle cx="210" cy="160" r="78" fill="none" stroke="#00B95F" stroke-width="15"
-          stroke-linecap="round" stroke-dasharray="367 490" transform="rotate(-90 210 160)"/>
-  <path d="M207 96 l-46 78 24 0 -9 46 52 -68 -23 0 10 -42 z" fill="#14824B"/>
-  <circle cx="126" cy="141" r="9" fill="#14824B" stroke="#FFFFFF" stroke-width="4"/>
+  <rect x="20" y="30" width="380" height="260" rx="28" fill="#F4F8F5"/>
+  <circle cx="210" cy="160" r="100" fill="#EAF3EC"/>
+  <circle cx="210" cy="160" r="84" fill="none" stroke="#00B95F" stroke-width="15"
+          stroke-linecap="round" stroke-dasharray="415 553" transform="rotate(-90 210 160)"/>
+  <path d="M207 112 l-44 72 24 0 -10 46 50 -70 -24 0 11 -40 z" fill="#14824B"/>
+  <circle cx="282" cy="108" r="10" fill="#69CD37" stroke="#FFFFFF" stroke-width="4"/>
 </svg>

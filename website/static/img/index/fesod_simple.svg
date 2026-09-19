@@ -17,14 +17,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img">
-  <rect x="20" y="30" width="380" height="260" rx="28" fill="#F1F5F2"/>
-  <rect x="72" y="84" width="190" height="124" rx="18" fill="#FFFFFF" stroke="#E2EAE4" stroke-width="2"/>
-  <rect x="72" y="84" width="190" height="34" rx="18" fill="#EAF3EC"/>
-  <text x="92" y="107" fill="#14824B" font-family="Consolas,monospace" font-size="16" font-weight="bold">&lt;fesod /&gt;</text>
+  <rect x="20" y="30" width="380" height="260" rx="28" fill="#F4F8F5"/>
+  <circle cx="210" cy="160" r="100" fill="#EAF3EC"/>
+  <rect x="118" y="106" width="184" height="108" rx="14" fill="#FFFFFF" stroke="#DFE8E1" stroke-width="2"/>
+  <text x="140" y="138" fill="#14824B" font-family="Consolas,monospace" font-size="15" font-weight="bold">&lt;fesod /&gt;</text>
   <g stroke="#E4EBE6" stroke-width="4" stroke-linecap="round">
-    <line x1="92" y1="140" x2="208" y2="140"/>
-    <line x1="92" y1="160" x2="170" y2="160"/>
+    <line x1="140" y1="156" x2="272" y2="156"/>
+    <line x1="140" y1="172" x2="230" y2="172"/>
   </g>
-  <circle cx="322" cy="196" r="52" fill="#00B95F"/>
-  <path d="M 301 196 L 317 214 L 345 174" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="280" cy="100" r="28" fill="#00B95F" stroke="#FFFFFF" stroke-width="4"/>
+  <path d="M 269 100 L 278 110 L 293 88" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

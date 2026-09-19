@@ -68,7 +68,7 @@ public class CustomStringStringConverter implements Converter<String> {
 ### Converter Resolution Priority
 
 1. Field-level converter (`@ExcelProperty(converter = ...)`) — highest priority
-2. Builder-level converter (`.registerConverter(...)`)
+2. Builder-level converter (`.registerConverter(...)`) with a matching lookup key
 3. Built-in default converter — lowest priority
 
 ---
@@ -77,13 +77,26 @@ public class CustomStringStringConverter implements Converter<String> {
 
 ### Write with Global Converter
 
+For ordinary XLSX/XLS writes, global converter lookup uses the Java type and a `null` Excel type key. Use the following variant of the converter above. The returned `WriteCellData` still determines the output cell type; returning `null` here only changes the lookup key.
+
+```java
+public class GlobalStringWriteConverter extends CustomStringStringConverter {
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return null;
+    }
+}
+```
+
+For CSV writing and reading string cells, register the original `CustomStringStringConverter`, which returns `CellDataTypeEnum.STRING`.
+
 ```java
 @Test
 public void customConverterWrite() {
     String fileName = "customConverterWrite" + System.currentTimeMillis() + ".xlsx";
 
     FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new CustomStringStringConverter())
+        .registerConverter(new GlobalStringWriteConverter())
         .sheet()
         .doWrite(data());
 }

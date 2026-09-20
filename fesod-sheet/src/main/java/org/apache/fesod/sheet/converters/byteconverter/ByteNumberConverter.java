@@ -53,7 +53,7 @@ public class ByteNumberConverter implements Converter<Byte> {
     @Override
     public Byte convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return cellData.getNumberValue().byteValue();
+        return NumberUtils.toByte(cellData.getNumberValue());
     }
 
     @Override

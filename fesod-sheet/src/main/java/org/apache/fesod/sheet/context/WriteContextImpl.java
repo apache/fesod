@@ -35,6 +35,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.fesod.common.beans.BeanWrapper;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
@@ -363,7 +364,7 @@ public class WriteContextImpl implements WriteContext {
             Head head = entry.getValue();
             int columnIndex = entry.getKey();
             ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                    null,
+                    (BeanWrapper) null,
                     currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
                     head.getFieldName(),
                     currentWriteHolder);

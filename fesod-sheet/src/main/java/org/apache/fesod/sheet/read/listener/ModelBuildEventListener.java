@@ -29,8 +29,9 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.common.beans.BeanWrappers;
 import org.apache.fesod.common.util.MapUtils;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
@@ -41,7 +42,6 @@ import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.ReadSheetHolder;
 import org.apache.fesod.sheet.read.metadata.property.ExcelReadHeadProperty;
-import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.ConverterUtils;
 import org.apache.fesod.sheet.util.DateUtils;
@@ -176,7 +176,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                     e);
         }
         Map<Integer, Head> headMap = excelReadHeadProperty.getHeadMap();
-        BeanMap dataMap = BeanMapUtils.create(resultModel);
+        BeanWrapper dataWrapper = BeanWrappers.create(resultModel);
         for (Map.Entry<Integer, Head> entry : headMap.entrySet()) {
             Integer index = entry.getKey();
             Head head = entry.getValue();
@@ -189,7 +189,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                     cellData,
                     head.getField(),
                     ClassUtils.declaredExcelContentProperty(
-                            dataMap,
+                            dataWrapper,
                             readSheetHolder.excelReadHeadProperty().getHeadClazz(),
                             fieldName,
                             readSheetHolder),
@@ -198,16 +198,16 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                     context.readRowHolder().getRowIndex(),
                     index);
             if (value != null) {
-                dataMap.put(fieldName, value);
+                dataWrapper.setProperty(fieldName, value);
 
                 // Avoid the problem where values cannot be assigned due to non-standard setters in entity classes
-                if (dataMap.get(fieldName) == null) {
+                if (dataWrapper.getProperty(fieldName) == null) {
                     try {
                         Field field = head.getField();
                         if (!field.isAccessible()) {
                             field.setAccessible(true);
                         }
-                        field.set(dataMap.getBean(), value);
+                        field.set(dataWrapper.unwrap(), value);
                     } catch (IllegalAccessException e) {
                         throw new ExcelDataConvertException(
                                 context.readRowHolder().getRowIndex(),

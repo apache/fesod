@@ -44,9 +44,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.common.beans.BeanWrappers;
+import org.apache.fesod.common.beans.MapBeanWrapper;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.MapUtils;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
@@ -108,16 +110,28 @@ public class ClassUtils {
      * @param dataMap
      * @param headClazz
      * @param fieldName
+     * @deprecated use {@link ClassUtils#declaredExcelContentProperty(BeanWrapper, Class, String, ConfigurationHolder)}
+     */
+    @Deprecated
+    public static ExcelContentProperty declaredExcelContentProperty(
+            Map<?, ?> dataMap, Class<?> headClazz, String fieldName, ConfigurationHolder configurationHolder) {
+        BeanWrapper beanWrapper = BeanWrappers.create(dataMap);
+        return declaredExcelContentProperty(beanWrapper, headClazz, fieldName, configurationHolder);
+    }
+
+    /**
+     * Calculate the configuration information for the class
+     *
+     * @param dataWrapper
+     * @param headClazz
+     * @param fieldName
      * @return
      */
     public static ExcelContentProperty declaredExcelContentProperty(
-            Map<?, ?> dataMap, Class<?> headClazz, String fieldName, ConfigurationHolder configurationHolder) {
+            BeanWrapper dataWrapper, Class<?> headClazz, String fieldName, ConfigurationHolder configurationHolder) {
         Class<?> clazz = null;
-        if (dataMap instanceof BeanMap) {
-            Object bean = ((BeanMap) dataMap).getBean();
-            if (bean != null) {
-                clazz = bean.getClass();
-            }
+        if (dataWrapper != null && !(dataWrapper instanceof MapBeanWrapper)) {
+            clazz = dataWrapper.getWrappedClass();
         }
         return getExcelContentProperty(clazz, headClazz, fieldName, configurationHolder);
     }

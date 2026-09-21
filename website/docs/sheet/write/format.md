@@ -53,10 +53,10 @@ public class ConverterData {
 ### Code Example
 
 ```java
-@Test
-public void converterWrite() {
-    String fileName = "converterWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, ConverterData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, ConverterData.class)
         .sheet()
         .doWrite(data());
 }

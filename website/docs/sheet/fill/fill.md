@@ -87,16 +87,17 @@ private List<FillData> data() {
 ### Code Example
 
 ```java
-@Test
-public void simpleFill() {
-    String templateFileName = "path/to/simple.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname0 = "path/to/demo0.xlsx";
+    String pathname1 = "path/to/demo1.xlsx";
 
     // Approach 1: Fill based on object
     FillData fillData = new FillData();
     fillData.setName("John Doe");
     fillData.setNumber(5.2);
-    FesodSheet.write("simpleFill.xlsx")
-            .withTemplate(templateFileName)
+    FesodSheet.write(pathname0)
+            .withTemplate(template)
             .sheet()
             .doFill(fillData);
 
@@ -104,8 +105,8 @@ public void simpleFill() {
     Map<String, Object> map = new HashMap<>();
     map.put("name", "John Doe");
     map.put("number", 5.2);
-    FesodSheet.write("simpleFillMap.xlsx")
-            .withTemplate(templateFileName)
+    FesodSheet.write(pathname1)
+            .withTemplate(template)
             .sheet()
             .doFill(map);
 }
@@ -146,18 +147,19 @@ Fill multiple data items into a template list, supporting in-memory batch operat
 ### Code Example
 
 ```java
-@Test
-public void listFill() {
-    String templateFileName = "path/to/list.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname0 = "path/to/demo0.xlsx";
+    String pathname1 = "path/to/demo1.xlsx";
 
     // Approach 1: Fill all data at once
-    FesodSheet.write("listFill.xlsx")
-            .withTemplate(templateFileName)
+    FesodSheet.write(pathname0)
+            .withTemplate(template)
             .sheet()
             .doFill(data());
 
     // Approach 2: Batch filling
-    try (ExcelWriter writer = FesodSheet.write("listFillBatch.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname1).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
         writer.fill(data(), writeSheet);
         writer.fill(data(), writeSheet);
@@ -223,11 +225,11 @@ Fill various data types in a template, including lists and regular variables.
 ### Code Example
 
 ```java
-@Test
-public void complexFill() {
-    String templateFileName = "path/to/complex.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("complexFill.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // Fill list data, with forceNewRow enabled
@@ -289,11 +291,11 @@ filled using `WriteTable`.
 ### Code Example
 
 ```java
-@Test
-public void complexFillWithTable() {
-    String templateFileName = "path/to/complexFillWithTable.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("complexFillWithTable.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // Fill list data
@@ -360,11 +362,11 @@ Fill list data horizontally, suitable for scenarios with dynamic column numbers.
 ### Code Example
 
 ```java
-@Test
-public void horizontalFill() {
-    String templateFileName = "path/to/horizontal.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("horizontalFill.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         FillConfig config = FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build();
@@ -418,11 +420,11 @@ Support filling multiple lists simultaneously, with prefixes to differentiate be
 ### Code Example
 
 ```java
-@Test
-public void compositeFill() {
-    String templateFileName = "path/to/composite.xlsx";
+void main() {
+    String template = "path/from/demo.xlsx";
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelWriter writer = FesodSheet.write("compositeFill.xlsx").withTemplate(templateFileName).build()) {
+    try (ExcelWriter writer = FesodSheet.write(pathname).withTemplate(template).build()) {
         WriteSheet writeSheet = FesodSheet.writerSheet().build();
 
         // Use FillWrapper for filling multiple lists

@@ -65,13 +65,12 @@ All fields in the POJO are `String` type. Fesod applies the configured converter
 ### Code Example
 
 ```java
-@Test
-public void converterRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, ConverterData.class, new PageReadListener<ConverterData>(dataList -> {
+    FesodSheet.read(pathname, ConverterData.class, new PageReadListener<ConverterData>(dataList -> {
         for (ConverterData data : dataList) {
-            log.info("Read a row of data: {}", JSON.toJSONString(data));
+            System.out.println("Read a row of data: " + JSON.toJSONString(data));
         }
     })).sheet().doRead();
 }

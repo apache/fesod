@@ -36,7 +36,7 @@ import org.apache.fesod.sheet.converters.Converter;
 /**
  *
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ExcelProperty {

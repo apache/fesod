@@ -17,36 +17,26 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
+package org.apache.fesod.sheet.annotation;
 
-package org.apache.fesod.sheet.annotation.write.style;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
- * Set the width of the table
- *
- *
+ * Tests {@link AnnotationMetadataResolver}.
  */
-@Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface ColumnWidth {
+@Tag(Tags.UNIT)
+class AnnotationMetadataResolverTest {
 
-    /**
-     * Column width
-     * <p>
-     * -1 means the default column width is used
-     *
-     * @return Column width
-     */
-    int value() default -1;
+    private final AnnotationMetadataResolver resolver = new AnnotationMetadataResolver();
+
+    @Test
+    void shouldIgnoreProtocolAndJdkMetaAnnotationsOnly() {
+        Assertions.assertTrue(resolver.shouldIgnore(FesodMarked.class));
+        Assertions.assertTrue(resolver.shouldIgnore(Target.class));
+        Assertions.assertFalse(resolver.shouldIgnore(ExcelProperty.class));
+    }
 }

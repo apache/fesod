@@ -42,7 +42,7 @@ import java.math.RoundingMode;
  *
  *
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface NumberFormat {

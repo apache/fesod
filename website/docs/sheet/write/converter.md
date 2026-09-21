@@ -113,6 +113,31 @@ public void globalConverterWrite() {
 }
 ```
 
+### Wildcard Key
+
+Returning `null` from `supportExcelTypeKey()` declares the wildcard key `(JavaType, null)`, which matches every target cell data type:
+
+```java
+public class BooleanYesNoConverter implements Converter<Boolean> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return Boolean.class;
+    }
+
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return null; // wildcard key: (Boolean, null), matches every target cell data type
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<Boolean> context) {
+        return new WriteCellData<>(Boolean.TRUE.equals(context.getValue()) ? "YES" : "NO");
+    }
+}
+```
+
+Wildcard converters are registered under both `(JavaType, null)` and `(JavaType, STRING)`, so a single registration applies to both write formats: xlsx looks converters up with the `(JavaType, null)` key, while CSV forces the lookup key to `(JavaType, STRING)`. Return an explicit `CellDataTypeEnum` if you only want the converter to apply to a single target cell data type.
+
 ---
 
 ## Converter Resolution Priority

@@ -27,10 +27,13 @@ package org.apache.fesod.sheet.write.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.AbstractParameterBuilder;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
 import org.apache.fesod.sheet.write.metadata.WriteBasicParameter;
+import org.apache.fesod.sheet.write.view.ClassBasedViewMatcher;
+import org.apache.fesod.sheet.write.view.NameBasedViewMatcher;
 
 /**
  * Build ExcelBuilder
@@ -168,6 +171,36 @@ public abstract class AbstractExcelWriterParameterBuilder<
      */
     public T orderByIncludeColumn(Boolean orderByIncludeColumn) {
         parameter().setOrderByIncludeColumn(orderByIncludeColumn);
+        return self();
+    }
+
+    /**
+     * Only write the fields marked by the following View class identifiers.
+     *
+     * @param types Target View class identifiers
+     * @throws IllegalArgumentException if the types is empty
+     * @return this
+     */
+    public T groups(Class<?>... types) {
+        if (ArrayUtils.isEmpty(types)) {
+            throw new IllegalArgumentException("Types must not be empty");
+        }
+        parameter().setWriteViewMatcher(new ClassBasedViewMatcher(types));
+        return self();
+    }
+
+    /**
+     * Only write to the fields marked by the following View string identifiers.
+     *
+     * @param names Target View string identifiers
+     * @throws IllegalArgumentException if the names is empty
+     * @return this
+     */
+    public T groups(String... names) {
+        if (ArrayUtils.isEmpty(names)) {
+            throw new IllegalArgumentException("Names must not be empty");
+        }
+        parameter().setWriteViewMatcher(new NameBasedViewMatcher(names));
         return self();
     }
 }

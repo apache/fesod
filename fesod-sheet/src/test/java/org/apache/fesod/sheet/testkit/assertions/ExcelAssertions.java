@@ -81,6 +81,13 @@ public final class ExcelAssertions implements AutoCloseable {
         return workbook().sheet(index);
     }
 
+    /**
+     * Shortcut to assert on a specific sheet by name.
+     */
+    public SheetAssert sheet(String name) {
+        return workbook().sheet(name);
+    }
+
     Workbook getWorkbook() {
         return workbook;
     }

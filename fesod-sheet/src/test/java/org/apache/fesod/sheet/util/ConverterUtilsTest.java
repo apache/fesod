@@ -25,9 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.fesod.sheet.context.AnalysisContext;
+import org.apache.fesod.sheet.converters.CellDataConverterRegistry;
 import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.NullableObjectConverter;
+import org.apache.fesod.sheet.converters.ReadConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelDataConvertException;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
@@ -66,15 +67,15 @@ class ConverterUtilsTest {
     @Mock
     private Converter integerConverter;
 
-    private Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap;
+    private CellDataConverterRegistry converterRegistry;
 
     @BeforeEach
     void setUp() {
-        converterMap = new HashMap<>();
+        converterRegistry = new CellDataConverterRegistry();
 
         Mockito.lenient().when(context.readSheetHolder()).thenReturn(readSheetHolder);
         Mockito.lenient().when(context.readRowHolder()).thenReturn(readRowHolder);
-        Mockito.lenient().when(readSheetHolder.converterMap()).thenReturn(converterMap);
+        Mockito.lenient().when(readSheetHolder.converterRegistry()).thenReturn(converterRegistry);
         Mockito.lenient().when(readRowHolder.getRowIndex()).thenReturn(1);
     }
 
@@ -85,9 +86,12 @@ class ConverterUtilsTest {
         cellDataMap.put(0, new ReadCellData<>("A"));
         cellDataMap.put(1, new ReadCellData<>("B"));
 
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
-        converterMap.put(key, stringConverter);
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("A", "B");
+        ReadConverter<String> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(String.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.STRING).when(readConverter).supportExcelTypeKey();
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenReturn("A", "B");
+
+        converterRegistry.addCustomReadConverter(readConverter);
 
         Map<Integer, String> result = ConverterUtils.convertToStringMap(cellDataMap, context);
 
@@ -103,9 +107,12 @@ class ConverterUtilsTest {
         cellDataMap.put(0, new ReadCellData<>("A"));
         cellDataMap.put(2, new ReadCellData<>("C"));
 
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
-        converterMap.put(key, stringConverter);
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("A", "C");
+        ReadConverter<String> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(String.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.STRING).when(readConverter).supportExcelTypeKey();
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenReturn("A", "C");
+
+        converterRegistry.addCustomReadConverter(readConverter);
 
         Map<Integer, String> result = ConverterUtils.convertToStringMap(cellDataMap, context);
 
@@ -147,12 +154,15 @@ class ConverterUtilsTest {
     void test_convertToJavaData_simpleConversion() throws Exception {
         ReadCellData<?> cellData = new ReadCellData<>(new BigDecimal("123"));
 
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(Integer.class, CellDataTypeEnum.NUMBER);
-        converterMap.put(key, integerConverter);
-        Mockito.when(integerConverter.convertToJavaData(Mockito.any())).thenReturn(123);
+        ReadConverter<Integer> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(Integer.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.NUMBER).when(readConverter).supportExcelTypeKey();
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenReturn(123);
+
+        converterRegistry.addCustomReadConverter(readConverter);
 
         Object result = ConverterUtils.convertToJavaObject(
-                cellData, null, Integer.class, null, null, converterMap, context, 1, 0);
+                cellData, null, Integer.class, null, null, converterRegistry, context, 1, 0);
 
         Assertions.assertEquals(123, result);
     }
@@ -161,16 +171,19 @@ class ConverterUtilsTest {
     void test_convertToJavaData() throws Exception {
         ReadCellData<?> cellData = new ReadCellData<>("123");
 
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
-        converterMap.put(key, stringConverter);
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("123");
+        ReadConverter<String> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(String.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.STRING).when(readConverter).supportExcelTypeKey();
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenReturn("123");
+
+        converterRegistry.addCustomReadConverter(readConverter);
 
         Object result1 =
-                ConverterUtils.convertToJavaObject(cellData, null, null, null, null, converterMap, context, 1, 0);
+                ConverterUtils.convertToJavaObject(cellData, null, null, null, null, converterRegistry, context, 1, 0);
 
         Field field = DemoData.class.getDeclaredField("stringField");
         Object result2 =
-                ConverterUtils.convertToJavaObject(cellData, field, null, null, null, converterMap, context, 1, 0);
+                ConverterUtils.convertToJavaObject(cellData, field, null, null, null, converterRegistry, context, 1, 0);
 
         Assertions.assertEquals("123", result1);
         Assertions.assertEquals("123", result2);
@@ -181,12 +194,15 @@ class ConverterUtilsTest {
         ReadCellData<?> cellData = new ReadCellData<>(new BigDecimal("100"));
         Field field = DemoData.class.getDeclaredField("cellDataIntField");
 
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(Integer.class, CellDataTypeEnum.NUMBER);
-        converterMap.put(key, integerConverter);
-        Mockito.when(integerConverter.convertToJavaData(Mockito.any())).thenReturn(100);
+        ReadConverter<Integer> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(Integer.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.NUMBER).when(readConverter).supportExcelTypeKey();
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenReturn(100);
+
+        converterRegistry.addCustomReadConverter(readConverter);
 
         Object result = ConverterUtils.convertToJavaObject(
-                cellData, field, ReadCellData.class, null, null, converterMap, context, 1, 0);
+                cellData, field, ReadCellData.class, null, null, converterRegistry, context, 1, 0);
 
         Assertions.assertInstanceOf(ReadCellData.class, result);
         ReadCellData<?> resultData = (ReadCellData<?>) result;
@@ -198,15 +214,18 @@ class ConverterUtilsTest {
         ReadCellData<?> cellData = new ReadCellData<>("test");
         Field field = DemoData.class.getDeclaredField("rawCellDataField");
 
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
-        converterMap.put(key, stringConverter);
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("test");
+        ReadConverter<String> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(String.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.STRING).when(readConverter).supportExcelTypeKey();
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenReturn("test");
+
+        converterRegistry.addCustomReadConverter(readConverter);
 
         Object result = ConverterUtils.convertToJavaObject(
-                cellData, field, ReadCellData.class, null, null, converterMap, context, 1, 0);
+                cellData, field, ReadCellData.class, null, null, converterRegistry, context, 1, 0);
 
         Assertions.assertInstanceOf(ReadCellData.class, result);
-        Mockito.verify(stringConverter).convertToJavaData(Mockito.any());
+        Mockito.verify(readConverter).convertToJavaData(Mockito.any());
     }
 
     @Test
@@ -215,14 +234,18 @@ class ConverterUtilsTest {
 
         Converter globalConverter = Mockito.mock(Converter.class);
         Converter customConverter = Mockito.mock(Converter.class);
-        converterMap.put(ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING), globalConverter);
+
+        Mockito.doReturn(String.class).when(globalConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.STRING).when(globalConverter).supportExcelTypeKey();
+
+        converterRegistry.addCustomReadConverter(globalConverter);
 
         ExcelContentProperty property = Mockito.mock(ExcelContentProperty.class);
         Mockito.when(property.getConverter()).thenReturn(customConverter);
         Mockito.when(customConverter.convertToJavaData(Mockito.any())).thenReturn("Custom");
 
         Object result = ConverterUtils.convertToJavaObject(
-                cellData, null, String.class, null, property, converterMap, context, 1, 0);
+                cellData, null, String.class, null, property, converterRegistry, context, 1, 0);
 
         Assertions.assertEquals("Custom", result);
         Mockito.verify(customConverter).convertToJavaData(Mockito.any());
@@ -236,7 +259,7 @@ class ConverterUtilsTest {
         Mockito.when(property.getConverter()).thenReturn(stringConverter);
 
         Object result = ConverterUtils.convertToJavaObject(
-                cellData, null, String.class, null, property, converterMap, context, 1, 0);
+                cellData, null, String.class, null, property, converterRegistry, context, 1, 0);
 
         Assertions.assertNull(result);
         Mockito.verify(stringConverter, Mockito.never()).convertToJavaData(Mockito.any());
@@ -253,7 +276,7 @@ class ConverterUtilsTest {
         Mockito.when(nullableConverter.convertToJavaData(Mockito.any())).thenReturn("HandledNull");
 
         Object result = ConverterUtils.convertToJavaObject(
-                cellData, null, String.class, null, property, converterMap, context, 1, 0);
+                cellData, null, String.class, null, property, converterRegistry, context, 1, 0);
 
         Assertions.assertEquals("HandledNull", result);
         Mockito.verify(nullableConverter).convertToJavaData(Mockito.any());
@@ -262,13 +285,18 @@ class ConverterUtilsTest {
     @Test
     void test_exception_wrapping() throws Exception {
         ReadCellData<?> cellData = new ReadCellData<>("ErrorData");
-        ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
-        converterMap.put(key, stringConverter);
 
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenThrow(new RuntimeException("Inner error"));
+        ReadConverter<String> readConverter = Mockito.mock(ReadConverter.class);
+        Mockito.doReturn(String.class).when(readConverter).supportJavaTypeKey();
+        Mockito.doReturn(CellDataTypeEnum.STRING).when(readConverter).supportExcelTypeKey();
+
+        converterRegistry.addCustomReadConverter(readConverter);
+
+        Mockito.when(readConverter.convertToJavaData(Mockito.any())).thenThrow(new RuntimeException("Inner error"));
 
         ExcelDataConvertException ex = Assertions.assertThrows(ExcelDataConvertException.class, () -> {
-            ConverterUtils.convertToJavaObject(cellData, null, String.class, null, null, converterMap, context, 99, 88);
+            ConverterUtils.convertToJavaObject(
+                    cellData, null, String.class, null, null, converterRegistry, context, 99, 88);
         });
 
         Assertions.assertEquals(99, ex.getRowIndex());

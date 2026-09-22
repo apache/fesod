@@ -83,7 +83,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                         cellData,
                         null,
                         null,
-                        readSheetHolder.converterMap(),
+                        readSheetHolder.converterRegistry(),
                         context,
                         context.readRowHolder().getRowIndex(),
                         key));
@@ -143,7 +143,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                 ReadCellData.class,
                 classGeneric,
                 null,
-                readSheetHolder.converterMap(),
+                readSheetHolder.converterRegistry(),
                 context,
                 context.readRowHolder().getRowIndex(),
                 columnIndex);
@@ -193,7 +193,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                             readSheetHolder.excelReadHeadProperty().getHeadClazz(),
                             fieldName,
                             readSheetHolder),
-                    readSheetHolder.converterMap(),
+                    readSheetHolder.converterRegistry(),
                     context,
                     context.readRowHolder().getRowIndex(),
                     index);

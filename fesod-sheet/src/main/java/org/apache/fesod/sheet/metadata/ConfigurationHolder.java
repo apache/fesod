@@ -25,9 +25,7 @@
 
 package org.apache.fesod.sheet.metadata;
 
-import java.util.Map;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.converters.CellDataConverterRegistry;
 
 /**
  * Get the corresponding holder
@@ -50,10 +48,5 @@ public interface ConfigurationHolder extends Holder {
      */
     GlobalConfiguration globalConfiguration();
 
-    /**
-     * What converter does the currently operated cell need to execute
-     *
-     * @return Converter
-     */
-    Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap();
+    CellDataConverterRegistry converterRegistry();
 }

@@ -29,9 +29,8 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.context.WriteContext;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.NullableObjectConverter;
+import org.apache.fesod.sheet.converters.WriteConverter;
 import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelWriteDataConvertException;
@@ -335,24 +334,22 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private WriteCellData<?> doConvert(CellWriteHandlerContext cellWriteHandlerContext) {
         ExcelContentProperty excelContentProperty = cellWriteHandlerContext.getExcelContentProperty();
 
-        Converter<?> converter = null;
+        WriteConverter<?> converter = null;
         if (excelContentProperty != null) {
             converter = excelContentProperty.getConverter();
         }
         if (converter == null) {
-            // csv is converted to string by default
-            if (writeContext.writeWorkbookHolder().getExcelType() == ExcelTypeEnum.CSV) {
-                cellWriteHandlerContext.setTargetCellDataType(CellDataTypeEnum.STRING);
-            }
             converter = writeContext
                     .currentWriteHolder()
-                    .converterMap()
-                    .get(ConverterKeyBuild.buildKey(
+                    .converterRegistry()
+                    .findWriteConverter(
                             cellWriteHandlerContext.getOriginalFieldClass(),
-                            cellWriteHandlerContext.getTargetCellDataType()));
+                            cellWriteHandlerContext.getColumnIndex(),
+                            CellDataTypeEnum.STRING.equals(cellWriteHandlerContext.getTargetCellDataType()));
         }
         if (cellWriteHandlerContext.getOriginalValue() == null && !(converter instanceof NullableObjectConverter)) {
             return new WriteCellData<>(CellDataTypeEnum.EMPTY);
@@ -365,7 +362,7 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         }
         WriteCellData<?> cellData;
         try {
-            cellData = ((Converter<Object>) converter)
+            cellData = ((WriteConverter<Object>) converter)
                     .convertToExcelData(new WriteConverterContext<>(
                             cellWriteHandlerContext.getOriginalValue(), excelContentProperty, writeContext));
         } catch (Exception e) {

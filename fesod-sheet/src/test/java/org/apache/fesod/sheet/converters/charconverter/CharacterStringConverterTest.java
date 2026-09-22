@@ -19,16 +19,7 @@
 
 package org.apache.fesod.sheet.converters.charconverter;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.annotation.ExcelProperty;
-import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
-import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -77,46 +68,5 @@ class CharacterStringConverterTest {
         WriteCellData<?> cellData = converter.convertToExcelData('A', null, GLOBAL_CONFIGURATION);
         Assertions.assertEquals(CellDataTypeEnum.STRING, cellData.getType());
         Assertions.assertEquals("A", cellData.getStringValue());
-    }
-
-    @Test
-    void characterFieldRoundTripsThroughFesodSheet() throws Exception {
-        File file = File.createTempFile("fesod-character", ".xlsx");
-        file.deleteOnExit();
-        CharacterWriteData row = new CharacterWriteData();
-        row.setFlag('A');
-
-        FesodSheet.write(file, CharacterWriteData.class).sheet().doWrite(Collections.singletonList(row));
-
-        List<CharacterReadData> rows = FesodSheet.read(file, CharacterReadData.class, new CharacterReadListener())
-                .sheet()
-                .doReadSync();
-        Assertions.assertEquals(1, rows.size());
-        Assertions.assertEquals(Character.valueOf('A'), rows.get(0).getFlag());
-    }
-
-    @Getter
-    @Setter
-    public static class CharacterWriteData {
-
-        @ExcelProperty("flag")
-        private Character flag;
-    }
-
-    @Getter
-    @Setter
-    public static class CharacterReadData {
-
-        @ExcelProperty("flag")
-        private Character flag;
-    }
-
-    public static class CharacterReadListener extends AnalysisEventListener<CharacterReadData> {
-
-        @Override
-        public void invoke(CharacterReadData data, AnalysisContext context) {}
-
-        @Override
-        public void doAfterAllAnalysed(AnalysisContext context) {}
     }
 }

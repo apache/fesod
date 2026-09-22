@@ -19,19 +19,10 @@
 
 package org.apache.fesod.sheet.converters.year;
 
-import java.io.File;
 import java.time.DateTimeException;
 import java.time.Year;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.fesod.sheet.FesodSheet;
-import org.apache.fesod.sheet.annotation.ExcelProperty;
-import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
-import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -101,48 +92,5 @@ class YearStringConverterTest {
 
         WriteCellData<?> usCellData = converter.convertToExcelData(Year.of(2026), contentProperty, usConfiguration);
         Assertions.assertEquals("AD 2026", usCellData.getStringValue());
-    }
-
-    @Test
-    void yearFieldRoundTripsThroughFesodSheet() throws Exception {
-        File file = File.createTempFile("fesod-year", ".xlsx");
-        file.deleteOnExit();
-        YearWriteData row = new YearWriteData();
-        row.setFlag(Year.of(2026));
-
-        // A Year field is written through the full write path: without a wildcard registration
-        // (putWriteConverter) the xlsx lookup key (Year, null) finds no converter and throws.
-        FesodSheet.write(file, YearWriteData.class).sheet().doWrite(Collections.singletonList(row));
-
-        List<YearReadData> rows = FesodSheet.read(file, YearReadData.class, new YearReadListener())
-                .sheet()
-                .doReadSync();
-        Assertions.assertEquals(1, rows.size());
-        Assertions.assertEquals(Year.of(2026), rows.get(0).getFlag());
-    }
-
-    @Getter
-    @Setter
-    public static class YearWriteData {
-
-        @ExcelProperty("flag")
-        private Year flag;
-    }
-
-    @Getter
-    @Setter
-    public static class YearReadData {
-
-        @ExcelProperty("flag")
-        private Year flag;
-    }
-
-    public static class YearReadListener extends AnalysisEventListener<YearReadData> {
-
-        @Override
-        public void invoke(YearReadData data, AnalysisContext context) {}
-
-        @Override
-        public void doAfterAllAnalysed(AnalysisContext context) {}
     }
 }

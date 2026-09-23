@@ -552,7 +552,7 @@ public class WriteContextImpl implements WriteContext {
                 }
                 writeWorkbookHolder.getWorkbook().close();
             } catch (Throwable t) {
-                throwable = t;
+                throwable = keepFirstFailure(throwable, t);
             }
         }
         try {
@@ -561,27 +561,28 @@ public class WriteContextImpl implements WriteContext {
                 ((SXSSFWorkbook) workbook).dispose();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = keepFirstFailure(throwable, t);
         }
         try {
             if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
                 writeWorkbookHolder.getOutputStream().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = keepFirstFailure(throwable, t);
         }
         if (writeExcel && !isOutputStreamEncrypt) {
             try {
                 doFileEncrypt07();
             } catch (Throwable t) {
-                throwable = t;
+                Throwable failure = t;
                 // The workbook was written to the file before encryption, so the file still holds the unprotected
                 // workbook and must not be left behind.
                 File file = writeWorkbookHolder.getFile();
                 if (file.exists() && !file.delete()) {
-                    throwable =
+                    failure =
                             new ExcelGenerateException("Can not delete unencrypted file: " + file.getAbsolutePath(), t);
                 }
+                throwable = keepFirstFailure(throwable, failure);
             }
         }
         try {
@@ -589,7 +590,7 @@ public class WriteContextImpl implements WriteContext {
                 writeWorkbookHolder.getTempTemplateInputStream().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = keepFirstFailure(throwable, t);
         }
         clearEncrypt03();
         removeThreadLocalCache();
@@ -599,6 +600,13 @@ public class WriteContextImpl implements WriteContext {
         if (log.isDebugEnabled()) {
             log.debug("Finished write.");
         }
+    }
+
+    /**
+     * Returns the failure already recorded, or the new one if there is none yet.
+     */
+    private static Throwable keepFirstFailure(Throwable recorded, Throwable t) {
+        return recorded != null ? recorded : t;
     }
 
     /**

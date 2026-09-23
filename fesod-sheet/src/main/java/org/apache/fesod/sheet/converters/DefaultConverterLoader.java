@@ -44,6 +44,7 @@ import org.apache.fesod.sheet.converters.bytearray.ByteArrayImageConverter;
 import org.apache.fesod.sheet.converters.byteconverter.ByteBooleanConverter;
 import org.apache.fesod.sheet.converters.byteconverter.ByteNumberConverter;
 import org.apache.fesod.sheet.converters.byteconverter.ByteStringConverter;
+import org.apache.fesod.sheet.converters.clob.ClobStringConverter;
 import org.apache.fesod.sheet.converters.date.DateDateConverter;
 import org.apache.fesod.sheet.converters.date.DateNumberConverter;
 import org.apache.fesod.sheet.converters.date.DateStringConverter;
@@ -111,6 +112,8 @@ public class DefaultConverterLoader {
         putAllConverter(new ByteNumberConverter());
         putAllConverter(new ByteStringConverter());
 
+        putAllConverter(new ClobStringConverter());
+
         putAllConverter(new DateNumberConverter());
         putAllConverter(new DateStringConverter());
 
@@ -166,6 +169,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LongNumberConverter());
         putWriteConverter(new ShortNumberConverter());
         putWriteConverter(new StringStringConverter());
+        putWriteConverter(new ClobStringConverter());
         putWriteConverter(new FileImageConverter());
         putWriteConverter(new InputStreamImageConverter());
         putWriteConverter(new ByteArrayImageConverter());
@@ -187,6 +191,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LongStringConverter());
         putWriteStringConverter(new ShortStringConverter());
         putWriteStringConverter(new StringStringConverter());
+        putWriteStringConverter(new ClobStringConverter());
         defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
     }
 

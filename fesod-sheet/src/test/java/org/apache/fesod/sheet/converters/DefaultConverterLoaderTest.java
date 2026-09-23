@@ -19,9 +19,11 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.sql.Clob;
 import java.time.LocalTime;
 import java.util.Map;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.clob.ClobStringConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
@@ -65,6 +67,21 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 LocalTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersClobStringConverter() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                ClobStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Clob.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                ClobStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Clob.class)));
+        Assertions.assertInstanceOf(
+                ClobStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(Clob.class, CellDataTypeEnum.STRING)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

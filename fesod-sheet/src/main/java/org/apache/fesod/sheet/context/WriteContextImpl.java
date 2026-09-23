@@ -26,13 +26,11 @@
 package org.apache.fesod.sheet.context;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -45,10 +43,8 @@ import org.apache.fesod.sheet.metadata.CellRange;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
 import org.apache.fesod.sheet.util.NumberUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
@@ -65,13 +61,6 @@ import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteTableHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
 import org.apache.fesod.sheet.write.property.ExcelWriteHeadProperty;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.poifs.crypt.EncryptionMode;
-import org.apache.poi.poifs.crypt.Encryptor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -548,6 +537,7 @@ public class WriteContextImpl implements WriteContext {
      * @param onException Indicates whether the finish is triggered by an exception.
      */
     private void writeAndCloseWorkbook(boolean onException) {
+        WorkbookEncryption encryption = new WorkbookEncryption(writeWorkbookHolder);
         Throwable throwable = null;
         boolean isOutputStreamEncrypt = false;
         // Determine if you need to write excel
@@ -558,7 +548,7 @@ public class WriteContextImpl implements WriteContext {
         // No data is written if an exception is thrown
         if (writeExcel) {
             try {
-                isOutputStreamEncrypt = doOutputStreamEncrypt07();
+                isOutputStreamEncrypt = encryption.doOutputStreamEncrypt07();
             } catch (Throwable t) {
                 throwable = t;
                 writeExcel = false;
@@ -572,7 +562,7 @@ public class WriteContextImpl implements WriteContext {
         throwable = runStep(throwable, this::closeOutputStream);
         if (writeExcel && !isOutputStreamEncrypt) {
             try {
-                doFileEncrypt07();
+                encryption.doFileEncrypt07();
             } catch (Throwable t) {
                 Throwable failure = t;
                 // The workbook was written to the file before encryption, so the file still holds the unprotected
@@ -586,7 +576,7 @@ public class WriteContextImpl implements WriteContext {
             }
         }
         throwable = runStep(throwable, this::closeTemplateInputStream);
-        clearEncrypt03();
+        encryption.clearEncrypt03();
         removeThreadLocalCache();
         if (throwable != null) {
             throw new ExcelGenerateException("Can not close IO.", throwable);
@@ -707,97 +697,5 @@ public class WriteContextImpl implements WriteContext {
     @Override
     public Workbook getWorkbook() {
         return writeWorkbookHolder.getWorkbook();
-    }
-
-    /**
-     * Clears encryption settings for older Excel formats.
-     */
-    private void clearEncrypt03() {
-        if (!isEncrypted(ExcelTypeEnum.XLS)) {
-            return;
-        }
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
-    /**
-     * Checks whether the workbook is password-protected and written as the given type.
-     */
-    private boolean isEncrypted(ExcelTypeEnum excelType) {
-        return !StringUtils.isEmpty(writeWorkbookHolder.getPassword())
-                && excelType.equals(writeWorkbookHolder.getExcelType());
-    }
-
-    /**
-     * Encrypts the output stream for newer Excel formats.
-     *
-     * @return True if encryption is successful, otherwise false.
-     * @throws Exception If an error occurs during encryption.
-     */
-    private boolean doOutputStreamEncrypt07() throws Exception {
-        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
-            return false;
-        }
-        if (writeWorkbookHolder.getFile() != null) {
-            return false;
-        }
-        File tempXlsx = FileUtils.createTmpFile(UUID.randomUUID() + ".xlsx");
-        try {
-            try (FileOutputStream tempFileOutputStream = new FileOutputStream(tempXlsx)) {
-                try {
-                    writeWorkbookHolder.getWorkbook().write(tempFileOutputStream);
-                } finally {
-                    writeWorkbookHolder.getWorkbook().close();
-                }
-            }
-            try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(tempXlsx)) {
-                fileSystem.writeFilesystem(writeWorkbookHolder.getOutputStream());
-            }
-        } finally {
-            if (tempXlsx.exists() && !tempXlsx.delete()) {
-                throw new ExcelGenerateException("Can not delete temp File!");
-            }
-        }
-        return true;
-    }
-
-    /**
-     * To encrypt
-     */
-    private void doFileEncrypt07() throws Exception {
-        // Check if the password is empty or the file type is not xlsx, if so, return directly
-        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
-            return;
-        }
-        // Check if the file is null, if so, return directly
-        if (writeWorkbookHolder.getFile() == null) {
-            return;
-        }
-        // Use try-with-resources to automatically close resources, encrypt and write the file
-        try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(writeWorkbookHolder.getFile());
-                FileOutputStream fileOutputStream = new FileOutputStream(writeWorkbookHolder.getFile())) {
-            fileSystem.writeFilesystem(fileOutputStream);
-        }
-    }
-
-    /**
-     * Opens a file system and encrypts the given file.
-     *
-     * This method creates a new POIFSFileSystem instance, sets up an Encryptor with a standard encryption mode,
-     * and confirms the password for encryption. It then opens the provided file in read-write mode, saves its content
-     * into an encrypted output stream, and finally returns the encrypted file system.
-     *
-     * @param file The file to be encrypted.
-     * @return An encrypted POIFSFileSystem object.
-     * @throws Exception If any error occurs during the encryption process or file handling.
-     */
-    private POIFSFileSystem openFileSystemAndEncrypt(File file) throws Exception {
-        POIFSFileSystem fileSystem = new POIFSFileSystem();
-        Encryptor encryptor = new EncryptionInfo(EncryptionMode.standard).getEncryptor();
-        encryptor.confirmPassword(writeWorkbookHolder.getPassword());
-        try (OPCPackage opcPackage = OPCPackage.open(file, PackageAccess.READ_WRITE);
-                OutputStream outputStream = encryptor.getDataStream(fileSystem)) {
-            opcPackage.save(outputStream);
-        }
-        return fileSystem;
     }
 }

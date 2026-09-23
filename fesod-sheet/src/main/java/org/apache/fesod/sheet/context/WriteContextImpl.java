@@ -687,20 +687,15 @@ public class WriteContextImpl implements WriteContext {
         File tempXlsx = FileUtils.createTmpFile(UUID.randomUUID() + ".xlsx");
         FileOutputStream tempFileOutputStream = new FileOutputStream(tempXlsx);
         try {
-            writeWorkbookHolder.getWorkbook().write(tempFileOutputStream);
-        } finally {
             try {
+                writeWorkbookHolder.getWorkbook().write(tempFileOutputStream);
+            } finally {
                 writeWorkbookHolder.getWorkbook().close();
                 tempFileOutputStream.close();
-            } catch (Exception e) {
-                if (!tempXlsx.delete()) {
-                    throw new ExcelGenerateException("Can not delete temp File!");
-                }
-                throw e;
             }
-        }
-        try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(tempXlsx)) {
-            fileSystem.writeFilesystem(writeWorkbookHolder.getOutputStream());
+            try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(tempXlsx)) {
+                fileSystem.writeFilesystem(writeWorkbookHolder.getOutputStream());
+            }
         } finally {
             if (!tempXlsx.delete()) {
                 throw new ExcelGenerateException("Can not delete temp File!");

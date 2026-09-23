@@ -27,6 +27,8 @@ package org.apache.fesod.sheet.readwrite;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
@@ -45,6 +47,7 @@ import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
 import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
@@ -163,6 +166,43 @@ public class EncryptDataTest extends AbstractExcelTest {
                     .sheet()
                     .doWrite(TestDataBuilder.simpleData(10)));
             Assertions.assertEquals(0, out.size());
+        } finally {
+            FileUtils.setTempFilePrefix(originalPrefix);
+        }
+    }
+
+    /**
+     * Verifies that when writing the unencrypted temp file for an XLSX stream write fails, the temp file is deleted.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_tempFileWriteFails_deletesTempFile() {
+        File tempFileDir = new File(tempDir, "fesod-temp");
+        String originalPrefix = FileUtils.getTempFilePrefix();
+        FileUtils.setTempFilePrefix(tempFileDir.getAbsolutePath() + File.separator);
+        // Swaps in a workbook whose write puts the data out and then fails, like a disk filling up
+        WorkbookWriteHandler failingWorkbook = new WorkbookWriteHandler() {
+            @Override
+            public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
+                SXSSFWorkbook workbook = new SXSSFWorkbook() {
+                    @Override
+                    public void write(OutputStream stream) throws IOException {
+                        super.write(stream);
+                        throw new IOException("write failed");
+                    }
+                };
+                workbook.createSheet("s").createRow(0).createCell(0).setCellValue("secret");
+                context.getWriteWorkbookHolder().setWorkbook(workbook);
+            }
+        };
+        try {
+            Assertions.assertThrows(
+                    ExcelGenerateException.class, () -> FesodSheet.write(new ByteArrayOutputStream(), SimpleData.class)
+                            .excelType(ExcelTypeEnum.XLSX)
+                            .password(PASSWORD)
+                            .registerWriteHandler(failingWorkbook)
+                            .sheet("s")
+                            .doWrite(TestDataBuilder.simpleData(10)));
+            Assertions.assertArrayEquals(new String[0], tempFileDir.list());
         } finally {
             FileUtils.setTempFilePrefix(originalPrefix);
         }

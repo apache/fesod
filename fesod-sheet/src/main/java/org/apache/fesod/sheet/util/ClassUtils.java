@@ -343,7 +343,7 @@ public class ClassUtils {
             FieldWrapper field = entry.getValue();
 
             // The current field needs to be ignored
-            if (writeHolder.ignore(field.getFieldName(), entry.getKey())) {
+            if (writeHolder.ignore(field.getField().getName(), entry.getKey())) {
                 ignoreSet.add(field.getFieldName());
                 // indexFieldMap is keyed by the field's explicit @ExcelProperty(index), which for
                 // explicit-index fields equals the sortedFieldMap position (entry.getKey()); remove
@@ -384,26 +384,31 @@ public class ClassUtils {
 
         Collection<String> includeColumnFieldNames = writeHolder.includeColumnFieldNames();
         if (!CollectionUtils.isEmpty(includeColumnFieldNames)) {
-            // Field sorted map
+            // Field sorted map, keyed by the Java field name, which is what the user configures
             Map<String, Integer> filedIndexMap = MapUtils.newHashMap();
-            int fieldIndex = 0;
-            for (String includeColumnFieldName : includeColumnFieldNames) {
-                filedIndexMap.put(includeColumnFieldName, fieldIndex++);
-            }
+            fieldCache
+                    .getSortedFieldMap()
+                    .forEach(
+                            (index, field) -> filedIndexMap.put(field.getField().getName(), index));
 
             // rebuild sortedFieldMap
             Map<Integer, FieldWrapper> tempSortedFieldMap = MapUtils.newHashMap();
-            fieldCache.getSortedFieldMap().forEach((index, field) -> {
-                Integer tempFieldIndex = filedIndexMap.get(field.getFieldName());
-                if (tempFieldIndex != null) {
-                    tempSortedFieldMap.put(tempFieldIndex, field);
-
-                    //  The user has redefined the ordering and the ordering of annotations needs to be invalidated
-                    if (!tempFieldIndex.equals(index)) {
-                        indexFieldMap.remove(index);
-                    }
+            int fieldIndex = 0;
+            for (String includeColumnFieldName : includeColumnFieldNames) {
+                Integer index = filedIndexMap.get(includeColumnFieldName);
+                // The name is not a field of the class, the column is ignored, it must not hold a position
+                if (index == null) {
+                    continue;
                 }
-            });
+                FieldWrapper field = fieldCache.getSortedFieldMap().get(index);
+                tempSortedFieldMap.put(fieldIndex, field);
+
+                //  The user has redefined the ordering and the ordering of annotations needs to be invalidated
+                if (fieldIndex != index) {
+                    indexFieldMap.remove(index);
+                }
+                fieldIndex++;
+            }
             fieldCache.setSortedFieldMap(tempSortedFieldMap);
             return;
         }

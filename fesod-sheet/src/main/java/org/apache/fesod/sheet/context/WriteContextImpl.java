@@ -564,23 +564,12 @@ public class WriteContextImpl implements WriteContext {
                 writeExcel = false;
             }
         }
+        boolean writePlainWorkbook = writeExcel;
         if (!isOutputStreamEncrypt) {
-            try {
-                writeWorkbook(writeExcel);
-            } catch (Throwable t) {
-                throwable = keepFirstFailure(throwable, t);
-            }
+            throwable = runStep(throwable, () -> writeWorkbook(writePlainWorkbook));
         }
-        try {
-            disposeSxssfWorkbook();
-        } catch (Throwable t) {
-            throwable = keepFirstFailure(throwable, t);
-        }
-        try {
-            closeOutputStream();
-        } catch (Throwable t) {
-            throwable = keepFirstFailure(throwable, t);
-        }
+        throwable = runStep(throwable, this::disposeSxssfWorkbook);
+        throwable = runStep(throwable, this::closeOutputStream);
         if (writeExcel && !isOutputStreamEncrypt) {
             try {
                 doFileEncrypt07();
@@ -596,11 +585,7 @@ public class WriteContextImpl implements WriteContext {
                 throwable = keepFirstFailure(throwable, failure);
             }
         }
-        try {
-            closeTemplateInputStream();
-        } catch (Throwable t) {
-            throwable = keepFirstFailure(throwable, t);
-        }
+        throwable = runStep(throwable, this::closeTemplateInputStream);
         clearEncrypt03();
         removeThreadLocalCache();
         if (throwable != null) {
@@ -647,6 +632,24 @@ public class WriteContextImpl implements WriteContext {
         if (writeWorkbookHolder.getTempTemplateInputStream() != null) {
             writeWorkbookHolder.getTempTemplateInputStream().close();
         }
+    }
+
+    @FunctionalInterface
+    private interface FinishStep {
+        void run() throws Exception;
+    }
+
+    /**
+     * Runs one step of the finishing sequence. A failure is recorded instead of stopping the sequence, and only the
+     * first failure is kept.
+     */
+    private static Throwable runStep(Throwable throwable, FinishStep step) {
+        try {
+            step.run();
+        } catch (Throwable t) {
+            return keepFirstFailure(throwable, t);
+        }
+        return throwable;
     }
 
     /**

@@ -27,6 +27,7 @@ package org.apache.fesod.sheet.context;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
@@ -496,8 +497,22 @@ public class WriteContextImpl implements WriteContext {
 
         // executes the callback after all sheets has been fully written.
         boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();
-        Map<Integer, WriteSheetHolder> writeSheetHolderMap =
-                shouldSkip ? null : writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
+        if (!shouldSkip) {
+            afterSheetsDispose();
+        }
+
+        WriteHandlerUtils.afterWorkbookDispose(writeWorkbookHolder.getWorkbookWriteHandlerContext());
+        if (writeWorkbookHolder == null) {
+            return;
+        }
+        writeAndCloseWorkbook(onException);
+    }
+
+    /**
+     * Runs the after-sheet-dispose handlers for every initialized sheet.
+     */
+    private void afterSheetsDispose() {
+        Map<Integer, WriteSheetHolder> writeSheetHolderMap = writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
         if (MapUtils.isNotEmpty(writeSheetHolderMap)) {
             if (MapUtils.size(writeSheetHolderMap) == 1) {
                 SheetWriteHandlerContext sheetWriteHandlerContext =
@@ -524,11 +539,15 @@ public class WriteContextImpl implements WriteContext {
                 }
             }
         }
+    }
 
-        WriteHandlerUtils.afterWorkbookDispose(writeWorkbookHolder.getWorkbookWriteHandlerContext());
-        if (writeWorkbookHolder == null) {
-            return;
-        }
+    /**
+     * Writes the workbook, encrypted if a password is set, then closes the workbook and its streams. Every step
+     * runs even if an earlier one failed, and the first failure is thrown at the end.
+     *
+     * @param onException Indicates whether the finish is triggered by an exception.
+     */
+    private void writeAndCloseWorkbook(boolean onException) {
         Throwable throwable = null;
         boolean isOutputStreamEncrypt = false;
         // Determine if you need to write excel
@@ -547,26 +566,18 @@ public class WriteContextImpl implements WriteContext {
         }
         if (!isOutputStreamEncrypt) {
             try {
-                if (writeExcel) {
-                    writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
-                }
-                writeWorkbookHolder.getWorkbook().close();
+                writeWorkbook(writeExcel);
             } catch (Throwable t) {
                 throwable = keepFirstFailure(throwable, t);
             }
         }
         try {
-            Workbook workbook = writeWorkbookHolder.getWorkbook();
-            if (workbook instanceof SXSSFWorkbook) {
-                ((SXSSFWorkbook) workbook).dispose();
-            }
+            disposeSxssfWorkbook();
         } catch (Throwable t) {
             throwable = keepFirstFailure(throwable, t);
         }
         try {
-            if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
-                writeWorkbookHolder.getOutputStream().close();
-            }
+            closeOutputStream();
         } catch (Throwable t) {
             throwable = keepFirstFailure(throwable, t);
         }
@@ -586,9 +597,7 @@ public class WriteContextImpl implements WriteContext {
             }
         }
         try {
-            if (writeWorkbookHolder.getTempTemplateInputStream() != null) {
-                writeWorkbookHolder.getTempTemplateInputStream().close();
-            }
+            closeTemplateInputStream();
         } catch (Throwable t) {
             throwable = keepFirstFailure(throwable, t);
         }
@@ -599,6 +608,44 @@ public class WriteContextImpl implements WriteContext {
         }
         if (log.isDebugEnabled()) {
             log.debug("Finished write.");
+        }
+    }
+
+    /**
+     * Writes the unencrypted workbook to the output stream if requested, then closes the workbook.
+     */
+    private void writeWorkbook(boolean writeExcel) throws IOException {
+        if (writeExcel) {
+            writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
+        }
+        writeWorkbookHolder.getWorkbook().close();
+    }
+
+    /**
+     * Deletes the temporary files backing a streaming workbook.
+     */
+    private void disposeSxssfWorkbook() {
+        Workbook workbook = writeWorkbookHolder.getWorkbook();
+        if (workbook instanceof SXSSFWorkbook) {
+            ((SXSSFWorkbook) workbook).dispose();
+        }
+    }
+
+    /**
+     * Closes the output stream, unless the caller asked to keep it open.
+     */
+    private void closeOutputStream() throws IOException {
+        if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
+            writeWorkbookHolder.getOutputStream().close();
+        }
+    }
+
+    /**
+     * Closes the temporary copy of the template input stream, if one was made.
+     */
+    private void closeTemplateInputStream() throws IOException {
+        if (writeWorkbookHolder.getTempTemplateInputStream() != null) {
+            writeWorkbookHolder.getTempTemplateInputStream().close();
         }
     }
 

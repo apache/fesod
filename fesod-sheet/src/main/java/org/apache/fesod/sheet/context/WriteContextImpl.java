@@ -663,11 +663,18 @@ public class WriteContextImpl implements WriteContext {
      * Clears encryption settings for older Excel formats.
      */
     private void clearEncrypt03() {
-        if (StringUtils.isEmpty(writeWorkbookHolder.getPassword())
-                || !ExcelTypeEnum.XLS.equals(writeWorkbookHolder.getExcelType())) {
+        if (!isEncrypted(ExcelTypeEnum.XLS)) {
             return;
         }
         Biff8EncryptionKey.setCurrentUserPassword(null);
+    }
+
+    /**
+     * Checks whether the workbook is password-protected and written as the given type.
+     */
+    private boolean isEncrypted(ExcelTypeEnum excelType) {
+        return !StringUtils.isEmpty(writeWorkbookHolder.getPassword())
+                && excelType.equals(writeWorkbookHolder.getExcelType());
     }
 
     /**
@@ -677,8 +684,7 @@ public class WriteContextImpl implements WriteContext {
      * @throws Exception If an error occurs during encryption.
      */
     private boolean doOutputStreamEncrypt07() throws Exception {
-        if (StringUtils.isEmpty(writeWorkbookHolder.getPassword())
-                || !ExcelTypeEnum.XLSX.equals(writeWorkbookHolder.getExcelType())) {
+        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
             return false;
         }
         if (writeWorkbookHolder.getFile() != null) {
@@ -709,8 +715,7 @@ public class WriteContextImpl implements WriteContext {
      */
     private void doFileEncrypt07() throws Exception {
         // Check if the password is empty or the file type is not xlsx, if so, return directly
-        if (StringUtils.isEmpty(writeWorkbookHolder.getPassword())
-                || !ExcelTypeEnum.XLSX.equals(writeWorkbookHolder.getExcelType())) {
+        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
             return;
         }
         // Check if the file is null, if so, return directly

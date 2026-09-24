@@ -61,6 +61,7 @@ under the License.
         <module>fesod-common</module>
         <module>fesod-shaded</module>
         <module>fesod-sheet</module>
+        <module>fesod-benchmark</module>
     </modules>
 
     <properties>

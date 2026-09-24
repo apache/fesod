@@ -21,6 +21,8 @@ package org.apache.fesod.sheet.converters.sqldate;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
+
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -48,9 +50,11 @@ public class SqlDateNumberConverter implements Converter<Date> {
     @Override
     public Date convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        java.util.Date date = DateUtils.getJavaDate(
-                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
-        return new Date(date.getTime());
+        LocalDate localDate = DateUtils.getLocalDate(
+                cellData.getNumberValue().doubleValue(),
+                DateUtils.isDate1904(contentProperty, globalConfiguration));
+
+        return localDate == null ? null : Date.valueOf(localDate);
     }
 
     @Override

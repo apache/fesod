@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
-import java.util.Optional;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
@@ -54,27 +53,29 @@ public class HyperlinkTagHandler extends AbstractXlsxTagHandler {
             return;
         }
         // Hyperlink has 2 case:
-        // case 1，In the 'location' tag
+        // case 1, In the 'r:id' tag, Then go to 'PackageRelationshipCollection' to get inside;
+        // a 'location' next to it is the URI fragment
         String location = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_LOCATION);
-        if (location != null) {
-            CellExtra cellExtra = new CellExtra(CellExtraTypeEnum.HYPERLINK, location, ref);
-            xlsxReadContext.readSheetHolder().setCellExtra(cellExtra);
-            xlsxReadContext.analysisEventProcessor().extra(xlsxReadContext);
-            return;
-        }
-        // case 2, In the 'r:id' tag, Then go to 'PackageRelationshipCollection' to get inside
         String rId = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_RID);
         PackageRelationshipCollection packageRelationshipCollection =
                 xlsxReadContext.xlsxReadSheetHolder().getPackageRelationshipCollection();
-        if (rId == null || packageRelationshipCollection == null) {
+        PackageRelationship relationship = rId == null || packageRelationshipCollection == null
+                ? null
+                : packageRelationshipCollection.getRelationshipByID(rId);
+        String address;
+        if (relationship != null) {
+            address = relationship.getTargetURI().toString();
+            if (location != null) {
+                address += "#" + location;
+            }
+        } else if (location != null) {
+            // case 2，In the 'location' tag
+            address = location;
+        } else {
             return;
         }
-        Optional.ofNullable(packageRelationshipCollection.getRelationshipByID(rId))
-                .map(PackageRelationship::getTargetURI)
-                .ifPresent(uri -> {
-                    CellExtra cellExtra = new CellExtra(CellExtraTypeEnum.HYPERLINK, uri.toString(), ref);
-                    xlsxReadContext.readSheetHolder().setCellExtra(cellExtra);
-                    xlsxReadContext.analysisEventProcessor().extra(xlsxReadContext);
-                });
+        CellExtra cellExtra = new CellExtra(CellExtraTypeEnum.HYPERLINK, address, ref);
+        xlsxReadContext.readSheetHolder().setCellExtra(cellExtra);
+        xlsxReadContext.analysisEventProcessor().extra(xlsxReadContext);
     }
 }

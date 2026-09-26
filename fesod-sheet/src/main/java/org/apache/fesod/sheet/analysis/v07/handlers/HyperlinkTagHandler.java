@@ -52,9 +52,8 @@ public class HyperlinkTagHandler extends AbstractXlsxTagHandler {
         if (StringUtils.isEmpty(ref)) {
             return;
         }
-        // Hyperlink has 2 case:
-        // case 1, In the 'r:id' tag, Then go to 'PackageRelationshipCollection' to get inside;
-        // a 'location' next to it is the URI fragment
+        // External hyperlinks store the target in the r:id relationship.
+        // When present, location contains the URI fragment.
         String location = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_LOCATION);
         String rId = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_RID);
         PackageRelationshipCollection packageRelationshipCollection =
@@ -69,7 +68,7 @@ public class HyperlinkTagHandler extends AbstractXlsxTagHandler {
                 address += "#" + location;
             }
         } else if (location != null) {
-            // case 2，In the 'location' tag
+            // Internal hyperlinks store their destination directly in location.
             address = location;
         } else {
             return;

@@ -363,6 +363,16 @@ under the License.
     <build>
         <resources>
             <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
                 <directory>${maven.multiModuleProjectDirectory}</directory>
                 <includes>
                     <include>DISCLAIMER</include>

@@ -670,8 +670,10 @@ public class WriteContextImpl implements WriteContext {
         }
         File tempXlsx = FileUtils.createTmpFile(UUID.randomUUID() + ".xlsx");
         FileOutputStream tempFileOutputStream = new FileOutputStream(tempXlsx);
+        boolean wrote = false;
         try {
             writeWorkbookHolder.getWorkbook().write(tempFileOutputStream);
+            wrote = true;
         } finally {
             try {
                 writeWorkbookHolder.getWorkbook().close();
@@ -681,6 +683,12 @@ public class WriteContextImpl implements WriteContext {
                     throw new ExcelGenerateException("Can not delete temp File!");
                 }
                 throw e;
+            }
+            // write() failed and close() succeeded: the catch above did not run, so the staged
+            // file would otherwise survive. Delete only after the stream is closed so Windows
+            // can unlink it.
+            if (!wrote && tempXlsx.exists() && !tempXlsx.delete()) {
+                throw new ExcelGenerateException("Can not delete temp File!");
             }
         }
         try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(tempXlsx)) {

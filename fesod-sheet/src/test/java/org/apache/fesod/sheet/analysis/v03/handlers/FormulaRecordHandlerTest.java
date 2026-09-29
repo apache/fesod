@@ -89,14 +89,8 @@ class FormulaRecordHandlerTest extends AbstractExcelTest {
         Map<Integer, Object> row = rows.get(0);
         Assertions.assertEquals(ERRORS.length, row.size());
         Assertions.assertAll(IntStream.range(0, ERRORS.length).mapToObj(column -> () -> {
-            String context = "format="
-                    + format
-                    + ", mode="
-                    + mode
-                    + ", column="
-                    + column
-                    + ", formula="
-                    + FORMULAS[column];
+            String context =
+                    "format=" + format + ", mode=" + mode + ", column=" + column + ", formula=" + FORMULAS[column];
             Object value = row.get(column);
             if (mode == ReadDefaultReturnEnum.READ_CELL_DATA) {
                 ReadCellData<?> cellData = (ReadCellData<?>) value;

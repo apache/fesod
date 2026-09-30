@@ -32,7 +32,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.chrono.IsoEra;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -389,7 +393,11 @@ public class DateUtils {
         }
         DateTimeFormatter formatter = formatCache.get(dateFormat);
         if (formatter == null) {
-            formatter = DateTimeFormatter.ofPattern(dateFormat, actualLocale);
+            formatter = new DateTimeFormatterBuilder()
+                    .appendPattern(dateFormat)
+                    .parseDefaulting(ChronoField.ERA, IsoEra.CE.getValue())
+                    .toFormatter(actualLocale)
+                    .withResolverStyle(ResolverStyle.STRICT);
             formatCache.put(dateFormat, formatter);
         }
         return formatter;
@@ -407,6 +415,7 @@ public class DateUtils {
             }
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        simpleDateFormat.setLenient(false);
         dateFormatMap.put(dateFormat, simpleDateFormat);
         return simpleDateFormat;
     }

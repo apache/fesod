@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -100,6 +101,20 @@ class DateUtilsTest {
         Assertions.assertEquals(30, cal2.get(Calendar.MINUTE));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-31", "2023-02-29", "2024-13-01"})
+    void test_parseDateRejectsInvalidCalendarDates(String value) {
+        Assertions.assertThrows(ParseException.class, () -> DateUtils.parseDate(value, DateUtils.DATE_FORMAT_10));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-29", "2023-02-28"})
+    void test_parseDateAcceptsValidCalendarDates(String value) throws ParseException {
+        Date parsed = DateUtils.parseDate(value, DateUtils.DATE_FORMAT_10);
+
+        Assertions.assertEquals(value, DateUtils.format(parsed, DateUtils.DATE_FORMAT_10));
+    }
+
     @Test
     void test_parseLocalDateTime() {
         String dateStr = "2026-10-01 12:30:45";
@@ -153,6 +168,21 @@ class DateUtilsTest {
         Assertions.assertEquals(2026, autoDetectFormatResult.getYear());
         Assertions.assertEquals(10, autoDetectFormatResult.getMonthValue());
         Assertions.assertEquals(1, autoDetectFormatResult.getDayOfMonth());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-31", "2023-02-29", "2024-13-01"})
+    void test_parseLocalDateRejectsInvalidCalendarDates(String value) {
+        Assertions.assertThrows(
+                DateTimeParseException.class, () -> DateUtils.parseLocalDate(value, DateUtils.DATE_FORMAT_10, null));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-29", "2023-02-28"})
+    void test_parseLocalDateAcceptsValidCalendarDates(String value) {
+        LocalDate parsed = DateUtils.parseLocalDate(value, DateUtils.DATE_FORMAT_10, null);
+
+        Assertions.assertEquals(value, DateUtils.format(parsed, DateUtils.DATE_FORMAT_10));
     }
 
     @Test

@@ -25,10 +25,12 @@
 
 package org.apache.fesod.sheet.readwrite;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.testkit.Tags;
@@ -38,9 +40,13 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.listeners.CollectingReadListener;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
+import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -137,5 +143,54 @@ public class EncryptDataTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         Assertions.assertEquals(10, dataList.size());
+    }
+
+    /**
+     * Verifies that when encrypting an XLSX stream write fails, nothing is written to the stream rather than
+     * the unencrypted workbook.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_encryptionFails_writesNothing() throws Exception {
+        // A temp directory under a regular file cannot be created, so the encryption step fails
+        File regularFile = createTempFile("enc-blocker", ExcelFormat.XLSX);
+        String originalPrefix = FileUtils.getTempFilePrefix();
+        FileUtils.setTempFilePrefix(regularFile.getAbsolutePath() + File.separator + "sub" + File.separator);
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Assertions.assertThrows(ExcelGenerateException.class, () -> FesodSheet.write(out, SimpleData.class)
+                    .excelType(ExcelTypeEnum.XLSX)
+                    .password(PASSWORD)
+                    .sheet()
+                    .doWrite(TestDataBuilder.simpleData(10)));
+            Assertions.assertEquals(0, out.size());
+        } finally {
+            FileUtils.setTempFilePrefix(originalPrefix);
+        }
+    }
+
+    /**
+     * Verifies that when encrypting an XLSX file write fails, the unencrypted file is not left behind.
+     */
+    @Test
+    void xlsxFilePasswordWrite_encryptionFails_leavesNoFile() throws Exception {
+        File file = createTempFile("enc-readonly", ExcelFormat.XLSX);
+        // Root ignores file permissions, so the failure forced below cannot happen
+        Assumptions.assumeTrue(file.setReadOnly() && !file.canWrite(), "file permissions are not enforced");
+        Assertions.assertTrue(file.setWritable(true));
+        // Once the write stream is open, making the file read-only makes the encrypt-in-place step fail
+        WorkbookWriteHandler makeReadOnly = new WorkbookWriteHandler() {
+            @Override
+            public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
+                Assertions.assertTrue(file.setReadOnly());
+            }
+        };
+
+        Assertions.assertThrows(ExcelGenerateException.class, () -> FesodSheet.write(file, SimpleData.class)
+                .excelType(ExcelTypeEnum.XLSX)
+                .password(PASSWORD)
+                .registerWriteHandler(makeReadOnly)
+                .sheet()
+                .doWrite(TestDataBuilder.simpleData(10)));
+        Assertions.assertFalse(file.exists());
     }
 }

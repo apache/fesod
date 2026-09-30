@@ -542,6 +542,7 @@ public class WriteContextImpl implements WriteContext {
                 isOutputStreamEncrypt = doOutputStreamEncrypt07();
             } catch (Throwable t) {
                 throwable = t;
+                writeExcel = false;
             }
         }
         if (!isOutputStreamEncrypt) {
@@ -574,6 +575,13 @@ public class WriteContextImpl implements WriteContext {
                 doFileEncrypt07();
             } catch (Throwable t) {
                 throwable = t;
+                // The workbook was written to the file before encryption, so the file still holds the unprotected
+                // workbook and must not be left behind.
+                File file = writeWorkbookHolder.getFile();
+                if (file.exists() && !file.delete()) {
+                    throwable =
+                            new ExcelGenerateException("Can not delete unencrypted file: " + file.getAbsolutePath(), t);
+                }
             }
         }
         try {

@@ -28,6 +28,7 @@ package org.apache.fesod.sheet.metadata.csv;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -189,12 +190,12 @@ public class CsvWorkbook implements Workbook {
 
     @Override
     public Iterator<Sheet> sheetIterator() {
-        return null;
+        return iterator();
     }
 
     @Override
     public int getNumberOfSheets() {
-        return 0;
+        return csvSheet == null ? 0 : 1;
     }
 
     @Override
@@ -419,6 +420,9 @@ public class CsvWorkbook implements Workbook {
 
     @Override
     public Iterator<Sheet> iterator() {
-        return null;
+        if (csvSheet == null) {
+            return Collections.emptyIterator();
+        }
+        return Collections.<Sheet>singletonList(csvSheet).iterator();
     }
 }

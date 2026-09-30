@@ -39,7 +39,6 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -138,10 +137,11 @@ public class CompatibilityTest extends AbstractExcelTest {
                 FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         Assertions.assertEquals(10L, list.size());
 
-        // Save file content before deleting the system temp dir (which also removes @TempDir)
+        // Save file content before deleting Fesod's temp dir
         byte[] fileContent = java.nio.file.Files.readAllBytes(file.toPath());
 
-        FileUtils.delete(new File(System.getProperty(TempFile.JAVA_IO_TMPDIR)));
+        // Only delete Fesod's own temp dir, never the whole system temp dir shared with other processes
+        FileUtils.delete(new File(FileUtils.getTempFilePrefix()));
 
         // Recreate the file after temp dir deletion to continue the test
         file.getParentFile().mkdirs();

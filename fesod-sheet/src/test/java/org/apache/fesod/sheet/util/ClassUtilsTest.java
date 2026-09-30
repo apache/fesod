@@ -128,6 +128,27 @@ class ClassUtilsTest {
     }
 
     @Test
+    void test_declaredFields_cache_memory_orderByIncludeColumn() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
+        List<String> include = Arrays.asList("name", "id");
+        Mockito.when(writeHolder.includeColumnFieldNames()).thenReturn(include);
+        Mockito.when(writeHolder.ignore(Mockito.anyString(), Mockito.anyInt()))
+                .thenAnswer(invocation -> !include.contains(invocation.getArgument(0)));
+
+        Mockito.when(writeHolder.orderByIncludeColumn()).thenReturn(false);
+        FieldCache declarationOrderCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
+
+        Mockito.when(writeHolder.orderByIncludeColumn()).thenReturn(true);
+        FieldCache includeOrderCache = ClassUtils.declaredFields(ComplexEntity.class, writeHolder);
+
+        Assertions.assertNotSame(declarationOrderCache, includeOrderCache);
+        Assertions.assertEquals(
+                "id", declarationOrderCache.getSortedFieldMap().get(0).getFieldName());
+        Assertions.assertEquals(
+                "name", includeOrderCache.getSortedFieldMap().get(0).getFieldName());
+    }
+
+    @Test
     void test_declaredFields_cache_ThreadLocal() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
 

@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -498,5 +499,28 @@ class DateUtilsTest {
         Assertions.assertNull(((ThreadLocal<?>) f1.get(null)).get());
         Assertions.assertNull(((ThreadLocal<?>) f2.get(null)).get());
         Assertions.assertNull(((ThreadLocal<?>) f3.get(null)).get());
+    }
+
+    @Test
+    void test_parseYearUsesDefaultFormat() {
+        Assertions.assertEquals(Year.of(2026), DateUtils.parseYear("2026", null, null));
+        Assertions.assertEquals(Year.of(2026), DateUtils.parseYear("2026", null, Locale.US));
+    }
+
+    @Test
+    void test_parseYearUsesCustomFormat() {
+        Assertions.assertEquals(Year.of(2026), DateUtils.parseYear("26", "uu", null));
+    }
+
+    @Test
+    void test_formatYearUsesDefaultFormat() {
+        Assertions.assertEquals("2026", DateUtils.format(Year.of(2026), null, null));
+        Assertions.assertEquals("2026", DateUtils.format(Year.of(2026), null, Locale.US));
+    }
+
+    @Test
+    void test_formatYearRespectsLocaleForEraPatterns() {
+        Assertions.assertEquals("公元 2026", DateUtils.format(Year.of(2026), "G y", Locale.CHINA));
+        Assertions.assertEquals("AD 2026", DateUtils.format(Year.of(2026), "G y", Locale.US));
     }
 }

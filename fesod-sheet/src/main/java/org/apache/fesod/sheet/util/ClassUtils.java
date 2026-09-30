@@ -560,6 +560,7 @@ public class ClassUtils {
         private Collection<Integer> excludeColumnIndexes;
         private Collection<String> includeColumnFieldNames;
         private Collection<Integer> includeColumnIndexes;
+        private Boolean orderByIncludeColumn;
 
         FieldCacheKey(Class<?> clazz, ConfigurationHolder configurationHolder) {
             this.clazz = clazz;
@@ -569,6 +570,7 @@ public class ClassUtils {
                 this.excludeColumnIndexes = writeHolder.excludeColumnIndexes();
                 this.includeColumnFieldNames = writeHolder.includeColumnFieldNames();
                 this.includeColumnIndexes = writeHolder.includeColumnIndexes();
+                this.orderByIncludeColumn = writeHolder.orderByIncludeColumn();
             }
         }
     }

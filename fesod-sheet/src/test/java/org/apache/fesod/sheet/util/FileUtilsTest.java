@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.UUID;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
@@ -36,6 +37,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -268,6 +270,33 @@ class FileUtilsTest {
         FileUtils.delete(root);
 
         Assertions.assertFalse(root.exists());
+    }
+
+    @Test
+    void test_delete_doesNotFollowSymbolicLinks() throws IOException {
+        // outside/
+        //   - keep.txt
+        // root/
+        //   - link -> outside/
+        File outside = tempDir.resolve("outside").toFile();
+        FileUtils.createDirectory(outside);
+        File keep = new File(outside, "keep.txt");
+        Files.write(keep.toPath(), "content".getBytes());
+
+        File root = tempDir.resolve("root").toFile();
+        FileUtils.createDirectory(root);
+        Path link = root.toPath().resolve("link");
+        try {
+            Files.createSymbolicLink(link, outside.toPath());
+        } catch (IOException | UnsupportedOperationException e) {
+            Assumptions.assumeTrue(false, "Symbolic links are not supported: " + e.getMessage());
+        }
+
+        FileUtils.delete(root);
+
+        Assertions.assertFalse(root.exists());
+        Assertions.assertFalse(Files.exists(link, LinkOption.NOFOLLOW_LINKS));
+        Assertions.assertTrue(keep.exists());
     }
 
     @Test

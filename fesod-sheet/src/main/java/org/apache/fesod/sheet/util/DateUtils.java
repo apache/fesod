@@ -77,6 +77,7 @@ public class DateUtils {
     public static final LocalDate EPOCH = LocalDate.of(1970, 1, 1);
 
     public static final String DATE_FORMAT_10 = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_10_FORWARD_SLASH = "yyyy/MM/dd";
     public static final String DATE_FORMAT_14 = "yyyyMMddHHmmss";
     public static final String DATE_FORMAT_16 = "yyyy-MM-dd HH:mm";
     public static final String DATE_FORMAT_16_FORWARD_SLASH = "yyyy/MM/dd HH:mm";
@@ -201,7 +202,11 @@ public class DateUtils {
             case 14:
                 return DATE_FORMAT_14;
             case 10:
-                return DATE_FORMAT_10;
+                if (dateString.contains(MINUS)) {
+                    return DATE_FORMAT_10;
+                } else {
+                    return DATE_FORMAT_10_FORWARD_SLASH;
+                }
             default:
                 throw new IllegalArgumentException("can not find date format for：" + dateString);
         }

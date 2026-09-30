@@ -186,6 +186,8 @@ public class ReadCellData<T> extends CellData<T> {
     public ReadCellData<Object> clone() {
         ReadCellData<Object> readCellData = new ReadCellData<>();
         readCellData.setType(getType());
+        readCellData.setRowIndex(getRowIndex());
+        readCellData.setColumnIndex(getColumnIndex());
         readCellData.setNumberValue(getNumberValue());
         readCellData.setOriginalNumberValue(getOriginalNumberValue());
         readCellData.setStringValue(getStringValue());

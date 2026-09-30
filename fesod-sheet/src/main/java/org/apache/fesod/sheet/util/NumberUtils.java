@@ -30,6 +30,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.fesod.common.util.MapUtils;
@@ -228,7 +229,12 @@ public class NumberUtils {
         RoundingMode roundingMode = contentProperty.getNumberFormatProperty().getRoundingMode();
         DecimalFormat decimalFormat = getCacheDecimalFormat(format, roundingMode);
         decimalFormat.setParseBigDecimal(true);
-        return decimalFormat.parse(string);
+        ParsePosition position = new ParsePosition(0);
+        Number number = decimalFormat.parse(string, position);
+        if (number == null || position.getIndex() != string.length()) {
+            throw new ParseException("Unparseable number: \"" + string + "\"", position.getIndex());
+        }
+        return number;
     }
 
     private static DecimalFormat getCacheDecimalFormat(String format, RoundingMode roundingMode) {

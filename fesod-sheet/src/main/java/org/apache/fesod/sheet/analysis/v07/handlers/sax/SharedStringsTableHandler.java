@@ -63,24 +63,19 @@ public class SharedStringsTableHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) {
-        if (name == null) {
+        String tagName = tagName(localName, name);
+        if (tagName == null) {
             return;
         }
-        switch (name) {
+        switch (tagName) {
             case ExcelXmlConstants.SHAREDSTRINGS_T_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_X_T_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_NS2_T_TAG:
                 currentElementData = null;
                 isTagt = true;
                 break;
             case ExcelXmlConstants.SHAREDSTRINGS_SI_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_X_SI_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_NS2_SI_TAG:
                 currentData = null;
                 break;
             case ExcelXmlConstants.SHAREDSTRINGS_RPH_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_X_RPH_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_NS2_RPH_TAG:
                 ignoreTagt = true;
                 break;
             default:
@@ -90,13 +85,12 @@ public class SharedStringsTableHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String name) {
-        if (name == null) {
+        String tagName = tagName(localName, name);
+        if (tagName == null) {
             return;
         }
-        switch (name) {
+        switch (tagName) {
             case ExcelXmlConstants.SHAREDSTRINGS_T_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_X_T_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_NS2_T_TAG:
                 if (currentElementData != null) {
                     if (currentData == null) {
                         currentData = new StringBuilder();
@@ -106,8 +100,6 @@ public class SharedStringsTableHandler extends DefaultHandler {
                 isTagt = false;
                 break;
             case ExcelXmlConstants.SHAREDSTRINGS_SI_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_X_SI_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_NS2_SI_TAG:
                 if (currentData == null) {
                     readCache.put(null);
                 } else {
@@ -115,8 +107,6 @@ public class SharedStringsTableHandler extends DefaultHandler {
                 }
                 break;
             case ExcelXmlConstants.SHAREDSTRINGS_RPH_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_X_RPH_TAG:
-            case ExcelXmlConstants.SHAREDSTRINGS_NS2_RPH_TAG:
                 ignoreTagt = false;
                 break;
             default:
@@ -133,5 +123,19 @@ public class SharedStringsTableHandler extends DefaultHandler {
             currentElementData = new StringBuilder();
         }
         currentElementData.append(ch, start, length);
+    }
+
+    private static String tagName(String localName, String name) {
+        if (localName != null && !localName.isEmpty()) {
+            return localName;
+        }
+        if (name == null) {
+            return null;
+        }
+        int prefixIndex = name.indexOf(':');
+        if (prefixIndex >= 0) {
+            return name.substring(prefixIndex + 1);
+        }
+        return name;
     }
 }

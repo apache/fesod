@@ -27,10 +27,12 @@ package org.apache.fesod.sheet.readwrite;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
+import org.apache.commons.io.output.BrokenOutputStream;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.read.builder.ExcelReaderBuilder;
@@ -177,32 +179,118 @@ public class EncryptDataTest extends AbstractExcelTest {
     @Test
     void xlsxStreamPasswordWrite_tempFileWriteFails_deletesTempFile() {
         File tempFileDir = new File(tempDir, "fesod-temp");
-        String originalPrefix = FileUtils.getTempFilePrefix();
-        FileUtils.setTempFilePrefix(tempFileDir.getAbsolutePath() + File.separator);
-        // Swaps in a workbook whose write puts the data out and then fails, like a disk filling up
-        WorkbookWriteHandler failingWorkbook = new WorkbookWriteHandler() {
+        WorkbookWriteHandler failingWorkbook = swapWorkbook(new SXSSFWorkbook() {
+            @Override
+            public void write(OutputStream stream) throws IOException {
+                super.write(stream);
+                throw new IOException("write failed");
+            }
+        });
+        Assertions.assertThrows(
+                ExcelGenerateException.class,
+                () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
+        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+    }
+
+    /**
+     * Verifies that when closing the workbook after writing the temp file fails, the temp file is deleted.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_workbookCloseFails_deletesTempFile() {
+        File tempFileDir = new File(tempDir, "fesod-temp");
+        WorkbookWriteHandler failingWorkbook = swapWorkbook(new SXSSFWorkbook() {
+            @Override
+            public void close() throws IOException {
+                super.close();
+                throw new IOException("close failed");
+            }
+        });
+        Assertions.assertThrows(
+                ExcelGenerateException.class,
+                () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
+        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+    }
+
+    /**
+     * Verifies that when closing the workbook after writing the temp file fails, the temp file stream is closed.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_workbookCloseFails_closesTempFileStream() {
+        File tempFileDir = new File(tempDir, "fesod-temp");
+        OutputStream[] tempFileStream = new OutputStream[1];
+        WorkbookWriteHandler failingWorkbook = swapWorkbook(new SXSSFWorkbook() {
+            @Override
+            public void write(OutputStream stream) throws IOException {
+                if (tempFileStream[0] == null) {
+                    tempFileStream[0] = stream;
+                }
+                super.write(stream);
+            }
+
+            @Override
+            public void close() throws IOException {
+                super.close();
+                throw new IOException("close failed");
+            }
+        });
+        Assertions.assertThrows(
+                ExcelGenerateException.class,
+                () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
+        Assertions.assertThrows(IOException.class, () -> tempFileStream[0].write(0));
+    }
+
+    /**
+     * Verifies that when writing the encrypted workbook to the caller's stream fails, the temp file is deleted.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_encryptedWriteFails_deletesTempFile() {
+        File tempFileDir = new File(tempDir, "fesod-temp");
+        Assertions.assertThrows(
+                ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, BrokenOutputStream.INSTANCE, null));
+        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+    }
+
+    /**
+     * Verifies that when the temp file cannot be opened, the open error is reported rather than a failed delete.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_tempFileOpenFails_reportsOpenError() {
+        File tempFileDir = new File(tempDir, "fesod-temp");
+        Assertions.assertTrue(tempFileDir.mkdirs());
+        Assertions.assertTrue(tempFileDir.setWritable(false));
+        try {
+            // Root and some file systems ignore the flag, so the open would not fail there
+            Assumptions.assumeFalse(tempFileDir.canWrite());
+            ExcelGenerateException e = Assertions.assertThrows(
+                    ExcelGenerateException.class,
+                    () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), null));
+            Assertions.assertInstanceOf(FileNotFoundException.class, e.getCause());
+        } finally {
+            Assertions.assertTrue(tempFileDir.setWritable(true));
+        }
+    }
+
+    private static WorkbookWriteHandler swapWorkbook(SXSSFWorkbook workbook) {
+        return new WorkbookWriteHandler() {
             @Override
             public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
-                SXSSFWorkbook workbook = new SXSSFWorkbook() {
-                    @Override
-                    public void write(OutputStream stream) throws IOException {
-                        super.write(stream);
-                        throw new IOException("write failed");
-                    }
-                };
                 workbook.createSheet("s").createRow(0).createCell(0).setCellValue("secret");
                 context.getWriteWorkbookHolder().setWorkbook(workbook);
             }
         };
+    }
+
+    private void writeWithPassword(File tempFileDir, OutputStream outputStream, WorkbookWriteHandler writeHandler) {
+        String originalPrefix = FileUtils.getTempFilePrefix();
+        FileUtils.setTempFilePrefix(tempFileDir.getAbsolutePath() + File.separator);
         try {
-            Assertions.assertThrows(
-                    ExcelGenerateException.class, () -> FesodSheet.write(new ByteArrayOutputStream(), SimpleData.class)
-                            .excelType(ExcelTypeEnum.XLSX)
-                            .password(PASSWORD)
-                            .registerWriteHandler(failingWorkbook)
-                            .sheet("s")
-                            .doWrite(TestDataBuilder.simpleData(10)));
-            Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+            ExcelWriterBuilder writerBuilder = FesodSheet.write(outputStream, SimpleData.class)
+                    .excelType(ExcelTypeEnum.XLSX)
+                    .password(PASSWORD);
+            if (writeHandler != null) {
+                writerBuilder.registerWriteHandler(writeHandler);
+            }
+            writerBuilder.sheet("s").doWrite(TestDataBuilder.simpleData(10));
         } finally {
             FileUtils.setTempFilePrefix(originalPrefix);
         }

@@ -677,7 +677,11 @@ public class DataFormatter {
      */
     public String format(BigDecimal data, Short dataFormat, String dataFormatString) {
         if (DateUtils.isADateFormat(dataFormat, dataFormatString)) {
-            return getFormattedDateString(data.doubleValue(), dataFormat, dataFormatString);
+            if (DateUtils.isValidExcelDate(data.doubleValue())) {
+                return getFormattedDateString(data.doubleValue(), dataFormat, dataFormatString);
+            }
+
+            return getDefaultFormat().format(data);
         }
         return getFormattedNumberString(data, dataFormat, dataFormatString);
     }

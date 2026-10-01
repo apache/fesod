@@ -26,6 +26,11 @@
 package org.apache.fesod.sheet.style;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +45,7 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatCapability;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.write.merge.LoopMergeStrategy;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
@@ -98,6 +104,29 @@ public class FillDataTest extends AbstractExcelTest {
         File file = createTempFile("composite", format);
         File template = readFile("fill" + File.separator + "composite" + format.getExtension());
         compositeFillImpl(file, template);
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource(value = FormatScope.BINARY, requires = FormatCapability.TEMPLATES)
+    void shouldFormatVariablesInCompositeCellViaStringConverters(ExcelFormat format) throws Exception {
+        File template = createTempFile("fillToStringTemplate", format);
+        List<List<String>> head = new ArrayList<>();
+        head.add(Collections.singletonList("line"));
+        List<List<String>> templateRow = new ArrayList<>();
+        templateRow.add(Collections.singletonList("date: {date} amount: {amount}"));
+        FesodSheet.write(template).head(head).sheet().doWrite(templateRow);
+
+        File file = createTempFile("fillToString", format);
+        Map<String, Object> data = new HashMap<>();
+        Date date = Date.from(Instant.now());
+        data.put("date", date);
+        data.put("amount", new BigDecimal("1234.56"));
+        FesodSheet.write(file).withTemplate(template).sheet().doFill(data);
+
+        List<Map<Integer, String>> rows =
+                FesodSheet.read(file).sheet().headRowNumber(0).doReadSync();
+        Map<Integer, String> filledRow = rows.get(1);
+        Assertions.assertEquals("date: " + DateUtils.format(date) + " amount: 1234.56", filledRow.get(0));
     }
 
     private void byNameFillImpl(File file, File template) {

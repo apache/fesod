@@ -26,13 +26,13 @@
 package org.apache.fesod.sheet.metadata;
 
 import java.util.List;
-import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.converters.CellDataConverterRegistry;
+import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.support.ExcelTypeEnum;
 
 /**
  * Write/read holder
@@ -60,13 +60,8 @@ public abstract class AbstractHolder implements ConfigurationHolder {
      * Some global variables
      */
     private GlobalConfiguration globalConfiguration;
-    /**
-     * <p>
-     * Read key:
-     * <p>
-     * Write key:
-     */
-    private Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap;
+
+    private CellDataConverterRegistry converterRegistry;
 
     public AbstractHolder(BasicParameter basicParameter, AbstractHolder prentAbstractHolder) {
         this.newInitialization = Boolean.TRUE;
@@ -125,11 +120,32 @@ public abstract class AbstractHolder implements ConfigurationHolder {
         } else {
             globalConfiguration.setFiledCacheLocation(basicParameter.getFiledCacheLocation());
         }
+
+        if (prentAbstractHolder == null) {
+            this.converterRegistry = new CellDataConverterRegistry();
+        } else {
+            this.converterRegistry = new CellDataConverterRegistry(prentAbstractHolder.getConverterRegistry());
+        }
+    }
+
+    /**
+     * register default converters
+     */
+    protected void initDefaultConverters(ExcelTypeEnum excelTypeEnum, boolean readable) {
+        if (readable) {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultReadConverter());
+            return;
+        }
+        if (ExcelTypeEnum.CSV.equals(excelTypeEnum)) {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultWriteStringConverter());
+        } else {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultWriteConverter());
+        }
     }
 
     @Override
-    public Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap() {
-        return getConverterMap();
+    public CellDataConverterRegistry converterRegistry() {
+        return getConverterRegistry();
     }
 
     @Override

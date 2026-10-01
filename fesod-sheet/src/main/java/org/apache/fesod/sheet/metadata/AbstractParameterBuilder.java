@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
-import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
@@ -119,13 +118,7 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
      * @param converter
      * @return
      */
-    public T registerConverter(Converter<?> converter) {
-        if (parameter().getCustomConverterList() == null) {
-            parameter().setCustomConverterList(ListUtils.newArrayList());
-        }
-        parameter().getCustomConverterList().add(converter);
-        return self();
-    }
+    public abstract T registerConverter(Converter<?> converter);
 
     /**
      * true if date uses 1904 windowing, or false if using 1900 date windowing.

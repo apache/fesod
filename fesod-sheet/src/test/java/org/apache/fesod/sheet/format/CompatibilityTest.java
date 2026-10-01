@@ -46,7 +46,10 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -162,7 +165,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     public void readXlsxWithArbitraryNamespacePrefix() throws Exception {
         File source = new File(tempDir, "namespace-source.xlsx");
         File prefixed = new File(tempDir, "namespace-prefixed.xlsx");
-        FesodSheet.write(source, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(1));
+        writeSharedStringWorkbook(source);
 
         writeWithPrefixedSpreadsheetNamespace(source, prefixed);
 
@@ -171,6 +174,19 @@ public class CompatibilityTest extends AbstractExcelTest {
 
         Assertions.assertEquals(1, data.size());
         Assertions.assertEquals("Name0", data.get(0).getName());
+    }
+
+    private static void writeSharedStringWorkbook(File file) throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+                FileOutputStream outputStream = new FileOutputStream(file)) {
+            Sheet sheet = workbook.createSheet();
+            Row head = sheet.createRow(0);
+            head.createCell(0).setCellValue("Name");
+            head.createCell(1).setCellValue("Age");
+            head.createCell(2).setCellValue("Date");
+            sheet.createRow(1).createCell(0).setCellValue("Name0");
+            workbook.write(outputStream);
+        }
     }
 
     @Test
@@ -222,9 +238,10 @@ public class CompatibilityTest extends AbstractExcelTest {
     }
 
     private static String prefixWorksheetTags(String xml) {
-        return xml.replace(
-                        "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
-                        "<p:worksheet xmlns:p=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"")
+        return xml.replace("<worksheet", "<p:worksheet")
+                .replace(
+                        " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
+                        " xmlns:p=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"")
                 .replace("</worksheet>", "</p:worksheet>")
                 .replace("<dimension", "<p:dimension")
                 .replace("<sheetViews", "<p:sheetViews")
@@ -239,17 +256,25 @@ public class CompatibilityTest extends AbstractExcelTest {
                 .replace("</c>", "</p:c>")
                 .replace("<v>", "<p:v>")
                 .replace("</v>", "</p:v>")
-                .replace("<pageMargins", "<p:pageMargins");
+                .replace("<pageMargins", "<p:pageMargins")
+                .replace(
+                        "</p:sheetData>",
+                        "<ext:row xmlns:ext=\"urn:fesod:test:foreign\" r=\"999\">"
+                                + "<ext:c r=\"A999\"><ext:v>999</ext:v></ext:c></ext:row>"
+                                + "</p:sheetData>");
     }
 
     private static String prefixSharedStringTags(String xml) {
-        return xml.replace(
-                        "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
-                        "<p:sst xmlns:p=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"")
+        return xml.replace("<sst", "<p:sst")
+                .replace(
+                        " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
+                        " xmlns:p=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"")
                 .replace("</sst>", "</p:sst>")
                 .replace("<si>", "<p:si>")
                 .replace("</si>", "</p:si>")
                 .replace("<t>", "<p:t>")
-                .replace("</t>", "</p:t>");
+                .replace("</t>", "</p:t>")
+                .replace(
+                        "<p:si>", "<ext:si xmlns:ext=\"urn:fesod:test:foreign\"><ext:t>foreign</ext:t></ext:si><p:si>");
     }
 }

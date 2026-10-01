@@ -63,6 +63,9 @@ public class SharedStringsTableHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) {
+        if (!isSpreadsheetNamespace(uri)) {
+            return;
+        }
         String tagName = tagName(localName, name);
         if (tagName == null) {
             return;
@@ -85,6 +88,9 @@ public class SharedStringsTableHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String name) {
+        if (!isSpreadsheetNamespace(uri)) {
+            return;
+        }
         String tagName = tagName(localName, name);
         if (tagName == null) {
             return;
@@ -137,5 +143,9 @@ public class SharedStringsTableHandler extends DefaultHandler {
             return name.substring(prefixIndex + 1);
         }
         return name;
+    }
+
+    private static boolean isSpreadsheetNamespace(String uri) {
+        return uri == null || ExcelXmlConstants.NAMESPACE_SPREADSHEETML.equals(uri);
     }
 }

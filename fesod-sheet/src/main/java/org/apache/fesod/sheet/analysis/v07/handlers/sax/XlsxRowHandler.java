@@ -92,6 +92,9 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+        if (!isSpreadsheetNamespace(uri)) {
+            return;
+        }
         String tagName = tagName(localName, name);
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(tagName);
         if (handler == null || !handler.support(xlsxReadContext)) {
@@ -116,6 +119,9 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
+        if (!isSpreadsheetNamespace(uri)) {
+            return;
+        }
         String tagName = tagName(localName, name);
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(tagName);
         if (handler == null || !handler.support(xlsxReadContext)) {
@@ -137,5 +143,9 @@ public class XlsxRowHandler extends DefaultHandler {
             return name.substring(prefixIndex + 1);
         }
         return name;
+    }
+
+    private static boolean isSpreadsheetNamespace(String uri) {
+        return uri == null || ExcelXmlConstants.NAMESPACE_SPREADSHEETML.equals(uri);
     }
 }

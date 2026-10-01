@@ -27,9 +27,16 @@ package org.apache.fesod.sheet.format;
 
 import com.alibaba.fastjson2.JSON;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.cache.Ehcache;
@@ -39,7 +46,10 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
 import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -152,6 +162,34 @@ public class CompatibilityTest extends AbstractExcelTest {
     }
 
     @Test
+    public void readXlsxWithArbitraryNamespacePrefix() throws Exception {
+        File source = new File(tempDir, "namespace-source.xlsx");
+        File prefixed = new File(tempDir, "namespace-prefixed.xlsx");
+        writeSharedStringWorkbook(source);
+
+        writeWithPrefixedSpreadsheetNamespace(source, prefixed);
+
+        List<SimpleData> data =
+                FesodSheet.read(prefixed).head(SimpleData.class).sheet().doReadSync();
+
+        Assertions.assertEquals(1, data.size());
+        Assertions.assertEquals("Name0", data.get(0).getName());
+    }
+
+    private static void writeSharedStringWorkbook(File file) throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+                FileOutputStream outputStream = new FileOutputStream(file)) {
+            Sheet sheet = workbook.createSheet();
+            Row head = sheet.createRow(0);
+            head.createCell(0).setCellValue("Name");
+            head.createCell(1).setCellValue("Age");
+            head.createCell(2).setCellValue("Date");
+            sheet.createRow(1).createCell(0).setCellValue("Name0");
+            workbook.write(outputStream);
+        }
+    }
+
+    @Test
     public void readXlsxWithEscapeSequence() {
         // `SH_x005f_x000D_Z002` exists in `ShardingString.xml` and needs to be replaced by: `SH_x000D_Z002`
         File file = compatibilityFile("t09.xlsx");
@@ -176,5 +214,67 @@ public class CompatibilityTest extends AbstractExcelTest {
                 .sheet()
                 .headRowNumber(headRowNumber)
                 .doReadSync();
+    }
+
+    private static void writeWithPrefixedSpreadsheetNamespace(File source, File target) throws IOException {
+        try (ZipFile zipFile = new ZipFile(source);
+                ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(target))) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                zipOutputStream.putNextEntry(new ZipEntry(entry.getName()));
+                byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(zipFile.getInputStream(entry));
+                if ("xl/worksheets/sheet1.xml".equals(entry.getName())) {
+                    bytes = prefixWorksheetTags(new String(bytes, StandardCharsets.UTF_8))
+                            .getBytes(StandardCharsets.UTF_8);
+                } else if ("xl/sharedStrings.xml".equals(entry.getName())) {
+                    bytes = prefixSharedStringTags(new String(bytes, StandardCharsets.UTF_8))
+                            .getBytes(StandardCharsets.UTF_8);
+                }
+                zipOutputStream.write(bytes);
+                zipOutputStream.closeEntry();
+            }
+        }
+    }
+
+    private static String prefixWorksheetTags(String xml) {
+        return xml.replace("<worksheet", "<p:worksheet")
+                .replace(
+                        " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
+                        " xmlns:p=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"")
+                .replace("</worksheet>", "</p:worksheet>")
+                .replace("<dimension", "<p:dimension")
+                .replace("<sheetViews", "<p:sheetViews")
+                .replace("</sheetViews>", "</p:sheetViews>")
+                .replace("<sheetView", "<p:sheetView")
+                .replace("<sheetFormatPr", "<p:sheetFormatPr")
+                .replace("<sheetData", "<p:sheetData")
+                .replace("</sheetData>", "</p:sheetData>")
+                .replace("<row", "<p:row")
+                .replace("</row>", "</p:row>")
+                .replace("<c ", "<p:c ")
+                .replace("</c>", "</p:c>")
+                .replace("<v>", "<p:v>")
+                .replace("</v>", "</p:v>")
+                .replace("<pageMargins", "<p:pageMargins")
+                .replace(
+                        "</p:sheetData>",
+                        "<ext:row xmlns:ext=\"urn:fesod:test:foreign\" r=\"999\">"
+                                + "<ext:c r=\"A999\"><ext:v>999</ext:v></ext:c></ext:row>"
+                                + "</p:sheetData>");
+    }
+
+    private static String prefixSharedStringTags(String xml) {
+        return xml.replace("<sst", "<p:sst")
+                .replace(
+                        " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
+                        " xmlns:p=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"")
+                .replace("</sst>", "</p:sst>")
+                .replace("<si>", "<p:si>")
+                .replace("</si>", "</p:si>")
+                .replace("<t>", "<p:t>")
+                .replace("</t>", "</p:t>")
+                .replace(
+                        "<p:si>", "<ext:si xmlns:ext=\"urn:fesod:test:foreign\"><ext:t>foreign</ext:t></ext:si><p:si>");
     }
 }

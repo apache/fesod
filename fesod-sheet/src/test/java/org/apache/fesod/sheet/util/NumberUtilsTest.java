@@ -344,6 +344,68 @@ class NumberUtilsTest {
     }
 
     @Test
+    void test_parseInteger_noFormat_truncatesFraction() throws ParseException {
+        Assertions.assertEquals(1, NumberUtils.parseInteger("1.9", null));
+        Assertions.assertEquals(-1, NumberUtils.parseInteger("-1.9", null));
+    }
+
+    @Test
+    void test_parseIntegral_noFormat_outOfRange() {
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseByte("128", null));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseShort("32768", null));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseInteger("13800138000", null));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseLong("9223372036854775808", null));
+    }
+
+    @Test
+    void test_parseIntegral_withFormat_outOfRange() {
+        Mockito.when(contentProperty.getNumberFormatProperty()).thenReturn(numberFormatProperty);
+        Mockito.when(numberFormatProperty.getFormat()).thenReturn("#,###");
+        Mockito.when(numberFormatProperty.getRoundingMode()).thenReturn(RoundingMode.HALF_UP);
+
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseByte("128", contentProperty));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseShort("32,768", contentProperty));
+        Assertions.assertThrows(
+                ArithmeticException.class, () -> NumberUtils.parseInteger("13,800,138,000", contentProperty));
+        Assertions.assertThrows(
+                ArithmeticException.class, () -> NumberUtils.parseLong("9,223,372,036,854,775,808", contentProperty));
+    }
+
+    @Test
+    void test_toByte_bounds() {
+        Assertions.assertEquals(Byte.MAX_VALUE, NumberUtils.toByte(new BigDecimal("127.9")));
+        Assertions.assertEquals(Byte.MIN_VALUE, NumberUtils.toByte(new BigDecimal("-128.9")));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.toByte(new BigDecimal("128")));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.toByte(new BigDecimal("-129")));
+    }
+
+    @Test
+    void test_toShort_bounds() {
+        Assertions.assertEquals(Short.MAX_VALUE, NumberUtils.toShort(new BigDecimal("32767.9")));
+        Assertions.assertEquals(Short.MIN_VALUE, NumberUtils.toShort(new BigDecimal("-32768.9")));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.toShort(new BigDecimal("32768")));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.toShort(new BigDecimal("-32769")));
+    }
+
+    @Test
+    void test_toInt_bounds() {
+        Assertions.assertEquals(Integer.MAX_VALUE, NumberUtils.toInt(new BigDecimal("2147483647.9")));
+        Assertions.assertEquals(Integer.MIN_VALUE, NumberUtils.toInt(new BigDecimal("-2147483648.9")));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.toInt(new BigDecimal("2147483648")));
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.toInt(new BigDecimal("-2147483649")));
+    }
+
+    @Test
+    void test_toLong_bounds() {
+        Assertions.assertEquals(Long.MAX_VALUE, NumberUtils.toLong(new BigDecimal("9223372036854775807.9")));
+        Assertions.assertEquals(Long.MIN_VALUE, NumberUtils.toLong(new BigDecimal("-9223372036854775808.9")));
+        Assertions.assertThrows(
+                ArithmeticException.class, () -> NumberUtils.toLong(new BigDecimal("9223372036854775808")));
+        Assertions.assertThrows(
+                ArithmeticException.class, () -> NumberUtils.toLong(new BigDecimal("-9223372036854775809")));
+    }
+
+    @Test
     void test_parse_Error() {
         Mockito.when(contentProperty.getNumberFormatProperty()).thenReturn(numberFormatProperty);
         Mockito.when(numberFormatProperty.getFormat()).thenReturn("#");

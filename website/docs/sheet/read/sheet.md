@@ -35,11 +35,10 @@ You can read multiple sheets from a spreadsheet file, but the same sheet cannot 
 #### Reading All Sheets
 
 ```java
-@Test
-public void readAllSheet() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener()).doReadAll();
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).doReadAll();
 }
 ```
 
@@ -57,11 +56,10 @@ You can read a specific sheet from a spreadsheet file, supporting specification 
 ### Code Example
 
 ```java
-@Test
-public void readSingleSheet() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    try (ExcelReader excelReader = FesodSheet.read(fileName).build()) {
+    try (ExcelReader excelReader = FesodSheet.read(pathname).build()) {
         // Sheet index
         ReadSheet sheet1 = FesodSheet.readSheet(0).head(DemoData.class)
                 .registerReadListener(new DemoDataListener()).build();
@@ -85,11 +83,10 @@ This supports both **"normal hidden"** and **"very hidden"** states.
 ### Code Example
 
 ```java
-@Test
-public void exceptionRead() {
-    String fileName = "path/to/demo.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .ignoreHiddenSheet(Boolean.TRUE)
             .sheet()
             .doRead();

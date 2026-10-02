@@ -59,10 +59,10 @@ Additionally, Fesod provides constants in `CsvConstant` to simplify usage.
 If the CSV file uses `\u0000` as the separator, you can configure it as follows:
 
 ```java
-@Test
-public void delimiterDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .delimiter(CsvConstant.UNICODE_EMPTY)
             .doReadSync();
@@ -80,10 +80,10 @@ This should be set when field content contains delimiters or line breaks.
 #### Code Example
 
 ```java
-@Test
-public void quoteDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .quote(CsvConstant.DOUBLE_QUOTE, QuoteMode.MINIMAL)
             .doReadSync();
@@ -98,10 +98,10 @@ separators (for example, Windows uses `CRLF`, while Unix/Linux uses `LF`).
 #### Code Example
 
 ```java
-@Test
-public void recordSeparatorDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .recordSeparator(CsvConstant.LF)
             .doReadSync();
@@ -116,10 +116,10 @@ public void recordSeparatorDemo() {
 #### Code Example
 
 ```java
-@Test
-public void nullStringDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .nullString("N/A")
             .doReadSync();
@@ -133,10 +133,10 @@ public void nullStringDemo() {
 #### Code Example
 
 ```java
-@Test
-public void escapeDemo() {
-    String csvFile = "path/to/your.csv";
-    List<DemoData> dataList = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener())
+void main() {
+    String pathname = "path/to/demo.csv";
+
+    List<DemoData> dataList = FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
             .csv()
             .escape(CsvConstant.BACKSLASH)
             .doReadSync();
@@ -174,13 +174,12 @@ Supports directly building a `CSVFormat` object.
 ### Code Example
 
 ```java
-@Test
-public void csvFormatDemo() {
+void main() {
+    String pathname = "path/to/demo.csv";
 
     CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter(CsvConstant.AT).build();
-    String csvFile = "path/to/your.csv";
 
-    try (ExcelReader excelReader = FesodSheet.read(csvFile, DemoData.class, new DemoDataListener()).build()) {
+    try (ExcelReader excelReader = FesodSheet.read(pathname, DemoData.class, new DemoDataListener()).build()) {
         ReadWorkbookHolder readWorkbookHolder = excelReader.analysisContext().readWorkbookHolder();
         // Check if it's an instance of CsvReadWorkbookHolder
         if (readWorkbookHolder instanceof CsvReadWorkbookHolder) {

@@ -83,10 +83,10 @@ public class ConverterData {
 ### Code Example
 
 ```java
-@Test
-public void converterWrite() {
-    String fileName = "converterWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, ConverterData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, ConverterData.class)
         .sheet()
         .doWrite(data());
 }
@@ -103,10 +103,10 @@ Register a converter at the builder level to apply it to ALL fields matching the
 ### Code Example
 
 ```java
-@Test
-public void globalConverterWrite() {
-    String fileName = "globalConverterWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, DemoData.class)
+void main() {
+    String pathname = "path/to/demo.xlsx";
+
+    FesodSheet.write(pathname, DemoData.class)
         .registerConverter(new CustomStringStringConverter())
         .sheet()
         .doWrite(data());

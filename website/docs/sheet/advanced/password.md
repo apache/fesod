@@ -33,11 +33,10 @@ Fesod supports Excel's built-in password protection for both reading and writing
 ### Code Example
 
 ```java
-@Test
-public void passwordWrite() {
-    String fileName = "passwordWrite" + System.currentTimeMillis() + ".xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.write(fileName)
+    FesodSheet.write(pathname)
         .password("your_password")
         .head(DemoData.class)
         .sheet("PasswordSheet")
@@ -52,11 +51,10 @@ public void passwordWrite() {
 ### Code Example
 
 ```java
-@Test
-public void passwordRead() {
-    String fileName = "path/to/encrypted.xlsx";
+void main() {
+    String pathname = "path/to/demo.xlsx";
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+    FesodSheet.read(pathname, DemoData.class, new DemoDataListener())
         .password("your_password")
         .sheet()
         .doRead();

@@ -555,7 +555,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             int suffixIndex = -1;
             while (suffixIndex == -1 && startIndex < length) {
-                suffixIndex = value.indexOf(FILL_SUFFIX, startIndex + 1);
+                // A stray '}' before the placeholder is literal text, so the matching suffix must be
+                // searched after the '{' — searching from startIndex alone could return an earlier '}'
+                // and invert the substring bounds below.
+                suffixIndex = value.indexOf(FILL_SUFFIX, Math.max(startIndex + 1, prefixIndex + 1));
                 if (suffixIndex < 0) {
                     break out;
                 }

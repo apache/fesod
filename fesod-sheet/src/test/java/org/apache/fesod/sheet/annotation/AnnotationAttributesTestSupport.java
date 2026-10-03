@@ -17,36 +17,14 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
-package org.apache.fesod.sheet.annotation.write.style;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.apache.fesod.sheet.annotation;
 
 /**
- * Set the width of the table
- *
- *
+ * For testing purposes only.
  */
-@Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface ColumnWidth {
+public class AnnotationAttributesTestSupport {
 
-    /**
-     * Column width
-     * <p>
-     * -1 means the default column width is used
-     *
-     * @return Column width
-     */
-    int value() default -1;
+    public static void put(AnnotationAttributes attrs, String name, Object value) {
+        attrs.put(name, value);
+    }
 }

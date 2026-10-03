@@ -124,8 +124,6 @@ public class DataFormatter {
      */
     private static final String invalidDateTimeString;
 
-    private static final BigDecimal TEN = new BigDecimal(10);
-
     static {
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < 255; i++) {
@@ -522,42 +520,61 @@ public class DataFormatter {
     private static class InternalDecimalFormatWithScale extends Format {
 
         private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
-        private BigDecimal divider;
-        private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
+        private final int powersOfTenToScaleDown;
         private final DecimalFormat df;
 
         private static String trimTrailingCommas(String s) {
             return s.replaceAll(",+$", "");
         }
 
-        public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
+        /**
+         * Counts the digit placeholders behind a decimal point that the format marks as literal text, ie one
+         * escaped as {@code \.} or quoted as {@code "."}. Those digits belong to the integer part, but
+         * {@link #cleanFormatForNumber} has dropped the escaping by the time {@link DecimalFormat} sees the
+         * pattern, which turns them into decimals: {@code 0\.0,} would otherwise print 1234567 as
+         * {@code 1234.6} instead of {@code 123.5}.
+         */
+        private static int digitsAfterLiteralDecimalPoint(String formatStr) {
+            int digits = 0;
+            boolean afterLiteralPoint = false;
+            boolean quoted = false;
+            for (int i = 0; i < formatStr.length(); i++) {
+                char c = formatStr.charAt(i);
+                boolean escaped = c == '\\' && i < formatStr.length() - 1;
+                if (escaped) {
+                    c = formatStr.charAt(++i);
+                } else if (c == '"') {
+                    quoted = !quoted;
+                    continue;
+                }
+                if (c == '.') {
+                    afterLiteralPoint = escaped || quoted;
+                    digits = 0;
+                } else if (afterLiteralPoint && (c == '0' || c == '#')) {
+                    digits++;
+                }
+            }
+            return digits;
+        }
+
+        public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols, String rawPattern) {
             df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
             setExcelStyleRoundingMode(df);
             Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
             if (endsWithCommasMatcher.find()) {
-                int index_point = pattern.indexOf(".");
-                int index_comma = pattern.indexOf(",");
-                int cnt = index_comma - index_point - 1;
-                String commas = (endsWithCommasMatcher.group(1));
-                BigDecimal temp = BigDecimal.ONE;
-                for (int i = 0; i < commas.length(); ++i) {
-                    temp = temp.multiply(ONE_THOUSAND);
-                }
-                for (int i = 0; i < cnt; i++) {
-                    temp = temp.multiply(TEN);
-                }
-                divider = temp;
+                powersOfTenToScaleDown =
+                        3 * endsWithCommasMatcher.group(1).length() + digitsAfterLiteralDecimalPoint(rawPattern);
             } else {
-                divider = null;
+                powersOfTenToScaleDown = 0;
             }
         }
 
         private Object scaleInput(Object obj) {
-            if (divider != null) {
+            if (powersOfTenToScaleDown > 0) {
                 if (obj instanceof BigDecimal) {
-                    obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
+                    obj = ((BigDecimal) obj).movePointLeft(powersOfTenToScaleDown);
                 } else if (obj instanceof Double) {
-                    obj = (Double) obj / divider.doubleValue();
+                    obj = (Double) obj / Math.pow(10, powersOfTenToScaleDown);
                 } else {
                     throw new UnsupportedOperationException();
                 }
@@ -600,7 +617,7 @@ public class DataFormatter {
         }
 
         try {
-            return new InternalDecimalFormatWithScale(format, symbols);
+            return new InternalDecimalFormatWithScale(format, symbols, formatStr);
         } catch (IllegalArgumentException iae) {
             log.error("Formatting failed for format {}, falling back", formatStr, iae);
             // the pattern could not be parsed correctly,

@@ -21,10 +21,12 @@ package org.apache.fesod.sheet.converters;
 
 import java.time.LocalTime;
 import java.util.Map;
+import java.util.UUID;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
+import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,6 +67,21 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 LocalTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersUuidFamily() {
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class,
+                DefaultConverterLoader.loadDefaultReadConverter()
+                        .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class,
+                DefaultConverterLoader.loadDefaultWriteConverter().get(ConverterKeyBuild.buildKey(UUID.class)));
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class,
+                DefaultConverterLoader.loadDefaultWriteConverter()
+                        .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

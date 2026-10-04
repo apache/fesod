@@ -28,6 +28,7 @@ package org.apache.fesod.sheet.analysis.v03.handlers;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
@@ -48,19 +49,27 @@ public class LabelRecordHandler extends AbstractXlsRecordHandler implements Igno
         }
 
         String data = lrec.getValue();
-        if (data != null) {
-            GlobalConfiguration globalConfiguration =
-                    xlsReadContext.currentReadHolder().globalConfiguration();
-            if (globalConfiguration.getAutoStrip()) {
-                data = StringUtils.strip(data);
-            } else if (globalConfiguration.getAutoTrim()) {
-                data = data.trim();
-            }
+        if (data == null) {
+            xlsReadContext
+                    .xlsReadSheetHolder()
+                    .getCellMap()
+                    .put(targetColumnIndex, ReadCellData.newEmptyInstance(lrec.getRow(), targetColumnIndex));
+            return;
         }
-        xlsReadContext
-                .xlsReadSheetHolder()
-                .getCellMap()
-                .put(targetColumnIndex, ReadCellData.newInstance(data, lrec.getRow(), targetColumnIndex));
-        xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
+
+        GlobalConfiguration globalConfiguration =
+                xlsReadContext.currentReadHolder().globalConfiguration();
+        if (Boolean.TRUE.equals(globalConfiguration.getAutoStrip())) {
+            data = StringUtils.strip(data);
+        } else if (Boolean.TRUE.equals(globalConfiguration.getAutoTrim())) {
+            data = data.trim();
+        }
+
+        ReadCellData<?> cellData = ReadCellData.newInstance(data, lrec.getRow(), targetColumnIndex);
+        cellData.checkEmpty();
+        xlsReadContext.xlsReadSheetHolder().getCellMap().put(targetColumnIndex, cellData);
+        if (cellData.getType() != CellDataTypeEnum.EMPTY) {
+            xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
+        }
     }
 }

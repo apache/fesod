@@ -257,6 +257,7 @@ public class CompatibilityTest extends AbstractExcelTest {
                 .replace("<v>", "<p:v>")
                 .replace("</v>", "</p:v>")
                 .replace("<pageMargins", "<p:pageMargins")
+                .replace("<p:v>0</p:v>", "<p:v>0<ext:v xmlns:ext=\"urn:fesod:test:foreign\">999</ext:v></p:v>")
                 .replace(
                         "</p:sheetData>",
                         "<ext:row xmlns:ext=\"urn:fesod:test:foreign\" r=\"999\">"
@@ -274,6 +275,9 @@ public class CompatibilityTest extends AbstractExcelTest {
                 .replace("</si>", "</p:si>")
                 .replace("<t>", "<p:t>")
                 .replace("</t>", "</p:t>")
+                .replace(
+                        "<p:t>Name0</p:t>",
+                        "<p:t>Name<ext:t xmlns:ext=\"urn:fesod:test:foreign\">foreign</ext:t>0</p:t>")
                 .replace(
                         "<p:si>", "<ext:si xmlns:ext=\"urn:fesod:test:foreign\"><ext:t>foreign</ext:t></ext:si><p:si>");
     }

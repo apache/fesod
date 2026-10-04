@@ -57,13 +57,20 @@ public class SharedStringsTableHandler extends DefaultHandler {
      */
     private boolean isTagt = false;
 
+    private int ignoredElementDepth;
+
     public SharedStringsTableHandler(ReadCache readCache) {
         this.readCache = readCache;
     }
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) {
+        if (ignoredElementDepth > 0) {
+            ignoredElementDepth++;
+            return;
+        }
         if (!isSpreadsheetNamespace(uri)) {
+            ignoredElementDepth = 1;
             return;
         }
         String tagName = tagName(localName, name);
@@ -88,6 +95,10 @@ public class SharedStringsTableHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String name) {
+        if (ignoredElementDepth > 0) {
+            ignoredElementDepth--;
+            return;
+        }
         if (!isSpreadsheetNamespace(uri)) {
             return;
         }
@@ -122,7 +133,7 @@ public class SharedStringsTableHandler extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) {
-        if (!isTagt || ignoreTagt) {
+        if (ignoredElementDepth > 0 || !isTagt || ignoreTagt) {
             return;
         }
         if (currentElementData == null) {

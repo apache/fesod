@@ -50,6 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XlsxRowHandler extends DefaultHandler {
     private final XlsxReadContext xlsxReadContext;
     private static final Map<String, XlsxTagHandler> XLSX_CELL_HANDLER_MAP = new HashMap<>(64);
+    private int ignoredElementDepth;
 
     static {
         CellFormulaTagHandler cellFormulaTagHandler = new CellFormulaTagHandler();
@@ -92,7 +93,12 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+        if (ignoredElementDepth > 0) {
+            ignoredElementDepth++;
+            return;
+        }
         if (!isSpreadsheetNamespace(uri)) {
+            ignoredElementDepth = 1;
             return;
         }
         String tagName = tagName(localName, name);
@@ -106,6 +112,9 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+        if (ignoredElementDepth > 0) {
+            return;
+        }
         String currentTag = xlsxReadContext.xlsxReadSheetHolder().getTagDeque().peek();
         if (currentTag == null) {
             return;
@@ -119,6 +128,10 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
+        if (ignoredElementDepth > 0) {
+            ignoredElementDepth--;
+            return;
+        }
         if (!isSpreadsheetNamespace(uri)) {
             return;
         }

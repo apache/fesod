@@ -37,8 +37,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 /**
  * Field-level round trips for the Character and Year converters across every supported format.
- * The xlsx/xls legs exercise the wildcard write key ((type, null)); the csv leg exercises the
- * (type, STRING) key.
+ * Converter lookup differs by direction: on write, xlsx/xls resolve the wildcard key
+ * ((type, null)) while CSV forces a STRING target and resolves (type, STRING); on read, every
+ * format resolves by the concrete cell type key, here (type, STRING).
  */
 @Tag(Tags.ROUND_TRIP)
 public class CharacterAndYearFieldRoundTripTest extends AbstractExcelTest {

@@ -83,7 +83,8 @@ public class BigDecimalBooleanConverter implements Converter<BigDecimal> {
 
     /**
      * Converts Java type BigDecimal to Excel cell data.
-     * If the value is BigDecimal.ONE, returns a WriteCellData containing true, otherwise returns a WriteCellData containing false.
+     * If the value is numerically equal to one, returns a WriteCellData containing true, otherwise returns a
+     * WriteCellData containing false.
      *
      * @param value                  Java type BigDecimal value.
      * @param contentProperty        Excel content property.
@@ -93,7 +94,7 @@ public class BigDecimalBooleanConverter implements Converter<BigDecimal> {
     @Override
     public WriteCellData<?> convertToExcelData(
             BigDecimal value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (BigDecimal.ONE.equals(value)) {
+        if (value != null && BigDecimal.ONE.compareTo(value) == 0) {
             return new WriteCellData<>(Boolean.TRUE);
         }
         return new WriteCellData<>(Boolean.FALSE);

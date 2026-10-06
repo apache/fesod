@@ -1,0 +1,363 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# Performance regression gate for Fesod.
+#
+# Runs the baseline benchmark suite (fesod-benchmark/baseline package) on release tags
+# (e.g. 2.1.0-incubating) and on demand (workflow_dispatch), compares the results against
+# the committed baseline (fesod-benchmark/baseline/jmh-baseline.json) and:
+#   - appends the comparison report to the job step summary
+#   - emits ::error/::warning annotations for regressions (visible on the run page)
+#   - fails the job when a regression exceeds the fail threshold with non-overlapping
+#     JMH error bars (high-confidence regressions only — see benchmark.md for the
+#     rationale of the tiered gate)
+#
+# On tags with a regression, a follow-up job posts the report as a comment on the
+# matching GitHub Release (or opens an issue) so maintainers cannot miss it.
+# A passing tag run (or a dispatch with update_baseline) opens a PR that refreshes
+# the committed baseline — the baseline lifecycle follows releases.
+#
+# The baseline can only be regenerated on a GitHub runner (same hardware/JDK).
+# Never commit a baseline generated on a local machine.
+
+name: Benchmark
+
+on:
+  push:
+    tags:
+      - '[0-9]+.*'
+  workflow_dispatch:
+    inputs:
+      update_baseline:
+        description: 'Run the suite and open a PR refreshing the committed baseline'
+        type: boolean
+        default: false
+      warn_threshold:
+        description: 'Regression percentage that triggers a warning'
+        type: number
+        default: 10
+      fail_threshold:
+        description: 'Regression percentage that fails the job (beyond JMH error bars)'
+        type: number
+        default: 20
+
+concurrency:
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  BASELINE_FILE: fesod-benchmark/baseline/jmh-baseline.json
+  BASELINE_META: fesod-benchmark/baseline/baseline-meta.json
+  CURRENT_RESULT: fesod-benchmark/target/baseline-current.json
+  REPORT_FILE: fesod-benchmark/target/benchmark-report.md
+
+jobs:
+  benchmark:
+    name: Baseline comparison (JDK 17)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      pull-requests: write
+    outputs:
+      bootstrap: ${{ steps.baseline.outputs.exists != 'true' }}
+      update_requested: ${{ github.event_name == 'workflow_dispatch' && inputs.update_baseline }}
+      is_tag: ${{ startsWith(github.ref, 'refs/tags/') }}
+      compare_outcome: ${{ steps.compare.outcome }}
+      tag: ${{ github.ref_name }}
+      jdk: ${{ steps.env.outputs.jdk }}
+      os: ${{ steps.env.outputs.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-benchmark-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-benchmark-
+
+      - name: Record environment
+        id: env
+        run: |
+          echo "jdk=$(java -version 2>&1 | head -n 1)" >> "$GITHUB_OUTPUT"
+          echo "os=$(uname -sr)" >> "$GITHUB_OUTPUT"
+
+      - name: Check baseline presence
+        id: baseline
+        run: |
+          if [ -f "$BASELINE_FILE" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No committed baseline found — this run will bootstrap one."
+          fi
+
+      - name: Build benchmark suite
+        run: ./mvnw -B -ntp -pl fesod-benchmark -am package -DskipTests
+
+      - name: Run baseline suite
+        run: |
+          cd fesod-benchmark
+          java -cp target/benchmarks.jar org.apache.fesod.sheet.benchmark.baseline.BaselineRunner
+
+      - name: Compare against baseline
+        id: compare
+        continue-on-error: true
+        run: |
+          java -cp fesod-benchmark/target/benchmarks.jar \
+            org.apache.fesod.sheet.benchmark.baseline.BaselineComparator \
+            --baseline "$BASELINE_FILE" \
+            --baseline-meta "$BASELINE_META" \
+            --current "$CURRENT_RESULT" \
+            --warn "${{ inputs.warn_threshold || vars.BENCHMARK_WARN_PCT || '10' }}" \
+            --fail "${{ inputs.fail_threshold || vars.BENCHMARK_FAIL_PCT || '20' }}" \
+            --report "$REPORT_FILE"
+
+      - name: Add report to job summary
+        if: always()
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          {
+            echo "## 📊 Fesod performance report"
+            echo
+            echo "Run \`${{ github.sha }}\` on \`ubuntu-24.04\` · ${{ steps.env.outputs.jdk }} · [full run](${RUN_URL})"
+            echo
+            if [ -f "$REPORT_FILE" ]; then
+              cat "$REPORT_FILE"
+            else
+              echo "_No comparison report was produced (suite run failed or was cancelled)."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          if-no-files-found: warn
+          path: |
+            ${{ env.CURRENT_RESULT }}
+            ${{ env.REPORT_FILE }}
+
+      - name: Comment report on open PR (manual runs on a PR branch)
+        if: github.event_name == 'workflow_dispatch' && always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          [ -f "$REPORT_FILE" ] || { echo "No report file — skipping."; exit 0; }
+          PR_NUMBER=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open \
+            --json number -q '.[0].number' 2>/dev/null || true)
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR for branch '$BRANCH' — report is in the job summary only."
+            exit 0
+          fi
+          MARKER='<!-- fesod-benchmark-report -->'
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          BODY_FILE=$(mktemp)
+          {
+            echo "$MARKER"
+            echo "### 📊 Performance vs baseline — run [${{ github.run_id }}](${RUN_URL})"
+            echo
+            cat "$REPORT_FILE"
+          } > "$BODY_FILE"
+          EXISTING=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+            --paginate -q ".[] | select(.body | startswith(\"$MARKER\")) | .id" | head -n 1)
+          if [ -n "$EXISTING" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$EXISTING" \
+              -F body=@"$BODY_FILE" > /dev/null
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+              -F body=@"$BODY_FILE" > /dev/null
+          fi
+          echo "Report commented on PR #$PR_NUMBER."
+
+      - name: Fail on regression
+        if: steps.compare.outcome == 'failure' && !(github.event_name == 'workflow_dispatch' && inputs.update_baseline)
+        run: |
+          echo "::error title=Performance regression::At least one benchmark regressed beyond the fail threshold. See the benchmark report in the job summary."
+          exit 1
+
+  notify-regression:
+    name: Notify maintainers (tag regression)
+    needs: benchmark
+    if: >-
+      always() &&
+      !cancelled() &&
+      needs.benchmark.outputs.compare_outcome == 'failure' &&
+      needs.benchmark.outputs.is_tag == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results
+          path: fesod-benchmark/target/
+
+      - name: Post report on release (or open an issue)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.benchmark.outputs.tag }}
+        run: |
+          if [ ! -f "$REPORT_FILE" ]; then
+            echo "No report file — nothing to notify."
+            exit 0
+          fi
+          BODY_FILE=$(mktemp)
+          {
+            echo "## 🚨 Performance regression detected on tag \`${TAG}\`"
+            echo
+            echo "The [benchmark run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) found regressions beyond the fail threshold. The baseline was **not** advanced."
+            echo
+            cat "$REPORT_FILE"
+          } > "$BODY_FILE"
+
+          # Best-effort notification ladder: release comment -> issue -> warning
+          # annotation. A missing release or a repository with issues disabled must
+          # never turn this job red — the gate itself is already red in that case.
+          notified=1
+          RELEASE_ID=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" -q .id 2>/dev/null || true)
+          # a failed lookup can leak the error body into the variable — keep numeric ids only
+          case "$RELEASE_ID" in
+            ''|*[!0-9]*) RELEASE_ID='' ;;
+          esac
+          if [ -n "$RELEASE_ID" ]; then
+            if gh api -X POST "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/comments" \
+                -F body=@"$BODY_FILE" > /dev/null 2>&1; then
+              echo "Commented on release $TAG."
+              notified=0
+            else
+              echo "::warning title=Regression notification::Release comment failed for '$TAG' — falling back to an issue."
+            fi
+          fi
+          if [ "$notified" -ne 0 ]; then
+            if gh issue create --repo "$GITHUB_REPOSITORY" \
+                --title "🚨 Performance regression on tag ${TAG}" \
+                --body-file "$BODY_FILE" --label "performance" 2>/dev/null \
+              || gh issue create --repo "$GITHUB_REPOSITORY" \
+                --title "🚨 Performance regression on tag ${TAG}" \
+                --body-file "$BODY_FILE"; then
+              echo "Opened a tracking issue."
+              notified=0
+            fi
+          fi
+          if [ "$notified" -ne 0 ]; then
+            echo "::warning title=Regression notification::Could not comment on release '$TAG' or open an issue (no release / issues disabled?). The report is in the job summary and run annotations."
+          fi
+
+  update-baseline:
+    name: Refresh baseline (opens PR)
+    needs: benchmark
+    if: >-
+      !cancelled() &&
+      needs.benchmark.result == 'success' &&
+      (needs.benchmark.outputs.update_requested == 'true' ||
+       needs.benchmark.outputs.bootstrap == 'true' ||
+       (needs.benchmark.outputs.is_tag == 'true' && needs.benchmark.outputs.compare_outcome == 'success'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results
+          path: fesod-benchmark/target/
+
+      - name: Write baseline files
+        env:
+          JDK_INFO: ${{ needs.benchmark.outputs.jdk }}
+          OS_INFO: ${{ needs.benchmark.outputs.os }}
+          SOURCE_REF: ${{ needs.benchmark.outputs.is_tag == 'true' && needs.benchmark.outputs.tag || github.ref_name }}
+        run: |
+          mkdir -p fesod-benchmark/baseline
+          cp "$CURRENT_RESULT" "$BASELINE_FILE"
+          jq -n \
+            --arg generatedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg gitSha "${{ github.sha }}" \
+            --arg gitRef "$SOURCE_REF" \
+            --arg jdkVersion "$JDK_INFO" \
+            --arg osName "$OS_INFO" \
+            --arg runnerLabel "ubuntu-24.04" \
+            --argjson benchmarkCount "$(jq 'length' "$CURRENT_RESULT")" \
+            '{generatedAt: $generatedAt, gitSha: $gitSha, gitRef: $gitRef, jdkVersion: $jdkVersion,
+              osName: $osName, runnerLabel: $runnerLabel, benchmarkCount: $benchmarkCount}' \
+            > "$BASELINE_META"
+          cat "$BASELINE_META"
+
+      - name: Open baseline refresh PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_BRANCH: ${{ needs.benchmark.outputs.is_tag == 'true' && 'main' || github.ref_name }}
+          REASON: ${{ needs.benchmark.outputs.is_tag == 'true' && format('release tag {0}', needs.benchmark.outputs.tag) || github.ref_name }}
+        run: |
+          BRANCH="benchmark/baseline-$(date -u +%Y%m%d%H%M%S)"
+          PR_BODY_FILE=$(mktemp)
+          {
+            echo "## Performance baseline refresh"
+            echo
+            echo "Regenerated from \`${{ github.sha }}\` (\`$REASON\`) on a \`ubuntu-24.04\` runner with JDK 17 (Temurin)"
+            echo "by the [Benchmark workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+            echo
+            if [ -f "$REPORT_FILE" ]; then
+              echo "### Change vs previous baseline"
+              echo
+              cat "$REPORT_FILE"
+              echo
+            fi
+            echo "### Files changed"
+            echo
+            echo '- `fesod-benchmark/baseline/jmh-baseline.json` — fresh JMH results, the new reference'
+            echo '- `fesod-benchmark/baseline/baseline-meta.json` — provenance (commit, runner, JDK, date)'
+            echo
+            echo "Merge this PR to accept the new performance characteristics as the project baseline."
+          } > "$PR_BODY_FILE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add fesod-benchmark/baseline
+          git commit -m "chore(benchmark): refresh performance baseline from ${{ github.sha }}"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH" \
+            --title "chore(benchmark): refresh performance baseline" \
+            --body-file "$PR_BODY_FILE"

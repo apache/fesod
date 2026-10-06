@@ -80,6 +80,12 @@ under the License.
             <artifactId>slf4j-simple</artifactId>
         </dependency>
 
+        <!-- JSON parsing of JMH results (regression gate comparator) -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -1,7 +1,8 @@
 # Fesod Benchmark Module
 
-JMH benchmarks for Fesod spreadsheet operations. This module is a **manual tool**:
-it is not wired into any CI workflow and is not part of the Fesod public API.
+JMH benchmarks for Fesod spreadsheet operations, plus (per this proposal) a
+release-time performance regression gate. Benchmark code is not part of the
+Fesod public API.
 
 It covers three complementary suites (package `org.apache.fesod.sheet.benchmark`):
 
@@ -101,3 +102,40 @@ results collected at different times stay comparable:
   (overwritten each invocation) and delete it from the trial `@TearDown` via
   `BenchmarkFileUtil.delete` — never inside the measured method, so cleanup
   I/O stays out of the reported time.
+
+## Performance regression gate (this PR's proposal)
+
+On top of the manual suites above, this PR wires `FesodBenchmark` into a
+**release-time regression gate**:
+
+- **Triggers**: release tags (`[0-9]+.*`) and manual `workflow_dispatch` — never
+  per pull request (shared-runner noise makes every-push gating flaky and
+  wasteful). Workflow: [`.github/workflows/benchmark.yml`](../.github/workflows/benchmark.yml).
+- **Components** (package `org.apache.fesod.sheet.benchmark.baseline`):
+  `BaselineRunner` runs `FesodBenchmark` with the pinned contract (3 forks,
+  3×1s warmup, 5×2s measurement, `-Xms1g -Xmx1g -XX:+UseG1GC`, gc profiler);
+  `BaselineComparator` compares against the committed baseline
+  ([`baseline/`](baseline/)) and renders the Markdown report with the gate verdict.
+- **Tiered verdicts** (calibrated against measured noise on real runners):
+
+  | Signal | Noise | Decision |
+  |---|---|---|
+  | `gc.alloc.rate.norm` (alloc per op) | ±0.1% | Regression beyond threshold → **fail** |
+  | avgt beyond fail threshold **and** non-overlapping JMH error bars | ±7% typical | **Fail** |
+  | avgt beyond threshold with overlapping error bars | — | **WARN only** |
+  | Tracked benchmark missing from a run | — | **Fail** |
+
+  Thresholds default to warn 10% / fail 20% (overridable via dispatch inputs or
+  repo variables `BENCHMARK_WARN_PCT` / `BENCHMARK_FAIL_PCT`).
+- **Baseline lifecycle**: the baseline is only ever generated on
+  `ubuntu-24.04` + JDK 17 Temurin GitHub runners; the first run bootstraps it
+  via an automated PR, passing tags advance it via automated PRs, and a
+  regression on a tag posts the report on the matching GitHub Release (or
+  opens an issue). Benchmark method/param names are the baseline keys — do not
+  rename them without a baseline refresh.
+- **ASF compliance**: only `actions/*` are used; bot pushes go only to
+  `benchmark/baseline-*` branches; baseline JSON enters the repo exclusively
+  through reviewed PRs.
+
+This gate is the part of the original PR #575 that was split out per review
+feedback; it is proposed here separately for discussion.

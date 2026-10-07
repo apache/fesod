@@ -102,7 +102,8 @@ public interface ReadListener<T> extends Listener {
         if (limit == null) {
             limit = context.readWorkbookHolder().getReadWorkbook().getNumRows();
         }
-        if (limit != null && index >= limit) {
+        // Zero is documented as "no limit", so only a positive limit stops the read.
+        if (limit != null && limit > 0 && index >= limit) {
             return false;
         }
         return true;

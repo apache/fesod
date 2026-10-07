@@ -30,13 +30,14 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -87,10 +88,15 @@ class BuiltinFormatsTest {
         assertEquals("￥1,234.50", readFirstCell(file, Locale.CHINA));
     }
 
-    @Test
-    void readCurrencyFormatDefinedInFileWithUsLocale() throws IOException {
-        File file = writeCurrencyCell("xlsx", "\"€\"#,##0.00");
-        assertEquals("€1,234.50", readFirstCell(file, Locale.US));
+    @ParameterizedTest
+    @ValueSource(strings = {"xlsx", "xls"})
+    void readCurrencyFormatDefinedInFileWithUsLocale(String extension) throws IOException {
+        File euro = writeCurrencyCell(extension, "\"€\"#,##0.00");
+        assertEquals("€1,234.50", readFirstCell(euro, Locale.US));
+
+        // a file saved by a Chinese Excel keeps its yuan formats when read with the US locale
+        File yuan = writeCurrencyCell(extension, "\"￥\"#,##0.00");
+        assertEquals("￥1,234.50", readFirstCell(yuan, Locale.US));
     }
 
     private static String readFirstCell(File file, Locale locale) {
@@ -101,17 +107,17 @@ class BuiltinFormatsTest {
 
     /**
      * Writes {@code 1234.5} with the built-in currency format 7, or with format 44 redefined as
-     * {@code numFmt44} in styles.xml when it is not null.
+     * {@code numFmt44} in the file when it is not null.
      */
     private File writeCurrencyCell(String extension, String numFmt44) throws IOException {
-        File file = new File(tempDir, "currency-" + (numFmt44 == null ? "builtin" : "custom") + "." + extension);
+        File file = File.createTempFile("currency", "." + extension, tempDir);
         try (Workbook workbook = "xls".equals(extension) ? new HSSFWorkbook() : new XSSFWorkbook();
                 OutputStream out = new FileOutputStream(file)) {
             CellStyle style = workbook.createCellStyle();
             if (numFmt44 == null) {
                 style.setDataFormat((short) 7);
             } else {
-                ((XSSFWorkbook) workbook).getStylesSource().putNumberFormat((short) 44, numFmt44);
+                redefineFormat44(workbook, numFmt44);
                 style.setDataFormat((short) 44);
             }
             Cell cell = workbook.createSheet("Sheet1").createRow(0).createCell(0);
@@ -120,5 +126,22 @@ class BuiltinFormatsTest {
             workbook.write(out);
         }
         return file;
+    }
+
+    private static void redefineFormat44(Workbook workbook, String format) {
+        if (workbook instanceof XSSFWorkbook) {
+            ((XSSFWorkbook) workbook).getStylesSource().putNumberFormat((short) 44, format);
+            return;
+        }
+        // a new HSSF workbook already carries a FORMAT record for 44, replace it
+        List<Record> records = ((HSSFWorkbook) workbook).getInternalWorkbook().getRecords();
+        for (int i = 0; i < records.size(); i++) {
+            Record record = records.get(i);
+            if (record instanceof FormatRecord && ((FormatRecord) record).getIndexCode() == 44) {
+                records.set(i, new FormatRecord(44, format));
+                return;
+            }
+        }
+        throw new IllegalStateException("no FORMAT record for 44");
     }
 }

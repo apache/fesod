@@ -508,8 +508,11 @@ public class BuiltinFormats {
             return defaultFormat;
         }
 
-        // Give priority to checking if it is the default value for all languages
-        if (index < BUILTIN_FORMATS_ALL_LANGUAGES.length) {
+        // Give priority to checking if it is the default value for all languages.
+        // The shortcut is skipped when the locale resolves to a locale-specific table (currently the US table,
+        // whose currency entries at indices 5-8, 42 and 44 use "$" instead of the "￥" kept in the all-language
+        // table), so that the locale-specific entries and the numFmt override from the file's styles.xml win.
+        if (switchBuiltinFormats(locale) != BUILTIN_FORMATS_US && index < BUILTIN_FORMATS_ALL_LANGUAGES.length) {
             String format = BUILTIN_FORMATS_ALL_LANGUAGES[index];
             if (format != null) {
                 return format;

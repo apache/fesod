@@ -80,15 +80,25 @@ public class CsvRow implements Row {
 
     @Override
     public Cell createCell(int column) {
-        CsvCell cell = new CsvCell(csvWorkbook, csvSheet, this, column, null);
-        cellList.add(cell);
-        return cell;
+        return createCell(column, null);
     }
 
     @Override
     public Cell createCell(int column, CellType type) {
         CsvCell cell = new CsvCell(csvWorkbook, csvSheet, this, column, type);
-        cellList.add(cell);
+        // Keep the list sorted by column index and replace the cell already in the column, since
+        // CsvSheet#flushData writes the cells in list order
+        int size = cellList.size();
+        if (size == 0 || cellList.get(size - 1).getColumnIndex() < column) {
+            cellList.add(cell);
+            return cell;
+        }
+        int position = indexOf(column);
+        if (position >= 0) {
+            cellList.set(position, cell);
+        } else {
+            cellList.add(-position - 1, cell);
+        }
         return cell;
     }
 
@@ -109,10 +119,8 @@ public class CsvRow implements Row {
 
     @Override
     public Cell getCell(int cellnum) {
-        if (cellnum < 0 || cellnum >= cellList.size()) {
-            return null;
-        }
-        return cellList.get(cellnum);
+        int position = indexOf(cellnum);
+        return position >= 0 ? cellList.get(position) : null;
     }
 
     @Override
@@ -133,7 +141,29 @@ public class CsvRow implements Row {
         if (CollectionUtils.isEmpty(cellList)) {
             return -1;
         }
-        return (short) cellList.size();
+        return (short) (cellList.get(cellList.size() - 1).getColumnIndex() + 1);
+    }
+
+    /**
+     * Binary search for the cell in the given column.
+     *
+     * @return the position of the cell, or {@code -(insertion point) - 1} if the column has no cell
+     */
+    private int indexOf(int column) {
+        int low = 0;
+        int high = cellList.size() - 1;
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            int midColumn = cellList.get(mid).getColumnIndex();
+            if (midColumn < column) {
+                low = mid + 1;
+            } else if (midColumn > column) {
+                high = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+        return -(low + 1);
     }
 
     @Override

@@ -110,6 +110,27 @@ public class NumberUtils {
     }
 
     /**
+     * Narrow a cell number to an integral value in the closed range [{@code minValue}, {@code maxValue}]. The
+     * fractional part is truncated toward zero, matching the previous narrowing behavior; a value whose
+     * truncated integer part falls outside the range throws {@link ArithmeticException} instead of silently
+     * wrapping around.
+     *
+     * @param value the cell number
+     * @param minValue the inclusive lower bound of the target type
+     * @param maxValue the inclusive upper bound of the target type
+     * @return the truncated value, guaranteed to be integral and within the range
+     */
+    public static BigDecimal narrowInRange(BigDecimal value, long minValue, long maxValue) {
+        BigDecimal truncated = value.setScale(0, RoundingMode.DOWN);
+        if (truncated.compareTo(BigDecimal.valueOf(minValue)) < 0
+                || truncated.compareTo(BigDecimal.valueOf(maxValue)) > 0) {
+            throw new ArithmeticException(
+                    truncated + " is out of the required range [" + minValue + ", " + maxValue + "]");
+        }
+        return truncated;
+    }
+
+    /**
      * parse
      *
      * @param string
@@ -118,9 +139,12 @@ public class NumberUtils {
      */
     public static Short parseShort(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).shortValue();
+            return narrowInRange(new BigDecimal(string), Short.MIN_VALUE, Short.MAX_VALUE)
+                    .shortValueExact();
         }
-        return parse(string, contentProperty).shortValue();
+        return narrowInRange(
+                        new BigDecimal(parse(string, contentProperty).toString()), Short.MIN_VALUE, Short.MAX_VALUE)
+                .shortValueExact();
     }
 
     /**
@@ -132,9 +156,11 @@ public class NumberUtils {
      */
     public static Long parseLong(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).longValue();
+            return narrowInRange(new BigDecimal(string), Long.MIN_VALUE, Long.MAX_VALUE)
+                    .longValueExact();
         }
-        return parse(string, contentProperty).longValue();
+        return narrowInRange(new BigDecimal(parse(string, contentProperty).toString()), Long.MIN_VALUE, Long.MAX_VALUE)
+                .longValueExact();
     }
 
     /**
@@ -146,9 +172,12 @@ public class NumberUtils {
      */
     public static Integer parseInteger(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).intValue();
+            return narrowInRange(new BigDecimal(string), Integer.MIN_VALUE, Integer.MAX_VALUE)
+                    .intValueExact();
         }
-        return parse(string, contentProperty).intValue();
+        return narrowInRange(
+                        new BigDecimal(parse(string, contentProperty).toString()), Integer.MIN_VALUE, Integer.MAX_VALUE)
+                .intValueExact();
     }
 
     /**
@@ -189,9 +218,11 @@ public class NumberUtils {
      */
     public static Byte parseByte(String string, ExcelContentProperty contentProperty) throws ParseException {
         if (!hasFormat(contentProperty)) {
-            return new BigDecimal(string).byteValue();
+            return narrowInRange(new BigDecimal(string), Byte.MIN_VALUE, Byte.MAX_VALUE)
+                    .byteValueExact();
         }
-        return parse(string, contentProperty).byteValue();
+        return narrowInRange(new BigDecimal(parse(string, contentProperty).toString()), Byte.MIN_VALUE, Byte.MAX_VALUE)
+                .byteValueExact();
     }
 
     /**

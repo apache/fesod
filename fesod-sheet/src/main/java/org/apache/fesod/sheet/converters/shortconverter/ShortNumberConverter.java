@@ -54,7 +54,8 @@ public class ShortNumberConverter implements Converter<Short> {
     @Override
     public Short convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return cellData.getNumberValue().shortValue();
+        return NumberUtils.narrowInRange(cellData.getNumberValue(), Short.MIN_VALUE, Short.MAX_VALUE)
+                .shortValueExact();
     }
 
     @Override

@@ -54,7 +54,8 @@ public class LongNumberConverter implements Converter<Long> {
     @Override
     public Long convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return cellData.getNumberValue().longValue();
+        return NumberUtils.narrowInRange(cellData.getNumberValue(), Long.MIN_VALUE, Long.MAX_VALUE)
+                .longValueExact();
     }
 
     @Override

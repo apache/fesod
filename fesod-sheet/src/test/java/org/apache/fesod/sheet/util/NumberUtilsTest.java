@@ -390,4 +390,35 @@ class NumberUtilsTest {
         FesodSheet.read(file).sheet().doReadSync();
         Assertions.assertNull(threadLocal.get());
     }
+
+    @Test
+    void test_parseInteger_rejectsOutOfRangeValue() {
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseInteger("13800138000", null));
+    }
+
+    @Test
+    void test_parseInteger_acceptsBoundaryValues() throws ParseException {
+        Assertions.assertEquals(Integer.MAX_VALUE, NumberUtils.parseInteger("2147483647", null));
+        Assertions.assertEquals(Integer.MIN_VALUE, NumberUtils.parseInteger("-2147483648", null));
+    }
+
+    @Test
+    void test_parseInteger_truncatesFractionLikeBefore() throws ParseException {
+        Assertions.assertEquals(123, NumberUtils.parseInteger("123.9", null));
+    }
+
+    @Test
+    void test_parseLong_rejectsOutOfRangeValue() {
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseLong("9223372036854775808", null));
+    }
+
+    @Test
+    void test_parseShort_rejectsOutOfRangeValue() {
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseShort("40000", null));
+    }
+
+    @Test
+    void test_parseByte_rejectsOutOfRangeValue() {
+        Assertions.assertThrows(ArithmeticException.class, () -> NumberUtils.parseByte("300", null));
+    }
 }

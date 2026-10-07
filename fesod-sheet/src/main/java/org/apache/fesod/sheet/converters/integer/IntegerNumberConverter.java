@@ -54,7 +54,8 @@ public class IntegerNumberConverter implements Converter<Integer> {
     @Override
     public Integer convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return cellData.getNumberValue().intValue();
+        return NumberUtils.narrowInRange(cellData.getNumberValue(), Integer.MIN_VALUE, Integer.MAX_VALUE)
+                .intValueExact();
     }
 
     @Override

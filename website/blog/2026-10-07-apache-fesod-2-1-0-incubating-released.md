@@ -46,7 +46,6 @@ After laying a solid compliance and governance foundation in the 2.0.x releases,
 * **Fluent Header API for No-Bean Mode:** Build headers programmatically with a fluent API when you are not using annotated beans.
 * **`java.time.LocalTime` Converters:** Native conversion support for `LocalTime` values in read and write paths.
 * **Image Converter Refinement:** `StringImageConverter` was split into dedicated `Pathname` and `Base64` converters for clearer, safer image handling.
-* **`FesodDoc` Initial Structure:** A new module lays the groundwork for future Word document (`.docx`) support.
 * **Performance:** Date and number formatters are now cached to reduce repeated parsing overhead during large reads.
 
 ### 2. Security & Compliance
@@ -84,7 +83,6 @@ From column-based reading to freeze panes, these features were shaped through in
 * Split `StringImageConverter` into `Pathname` and `Base64` converters.
 * Added `java.time.LocalTime` converters.
 * Added column index limit support in `ReadSheet`.
-* Added initial `FesodDoc` class structure.
 * Registered `EscapeHexCellWriteHandler` by default for XLSX.
 
 ### **Bugfixes**

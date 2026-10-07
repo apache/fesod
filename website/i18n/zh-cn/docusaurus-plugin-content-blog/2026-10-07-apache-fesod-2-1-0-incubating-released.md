@@ -46,7 +46,6 @@ tags: [announcement, release]
 * **无 Bean 模式流式表头 API：** 不使用注解 Bean 时，可通过流式 API 以编程方式构建表头。
 * **`java.time.LocalTime` 转换器：** 读写链路原生支持 `LocalTime` 值的转换。
 * **图片转换器精细化：** `StringImageConverter` 拆分为专用的 `Pathname` 与 `Base64` 两个转换器，图片处理更清晰、更安全。
-* **`FesodDoc` 初始结构：** 新模块为未来支持 Word 文档（`.docx`）打下基础。
 * **性能提升：** 日期与数字格式化器现在会被缓存，减少大规模读取时的重复解析开销。
 
 ### 2. 安全与合规
@@ -84,7 +83,6 @@ tags: [announcement, release]
 * `StringImageConverter` 拆分为 `Pathname` 与 `Base64` 转换器。
 * 新增 `java.time.LocalTime` 转换器。
 * `ReadSheet` 支持列索引上限。
-* 新增 `FesodDoc` 类的初始结构。
 * 默认注册 `EscapeHexCellWriteHandler` 以支持 XLSX。
 
 ### **修复 (Bugfix)**

@@ -23,11 +23,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -149,12 +151,81 @@ public class CsvFormatTest extends AbstractExcelTest {
                 .autoTrim(Boolean.FALSE)
                 .csv()
                 .doWrite(dataList(10, " " + STRING_PREFIX));
-        List<Object> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
+        List<CsvData> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
                 .autoTrim(Boolean.FALSE)
                 .csv()
                 .doReadSync();
         Assertions.assertEquals(10, dataList.size());
-        Assertions.assertNotNull(dataList.get(0));
+        // workbook-level autoTrim(false) must preserve the leading space
+        Assertions.assertEquals(" " + STRING_PREFIX + 0, dataList.get(0).getString());
+    }
+
+    @Test
+    public void testSheetAutoTrim() throws Exception {
+        File csvFile = createTempFile("csv-sheet-auto-trim", ExcelFormat.CSV);
+        Files.write(csvFile.toPath(), " a , b \n".getBytes(StandardCharsets.UTF_8));
+
+        // default configuration trims surrounding whitespace
+        List<Object> dataList = FesodSheet.read(csvFile, new CsvDataListener())
+                .headRowNumber(0)
+                .csv()
+                .doReadSync();
+        Assertions.assertEquals(1, dataList.size());
+        Map<?, ?> row = (Map<?, ?>) dataList.get(0);
+        Assertions.assertEquals("a", row.get(0));
+        Assertions.assertEquals("b", row.get(1));
+
+        // sheet-level autoTrim(false) (set after .csv()) must be honored: raw values preserved
+        List<Object> preservedList = FesodSheet.read(csvFile, new CsvDataListener())
+                .headRowNumber(0)
+                .csv()
+                .autoTrim(Boolean.FALSE)
+                .doReadSync();
+        Assertions.assertEquals(1, preservedList.size());
+        Map<?, ?> preservedRow = (Map<?, ?>) preservedList.get(0);
+        Assertions.assertEquals(" a ", preservedRow.get(0));
+        Assertions.assertEquals(" b ", preservedRow.get(1));
+
+        // workbook-level autoTrim(false) (set before .csv()) keeps working
+        List<Object> workbookList = FesodSheet.read(csvFile, new CsvDataListener())
+                .headRowNumber(0)
+                .autoTrim(Boolean.FALSE)
+                .csv()
+                .doReadSync();
+        Assertions.assertEquals(1, workbookList.size());
+        Map<?, ?> workbookRow = (Map<?, ?>) workbookList.get(0);
+        Assertions.assertEquals(" a ", workbookRow.get(0));
+        Assertions.assertEquals(" b ", workbookRow.get(1));
+    }
+
+    @Test
+    public void testSheetAutoStrip() throws Exception {
+        File csvFile = createTempFile("csv-sheet-auto-strip", ExcelFormat.CSV);
+        Files.write(csvFile.toPath(), " a , b \n".getBytes(StandardCharsets.UTF_8));
+
+        // sheet-level autoStrip(false) with autoTrim(false) must be honored: raw values preserved
+        List<Object> dataList = FesodSheet.read(csvFile, new CsvDataListener())
+                .headRowNumber(0)
+                .csv()
+                .autoTrim(Boolean.FALSE)
+                .autoStrip(Boolean.FALSE)
+                .doReadSync();
+        Assertions.assertEquals(1, dataList.size());
+        Map<?, ?> row = (Map<?, ?>) dataList.get(0);
+        Assertions.assertEquals(" a ", row.get(0));
+        Assertions.assertEquals(" b ", row.get(1));
+
+        // sheet-level autoStrip(true) strips even when autoTrim is disabled
+        List<Object> stripList = FesodSheet.read(csvFile, new CsvDataListener())
+                .headRowNumber(0)
+                .csv()
+                .autoTrim(Boolean.FALSE)
+                .autoStrip(Boolean.TRUE)
+                .doReadSync();
+        Assertions.assertEquals(1, stripList.size());
+        Map<?, ?> stripRow = (Map<?, ?>) stripList.get(0);
+        Assertions.assertEquals("a", stripRow.get(0));
+        Assertions.assertEquals("b", stripRow.get(1));
     }
 
     @Test

@@ -17,17 +17,9 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.constant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,9 +30,10 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -48,18 +41,17 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for {@link BuiltinFormats#getBuiltinFormat(Short, String, Locale)}.
- *
- * <p>
- * The all-language table carries "￥" currency entries at indices 5-8, 42 and 44, so it must not shadow the
- * US table (which uses "$" there) nor the numFmt override provided by the file's styles.xml when the locale
- * resolves to the US table.
  */
-@Tag(Tags.UNIT)
 @Tag(Tags.FORMAT)
 class BuiltinFormatsTest {
+
+    private static final String US_CURRENCY_5 = "\"$\"#,##0_);(\"$\"#,##0)";
+    private static final String US_CURRENCY_44 = "_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)";
+    private static final String CN_CURRENCY_5 = "\"￥\"#,##0_);(\"￥\"#,##0)";
 
     @TempDir
     File tempDir;
@@ -72,54 +64,57 @@ class BuiltinFormatsTest {
 
     static Stream<Arguments> builtinFormatProvider() {
         return Stream.of(
-                // The US locale must resolve the "$" currency entries of the US table.
-                Arguments.of(5, null, Locale.US, "\"$\"#,##0_);(\"$\"#,##0)"),
-                Arguments.of(7, null, Locale.US, "\"$\"#,##0.00_);(\"$\"#,##0.00)"),
-                Arguments.of(44, null, Locale.US, "_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)"),
-                // CN and default (null) locales keep resolving the all-language "￥" entries.
-                Arguments.of(5, null, Locale.CHINA, "\"￥\"#,##0_);(\"￥\"#,##0)"),
-                Arguments.of(5, null, null, "\"￥\"#,##0_);(\"￥\"#,##0)"),
-                // The externally provided format (the file's styles.xml numFmt override) wins for the US locale.
-                Arguments.of(14, "mm-dd-yy", Locale.US, "mm-dd-yy"),
-                // CN and default locales keep preferring the all-language entry over the external format.
-                Arguments.of(14, "mm-dd-yy", Locale.CHINA, "yyyy/m/d"),
-                Arguments.of(14, "mm-dd-yy", null, "yyyy/m/d"),
-                // Reserved placeholders are never returned as the effective format.
-                Arguments.of(5, "reserved-5", Locale.US, "\"$\"#,##0_);(\"$\"#,##0)"));
+                // US currency entries come from the US table, or from the file when it defines the format
+                Arguments.of(5, null, Locale.US, US_CURRENCY_5),
+                Arguments.of(5, "reserved-5", Locale.US, US_CURRENCY_5),
+                Arguments.of(44, null, Locale.US, US_CURRENCY_44),
+                Arguments.of(44, "\"€\"#,##0.00", Locale.US, "\"€\"#,##0.00"),
+                // CN and the default locale keep the all-language entries
+                Arguments.of(5, null, Locale.CHINA, CN_CURRENCY_5),
+                Arguments.of(5, US_CURRENCY_5, Locale.CHINA, CN_CURRENCY_5),
+                Arguments.of(5, null, null, CN_CURRENCY_5),
+                // non-currency entries are the same for every locale and still win over the POI defaults
+                Arguments.of(14, "m/d/yy", Locale.US, "yyyy/m/d"),
+                Arguments.of(22, "m/d/yy h:mm", Locale.US, "yyyy-m-d h:mm"),
+                Arguments.of(14, "m/d/yy", Locale.CHINA, "yyyy/m/d"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"xlsx", "xls"})
+    void readBuiltinCurrencyFollowsLocale(String extension) throws IOException {
+        File file = writeCurrencyCell(extension, null);
+        assertEquals("$1,234.50", readFirstCell(file, Locale.US));
+        assertEquals("￥1,234.50", readFirstCell(file, Locale.CHINA));
     }
 
     @Test
-    void readBuiltinCurrencyWithUsLocaleUsesDollar() throws IOException {
-        File file = createBuiltinCurrencyFile();
-        List<Map<Integer, String>> dataMap =
-                FesodSheet.read(file).locale(Locale.US).headRowNumber(0).doReadAllSync();
-        String value = dataMap.get(0).get(0);
-        assertTrue(value.contains("$"), "expected dollar currency but was: " + value);
-        assertFalse(value.contains("￥"), "unexpected yuan currency but was: " + value);
+    void readCurrencyFormatDefinedInFileWithUsLocale() throws IOException {
+        File file = writeCurrencyCell("xlsx", "\"€\"#,##0.00");
+        assertEquals("€1,234.50", readFirstCell(file, Locale.US));
     }
 
-    @Test
-    void readBuiltinCurrencyWithCnLocaleUsesYuan() throws IOException {
-        File file = createBuiltinCurrencyFile();
-        List<Map<Integer, String>> dataMap =
-                FesodSheet.read(file).locale(Locale.CHINA).headRowNumber(0).doReadAllSync();
-        String value = dataMap.get(0).get(0);
-        assertTrue(value.contains("￥"), "expected yuan currency but was: " + value);
-        assertFalse(value.contains("$"), "unexpected dollar currency but was: " + value);
+    private static String readFirstCell(File file, Locale locale) {
+        List<Map<Integer, String>> rows =
+                FesodSheet.read(file).locale(locale).headRowNumber(0).doReadAllSync();
+        return rows.get(0).get(0);
     }
 
     /**
-     * Creates an xlsx file with a single cell holding {@code 1234.5} formatted with built-in format 7
-     * (currency, two decimal places) and no styles.xml numFmt override.
+     * Writes {@code 1234.5} with the built-in currency format 7, or with format 44 redefined as
+     * {@code numFmt44} in styles.xml when it is not null.
      */
-    private File createBuiltinCurrencyFile() throws IOException {
-        File file = File.createTempFile("builtinCurrency", ".xlsx", tempDir);
-        try (XSSFWorkbook workbook = new XSSFWorkbook();
+    private File writeCurrencyCell(String extension, String numFmt44) throws IOException {
+        File file = new File(tempDir, "currency-" + (numFmt44 == null ? "builtin" : "custom") + "." + extension);
+        try (Workbook workbook = "xls".equals(extension) ? new HSSFWorkbook() : new XSSFWorkbook();
                 OutputStream out = new FileOutputStream(file)) {
-            Sheet sheet = workbook.createSheet("Sheet1");
             CellStyle style = workbook.createCellStyle();
-            style.setDataFormat((short) 7);
-            Cell cell = sheet.createRow(0).createCell(0);
+            if (numFmt44 == null) {
+                style.setDataFormat((short) 7);
+            } else {
+                ((XSSFWorkbook) workbook).getStylesSource().putNumberFormat((short) 44, numFmt44);
+                style.setDataFormat((short) 44);
+            }
+            Cell cell = workbook.createSheet("Sheet1").createRow(0).createCell(0);
             cell.setCellValue(1234.5);
             cell.setCellStyle(style);
             workbook.write(out);

@@ -212,6 +212,16 @@ public class CsvFormatTest extends AbstractExcelTest {
                         .csv()
                         .autoTrim(Boolean.TRUE)
                         .doReadSync());
+        assertFirstRow(
+                " a ",
+                " b ",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .autoStrip(Boolean.TRUE)
+                        .csv()
+                        .autoTrim(Boolean.FALSE)
+                        .autoStrip(Boolean.FALSE)
+                        .doReadSync());
     }
 
     @Test
@@ -225,6 +235,7 @@ public class CsvFormatTest extends AbstractExcelTest {
                 "\u3000b\u3000",
                 FesodSheet.read(csvFile)
                         .headRowNumber(0)
+                        .charset(StandardCharsets.UTF_8)
                         .csv()
                         .autoTrim(Boolean.FALSE)
                         .autoStrip(Boolean.FALSE)
@@ -235,6 +246,7 @@ public class CsvFormatTest extends AbstractExcelTest {
                 "b",
                 FesodSheet.read(csvFile)
                         .headRowNumber(0)
+                        .charset(StandardCharsets.UTF_8)
                         .csv()
                         .autoTrim(Boolean.FALSE)
                         .autoStrip(Boolean.TRUE)

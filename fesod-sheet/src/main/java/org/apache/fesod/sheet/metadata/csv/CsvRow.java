@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.metadata.csv;
 
 import java.util.Iterator;
 import java.util.List;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,7 +44,6 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CsvRow implements Row {
 
     /**

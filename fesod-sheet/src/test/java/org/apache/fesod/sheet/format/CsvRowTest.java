@@ -26,16 +26,29 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.annotation.ExcelProperty;
+import org.apache.fesod.sheet.exception.ExcelWriteDataConvertException;
 import org.apache.fesod.sheet.metadata.csv.CsvCell;
 import org.apache.fesod.sheet.metadata.csv.CsvRow;
 import org.apache.fesod.sheet.metadata.csv.CsvSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.apache.fesod.sheet.write.handler.CellWriteHandler;
+import org.apache.fesod.sheet.write.handler.RowWriteHandler;
+import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
+import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -246,6 +259,63 @@ public class CsvRowTest {
         String line = lines.get(0);
         Assertions.assertTrue(
                 line.contains("2024-01-15"), "CSV should contain the calendar date 2024-01-15, got: " + line);
+    }
+
+    @Test
+    void csvWrite_convertFailureExceptionShouldBeHashable() {
+        File csvFile = new File(tempDir, "csv-convert-failure.csv");
+        List<OptionalCsvData> data = Collections.singletonList(new OptionalCsvData("1", Optional.of("abc")));
+
+        // The context held by the exception references the CSV workbook, sheet, row and cell. JUnit hashes
+        // exceptions when it collects nested throwables, so a recursive hashCode hides the real error.
+        ExcelWriteDataConvertException e = Assertions.assertThrows(
+                ExcelWriteDataConvertException.class,
+                () -> FastExcel.write(csvFile, OptionalCsvData.class).csv().doWrite(data));
+        Assertions.assertDoesNotThrow(e::hashCode);
+    }
+
+    @Test
+    void csvWrite_cellsAndRowsCollectedInHashSetsShouldStayDistinct() {
+        File csvFile = new File(tempDir, "csv-hash-set.csv");
+        List<Cell> cellList = new ArrayList<>();
+        Set<Cell> cellSet = new HashSet<>();
+        Set<Row> rowSet = new HashSet<>();
+        FastExcel.write(csvFile)
+                .head(head())
+                .registerWriteHandler(new CellWriteHandler() {
+                    @Override
+                    public void afterCellDispose(CellWriteHandlerContext context) {
+                        cellList.add(context.getCell());
+                        cellSet.add(context.getCell());
+                    }
+                })
+                .registerWriteHandler(new RowWriteHandler() {
+                    @Override
+                    public void afterRowCreate(RowWriteHandlerContext context) {
+                        rowSet.add(context.getRow());
+                    }
+                })
+                .csv()
+                .doWrite(Arrays.asList(Arrays.asList("1", "Jackson", "20"), Arrays.asList("1", "Jackson", "20")));
+
+        // a header row and two identical data rows, each cell and row a distinct object
+        Assertions.assertEquals(9, cellList.size());
+        Assertions.assertEquals(9, cellSet.size());
+        Assertions.assertEquals(3, rowSet.size());
+        for (Cell cell : cellList) {
+            Assertions.assertTrue(cellSet.contains(cell));
+            Assertions.assertTrue(rowSet.contains(cell.getRow()));
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OptionalCsvData {
+        @ExcelProperty("No")
+        private String no;
+
+        @ExcelProperty("Description")
+        private Optional<String> description;
     }
 
     private static List<SimpleCsvData> modelData() {

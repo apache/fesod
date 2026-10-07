@@ -32,10 +32,6 @@ title: '指南'
 | 2.0.2-incubating | jdk8 - jdk25 | Apache 孵化器版本 |
 | 2.0.1-incubating | jdk8 - jdk25 | Apache 孵化器版本 |
 | 2.0.0-incubating | jdk8 - jdk25 | NA(无效)       |
-| 1.3.x            | jdk8 - jdk25 | 非 Apache 版本  |
-| 1.2.x            | jdk8 - jdk21 | 非 Apache 版本  |
-| 1.1.x            | jdk8 - jdk21 | 非 Apache 版本  |
-| 1.0.x            | jdk8 - jdk21 | 非 Apache 版本  |
 
 我们强烈建议您使用最新版本的 Apache Fesod(Incubating)，因为最新版本中的性能优化、BUG 修复和新功能都会让您的使用更加方便。
 

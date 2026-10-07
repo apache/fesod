@@ -33,10 +33,6 @@ Incubating) library:
 | 2.0.2-incubating | JDK8 - JDK25              | Apache Incubator release |
 | 2.0.1-incubating | JDK8 - JDK25              | Apache Incubator release |
 | 2.0.0-incubating | JDK8 - JDK25              | NA(not available)        |
-| 1.3.x            | JDK8 - JDK25              | Non-Apache release       |
-| 1.2.x            | JDK8 - JDK21              | Non-Apache release       |
-| 1.1.x            | JDK8 - JDK21              | Non-Apache release       |
-| 1.0.x            | JDK8 - JDK21              | Non-Apache release       |
 
 We strongly recommend using the latest version of Apache Fesod(Incubating), as performance optimizations, bug fixes, and
 new features

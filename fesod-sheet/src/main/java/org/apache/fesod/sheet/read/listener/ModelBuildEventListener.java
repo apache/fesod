@@ -99,7 +99,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
             }
         }
         int headSize = calculateHeadSize(readSheetHolder);
-        while (index <= headSize) {
+        while (index < headSize) {
             map.put(index, null);
             index++;
         }
@@ -149,12 +149,16 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
                 columnIndex);
     }
 
+    /**
+     * The number of columns a no-model row must be padded to. A supplied head answers with its column count, while the
+     * widest head row only answers with its last column index.
+     */
     private int calculateHeadSize(ReadSheetHolder readSheetHolder) {
         if (readSheetHolder.excelReadHeadProperty().getHeadMap().size() > 0) {
             return readSheetHolder.excelReadHeadProperty().getHeadMap().size();
         }
         if (readSheetHolder.getMaxNotEmptyDataHeadSize() != null) {
-            return readSheetHolder.getMaxNotEmptyDataHeadSize();
+            return readSheetHolder.getMaxNotEmptyDataHeadSize() + 1;
         }
         return 0;
     }

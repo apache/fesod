@@ -17,33 +17,26 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
+package org.apache.fesod.sheet.converters.offsetdatetime;
 
-package org.apache.fesod.sheet.converters.integer;
-
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.NumberUtils;
+import org.apache.fesod.sheet.util.DateUtils;
+import org.apache.poi.ss.usermodel.DateUtil;
 
-/**
- * Integer and number converter
- *
- *
- */
-public class IntegerNumberConverter implements Converter<Integer> {
-
+/** OffsetDateTime and number converter. */
+public class OffsetDateTimeNumberConverter implements Converter<OffsetDateTime> {
     @Override
     public Class<?> supportJavaTypeKey() {
-        return Integer.class;
+        return OffsetDateTime.class;
     }
 
     @Override
@@ -52,13 +45,20 @@ public class IntegerNumberConverter implements Converter<Integer> {
     }
 
     @Override
-    public Integer convertToJavaData(
+    public OffsetDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return NumberUtils.toInt(cellData.getNumberValue());
+        LocalDateTime localDateTime = DateUtils.getLocalDateTime(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
+        if (localDateTime == null) {
+            return null;
+        }
+        return localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime();
     }
 
     @Override
-    public WriteCellData<?> convertToExcelData(WriteConverterContext<Integer> context) {
-        return NumberUtils.formatToCellData(context.getValue(), context.getContentProperty());
+    public WriteCellData<?> convertToExcelData(
+            OffsetDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
+                value.toLocalDateTime(), DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

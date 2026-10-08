@@ -42,10 +42,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag(Tags.UNIT)
 class DataFormatterTest {
 
-    /** Display name for the {@code (data, pattern, expected)} tables. */
+    private static final BigDecimal LARGE_NUMBER = new BigDecimal("100000000000");
+
+    /**
+     * Display name for the {@code (data, pattern, expected)} tables.
+     */
     private static final String PATTERN_AND_RESULT = "[{index}] {1} -> {2}";
 
-    /** Display name for the {@code (data, dataFormat, pattern, expected)} tables. */
+    /**
+     * Display name for the {@code (data, dataFormat, pattern, expected)} tables.
+     */
     private static final String DATE_PATTERN_AND_RESULT = "[{index}] {2} -> {3}";
 
     private static DataFormatter formatter() {
@@ -58,6 +64,19 @@ class DataFormatterTest {
 
     private static String format(String data, Short dataFormat, String dataFormatString) {
         return formatter().format(new BigDecimal(data), dataFormat, dataFormatString);
+    }
+
+    @ParameterizedTest(name = "windowing={0}, scientific={1} -> {2}")
+    @CsvSource(
+            nullValues = "null",
+            value = {"false, null, 100000000000", "null, true, 1E+11", "null, false, 100000000000"})
+    void test_format_honorsScientificFormatWithNullableOptions(
+            Boolean use1904windowing, Boolean useScientificFormat, String expected) {
+        DataFormatter formatter = new DataFormatter(use1904windowing, Locale.US, useScientificFormat);
+
+        String result = formatter.format(LARGE_NUMBER, null, "General");
+
+        Assertions.assertEquals(expected, result);
     }
 
     @ParameterizedTest(name = PATTERN_AND_RESULT)

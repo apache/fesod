@@ -305,7 +305,11 @@ public class ConverterTest {
         assertEquals(
                 0, toJava(booleanConverter, new ReadCellData<>(Boolean.FALSE)).compareTo(BigDecimal.ZERO));
         Assertions.assertTrue(toExcel(booleanConverter, BigDecimal.ONE).getBooleanValue());
+        Assertions.assertTrue(toExcel(booleanConverter, new BigDecimal("1.0")).getBooleanValue());
+        Assertions.assertTrue(toExcel(booleanConverter, new BigDecimal("1.00")).getBooleanValue());
         Assertions.assertFalse(toExcel(booleanConverter, BigDecimal.ZERO).getBooleanValue());
+        Assertions.assertFalse(toExcel(booleanConverter, new BigDecimal("0.0")).getBooleanValue());
+        Assertions.assertFalse(toExcel(booleanConverter, new BigDecimal("2")).getBooleanValue());
 
         BigDecimalNumberConverter numberConverter = new BigDecimalNumberConverter();
         BigDecimal value = new BigDecimal("123.45");

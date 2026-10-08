@@ -69,6 +69,7 @@ class DateUtilsTest {
         Assertions.assertEquals(DateUtils.DATE_FORMAT_17, DateUtils.switchDateFormat("20260101 12:00:00"));
         Assertions.assertEquals(DateUtils.DATE_FORMAT_14, DateUtils.switchDateFormat("20260101120000"));
         Assertions.assertEquals(DateUtils.DATE_FORMAT_10, DateUtils.switchDateFormat("2026-01-01"));
+        Assertions.assertEquals(DateUtils.DATE_FORMAT_10_FORWARD_SLASH, DateUtils.switchDateFormat("2026/01/01"));
 
         Assertions.assertThrows(
                 IllegalArgumentException.class, () -> DateUtils.switchDateFormat("invalid_datestring_length"));
@@ -101,6 +102,17 @@ class DateUtilsTest {
         Assertions.assertEquals(2026, cal2.get(Calendar.YEAR));
         Assertions.assertEquals(Calendar.OCTOBER, cal2.get(Calendar.MONTH));
         Assertions.assertEquals(30, cal2.get(Calendar.MINUTE));
+    }
+
+    @Test
+    void test_parseDateAutoDetectsForwardSlashDateOnly() throws ParseException {
+        Date date = DateUtils.parseDate("2026/10/01");
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        Assertions.assertEquals(2026, cal.get(Calendar.YEAR));
+        Assertions.assertEquals(Calendar.OCTOBER, cal.get(Calendar.MONTH));
+        Assertions.assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
     }
 
     @Test
@@ -156,6 +168,10 @@ class DateUtilsTest {
         Assertions.assertEquals(2026, autoDetectFormatResult.getYear());
         Assertions.assertEquals(10, autoDetectFormatResult.getMonthValue());
         Assertions.assertEquals(1, autoDetectFormatResult.getDayOfMonth());
+
+        LocalDate forwardSlashDate = DateUtils.parseLocalDate("2026/10/01", "", null);
+
+        Assertions.assertEquals(LocalDate.of(2026, 10, 1), forwardSlashDate);
     }
 
     @Test
@@ -444,7 +460,8 @@ class DateUtilsTest {
                 "yyyy/mm/dd;@",
                 "[h]:mm:ss",
                 "mm:ss.0",
-                "yyyy-MM-dd HH:mm:ss"
+                "yyyy-MM-dd HH:mm:ss",
+                "hh:mm:ss.000 AM/PM"
             })
     void test_isADateFormat_true(String formatString) {
         Assertions.assertTrue(DateUtils.isADateFormat((short) 100, formatString));

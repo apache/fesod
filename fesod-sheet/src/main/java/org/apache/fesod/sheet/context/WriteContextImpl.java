@@ -541,7 +541,7 @@ public class WriteContextImpl implements WriteContext {
             try {
                 isOutputStreamEncrypt = doOutputStreamEncrypt07();
             } catch (Throwable t) {
-                throwable = recordFailure(null, t);
+                throwable = recordFailure(throwable, t);
             }
         }
         if (!isOutputStreamEncrypt) {

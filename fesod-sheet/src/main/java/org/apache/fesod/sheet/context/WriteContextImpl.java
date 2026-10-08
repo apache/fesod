@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.context;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -485,15 +484,11 @@ public class WriteContextImpl implements WriteContext {
         finished = true;
 
         // executes the callback after all sheets has been fully written.
-        boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();
-        if (!shouldSkip) {
+        if (!onException || writeWorkbookHolder.getWriteExcelOnException()) {
             afterSheetsDispose();
         }
 
         WriteHandlerUtils.afterWorkbookDispose(writeWorkbookHolder.getWorkbookWriteHandlerContext());
-        if (writeWorkbookHolder == null) {
-            return;
-        }
         writeAndCloseWorkbook(onException);
     }
 
@@ -531,8 +526,9 @@ public class WriteContextImpl implements WriteContext {
     }
 
     /**
-     * Writes the workbook, encrypted if a password is set, then closes the workbook and its streams. Every step
-     * runs even if an earlier one failed, and the first failure is thrown at the end.
+     * Writes the workbook, encrypted if a password is set, then closes the workbook and its streams. If encrypting
+     * into the output stream fails, the unencrypted workbook is not written in its place. Each close step runs even
+     * if an earlier step failed, and the first failure is thrown at the end.
      *
      * @param onException Indicates whether the finish is triggered by an exception.
      */
@@ -561,19 +557,7 @@ public class WriteContextImpl implements WriteContext {
         throwable = runStep(throwable, this::disposeSxssfWorkbook);
         throwable = runStep(throwable, this::closeOutputStream);
         if (writeExcel && !isOutputStreamEncrypt) {
-            try {
-                encryption.doFileEncrypt07();
-            } catch (Throwable t) {
-                Throwable failure = t;
-                // The workbook was written to the file before encryption, so the file still holds the unprotected
-                // workbook and must not be left behind.
-                File file = writeWorkbookHolder.getFile();
-                if (file.exists() && !file.delete()) {
-                    failure =
-                            new ExcelGenerateException("Can not delete unencrypted file: " + file.getAbsolutePath(), t);
-                }
-                throwable = keepFirstFailure(throwable, failure);
-            }
+            throwable = runStep(throwable, encryption::doFileEncrypt07);
         }
         throwable = runStep(throwable, this::closeTemplateInputStream);
         encryption.clearEncrypt03();
@@ -637,16 +621,9 @@ public class WriteContextImpl implements WriteContext {
         try {
             step.run();
         } catch (Throwable t) {
-            return keepFirstFailure(throwable, t);
+            return throwable != null ? throwable : t;
         }
         return throwable;
-    }
-
-    /**
-     * Returns the failure already recorded, or the new one if there is none yet.
-     */
-    private static Throwable keepFirstFailure(Throwable recorded, Throwable t) {
-        return recorded != null ? recorded : t;
     }
 
     /**

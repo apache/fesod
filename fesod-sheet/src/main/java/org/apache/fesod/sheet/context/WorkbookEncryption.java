@@ -117,10 +117,20 @@ final class WorkbookEncryption {
         if (writeWorkbookHolder.getFile() == null) {
             return;
         }
-        // Use try-with-resources to automatically close resources, encrypt and write the file
-        try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(writeWorkbookHolder.getFile());
-                FileOutputStream fileOutputStream = new FileOutputStream(writeWorkbookHolder.getFile())) {
-            fileSystem.writeFilesystem(fileOutputStream);
+        try {
+            // Use try-with-resources to automatically close resources, encrypt and write the file
+            try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(writeWorkbookHolder.getFile());
+                    FileOutputStream fileOutputStream = new FileOutputStream(writeWorkbookHolder.getFile())) {
+                fileSystem.writeFilesystem(fileOutputStream);
+            }
+        } catch (Throwable t) {
+            // The workbook was written to the file before encryption, so the file still holds the unprotected
+            // workbook and must not be left behind.
+            File file = writeWorkbookHolder.getFile();
+            if (file.exists() && !file.delete()) {
+                throw new ExcelGenerateException("Can not delete unencrypted file: " + file.getAbsolutePath(), t);
+            }
+            throw t;
         }
     }
 

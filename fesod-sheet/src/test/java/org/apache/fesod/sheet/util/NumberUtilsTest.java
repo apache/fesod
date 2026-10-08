@@ -275,6 +275,26 @@ class NumberUtilsTest {
     }
 
     @Test
+    void test_parseDouble_withFormatRejectsTrailingText() {
+        Mockito.when(contentProperty.getNumberFormatProperty()).thenReturn(numberFormatProperty);
+        Mockito.when(numberFormatProperty.getFormat()).thenReturn("#,##0.00");
+        Mockito.when(numberFormatProperty.getRoundingMode()).thenReturn(RoundingMode.HALF_UP);
+
+        Assertions.assertThrows(ParseException.class, () -> NumberUtils.parseDouble("1,234.56abc", contentProperty));
+    }
+
+    @Test
+    void test_parseBigDecimal_withFormatAcceptsConfiguredSuffix() throws ParseException {
+        Mockito.when(contentProperty.getNumberFormatProperty()).thenReturn(numberFormatProperty);
+        Mockito.when(numberFormatProperty.getFormat()).thenReturn("#,##0.00kg");
+        Mockito.when(numberFormatProperty.getRoundingMode()).thenReturn(RoundingMode.HALF_UP);
+
+        BigDecimal result = NumberUtils.parseBigDecimal("1,234.56kg", contentProperty);
+
+        Assertions.assertEquals(0, new BigDecimal("1234.56").compareTo(result));
+    }
+
+    @Test
     void test_parseLong_noFormat() throws ParseException {
         Long result = NumberUtils.parseLong("123456789", null);
 

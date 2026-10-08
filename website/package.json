@@ -15,8 +15,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "md-lint": "markdownlint-cli2 --config ./.markdownlint-cli2.jsonc \"./**/*.md\" \"#node_modules\"",
-    "md-lint-fix": "pnpm md-lint --fix",
-    "github-avatar": "node github-avatar.js"
+    "md-lint-fix": "pnpm md-lint --fix"
   },
   "dependencies": {
     "@docusaurus/core": "^3.10.2",

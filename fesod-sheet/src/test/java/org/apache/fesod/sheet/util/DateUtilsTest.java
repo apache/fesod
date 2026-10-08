@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -229,6 +230,15 @@ class DateUtilsTest {
         Assertions.assertEquals("12:30", DateUtils.format(time, DateUtils.TIME_FORMAT_5, Locale.US));
         Assertions.assertEquals("12:30:45", DateUtils.format(time, ""));
         Assertions.assertNull(DateUtils.format((LocalTime) null, DateUtils.TIME_FORMAT_8, Locale.US));
+    }
+
+    @Test
+    void test_parseAndFormat_ZonedDateTime() {
+        ZonedDateTime dateTime = ZonedDateTime.parse("2026-07-13T12:30:45+02:00[Europe/Stockholm]");
+
+        Assertions.assertEquals(dateTime, DateUtils.parseZonedDateTime(dateTime.toString(), null, Locale.US));
+        Assertions.assertEquals("2026-07-13 12:30:45", DateUtils.format(dateTime, DateUtils.DATE_FORMAT_19, Locale.US));
+        Assertions.assertNull(DateUtils.format((ZonedDateTime) null, DateUtils.DATE_FORMAT_19, Locale.US));
     }
 
     @Test

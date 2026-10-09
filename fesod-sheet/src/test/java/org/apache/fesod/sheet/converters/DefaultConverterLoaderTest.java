@@ -19,12 +19,20 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalTime;
+import java.time.Month;
+import java.time.Period;
 import java.util.Map;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.dayofweek.DayOfWeekStringConverter;
+import org.apache.fesod.sheet.converters.duration.DurationStringConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
+import org.apache.fesod.sheet.converters.month.MonthStringConverter;
+import org.apache.fesod.sheet.converters.period.PeriodStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,6 +73,33 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 LocalTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersMonthDayOfWeekPeriodAndDurationFamilies() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                MonthStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Month.class, CellDataTypeEnum.STRING)));
+        Assertions.assertInstanceOf(
+                DayOfWeekStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(DayOfWeek.class, CellDataTypeEnum.STRING)));
+        Assertions.assertInstanceOf(
+                PeriodStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Period.class, CellDataTypeEnum.STRING)));
+        Assertions.assertInstanceOf(
+                DurationStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Duration.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                MonthStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Month.class)));
+        Assertions.assertInstanceOf(
+                DayOfWeekStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(DayOfWeek.class)));
+        Assertions.assertInstanceOf(
+                PeriodStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Period.class)));
+        Assertions.assertInstanceOf(
+                DurationStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Duration.class)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

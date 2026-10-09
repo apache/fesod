@@ -19,8 +19,17 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Map;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
+import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
+import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
+import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
+import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
+import org.apache.fesod.sheet.converters.sqltime.SqlTimeStringConverter;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +51,41 @@ public class DefaultConverterLoaderTest {
     void loadAllConverterIsImmutableAndCopyIsMutable() {
         assertLoadIsImmutableAndCopyIsMutable(
                 DefaultConverterLoader.loadAllConverter(), DefaultConverterLoader.copyAllConverter());
+    }
+
+    @Test
+    void loadConvertersRegistersLocalTimeFamily() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                LocalTimeNumberConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.NUMBER)));
+        Assertions.assertInstanceOf(
+                LocalTimeStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                LocalTimeDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class)));
+        Assertions.assertInstanceOf(
+                LocalTimeStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersSqlTimeFamily() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                SqlTimeNumberConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.NUMBER)));
+        Assertions.assertInstanceOf(
+                SqlTimeStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.STRING)));
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                SqlTimeDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Time.class)));
+        Assertions.assertInstanceOf(
+                SqlTimeStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.STRING)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

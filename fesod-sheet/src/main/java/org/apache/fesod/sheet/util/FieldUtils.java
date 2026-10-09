@@ -27,12 +27,19 @@ package org.apache.fesod.sheet.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.fesod.common.util.MemberUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.metadata.NullObject;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FieldUtils {
 
     public static Class<?> nullObjectClass = NullObject.class;
@@ -177,5 +184,34 @@ public class FieldUtils {
             }
         }
         return match;
+    }
+
+    /**
+     * Resolves and retrieves all declared fields from the specified class and its inheritance hierarchy.
+     * If a field with the same name (resolved by CGLIB) is declared in both a subclass and a superclass,
+     * the subclass field definition takes precedence.
+     *
+     * @param cls the target {@link Class}, must not be {@code null}
+     * @return a {@link List} containing all resolved fields, or an empty list if no fields are found
+     */
+    public static List<Field> resolveAllFields(Class<?> cls) {
+        Validate.isTrue(cls != null, "The class must not be null");
+
+        List<Field> result = new ArrayList<>();
+        Set<String> fieldNames = new HashSet<>();
+        Class<?> tempClass = cls;
+        while (tempClass != null && tempClass != Object.class) {
+            for (Field field : tempClass.getDeclaredFields()) {
+                boolean shouldSkip = Modifier.isStatic(field.getModifiers())
+                        || field.isSynthetic()
+                        || !fieldNames.add(resolveCglibFieldName(field));
+                if (shouldSkip) {
+                    continue;
+                }
+                result.add(field);
+            }
+            tempClass = tempClass.getSuperclass();
+        }
+        return result;
     }
 }

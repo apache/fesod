@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
-import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -43,16 +42,10 @@ public class BoolErrRecordHandler extends AbstractXlsRecordHandler implements Ig
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BoolErrRecord ber = (BoolErrRecord) record;
-        int originalColumnIndex = ber.getColumn();
-        List<Integer> includeColumnIndexes =
-                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
 
-        int targetColumnIndex = originalColumnIndex;
-        if (includeColumnIndexes != null) {
-            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex < 0) {
-                return;
-            }
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(ber.getColumn());
+        if (targetColumnIndex == null) {
+            return;
         }
         ReadCellData<?> cellData;
         if (ber.isError()) {

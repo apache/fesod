@@ -222,9 +222,8 @@ ${RELEASE_MANAGER}
 
 ### 3.1 KEYS File
 
-If you are a **first-time** release manager or your original key has expired, please **append** the **public key** to the **KEYS** files in the Apache SVN project repositories:
+If you are a **first-time** release manager or your original key has expired, please **append** the **public key** to the **KEYS** file in the Apache SVN project **release** repository. The KEYS file is maintained in a single authoritative location (the release directory) so that it stays consistent and is available on downloads.apache.org for signature verification:
 
-- Dev repository: <https://dist.apache.org/repos/dist/dev/incubator/fesod>
 - Release repository: <https://dist.apache.org/repos/dist/release/incubator/fesod>
 
 Steps:
@@ -246,6 +245,7 @@ svn ci -m "add gpg key for xxx"
 Notes:
 
 - Do not directly overwrite the `KEYS` file in the repository. Only **append** to it.
+- The `KEYS` file is maintained only in the **release** directory (single source of truth). Do **not** create a copy in the dev directory, as two copies tend to drift out of sync.
 - SVN repositories require PPMC permissions. A PPMC member can assist you with the upload.
 
 ### 3.2 POM Configuration
@@ -316,6 +316,7 @@ For example, to release version `2.0.0-incubating`, follow these steps:
 
 - Create a new branch `2.0.0-incubating` as the release branch.
 - Update the version number in `pom.xml` to `2.0.0-incubating`.
+- Set a fixed `project.build.outputTimestamp` in `pom.xml` to ensure [reproducible builds](https://maven.apache.org/guides/mini/guide-reproducible-builds.html).
 - Push the RC (Release Candidate) version tag.
 
 ```bash
@@ -327,6 +328,15 @@ git tag -s 2.0.0-incubating-rc1 -m "release: release for 2.0.0-incubating RC1"
 
 # Push the tag to the remote repository
 git push origin 2.0.0-incubating-rc1
+```
+
+When the version is updated, also set a fixed build timestamp:
+
+```bash
+# Set a fixed build timestamp so every build produces identical artifacts
+mvn versions:set-property -Dproperty=project.build.outputTimestamp -DnewVersion=2026-09-10T00:00:00Z
+# Or edit pom.xml directly:
+#   <project.build.outputTimestamp>2026-09-10T00:00:00Z</project.build.outputTimestamp>
 ```
 
 #### 3.3.2 Push Binary Packages
@@ -343,7 +353,7 @@ Log in to the ASF Nexus repository with your Apache ID, locate the released vers
 
 #### 3.3.3 Package Source Code
 
-:::caution Note
+:::warning
 Do not package in your daily working directory!
 :::
 

@@ -26,7 +26,6 @@
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
 import java.math.BigDecimal;
-import java.util.List;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.constant.BuiltinFormats;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
@@ -44,17 +43,10 @@ public class NumberRecordHandler extends AbstractXlsRecordHandler implements Ign
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         NumberRecord nr = (NumberRecord) record;
-        int originalColumnIndex = nr.getColumn();
 
-        List<Integer> includeColumnIndexes =
-                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-
-        int targetColumnIndex = originalColumnIndex;
-        if (includeColumnIndexes != null) {
-            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex < 0) {
-                return;
-            }
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(nr.getColumn());
+        if (targetColumnIndex == null) {
+            return;
         }
 
         ReadCellData<?> cellData =

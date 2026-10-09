@@ -3,6 +3,23 @@ id: 'become-pmc-member'
 title: '如何成为 PPMC 成员'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 任何支持社区并在 CoPDoC 领域中工作的人都可以成为 Apache Fesod (Incubating) 的 Committer。CoPDoC 是以下四点的缩写，用来描述我们如何不仅仅通过代码来认识到您的贡献：
 
 - **(Co)mmunity** - 你可以通过我们的邮件列表、问题追踪器、讨论页面与社区成员互动，并分享愿景和知识。

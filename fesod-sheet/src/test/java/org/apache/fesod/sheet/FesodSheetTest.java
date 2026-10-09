@@ -310,7 +310,6 @@ class FesodSheetTest {
         Assertions.assertEquals(0, configuredSheet.getSheetNo());
         Assertions.assertEquals("Sheet1", configuredSheet.getSheetName());
         Assertions.assertEquals(100, configuredSheet.getNumRows());
-        Assertions.assertEquals(targetColumns, configuredSheet.getColumnIndexes());
         // data related tests
         Assertions.assertNotNull(readResults);
         Map<Integer, String> parsedRow = readResults.get(0);

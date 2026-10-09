@@ -188,15 +188,25 @@ Column `A` holds the text and both images; the second image overlaps column `B`.
 
 A `URL` field is fetched over the network while the file is written, under the following fetch policies:
 
-- Default allows `http` and `https` only;
+- Remote fetching is disabled by default and requires an explicit exact-host allowlist;
+- Configured policies support `http` and `https`;
+- Host matching is case-insensitive and does not support wildcards or implicit subdomain matching;
+- IPv6 literals are accepted with or without brackets; the allowlist matches hosts only and permits any URL port;
 - Refuses hosts resolving to a loopback, link-local, site-local or otherwise private address;
-- Follows at most 3 redirects and reads at most 10 MB;
+- Revalidates the scheme and host after every redirect, follows at most 3 redirects, and reads at most 10 MB;
 - The connect timeout is 1s and the read timeout 5s.
+
+Only allowlist hosts whose DNS and HTTP services you trust. A shared or attacker-controlled host must not be
+allowlisted because the host allowlist is the primary security boundary against DNS-rebinding attacks.
 
 A refused fetch fails the write with an `IOException` naming the rule that stopped it:
 
 ```shell
 URL image protocol is not allowed
+
+Remote URL image fetching is disabled
+
+URL image host is not allowlisted
 
 URL image host resolves to a restricted address
 
@@ -211,6 +221,8 @@ The policy is global and can be replaced:
 @Test
 public void configureUrlImages() {
     UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+        .allowedHosts(Collections.singletonList("images.internal"))
+        .allowedSchemes(SchemePolicy.HTTP_OR_HTTPS)
         .maxImageBytes(2 * 1024 * 1024)
         .maxRedirects(1)
         // allowPrivateNetwork on its own allows nothing - the host or its
@@ -225,4 +237,5 @@ public void configureUrlImages() {
 }
 ```
 
-Call `UrlImageConverter.resetFetchPolicy()` to restore the defaults.
+The policy is process-wide and should be configured during application startup. Call
+`UrlImageConverter.resetFetchPolicy()` to restore the default deny policy.

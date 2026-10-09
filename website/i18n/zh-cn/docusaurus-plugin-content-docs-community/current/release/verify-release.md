@@ -3,13 +3,30 @@ id: 'verify-release'
 title: '如何验证版本'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 详细检查列表请参考官方的 [Incubator Release Checklist](https://cwiki.apache.org/confluence/display/INCUBATOR/Incubator+Release+Checklist)。
 
 ## 1. 下载要发布的候选版本
 
 > 验证环节需依赖 GPG 工具，建议预先安装 `gpg` 或 `gpg2`。
 
-:::caution 注意
+:::warning
 请确保网络环境畅通，下载耗时取决于网络状况。
 :::
 
@@ -26,7 +43,7 @@ export RC_VERSION={RC版本号}
 下载物料：
 
 ```shell
-# 方式一：如果本地有 SVN，直接 checkout (推荐，包含了 KEYS 文件)
+# 方式一：如果本地有 SVN，直接 checkout (推荐)
 svn co https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-${RC_VERSION}/ fesod-dist-dev
 
 # 方式二：使用 wget 直接下载特定文件
@@ -51,8 +68,8 @@ wget https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-$
 **2.2.1 导入 KEYS**
 
 ```shell
-# 从 SVN 仓库下载 KEYS (通常在版本目录或根目录)
-curl https://dist.apache.org/repos/dist/dev/incubator/fesod/KEYS > KEYS
+# 下载 KEYS（KEYS 在 release 目录维护，单一来源）
+curl https://downloads.apache.org/incubator/fesod/KEYS > KEYS
 
 # 导入 KEYS 到本地
 gpg --import KEYS

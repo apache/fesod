@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
 
-      http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
 -->
+
 <project
         xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -53,21 +52,6 @@
         While incubation status is not necessarily a reflection of the completeness
         or stability of the code, it does indicate that the project has yet to be
         fully endorsed by the ASF.
-
-        Some of the incubating project’s releases may not be fully compliant with ASF
-        policy. For example, releases may have incomplete or un-reviewed licensing
-        conditions. What follows is a list of issues the project is currently aware of
-        (this list is likely to be incomplete):
-
-        1. IP Clearance and license header updates for legacy code derived from Alibaba
-        EasyExcel are currently in progress.
-
-        If you are planning to incorporate this work into your product/project,please be
-        aware that you will need to conduct a thorough licensing review to determine the
-        overall implications of including this work.
-
-        For the current status of this project through the Apache Incubator,
-        visit: https://incubator.apache.org/projects/fesod.html
     </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
@@ -76,13 +60,13 @@
         <module>fesod-bom</module>
         <module>fesod-common</module>
         <module>fesod-shaded</module>
-        <module>fesod-examples</module>
         <module>fesod-sheet</module>
     </modules>
 
     <properties>
-        <revision>2.1.0-SNAPSHOT</revision>
+        <revision>dev-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.outputTimestamp>2026-10-07T00:00:00Z</project.build.outputTimestamp>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -96,17 +80,15 @@
         <poi.version>5.5.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>
         <commons-io.version>2.21.0</commons-io.version>
-        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <slf4j-api.version>2.0.20</slf4j-api.version>
         <lombok.version>1.18.44</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
-        <fastjson2.version>2.0.64</fastjson2.version>
+        <fastjson2.version>2.0.65</fastjson2.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
-        <slf4j-simple.version>1.7.36</slf4j-simple.version>
-        <jcl-over-slf4j.version>1.7.36</jcl-over-slf4j.version>
-        <log4j-over-slf4j.version>1.7.36</log4j-over-slf4j.version>
+        <slf4j-simple.version>2.0.20</slf4j-simple.version>
+        <jcl-over-slf4j.version>2.0.20</jcl-over-slf4j.version>
+        <log4j-over-slf4j.version>2.0.20</log4j-over-slf4j.version>
         <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
-        <logback-classic.version>1.2.13</logback-classic.version>
-        <mockserver.version>5.15.0</mockserver.version>
         <jacoco.version>0.8.15</jacoco.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
@@ -125,7 +107,7 @@
     </scm>
 
     <organization>
-        <name>Apache Software Foundation</name>
+        <name>The Apache Software Foundation</name>
         <url>https://www.apache.org</url>
     </organization>
 
@@ -245,9 +227,9 @@
                 <version>${log4j-to-slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback-classic.version}</version>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j-simple.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -258,12 +240,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${spring-boot-starter-web.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mock-server</groupId>
-                <artifactId>mockserver-netty</artifactId>
-                <version>${mockserver.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -373,28 +349,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-netty</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.code-intelligence</groupId>
@@ -404,6 +361,25 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${maven.multiModuleProjectDirectory}</directory>
+                <includes>
+                    <include>DISCLAIMER</include>
+                </includes>
+                <targetPath>META-INF</targetPath>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -482,6 +458,30 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-disclaimer-into-jar</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${maven.multiModuleProjectDirectory}</directory>
+                                    <includes>
+                                        <include>DISCLAIMER</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

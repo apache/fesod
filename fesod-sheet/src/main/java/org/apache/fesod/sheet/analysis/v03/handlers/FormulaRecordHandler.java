@@ -26,7 +26,6 @@
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
@@ -54,17 +53,10 @@ public class FormulaRecordHandler extends AbstractXlsRecordHandler implements Ig
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         FormulaRecord frec = (FormulaRecord) record;
-        int originalColumnIndex = frec.getColumn();
 
-        List<Integer> includeColumnIndexes =
-                xlsReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-
-        int targetColumnIndex = originalColumnIndex;
-        if (includeColumnIndexes != null) {
-            targetColumnIndex = includeColumnIndexes.indexOf(originalColumnIndex);
-            if (targetColumnIndex < 0) {
-                return;
-            }
+        Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(frec.getColumn());
+        if (targetColumnIndex == null) {
+            return;
         }
 
         Map<Integer, Cell> cellMap = xlsReadContext.xlsReadSheetHolder().getCellMap();

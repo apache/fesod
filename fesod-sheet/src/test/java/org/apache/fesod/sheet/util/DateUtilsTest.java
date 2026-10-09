@@ -25,7 +25,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -65,9 +69,19 @@ class DateUtilsTest {
         Assertions.assertEquals(DateUtils.DATE_FORMAT_17, DateUtils.switchDateFormat("20260101 12:00:00"));
         Assertions.assertEquals(DateUtils.DATE_FORMAT_14, DateUtils.switchDateFormat("20260101120000"));
         Assertions.assertEquals(DateUtils.DATE_FORMAT_10, DateUtils.switchDateFormat("2026-01-01"));
+        Assertions.assertEquals(DateUtils.DATE_FORMAT_10_FORWARD_SLASH, DateUtils.switchDateFormat("2026/01/01"));
 
         Assertions.assertThrows(
                 IllegalArgumentException.class, () -> DateUtils.switchDateFormat("invalid_datestring_length"));
+    }
+
+    @Test
+    void test_switchTimeFormat() {
+        Assertions.assertEquals(DateUtils.TIME_FORMAT_8, DateUtils.switchTimeFormat("12:30:45"));
+        Assertions.assertEquals(DateUtils.TIME_FORMAT_5, DateUtils.switchTimeFormat("12:30"));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DateUtils.switchTimeFormat("12:30:45.123"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DateUtils.switchTimeFormat("invalid"));
     }
 
     @Test
@@ -88,6 +102,17 @@ class DateUtilsTest {
         Assertions.assertEquals(2026, cal2.get(Calendar.YEAR));
         Assertions.assertEquals(Calendar.OCTOBER, cal2.get(Calendar.MONTH));
         Assertions.assertEquals(30, cal2.get(Calendar.MINUTE));
+    }
+
+    @Test
+    void test_parseDateAutoDetectsForwardSlashDateOnly() throws ParseException {
+        Date date = DateUtils.parseDate("2026/10/01");
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        Assertions.assertEquals(2026, cal.get(Calendar.YEAR));
+        Assertions.assertEquals(Calendar.OCTOBER, cal.get(Calendar.MONTH));
+        Assertions.assertEquals(1, cal.get(Calendar.DAY_OF_MONTH));
     }
 
     @Test
@@ -143,6 +168,25 @@ class DateUtilsTest {
         Assertions.assertEquals(2026, autoDetectFormatResult.getYear());
         Assertions.assertEquals(10, autoDetectFormatResult.getMonthValue());
         Assertions.assertEquals(1, autoDetectFormatResult.getDayOfMonth());
+
+        LocalDate forwardSlashDate = DateUtils.parseLocalDate("2026/10/01", "", null);
+
+        Assertions.assertEquals(LocalDate.of(2026, 10, 1), forwardSlashDate);
+    }
+
+    @Test
+    void test_parseLocalTime() {
+        LocalTime usResult = DateUtils.parseLocalTime("12:30:45", DateUtils.TIME_FORMAT_8, Locale.US);
+        Assertions.assertEquals(LocalTime.of(12, 30, 45), usResult);
+
+        LocalTime result = DateUtils.parseLocalTime("12:30:45", DateUtils.TIME_FORMAT_8, null);
+        Assertions.assertEquals(LocalTime.of(12, 30, 45), result);
+
+        LocalTime autoDetectSeconds = DateUtils.parseLocalTime("12:30:45", "", null);
+        Assertions.assertEquals(LocalTime.of(12, 30, 45), autoDetectSeconds);
+
+        LocalTime autoDetectMinutes = DateUtils.parseLocalTime("12:30", "", null);
+        Assertions.assertEquals(LocalTime.of(12, 30), autoDetectMinutes);
     }
 
     @Test
@@ -194,6 +238,16 @@ class DateUtilsTest {
 
         String defaultFormatResult2 = DateUtils.format(ld, "");
         Assertions.assertEquals("2026-10-01", defaultFormatResult2);
+    }
+
+    @Test
+    void test_format_LocalTime() {
+        LocalTime time = LocalTime.of(12, 30, 45);
+
+        Assertions.assertEquals("12:30:45", DateUtils.format(time, null, Locale.US));
+        Assertions.assertEquals("12:30", DateUtils.format(time, DateUtils.TIME_FORMAT_5, Locale.US));
+        Assertions.assertEquals("12:30:45", DateUtils.format(time, ""));
+        Assertions.assertNull(DateUtils.format((LocalTime) null, DateUtils.TIME_FORMAT_8, Locale.US));
     }
 
     @Test
@@ -352,6 +406,22 @@ class DateUtilsTest {
         Assertions.assertEquals(expectedStr, formatted);
     }
 
+    @ParameterizedTest
+    @CsvSource({"0.5, 12:00:00", "1.0, 00:00:00", "43831.5, 12:00:00"})
+    void test_getLocalTime_1900(double excelValue, String expectedStr) {
+        LocalTime time = DateUtils.getLocalTime(excelValue, false);
+        Assertions.assertNotNull(time);
+        Assertions.assertEquals(expectedStr, time.format(DateTimeFormatter.ofPattern(DateUtils.TIME_FORMAT_8)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0.5, 12:00:00", "0.0, 00:00:00", "42369.5, 12:00:00"})
+    void test_getLocalTime_1904(double excelValue, String expectedStr) {
+        LocalTime time = DateUtils.getLocalTime(excelValue, true);
+        Assertions.assertNotNull(time);
+        Assertions.assertEquals(expectedStr, time.format(DateTimeFormatter.ofPattern(DateUtils.TIME_FORMAT_8)));
+    }
+
     @Test
     void test_isValidExcelDate() {
         Assertions.assertTrue(DateUtils.isValidExcelDate(0.0));
@@ -390,7 +460,8 @@ class DateUtilsTest {
                 "yyyy/mm/dd;@",
                 "[h]:mm:ss",
                 "mm:ss.0",
-                "yyyy-MM-dd HH:mm:ss"
+                "yyyy-MM-dd HH:mm:ss",
+                "hh:mm:ss.000 AM/PM"
             })
     void test_isADateFormat_true(String formatString) {
         Assertions.assertTrue(DateUtils.isADateFormat((short) 100, formatString));
@@ -412,7 +483,7 @@ class DateUtilsTest {
         boolean res1 = DateUtils.isADateFormat(formatId, formatStr);
         Assertions.assertTrue(res1);
 
-        Field threadLocalField = DateUtils.class.getDeclaredField("DATE_THREAD_LOCAL");
+        Field threadLocalField = ExcelDateFormatDetector.class.getDeclaredField("DATE_THREAD_LOCAL");
         threadLocalField.setAccessible(true);
         ThreadLocal<Map<Short, Boolean>> tl = (ThreadLocal<Map<Short, Boolean>>) threadLocalField.get(null);
 
@@ -426,12 +497,36 @@ class DateUtilsTest {
     }
 
     @Test
+    void test_parseOffsetDateTime() {
+        OffsetDateTime expected = OffsetDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneOffset.ofHours(8));
+        Assertions.assertEquals(expected, DateUtils.parseOffsetDateTime("2020-01-02T03:04:05+08:00", null, Locale.US));
+        Assertions.assertEquals(expected, DateUtils.parseOffsetDateTime("2020-01-02T03:04:05+08:00", "", Locale.US));
+        Assertions.assertEquals(
+                expected,
+                DateUtils.parseOffsetDateTime(
+                        "02 Januar 2020 03:04:05 +08:00", "dd MMMM yyyy HH:mm:ss XXX", Locale.GERMAN));
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> DateUtils.parseOffsetDateTime("2020-01-02T03:04:05", null, Locale.US));
+    }
+
+    @Test
+    void test_format_OffsetDateTime() {
+        OffsetDateTime value = OffsetDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneOffset.ofHours(8));
+        Assertions.assertNull(DateUtils.format((OffsetDateTime) null, null, Locale.US));
+        Assertions.assertEquals("2020-01-02T03:04:05+08:00", DateUtils.format(value, null, Locale.US));
+        Assertions.assertEquals("2020-01-02T03:04:05+08:00", DateUtils.format(value, "", Locale.US));
+        Assertions.assertEquals(
+                "02 Januar 2020 03:04:05 +08:00", DateUtils.format(value, "dd MMMM yyyy HH:mm:ss XXX", Locale.GERMAN));
+    }
+
+    @Test
     void test_removeThreadLocalCache() throws NoSuchFieldException, IllegalAccessException {
         DateUtils.format(new Date(), "yyyy-MM-dd");
         DateUtils.format(LocalDate.of(2026, 7, 13), "MMMM", Locale.US);
         DateUtils.isADateFormat((short) 100, "yyyy-MM-dd");
 
-        Field f1 = DateUtils.class.getDeclaredField("DATE_THREAD_LOCAL");
+        Field f1 = ExcelDateFormatDetector.class.getDeclaredField("DATE_THREAD_LOCAL");
         Field f2 = DateUtils.class.getDeclaredField("DATE_FORMAT_THREAD_LOCAL");
         Field f3 = DateUtils.class.getDeclaredField("DATE_TIME_FORMATTER_THREAD_LOCAL");
         f1.setAccessible(true);

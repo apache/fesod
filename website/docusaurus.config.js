@@ -89,13 +89,13 @@ const config = {
         'docusaurus-plugin-matomo'
     ],
     themeConfig: ({
-        image: 'img/logo.svg',
+        image: 'https://www.apache.org/logos/originals/fesod-1.svg',
         navbar: {
             title: '',
             logo: {
                 alt: '',
-                src: 'img/logo/fesod-logo.svg',
-                srcDark: 'img/logo/fesod-logo-white.svg',
+                src: 'https://www.apache.org/logos/originals/fesod-1.svg',
+                srcDark: 'https://www.apache.org/logos/originals/fesod-2.svg',
             },
             items: [
                 {
@@ -112,11 +112,6 @@ const config = {
                     label: 'Download',
                     position: 'right',
                     to: '/docs/download',
-                },
-                {
-                    label: 'Team',
-                    position: 'right',
-                    to: '/team',
                 },
                 {
                     label: 'Community',

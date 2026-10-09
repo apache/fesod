@@ -3,6 +3,23 @@ id: 'download'
 title: '下载'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # 下载 Apache Fesod (Incubating)
 
 这是 Apache Fesod (Incubating) 的官方下载页面。提供可从 ASF 发布站点下载的源码发布。二进制构件可通过 Maven
@@ -10,16 +27,17 @@ title: '下载'
 
 ## 最新版本
 
-|        版本        |    发布日期    | 下载                                                                                                                                                                                                                                                                                                                                                                                                        |                                 版本说明                                  |
+|        版本        |    发布日期    | 下载                                                                                                                                                                                                                                                                                                                                                                                                  |                                 版本说明                                  |
 |:----------------:|:----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------:|
-| 2.0.2-incubating | 2026-05-30 | [apache-fesod-2.0.2-incubating-src.tar.gz](https://www.apache.org/dyn/closer.lua/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz ) ([asc](https://downloads.apache.org/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.2-incubating) |
+| 2.1.0-incubating | 2026-10-07 | [apache-fesod-2.1.0-incubating-src.tar.gz](https://www.apache.org/dyn/closer.lua/incubator/fesod/2.1.0-incubating/apache-fesod-2.1.0-incubating-src.tar.gz) ([asc](https://downloads.apache.org/incubator/fesod/2.1.0-incubating/apache-fesod-2.1.0-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.1.0-incubating/apache-fesod-2.1.0-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.1.0-incubating) |
 
 ## 归档版本
 
 |     版本      |    发布日期    | 下载                                                                                                                                                                                                                                                                                                                                                                                                  |                                 版本说明                                  |
 |:----------------:|:----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------:|
-| 2.0.1-incubating | 2026-02-11 | [apache-fesod-2.0.1-incubating-src.tar.gz](https://www.apache.org/dyn/closer.lua/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz ) ([asc](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.asc), [sha512](https://downloads.apache.org/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.1-incubating) |
-| 2.0.0-incubating | 2026-01-24 | NA(Not Available)                                                                                                                                                                                                                                                                                                                                                                                         |                               NA(Not Available)                                |
+| 2.0.2-incubating | 2026-05-30 | [apache-fesod-2.0.2-incubating-src.tar.gz](https://archive.apache.org/dist/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz) ([asc](https://archive.apache.org/dist/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz.asc), [sha512](https://archive.apache.org/dist/incubator/fesod/2.0.2-incubating/apache-fesod-2.0.2-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.2-incubating) |
+| 2.0.1-incubating | 2026-02-11 | [apache-fesod-2.0.1-incubating-src.tar.gz](https://archive.apache.org/dist/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz) ([asc](https://archive.apache.org/dist/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.asc), [sha512](https://archive.apache.org/dist/incubator/fesod/2.0.1-incubating/apache-fesod-2.0.1-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.1-incubating) |
+| 2.0.0-incubating | 2026-01-21 | [apache-fesod-2.0.0-incubating-src.tar.gz](https://archive.apache.org/dist/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz) ([asc](https://archive.apache.org/dist/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz.asc), [sha512](https://archive.apache.org/dist/incubator/fesod/2.0.0-incubating/apache-fesod-2.0.0-incubating-src.tar.gz.sha512)) | [版本说明](https://github.com/apache/fesod/releases/tag/2.0.0-incubating) |
 
 在这里查看所有历史已归档版本: [archive](https://archive.apache.org/dist/incubator/fesod/).
 

@@ -5,6 +5,23 @@ authors: [psxjoy]
 tags: [announcement, release]
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 **2026年2月** —— Apache Fesod (Incubating) 社区欣然宣布，**Apache Fesod (Incubating) 2.0.1-incubating 版本正式发布！**
 
 这不仅是一个技术版本的迭代，更是 Fesod 项目自加入 **Apache 软件基金会 (ASF)** 孵化器以来的**首个正式发布版本**。在过去的几个月中，社区成员共同完成了大量的合规性改造、架构重构以及功能增强，标志着 Fesod 已经完全准备好在 ASF 规范下开启高性能 Excel 处理的新篇章。

@@ -3,6 +3,23 @@ id: 'image'
 title: '图片'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # 图片
 
 本章节介绍如何导出包含图片的文件。
@@ -166,15 +183,25 @@ public void imageCellWrite() throws Exception {
 
 写入文件时将通过 `URL` 下载，但内置了如下的一些安全策略：
 
-- 默认只允许 `http` 和 `https`;
+- 默认关闭远程下载，只有配置精确 Host 白名单后才会启用;
+- 配置后支持 `http` 和 `https`;
+- Host 匹配不区分大小写，不支持通配符或隐式子域匹配;
+- IPv6 字面量可以带或不带方括号；白名单只匹配 Host，不校验 URL 端口;
 - 拒绝解析到回环、链路本地、站点本地等私有地址的主机;
-- 最多跟随 3 次重定向，最多读取 10 MB;
+- 每次重定向后都会重新校验协议和 Host，最多跟随 3 次重定向，最多读取 10 MB;
 - 连接超时为 1 秒，读取超时为 5 秒。
+
+白名单只能包含其 DNS 和 HTTP 服务均可信的 Host。不得加入共享或攻击者可控制的 Host，因为 Host
+白名单是阻止 DNS-rebinding 攻击的主要安全边界。
 
 不满足上述约束时间会下载失败，且抛出自定义明细错误信息的 `IOException` 异常：
 
 ```shell
 URL image protocol is not allowed
+
+Remote URL image fetching is disabled
+
+URL image host is not allowlisted
 
 URL image host resolves to a restricted address
 
@@ -189,6 +216,8 @@ URL image data exceeds maximum size
 @Test
 public void configureUrlImages() {
     UrlImageConverter.setFetchPolicy(UrlImageFetchPolicy.builder()
+        .allowedHosts(Collections.singletonList("images.internal"))
+        .allowedSchemes(SchemePolicy.HTTP_OR_HTTPS)
         .maxImageBytes(2 * 1024 * 1024)
         .maxRedirects(1)
         // 只设置 allowPrivateNetwork 不会放行任何地址，
@@ -203,4 +232,4 @@ public void configureUrlImages() {
 }
 ```
 
-调用 `UrlImageConverter.resetFetchPolicy()` 可以恢复默认值。
+该策略在进程内全局生效，应在应用启动阶段配置。调用 `UrlImageConverter.resetFetchPolicy()` 可以恢复默认拒绝策略。

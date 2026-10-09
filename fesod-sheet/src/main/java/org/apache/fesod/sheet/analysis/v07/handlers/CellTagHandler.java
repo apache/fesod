@@ -26,7 +26,6 @@
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
 import java.math.BigDecimal;
-import java.util.List;
 import org.apache.fesod.common.util.PositionUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
@@ -37,6 +36,7 @@ import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
+import org.apache.fesod.sheet.util.XlsxEscapeUtils;
 import org.xml.sax.Attributes;
 
 /**
@@ -86,20 +86,11 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
     public void endElement(XlsxReadContext xlsxReadContext, String name) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
         ReadCellData<?> tempCellData = xlsxReadSheetHolder.getTempCellData();
-        int targetColumnIndex = 0;
 
-        List<Integer> includeColumnIndexes =
-                xlsxReadContext.readSheetHolder().getReadSheet().getColumnIndexes();
-
-        if (includeColumnIndexes == null) {
-            targetColumnIndex = xlsxReadSheetHolder.getColumnIndex();
-        } else {
-            // if it's a target column, rewrite the cell's internal index
-            targetColumnIndex = includeColumnIndexes.indexOf(xlsxReadSheetHolder.getColumnIndex());
-            if (targetColumnIndex < 0) {
-
-                return;
-            }
+        Integer targetColumnIndex =
+                xlsxReadContext.readSheetHolder().determineTargetColumnIndex(xlsxReadSheetHolder.getColumnIndex());
+        if (targetColumnIndex == null) {
+            return;
         }
 
         StringBuilder tempData = xlsxReadSheetHolder.getTempData();
@@ -116,6 +107,10 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
                 tempCellData.setStringValue(stringValue);
                 break;
             case DIRECT_STRING:
+                // Undo the '_xHHHH_' escapes of characters XML forbids
+                tempCellData.setStringValue(XlsxEscapeUtils.utfDecode(tempDataString));
+                tempCellData.setType(CellDataTypeEnum.STRING);
+                break;
             case ERROR:
                 tempCellData.setStringValue(tempDataString);
                 tempCellData.setType(CellDataTypeEnum.STRING);

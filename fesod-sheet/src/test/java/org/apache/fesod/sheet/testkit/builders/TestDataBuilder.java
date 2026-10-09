@@ -73,7 +73,7 @@ public final class TestDataBuilder {
     }
 
     /**
-     * Creates a single-element list of {@link ConverterWriteData} with all 14 fields populated.
+     * Creates a single-element list of {@link ConverterWriteData} with all common fields populated.
      */
     public static List<ConverterWriteData> converterWriteData() {
         List<ConverterWriteData> list = new ArrayList<>();
@@ -81,6 +81,7 @@ public final class TestDataBuilder {
         data.setDate(TestUtil.TEST_DATE);
         data.setLocalDate(TestUtil.TEST_LOCAL_DATE);
         data.setLocalDateTime(TestUtil.TEST_LOCAL_DATE_TIME);
+        data.setLocalTime(TestUtil.TEST_LOCAL_TIME);
         data.setBooleanData(Boolean.TRUE);
         data.setBigDecimal(BigDecimal.ONE);
         data.setBigInteger(BigInteger.ONE);

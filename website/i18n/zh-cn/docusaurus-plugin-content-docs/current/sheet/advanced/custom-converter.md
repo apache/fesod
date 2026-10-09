@@ -3,6 +3,23 @@ id: 'custom-converter'
 title: '自定义转换器'
 ---
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 # 自定义转换器
 
 本章节介绍如何创建和注册自定义转换器，同时支持读取和写入操作。
@@ -51,7 +68,7 @@ public class CustomStringStringConverter implements Converter<String> {
 ### 转换器解析优先级
 
 1. 字段级转换器（`@ExcelProperty(converter = ...)`）— 最高优先级
-2. 构建器级转换器（`.registerConverter(...)`）
+2. 查找键匹配的构建器级转换器（`.registerConverter(...)`）
 3. 内置默认转换器 — 最低优先级
 
 ---
@@ -60,13 +77,26 @@ public class CustomStringStringConverter implements Converter<String> {
 
 ### 使用全局转换器写入
 
+普通 XLSX/XLS 写入按 Java 类型和 `null` Excel 类型键查找全局转换器，因此需要使用上述转换器的以下变体。输出单元格类型仍由返回的 `WriteCellData` 决定；此处返回 `null` 仅改变查找键。
+
+```java
+public class GlobalStringWriteConverter extends CustomStringStringConverter {
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return null;
+    }
+}
+```
+
+写入 CSV 或读取字符串单元格时，请注册返回 `CellDataTypeEnum.STRING` 的原始 `CustomStringStringConverter`。
+
 ```java
 @Test
 public void customConverterWrite() {
     String fileName = "customConverterWrite" + System.currentTimeMillis() + ".xlsx";
 
     FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new CustomStringStringConverter())
+        .registerConverter(new GlobalStringWriteConverter())
         .sheet()
         .doWrite(data());
 }

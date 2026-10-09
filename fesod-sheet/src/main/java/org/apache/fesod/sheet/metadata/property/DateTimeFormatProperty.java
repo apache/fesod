@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.metadata.property;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 
 /**
@@ -38,15 +37,22 @@ import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 @Getter
 @AllArgsConstructor
 public class DateTimeFormatProperty {
-    private final String format;
-    private final Boolean use1904windowing;
+    private String format;
+
+    /**
+     * Whether dates use the 1904 windowing system. {@code null} represents the {@code DEFAULT} state, which means the
+     * field falls back to {@link org.apache.fesod.sheet.metadata.GlobalConfiguration}; {@code TRUE}/{@code FALSE}
+     * represent an explicit override (see #1042).
+     */
+    private Boolean use1904windowing;
 
     public static DateTimeFormatProperty build(DateTimeFormat dateTimeFormat) {
         if (dateTimeFormat == null) {
             return null;
         }
+        // Keep DEFAULT as null so converters can fall back to the global configuration
+        // instead of collapsing it to false (see #1042).
         return new DateTimeFormatProperty(
-                dateTimeFormat.value(),
-                BooleanUtils.isTrue(dateTimeFormat.use1904windowing().getBooleanValue()));
+                dateTimeFormat.value(), dateTimeFormat.use1904windowing().getBooleanValue());
     }
 }

@@ -1,5 +1,22 @@
 # Apache Fesod (Incubating) Website
 
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
 ## Requirements
@@ -30,22 +47,6 @@ pnpm start --locale zh-cn
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without
 having to restart the server.
-
-## Team Page
-
-### Member
-
-Update the member information in `src/pages/team/data/member.json` File.
-
-### Avatar
-
-```console
-pnpm github-avatar
-```
-
-This command will fetch the base64 string of the GitHub avatar from file
-`src/pages/team/data/member.json`, and store the result in the `src/pages/team/data/` directory. The operation might
-take a little while.
 
 ## Internationalization
 

@@ -200,17 +200,22 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
             if (value != null) {
                 dataMap.put(fieldName, value);
 
-                // 规避由于实体类 setter 不规范导致无法赋值的问题
+                // Avoid the problem where values cannot be assigned due to non-standard setters in entity classes
                 if (dataMap.get(fieldName) == null) {
-                    Object bean = dataMap.getBean();
                     try {
-                        Field field = bean.getClass().getDeclaredField(fieldName);
-                        field.setAccessible(true);
-                        field.set(bean, value);
-                    } catch (NoSuchFieldException ignore) {
-                        // ignore
+                        Field field = head.getField();
+                        if (!field.isAccessible()) {
+                            field.setAccessible(true);
+                        }
+                        field.set(dataMap.getBean(), value);
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
+                        throw new ExcelDataConvertException(
+                                context.readRowHolder().getRowIndex(),
+                                head.getColumnIndex(),
+                                cellData,
+                                null,
+                                "Cannot access field: " + fieldName,
+                                e);
                     }
                 }
             }

@@ -17,48 +17,47 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
+package org.apache.fesod.sheet.converters.sqltime;
 
-package org.apache.fesod.sheet.converters.integer;
-
+import java.sql.Time;
+import java.time.LocalTime;
 import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.NumberUtils;
+import org.apache.fesod.sheet.util.DateUtils;
 
-/**
- * Integer and number converter
- *
- *
- */
-public class IntegerNumberConverter implements Converter<Integer> {
-
+/** java.sql.Time and string converter. */
+public class SqlTimeStringConverter implements Converter<Time> {
     @Override
     public Class<?> supportJavaTypeKey() {
-        return Integer.class;
+        return Time.class;
     }
 
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
-        return CellDataTypeEnum.NUMBER;
+        return CellDataTypeEnum.STRING;
     }
 
     @Override
-    public Integer convertToJavaData(
+    public Time convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return NumberUtils.toInt(cellData.getNumberValue());
+        String format = contentProperty == null || contentProperty.getDateTimeFormatProperty() == null
+                ? null
+                : contentProperty.getDateTimeFormatProperty().getFormat();
+        LocalTime localTime =
+                DateUtils.parseLocalTime(cellData.getStringValue(), format, globalConfiguration.getLocale());
+        return Time.valueOf(localTime);
     }
 
     @Override
-    public WriteCellData<?> convertToExcelData(WriteConverterContext<Integer> context) {
-        return NumberUtils.formatToCellData(context.getValue(), context.getContentProperty());
+    public WriteCellData<?> convertToExcelData(
+            Time value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        String format = contentProperty == null || contentProperty.getDateTimeFormatProperty() == null
+                ? null
+                : contentProperty.getDateTimeFormatProperty().getFormat();
+        return new WriteCellData<>(DateUtils.format(value.toLocalTime(), format, globalConfiguration.getLocale()));
     }
 }

@@ -171,6 +171,9 @@ public class ConverterTest {
 
         IntegerNumberConverter numberConverter = new IntegerNumberConverter();
         assertEquals(42, toJava(numberConverter, new ReadCellData<>(new BigDecimal("42.9"))));
+        Assertions.assertThrows(
+                ArithmeticException.class,
+                () -> toJava(numberConverter, new ReadCellData<>(new BigDecimal("2147483648"))));
         WriteConverterContext<Integer> writeContext = new WriteConverterContext<>();
         writeContext.setValue(42);
         WriteCellData<?> numberCell = numberConverter.convertToExcelData(writeContext);
@@ -191,6 +194,9 @@ public class ConverterTest {
 
         LongNumberConverter numberConverter = new LongNumberConverter();
         assertEquals(99L, toJava(numberConverter, new ReadCellData<>(new BigDecimal("99.1"))));
+        Assertions.assertThrows(
+                ArithmeticException.class,
+                () -> toJava(numberConverter, new ReadCellData<>(new BigDecimal("9223372036854775808"))));
         WriteConverterContext<Long> writeContext = new WriteConverterContext<>();
         writeContext.setValue(99L);
         assertEquals(
@@ -215,6 +221,8 @@ public class ConverterTest {
 
         ShortNumberConverter numberConverter = new ShortNumberConverter();
         assertEquals((short) 7, toJava(numberConverter, new ReadCellData<>(new BigDecimal("7.8"))));
+        Assertions.assertThrows(
+                ArithmeticException.class, () -> toJava(numberConverter, new ReadCellData<>(new BigDecimal("32768"))));
         WriteConverterContext<Short> writeContext = new WriteConverterContext<>();
         writeContext.setValue((short) 7);
         assertEquals(
@@ -239,6 +247,8 @@ public class ConverterTest {
 
         ByteNumberConverter numberConverter = new ByteNumberConverter();
         assertEquals((byte) 3, toJava(numberConverter, new ReadCellData<>(new BigDecimal("3.9"))));
+        Assertions.assertThrows(
+                ArithmeticException.class, () -> toJava(numberConverter, new ReadCellData<>(new BigDecimal("128"))));
         assertEquals(0, toExcel(numberConverter, (byte) 3).getNumberValue().compareTo(new BigDecimal("3")));
 
         ByteStringConverter stringConverter = new ByteStringConverter();
@@ -295,7 +305,11 @@ public class ConverterTest {
         assertEquals(
                 0, toJava(booleanConverter, new ReadCellData<>(Boolean.FALSE)).compareTo(BigDecimal.ZERO));
         Assertions.assertTrue(toExcel(booleanConverter, BigDecimal.ONE).getBooleanValue());
+        Assertions.assertTrue(toExcel(booleanConverter, new BigDecimal("1.0")).getBooleanValue());
+        Assertions.assertTrue(toExcel(booleanConverter, new BigDecimal("1.00")).getBooleanValue());
         Assertions.assertFalse(toExcel(booleanConverter, BigDecimal.ZERO).getBooleanValue());
+        Assertions.assertFalse(toExcel(booleanConverter, new BigDecimal("0.0")).getBooleanValue());
+        Assertions.assertFalse(toExcel(booleanConverter, new BigDecimal("2")).getBooleanValue());
 
         BigDecimalNumberConverter numberConverter = new BigDecimalNumberConverter();
         BigDecimal value = new BigDecimal("123.45");

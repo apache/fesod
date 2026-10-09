@@ -225,7 +225,14 @@ public class ConverterUtils {
         }
 
         if (converter == null) {
-            converter = converterMap.get(ConverterKeyBuild.buildKey(clazz, cellData.getType()));
+            // The sheet resolver is the hot path; the argument map stays the fallback for callers
+            // that hand in a context without one (e.g. direct unit-test usage).
+            SheetConverterResolver sheetResolver = context.readSheetHolder().getConverterResolver();
+            if (sheetResolver != null) {
+                converter = sheetResolver.converter(clazz, cellData.getType());
+            } else {
+                converter = converterMap.get(ConverterKeyBuild.buildKey(clazz, cellData.getType()));
+            }
         }
         if (converter == null) {
             throw new ExcelDataConvertException(

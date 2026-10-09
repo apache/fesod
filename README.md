@@ -187,6 +187,10 @@ list.
 |:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
 | [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [Subscribe](mailto:dev-subscribe@fesod.apache.org)  ｜  [Unsubscribe](mailto:dev-unsubscribe@fesod.apache.org) |
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/chart?repos=apache/fesod&type=date&legend=top-left)](https://www.star-history.com/?repos=apache%2Ffesod&type=date)
+
 ## License
 
 Apache Fesod (Incubating) project is licensed under the [Apache License 2.0](LICENSE).

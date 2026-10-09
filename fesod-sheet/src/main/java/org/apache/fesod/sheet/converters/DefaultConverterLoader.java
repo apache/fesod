@@ -55,6 +55,7 @@ import org.apache.fesod.sheet.converters.floatconverter.FloatBooleanConverter;
 import org.apache.fesod.sheet.converters.floatconverter.FloatNumberConverter;
 import org.apache.fesod.sheet.converters.floatconverter.FloatStringConverter;
 import org.apache.fesod.sheet.converters.inputstream.InputStreamImageConverter;
+import org.apache.fesod.sheet.converters.instant.InstantStringConverter;
 import org.apache.fesod.sheet.converters.integer.IntegerBooleanConverter;
 import org.apache.fesod.sheet.converters.integer.IntegerNumberConverter;
 import org.apache.fesod.sheet.converters.integer.IntegerStringConverter;
@@ -128,6 +129,8 @@ public class DefaultConverterLoader {
         putAllConverter(new OffsetDateTimeNumberConverter());
         putAllConverter(new OffsetDateTimeStringConverter());
 
+        putAllConverter(new InstantStringConverter());
+
         putAllConverter(new DoubleBooleanConverter());
         putAllConverter(new DoubleNumberConverter());
         putAllConverter(new DoubleStringConverter());
@@ -165,6 +168,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
+        putWriteConverter(new InstantStringConverter());
         putWriteConverter(new OffsetDateTimeDateConverter());
         putWriteConverter(new DoubleNumberConverter());
         putWriteConverter(new FloatNumberConverter());
@@ -187,6 +191,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());
+        putWriteStringConverter(new InstantStringConverter());
         putWriteStringConverter(new OffsetDateTimeStringConverter());
         putWriteStringConverter(new DoubleStringConverter());
         putWriteStringConverter(new FloatStringConverter());

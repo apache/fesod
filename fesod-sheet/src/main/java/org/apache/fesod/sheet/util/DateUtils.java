@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -77,6 +78,7 @@ public class DateUtils {
     public static final LocalDate EPOCH = LocalDate.of(1970, 1, 1);
 
     public static final String DATE_FORMAT_10 = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_10_FORWARD_SLASH = "yyyy/MM/dd";
     public static final String DATE_FORMAT_14 = "yyyyMMddHHmmss";
     public static final String DATE_FORMAT_16 = "yyyy-MM-dd HH:mm";
     public static final String DATE_FORMAT_16_FORWARD_SLASH = "yyyy/MM/dd HH:mm";
@@ -165,6 +167,21 @@ public class DateUtils {
     }
 
     /**
+     * convert string to date, requiring the string to carry an explicit offset
+     *
+     * @param dateString date string, e.g. 2020-01-02T03:04:05+08:00
+     * @param dateFormat date format, empty means ISO_OFFSET_DATE_TIME
+     * @param local local
+     * @return
+     */
+    public static OffsetDateTime parseOffsetDateTime(String dateString, String dateFormat, Locale local) {
+        if (StringUtils.isEmpty(dateFormat)) {
+            return OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        }
+        return OffsetDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
+    }
+
+    /**
      * convert string to date
      *
      * @param dateString
@@ -201,7 +218,11 @@ public class DateUtils {
             case 14:
                 return DATE_FORMAT_14;
             case 10:
-                return DATE_FORMAT_10;
+                if (dateString.contains(MINUS)) {
+                    return DATE_FORMAT_10;
+                } else {
+                    return DATE_FORMAT_10_FORWARD_SLASH;
+                }
             default:
                 throw new IllegalArgumentException("can not find date format for：" + dateString);
         }
@@ -326,6 +347,24 @@ public class DateUtils {
             timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
         }
         return time.format(getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * Format date, preserving the offset in the output
+     *
+     * @param date date
+     * @param dateFormat date format, empty means ISO_OFFSET_DATE_TIME
+     * @param local local
+     * @return format string
+     */
+    public static String format(OffsetDateTime date, String dateFormat, Locale local) {
+        if (date == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(dateFormat)) {
+            return date.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        }
+        return date.format(getCacheDateTimeFormat(dateFormat, local));
     }
 
     /**

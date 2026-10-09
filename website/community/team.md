@@ -38,13 +38,13 @@ Apache Fesod (Incubating) team comprises Members and Contributors. We embrace th
 | Xin Yan         | [@tmlx1990](https://github.com/tmlx1990)                         | [yanxin](https://people.apache.org/committer-index.html#yanxin)                 | PPMC Member |
 | Zhe Zhang       | [@alaahong](https://github.com/alaahong)                         | [zhangzhe](https://people.apache.org/committer-index.html#zhangzhe)             | PPMC Member |
 | Ziqiu Guo       | [@delei](https://github.com/delei)                               | [delei](https://people.apache.org/committer-index.html#delei)                   | PPMC Member |
+| Jing Yang       | [@bengbengbalabalabeng](https://github.com/bengbengbalabalabeng) | [benbala](https://people.apache.org/committer-index.html#benbala)               | PPMC Member |
 
 ## Committers
 
 | Public Name     | GitHub Username                                                  | Apache ID                                                                       | Role        |
 |-----------------|------------------------------------------------------------------|---------------------------------------------------------------------------------|-------------|
 | Zhongqiang Gong | [@GOODBOY008](https://github.com/GOODBOY008)                     | [gongzhongqiang](https://people.apache.org/committer-index.html#gongzhongqiang) | Committer   |
-| Jing Yang       | [@bengbengbalabalabeng](https://github.com/bengbengbalabalabeng) | [benbala](https://people.apache.org/committer-index.html#benbala)               | Committer   |
 
 ## Contributors
 

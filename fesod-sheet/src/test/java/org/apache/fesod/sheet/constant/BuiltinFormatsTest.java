@@ -38,7 +38,10 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -70,14 +73,38 @@ class BuiltinFormatsTest {
                 Arguments.of(5, "reserved-5", Locale.US, US_CURRENCY_5),
                 Arguments.of(44, null, Locale.US, US_CURRENCY_44),
                 Arguments.of(44, "\"€\"#,##0.00", Locale.US, "\"€\"#,##0.00"),
-                // CN and the default locale keep the all-language entries
+                // CN and other non-US locales keep the all-language entries; a null locale falls back to the CN table
                 Arguments.of(5, null, Locale.CHINA, CN_CURRENCY_5),
                 Arguments.of(5, US_CURRENCY_5, Locale.CHINA, CN_CURRENCY_5),
+                Arguments.of(5, US_CURRENCY_5, Locale.GERMANY, CN_CURRENCY_5),
                 Arguments.of(5, null, null, CN_CURRENCY_5),
                 // non-currency entries are the same for every locale and still win over the POI defaults
                 Arguments.of(14, "m/d/yy", Locale.US, "yyyy/m/d"),
                 Arguments.of(22, "m/d/yy h:mm", Locale.US, "yyyy-m-d h:mm"),
                 Arguments.of(14, "m/d/yy", Locale.CHINA, "yyyy/m/d"));
+    }
+
+    @Test
+    @ResourceLock(Resources.GLOBAL)
+    void getBuiltinFormatUsesEditedAllLanguageEntries() {
+        String[] all = BuiltinFormats.BUILTIN_FORMATS_ALL_LANGUAGES;
+        String original7 = all[7];
+        String original14 = all[14];
+        String euro7 = "\"€\"#,##0.00_);(\"€\"#,##0.00)";
+        String usCurrency7 = "\"$\"#,##0.00_);(\"$\"#,##0.00)";
+        try {
+            // the class javadoc suggests editing the tables for languages other than Chinese
+            all[7] = euro7;
+            all[14] = "dd.mm.yyyy";
+            assertEquals(euro7, BuiltinFormats.getBuiltinFormat((short) 7, usCurrency7, Locale.GERMANY));
+            assertEquals(euro7, BuiltinFormats.getBuiltinFormat((short) 7, usCurrency7, null));
+            assertEquals("dd.mm.yyyy", BuiltinFormats.getBuiltinFormat((short) 14, "m/d/yy", Locale.US));
+            // the US locale still skips the all-language table for its currency entries
+            assertEquals(usCurrency7, BuiltinFormats.getBuiltinFormat((short) 7, usCurrency7, Locale.US));
+        } finally {
+            all[7] = original7;
+            all[14] = original14;
+        }
     }
 
     @ParameterizedTest

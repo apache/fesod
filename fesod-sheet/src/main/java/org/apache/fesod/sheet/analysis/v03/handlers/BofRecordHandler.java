@@ -51,6 +51,21 @@ public class BofRecordHandler extends AbstractXlsRecordHandler {
             return;
         }
         if (br.getType() != BOFRecord.TYPE_WORKSHEET) {
+            if (br.getType() == BOFRecord.TYPE_CHART
+                    || br.getType() == BOFRecord.TYPE_EXCEL_4_MACRO
+                    || br.getType() == BOFRecord.TYPE_VB_MODULE) {
+                // Chart, Excel 4 macro and VB module substreams carry their own BOUNDSHEET entry, so they occupy a
+                // slot in the sheet list even though their records must not be read: consume the slot and skip the
+                // substream, otherwise every following worksheet pairs with the wrong sheet.
+                initReadSheetDataList(xlsReadWorkbookHolder);
+                Integer skippedSheetIndex = xlsReadWorkbookHolder.getReadSheetIndex();
+                if (skippedSheetIndex == null) {
+                    skippedSheetIndex = 0;
+                }
+                xlsReadWorkbookHolder.setReadSheetIndex(skippedSheetIndex + 1);
+                xlsReadWorkbookHolder.setIgnoreRecord(Boolean.TRUE);
+                xlsReadWorkbookHolder.setCurrentSheetStopped(Boolean.FALSE);
+            }
             return;
         }
         // Init read sheet Data

@@ -47,7 +47,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class CsvRow implements Row {
 
     /**
-     * cell list
+     * cell list, kept sorted by column index by createCell; getCell binary-searches it and CsvSheet#flushData
+     * writes it in order
      */
     private final List<CsvCell> cellList;
 

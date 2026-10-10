@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.fesod.sheet.FastExcel;
 import org.apache.fesod.sheet.metadata.csv.CsvCell;
@@ -36,6 +37,7 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -248,6 +250,47 @@ public class CsvRowTest {
                 line.contains("2024-01-15"), "CSV should contain the calendar date 2024-01-15, got: " + line);
     }
 
+    @Test
+    void csvSheetPhysicalRowCountShouldMatchCreatedRows() throws Exception {
+        File csvFile = new File(tempDir, "physical-row-count.csv");
+
+        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+
+            Assertions.assertEquals(0, sheet.getPhysicalNumberOfRows());
+            sheet.createRow(0);
+            Assertions.assertEquals(1, sheet.getPhysicalNumberOfRows());
+
+            sheet.setRowCacheCount(1);
+            sheet.createRow(1);
+            Assertions.assertEquals(2, sheet.getPhysicalNumberOfRows());
+
+            sheet.close();
+        }
+    }
+
+    @Test
+    void csvWorkbookShouldReportCreatedSheetThroughPoiMetadata() throws Exception {
+        File csvFile = new File(tempDir, "workbook-sheet-metadata.csv");
+
+        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+
+            Assertions.assertEquals(0, workbook.getNumberOfSheets());
+            Assertions.assertFalse(workbook.sheetIterator().hasNext());
+            Assertions.assertFalse(workbook.iterator().hasNext());
+
+            Sheet sheet = workbook.createSheet();
+
+            Assertions.assertEquals(1, workbook.getNumberOfSheets());
+            assertSingleSheetIterator(sheet, workbook.sheetIterator());
+            assertSingleSheetIterator(sheet, workbook.iterator());
+
+            ((CsvSheet) sheet).close();
+        }
+    }
+
     private static List<SimpleCsvData> modelData() {
         List<SimpleCsvData> data = new ArrayList<>();
         data.add(new SimpleCsvData("1", "Jackson", "20"));
@@ -270,5 +313,11 @@ public class CsvRowTest {
         head.add(Arrays.asList("Name"));
         head.add(Arrays.asList("Age"));
         return head;
+    }
+
+    private static void assertSingleSheetIterator(Sheet expectedSheet, Iterator<Sheet> iterator) {
+        Assertions.assertTrue(iterator.hasNext());
+        Assertions.assertSame(expectedSheet, iterator.next());
+        Assertions.assertFalse(iterator.hasNext());
     }
 }

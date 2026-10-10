@@ -66,9 +66,10 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 LocalTimeDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class)));
+
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                LocalTimeStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+                LocalTimeStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(LocalTime.class)));
     }
 
     @Test
@@ -83,9 +84,9 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 SqlTimeDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Time.class)));
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                SqlTimeStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.STRING)));
+                SqlTimeStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(Time.class)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

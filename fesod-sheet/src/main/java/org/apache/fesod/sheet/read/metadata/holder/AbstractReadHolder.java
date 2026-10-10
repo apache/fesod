@@ -25,16 +25,13 @@
 
 package org.apache.fesod.sheet.read.metadata.holder;
 
-import java.util.HashMap;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.fesod.common.util.ListUtils;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
-import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.converters.ReadConverter;
 import org.apache.fesod.sheet.enums.HolderEnum;
 import org.apache.fesod.sheet.metadata.AbstractHolder;
 import org.apache.fesod.sheet.read.listener.ModelBuildEventListener;
@@ -119,19 +116,11 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
             this.readListenerList.addAll(readBasicParameter.getCustomReadListenerList());
         }
 
-        if (parentAbstractReadHolder == null) {
-            setConverterMap(DefaultConverterLoader.copyDefaultReadConverter());
-        } else {
-            setConverterMap(new HashMap<>(parentAbstractReadHolder.getConverterMap()));
-        }
+        // register converters (custom)
         if (readBasicParameter.getCustomConverterList() != null
                 && !readBasicParameter.getCustomConverterList().isEmpty()) {
-            for (Converter<?> converter : readBasicParameter.getCustomConverterList()) {
-                getConverterMap()
-                        .put(
-                                ConverterKeyBuild.buildKey(
-                                        converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                converter);
+            for (ReadConverter<?> converter : readBasicParameter.getCustomConverterList()) {
+                getConverterRegistry().addCustomReadConverter(converter);
             }
         }
     }

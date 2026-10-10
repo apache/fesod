@@ -26,15 +26,17 @@
 package org.apache.fesod.sheet.event;
 
 /**
- * Implement this interface when sorting
+ * Implement this interface to control the execution order of event listeners.
  *
- *
+ * <p>Listeners with a smaller {@link #order()} value are invoked first.</p>
  */
 public interface Order {
+
     /**
-     * The smaller the first implementation
+     * Returns the sort order of this listener.
+     * A smaller value means the listener is executed earlier.
      *
-     * @return
+     * @return the order value; listeners are invoked in ascending order of this value
      */
     int order();
 }

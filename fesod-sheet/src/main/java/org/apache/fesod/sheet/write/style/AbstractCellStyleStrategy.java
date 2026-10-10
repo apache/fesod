@@ -32,17 +32,40 @@ import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * Cell style strategy
+ * Base class for cell-style strategies that decide which style a header or content cell should be
+ * written with.
  *
+ * <p>The framework invokes {@link #afterCellDispose(CellWriteHandlerContext)} once per cell. This
+ * implementation dispatches to {@link #setHeadCellStyle(CellWriteHandlerContext)} for header cells
+ * and to {@link #setContentCellStyle(CellWriteHandlerContext)} for content cells; subclasses
+ * override whichever side they care about, typically the fine-grained
+ * {@link #setHeadCellStyle(Cell, Head, Integer)} / {@link #setContentCellStyle(Cell, Head, Integer)}
+ * variants.</p>
  *
+ * <p>This handler runs at {@link OrderConstant#DEFINE_STYLE} so that the cell value is already
+ * written by the time the style is attached.</p>
  */
 public abstract class AbstractCellStyleStrategy implements CellWriteHandler {
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns {@link OrderConstant#DEFINE_STYLE} so that style strategies run in the
+     * "define style" phase of the write pipeline.</p>
+     */
     @Override
     public int order() {
         return OrderConstant.DEFINE_STYLE;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation skips cells whose {@code isHead} flag is {@code null} (for example
+     * when filling data) and otherwise dispatches to
+     * {@link #setHeadCellStyle(CellWriteHandlerContext)} or
+     * {@link #setContentCellStyle(CellWriteHandlerContext)}.</p>
+     */
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
         if (context.getHead() == null) {
@@ -56,40 +79,61 @@ public abstract class AbstractCellStyleStrategy implements CellWriteHandler {
     }
 
     /**
-     * Sets the cell style of header
+     * Applies the header style to the current cell by delegating to
+     * {@link #setHeadCellStyle(Cell, Head, Integer)}.
      *
-     * @param context
+     * <p>Override this variant when extra information from the {@link CellWriteHandlerContext}
+     * (sheet holder, workbook, converted cell data, …) is needed; otherwise override the
+     * fine-grained variant.</p>
+     *
+     * @param context the context that carries the header cell being styled together with its head
+     *                metadata and relative row index; never {@code null}
      */
     protected void setHeadCellStyle(CellWriteHandlerContext context) {
         setHeadCellStyle(context.getCell(), context.getHeadData(), context.getRelativeRowIndex());
     }
 
     /**
-     * Sets the cell style of header
+     * Extension point that applies the header style to a single cell. The default implementation
+     * throws {@link UnsupportedOperationException}, so any subclass that wants header styling must
+     * override it (or override the {@link CellWriteHandlerContext} variant instead).
      *
-     * @param cell
-     * @param head
-     * @param relativeRowIndex
+     * @param cell             the header cell to style; never {@code null}
+     * @param head             the head metadata for the cell's column; may be {@code null} when
+     *                         writing without a header
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
+     * @throws UnsupportedOperationException if the subclass has not overridden this method
      */
     protected void setHeadCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
         throw new UnsupportedOperationException("Custom styles must override the setHeadCellStyle method.");
     }
 
     /**
-     * Sets the cell style of content
+     * Applies the content style to the current cell by delegating to
+     * {@link #setContentCellStyle(Cell, Head, Integer)}.
      *
-     * @param context
+     * <p>Override this variant when extra information from the {@link CellWriteHandlerContext} is
+     * needed; otherwise override the fine-grained variant.</p>
+     *
+     * @param context the context that carries the content cell being styled together with its head
+     *                metadata and relative row index; never {@code null}
      */
     protected void setContentCellStyle(CellWriteHandlerContext context) {
         setContentCellStyle(context.getCell(), context.getHeadData(), context.getRelativeRowIndex());
     }
 
     /**
-     * Sets the cell style of content
+     * Extension point that applies the content style to a single cell. The default implementation
+     * throws {@link UnsupportedOperationException}, so any subclass that wants content styling must
+     * override it (or override the {@link CellWriteHandlerContext} variant instead).
      *
-     * @param cell
-     * @param head
-     * @param relativeRowIndex
+     * @param cell             the content cell to style; never {@code null}
+     * @param head             the head metadata for the cell's column; may be {@code null} when
+     *                         writing without a header
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
+     * @throws UnsupportedOperationException if the subclass has not overridden this method
      */
     protected void setContentCellStyle(Cell cell, Head head, Integer relativeRowIndex) {
         throw new UnsupportedOperationException("Custom styles must override the setContentCellStyle method.");

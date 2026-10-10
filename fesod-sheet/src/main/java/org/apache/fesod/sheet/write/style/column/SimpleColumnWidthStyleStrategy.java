@@ -28,21 +28,38 @@ package org.apache.fesod.sheet.write.style.column;
 import org.apache.fesod.sheet.metadata.Head;
 
 /**
- * All the columns are the same width
+ * A ready-made {@link AbstractHeadColumnWidthStyleStrategy} that applies the same fixed width to
+ * every column, ignoring the head metadata and the column index.
  *
- *
+ * <p>Use this strategy when all columns should look uniform. For per-column sizing, extend
+ * {@link AbstractHeadColumnWidthStyleStrategy} directly and implement
+ * {@link AbstractHeadColumnWidthStyleStrategy#columnWidth(Head, Integer)}.</p>
  */
 public class SimpleColumnWidthStyleStrategy extends AbstractHeadColumnWidthStyleStrategy {
+
+    /**
+     * The width, in characters, that will be returned for every column regardless of head or index.
+     */
     private final Integer columnWidth;
 
     /**
+     * Creates a strategy that applies the same width to every column.
      *
-     * @param columnWidth
+     * @param columnWidth the fixed column width measured in characters; the value is passed
+     *                    through to {@link AbstractHeadColumnWidthStyleStrategy} which scales it
+     *                    to POI's unit internally. A {@code null} value leaves every column at
+     *                    its existing width
      */
     public SimpleColumnWidthStyleStrategy(Integer columnWidth) {
         this.columnWidth = columnWidth;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation always returns the width supplied to the constructor, ignoring both
+     * {@code head} and {@code columnIndex}.</p>
+     */
     @Override
     protected Integer columnWidth(Head head, Integer columnIndex) {
         return columnWidth;

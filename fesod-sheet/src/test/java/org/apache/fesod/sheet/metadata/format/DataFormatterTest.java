@@ -44,14 +44,10 @@ class DataFormatterTest {
 
     private static final BigDecimal LARGE_NUMBER = new BigDecimal("100000000000");
 
-    /**
-     * Display name for the {@code (data, pattern, expected)} tables.
-     */
+    /** Display name for the {@code (data, pattern, expected)} tables. */
     private static final String PATTERN_AND_RESULT = "[{index}] {1} -> {2}";
 
-    /**
-     * Display name for the {@code (data, dataFormat, pattern, expected)} tables.
-     */
+    /** Display name for the {@code (data, dataFormat, pattern, expected)} tables. */
     private static final String DATE_PATTERN_AND_RESULT = "[{index}] {2} -> {3}";
 
     private static DataFormatter formatter() {
@@ -75,7 +71,6 @@ class DataFormatterTest {
         DataFormatter formatter = new DataFormatter(use1904windowing, Locale.US, useScientificFormat);
 
         String result = formatter.format(LARGE_NUMBER, null, "General");
-
         Assertions.assertEquals(expected, result);
     }
 
@@ -128,6 +123,27 @@ class DataFormatterTest {
                 "      12345 | #'##0    | 12'345",
             })
     void usesAlternateGroupingSeparator(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                // each trailing comma divides by a further 1000
+                "   1234567 | #,##0,     | 1,235",
+                "   1234567 | 0,         | 1235",
+                "1234567890 | #,##0,,    | 1,235",
+                "   1234567 | #,##0.0,   | 1,234.6",
+                "   1234567 | #,##0.00,, | 1.23",
+                // a decimal point escaped or quoted as literal text does not start a decimal part
+                "   1234567 | 0\\.0,     | 123.5",
+                "      9234 | 0\\.0,     | 0.9",
+                "   1234567 | 0\".\"0,   | 123.5",
+                "   1234567 | 0\\.00,,   | 0.01",
+                "   1234567 | 0\\.000,   | 1.235",
+            })
+    void scalesByTrailingCommas(String data, String pattern, String expected) {
         Assertions.assertEquals(expected, format(data, pattern));
     }
 

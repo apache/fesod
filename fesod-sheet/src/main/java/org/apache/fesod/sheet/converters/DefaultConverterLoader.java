@@ -80,6 +80,9 @@ import org.apache.fesod.sheet.converters.period.PeriodStringConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortBooleanConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortNumberConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortStringConverter;
+import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
+import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
+import org.apache.fesod.sheet.converters.sqltime.SqlTimeStringConverter;
 import org.apache.fesod.sheet.converters.string.StringBooleanConverter;
 import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
@@ -135,6 +138,8 @@ public class DefaultConverterLoader {
 
         putAllConverter(new LocalTimeNumberConverter());
         putAllConverter(new LocalTimeStringConverter());
+        putAllConverter(new SqlTimeNumberConverter());
+        putAllConverter(new SqlTimeStringConverter());
         putAllConverter(new OffsetDateTimeNumberConverter());
         putAllConverter(new OffsetDateTimeStringConverter());
 
@@ -179,6 +184,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
+        putWriteConverter(new SqlTimeDateConverter());
         putWriteConverter(new OffsetDateTimeDateConverter());
         putWriteConverter(new DoubleNumberConverter());
         putWriteConverter(new FloatNumberConverter());
@@ -205,6 +211,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());
+        putWriteStringConverter(new SqlTimeStringConverter());
         putWriteStringConverter(new OffsetDateTimeStringConverter());
         putWriteStringConverter(new DoubleStringConverter());
         putWriteStringConverter(new FloatStringConverter());

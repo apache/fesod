@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.OffsetDateTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -94,6 +95,8 @@ public class DateUtils {
     public static String defaultDateFormat = DATE_FORMAT_19;
 
     public static String defaultLocalDateFormat = DATE_FORMAT_10;
+
+    public static String defaultYearFormat = "yyyy";
 
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 
@@ -431,6 +434,39 @@ public class DateUtils {
             return String.valueOf(dayOfWeek.getValue());
         }
         return getCacheDateTimeFormat(dayOfWeekFormat, local).format(dayOfWeek);
+    }
+
+    /**
+     * convert string to year
+     *
+     * @param yearString
+     * @param yearFormat
+     * @param local
+     * @return
+     */
+    public static Year parseYear(String yearString, String yearFormat, Locale local) {
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = defaultYearFormat;
+        }
+        return Year.parse(yearString, getCacheDateTimeFormat(yearFormat, local));
+    }
+
+    /**
+     * Format year
+     *
+     * @param year Year
+     * @param yearFormat year format
+     * @param local local
+     * @return format string
+     */
+    public static String format(Year year, String yearFormat, Locale local) {
+        if (year == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = defaultYearFormat;
+        }
+        return year.format(getCacheDateTimeFormat(yearFormat, local));
     }
 
     /**

@@ -528,11 +528,7 @@ public class DataFormatter {
         }
 
         /**
-         * Counts the digit placeholders behind a decimal point that the format marks as literal text, ie one
-         * escaped as {@code \.} or quoted as {@code "."}. Those digits belong to the integer part, but
-         * {@link #cleanFormatForNumber} has dropped the escaping by the time {@link DecimalFormat} sees the
-         * pattern, which turns them into decimals: {@code 0\.0,} would otherwise print 1234567 as
-         * {@code 1234.6} instead of {@code 123.5}.
+         * Counts digit placeholders after a decimal point escaped or quoted as a literal in the format.
          */
         private static int digitsAfterLiteralDecimalPoint(String formatStr) {
             int digits = 0;

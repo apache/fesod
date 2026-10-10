@@ -27,6 +27,7 @@ package org.apache.fesod.sheet.metadata.csv;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
@@ -662,7 +663,12 @@ public class CsvSheet implements Sheet, Closeable {
 
         flushData();
         csvPrinter.flush();
-        csvPrinter.close();
+        // The PrintWriter wrapping the caller's output stream never throws IOException, so pending output errors
+        // surface only through checkError. Closing the printer would close the caller's stream even when the writer
+        // was configured with autoCloseStream(false) - WriteContextImpl owns that decision.
+        if (out instanceof PrintWriter && ((PrintWriter) out).checkError()) {
+            throw new ExcelGenerateException("CSV write failed on the underlying output stream.");
+        }
     }
 
     public void printData() {

@@ -15,12 +15,16 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: Documentation CI
+name: Docs CI
 
 on:
   pull_request:
     paths:
       - 'website/**'
+      - '.github/workflows/ci-docs.yml'
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-docs-${{ github.event.pull_request.number || github.ref }}
@@ -32,6 +36,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86

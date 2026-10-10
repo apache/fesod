@@ -38,11 +38,18 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 @Tag(Tags.ROUND_TRIP)
 public class CustomConverterTest extends AbstractExcelTest {
@@ -122,6 +129,28 @@ public class CustomConverterTest extends AbstractExcelTest {
         Assertions.assertTrue(csvContent.contains("field:value,registered:value"));
     }
 
+    @ParameterizedTest
+    @ExcelFormatSource(FormatScope.BINARY)
+    void globalExcelConverterRespectsFieldLevelOverride(ExcelFormat format) throws Exception {
+        File file = createTempFile(format);
+        FieldLevelConverterWriteData writeData = new FieldLevelConverterWriteData();
+        writeData.setFieldValue("value");
+        writeData.setRegisteredValue("value");
+        List<FieldLevelConverterWriteData> list = new ArrayList<>();
+        list.add(writeData);
+
+        FesodSheet.write(file, FieldLevelConverterWriteData.class)
+                .registerConverter(new GlobalStringWriteConverter())
+                .sheet()
+                .doWrite(list);
+
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            Row row = workbook.getSheetAt(0).getRow(1);
+            Assertions.assertEquals("field:value", row.getCell(0).getStringCellValue());
+            Assertions.assertEquals("registered:value", row.getCell(1).getStringCellValue());
+        }
+    }
+
     private void writeFile(File file) {
         FesodSheet.write(file)
                 .registerConverter(new TimestampNumberConverter())
@@ -181,6 +210,13 @@ public class CustomConverterTest extends AbstractExcelTest {
         public WriteCellData<?> convertToExcelData(
                 String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
             return new WriteCellData<>("field:" + value);
+        }
+    }
+
+    public static class GlobalStringWriteConverter extends RegisteredStringConverter {
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return null;
         }
     }
 

@@ -23,11 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -150,12 +153,150 @@ public class CsvFormatTest extends AbstractExcelTest {
                 .autoTrim(Boolean.FALSE)
                 .csv()
                 .doWrite(dataList(10, " " + STRING_PREFIX));
-        List<Object> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
+        Assertions.assertTrue(
+                readCsvContent(csvFile).contains("\" " + STRING_PREFIX + "0\""),
+                "workbook-level autoTrim(false) should keep surrounding spaces");
+        List<CsvData> dataList = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
                 .autoTrim(Boolean.FALSE)
                 .csv()
                 .doReadSync();
         Assertions.assertEquals(10, dataList.size());
-        Assertions.assertNotNull(dataList.get(0));
+        // workbook-level autoTrim(false) must preserve the leading space
+        Assertions.assertEquals(" " + STRING_PREFIX + 0, dataList.get(0).getString());
+    }
+
+    @Test
+    public void testSheetAutoTrim() throws Exception {
+        File csvFile = createTempFile("csv-sheet-auto-trim", ExcelFormat.CSV);
+        Files.write(csvFile.toPath(), " a , b \n".getBytes(StandardCharsets.UTF_8));
+
+        // default configuration trims surrounding whitespace
+        assertFirstRow("a", "b", FesodSheet.read(csvFile).headRowNumber(0).csv().doReadSync());
+
+        // sheet-level autoTrim(false) set after .csv() keeps the raw values
+        assertFirstRow(
+                " a ",
+                " b ",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .csv()
+                        .autoTrim(Boolean.FALSE)
+                        .doReadSync());
+
+        // sheet-level autoTrim(false) set on .sheet() keeps the raw values
+        assertFirstRow(
+                " a ",
+                " b ",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .sheet()
+                        .autoTrim(Boolean.FALSE)
+                        .doReadSync());
+
+        // workbook-level autoTrim(false) set before .csv() keeps working
+        assertFirstRow(
+                " a ",
+                " b ",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .autoTrim(Boolean.FALSE)
+                        .csv()
+                        .doReadSync());
+
+        // the sheet-level flag takes precedence over the workbook-level one
+        assertFirstRow(
+                "a",
+                "b",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .autoTrim(Boolean.FALSE)
+                        .csv()
+                        .autoTrim(Boolean.TRUE)
+                        .doReadSync());
+        assertFirstRow(
+                " a ",
+                " b ",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .autoStrip(Boolean.TRUE)
+                        .csv()
+                        .autoTrim(Boolean.FALSE)
+                        .autoStrip(Boolean.FALSE)
+                        .doReadSync());
+    }
+
+    @Test
+    public void testSheetAutoStrip() throws Exception {
+        // U+3000 (ideographic space) is removed by strip but not by trim
+        File csvFile = createTempFile("csv-sheet-auto-strip", ExcelFormat.CSV);
+        Files.write(csvFile.toPath(), "\u3000a\u3000,\u3000b\u3000\n".getBytes(StandardCharsets.UTF_8));
+
+        assertFirstRow(
+                "\u3000a\u3000",
+                "\u3000b\u3000",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .charset(StandardCharsets.UTF_8)
+                        .csv()
+                        .autoTrim(Boolean.FALSE)
+                        .autoStrip(Boolean.FALSE)
+                        .doReadSync());
+
+        assertFirstRow(
+                "a",
+                "b",
+                FesodSheet.read(csvFile)
+                        .headRowNumber(0)
+                        .charset(StandardCharsets.UTF_8)
+                        .csv()
+                        .autoTrim(Boolean.FALSE)
+                        .autoStrip(Boolean.TRUE)
+                        .doReadSync());
+    }
+
+    @Test
+    public void testWriteSheetAutoTrim() throws Exception {
+        List<List<String>> data = Collections.singletonList(Collections.singletonList(" a "));
+
+        // default configuration trims surrounding whitespace
+        File csvFile = createTempFile(ExcelFormat.CSV);
+        FesodSheet.write(csvFile).csv().doWrite(data);
+        Assertions.assertEquals("a\r\n", readCsvContent(csvFile));
+
+        // sheet-level autoTrim(false) set after .csv() keeps the surrounding spaces
+        csvFile = createTempFile(ExcelFormat.CSV);
+        FesodSheet.write(csvFile).csv().autoTrim(Boolean.FALSE).doWrite(data);
+        Assertions.assertEquals("\" a \"\r\n", readCsvContent(csvFile));
+
+        // the sheet-level flags take precedence over the workbook-level one
+        csvFile = createTempFile(ExcelFormat.CSV);
+        FesodSheet.write(csvFile)
+                .autoTrim(Boolean.FALSE)
+                .csv()
+                .autoTrim(Boolean.TRUE)
+                .doWrite(data);
+        Assertions.assertEquals("a\r\n", readCsvContent(csvFile));
+
+        csvFile = createTempFile(ExcelFormat.CSV);
+        FesodSheet.write(csvFile)
+                .autoTrim(Boolean.FALSE)
+                .csv()
+                .autoStrip(Boolean.TRUE)
+                .doWrite(data);
+        Assertions.assertEquals("a\r\n", readCsvContent(csvFile));
+    }
+
+    private static void assertFirstRow(String expected0, String expected1, List<Object> rows) {
+        Assertions.assertEquals(1, rows.size());
+        Map<?, ?> row = (Map<?, ?>) rows.get(0);
+        Assertions.assertEquals(expected0, row.get(0));
+        Assertions.assertEquals(expected1, row.get(1));
+    }
+
+    private static String readCsvContent(File csvFile) throws IOException {
+        String content = new String(Files.readAllBytes(csvFile.toPath()), StandardCharsets.UTF_8);
+        // CSV output starts with a UTF-8 BOM by default
+        return content.startsWith("\uFEFF") ? content.substring(1) : content;
     }
 
     @Test

@@ -216,7 +216,9 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
         }
 
         // There are some special xls that do not have the terminator "[EOF]", so an additional
-        xlsReadContext.analysisEventProcessor().endSheet(xlsReadContext);
+        if (xlsReadContext.readSheetHolder() != null) {
+            xlsReadContext.analysisEventProcessor().endSheet(xlsReadContext);
+        }
     }
 
     private void setCurrentUserPassword() {

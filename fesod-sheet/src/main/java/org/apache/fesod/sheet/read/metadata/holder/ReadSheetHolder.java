@@ -36,6 +36,7 @@ import org.apache.fesod.sheet.metadata.Cell;
 import org.apache.fesod.sheet.metadata.CellExtra;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
+import org.apache.fesod.sheet.util.SheetConverterResolver;
 
 /**
  * sheet holder
@@ -93,6 +94,15 @@ public class ReadSheetHolder extends AbstractReadHolder {
      * Reading this sheet has ended.
      */
     private Boolean ended;
+
+    /**
+     * Memoizes the per-cell metadata resolution of this sheet — content property per field name,
+     * converter per (target class, cell type). Initialized in every constructor: the head property
+     * and converter map it reads are established by the superclass constructor.
+     */
+    @EqualsAndHashCode.Exclude
+    private SheetConverterResolver converterResolver =
+            new SheetConverterResolver(this, excelReadHeadProperty().getHeadClazz(), converterMap());
 
     public ReadSheetHolder(ReadSheet readSheet, ReadWorkbookHolder readWorkbookHolder) {
         super(readSheet, readWorkbookHolder);

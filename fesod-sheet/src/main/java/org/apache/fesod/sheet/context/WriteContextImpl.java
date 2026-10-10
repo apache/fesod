@@ -53,6 +53,7 @@ import org.apache.fesod.sheet.util.NumberUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
+import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContextRecycler;
 import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.fesod.sheet.write.handler.context.SheetWriteHandlerContext;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
@@ -149,6 +150,7 @@ public class WriteContextImpl implements WriteContext {
      */
     private void initCurrentWorkbookHolder(WriteWorkbook writeWorkbook) {
         writeWorkbookHolder = new WriteWorkbookHolder(writeWorkbook);
+        writeWorkbookHolder.setCellWriteHandlerContextRecycler(new CellWriteHandlerContextRecycler());
         currentWriteHolder = writeWorkbookHolder;
         if (log.isDebugEnabled()) {
             log.debug("CurrentConfiguration is writeWorkbookHolder");
@@ -359,6 +361,7 @@ public class WriteContextImpl implements WriteContext {
      */
     private void addOneRowOfHeadDataToExcel(
             Row row, Integer rowIndex, Map<Integer, Head> headMap, int relativeRowIndex) {
+        CellWriteHandlerContextRecycler cellContextRecycler = writeWorkbookHolder.getCellWriteHandlerContextRecycler();
         for (Map.Entry<Integer, Head> entry : headMap.entrySet()) {
             Head head = entry.getValue();
             int columnIndex = entry.getKey();
@@ -368,7 +371,7 @@ public class WriteContextImpl implements WriteContext {
                     head.getFieldName(),
                     currentWriteHolder);
 
-            CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
+            CellWriteHandlerContext cellWriteHandlerContext = cellContextRecycler.renew(
                     this, row, rowIndex, head, columnIndex, relativeRowIndex, Boolean.TRUE, excelContentProperty);
             WriteHandlerUtils.beforeCellCreate(cellWriteHandlerContext);
 
@@ -384,6 +387,7 @@ public class WriteContextImpl implements WriteContext {
             cellWriteHandlerContext.setFirstCellData(writeCellData);
 
             WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
+            cellContextRecycler.cellCompleted(cellWriteHandlerContext);
         }
     }
 
@@ -493,6 +497,8 @@ public class WriteContextImpl implements WriteContext {
             return;
         }
         finished = true;
+        // Detach the recycled cell context so no Row/Cell references survive the session.
+        writeWorkbookHolder.getCellWriteHandlerContextRecycler().release();
 
         // executes the callback after all sheets has been fully written.
         boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();

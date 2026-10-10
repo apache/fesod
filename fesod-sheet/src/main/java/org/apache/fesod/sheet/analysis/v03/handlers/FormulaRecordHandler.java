@@ -41,6 +41,7 @@ import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.CellType;
 
 /**
@@ -48,8 +49,6 @@ import org.apache.poi.ss.usermodel.CellType;
  */
 @Slf4j
 public class FormulaRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
-    private static final String ERROR = "#VALUE!";
-
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         FormulaRecord frec = (FormulaRecord) record;
@@ -108,7 +107,7 @@ public class FormulaRecordHandler extends AbstractXlsRecordHandler implements Ig
                 break;
             case ERROR:
                 tempCellData.setType(CellDataTypeEnum.ERROR);
-                tempCellData.setStringValue(ERROR);
+                tempCellData.setStringValue(ErrorEval.getText(frec.getCachedErrorValue()));
                 cellMap.put(targetColumnIndex, tempCellData);
                 break;
             case BOOLEAN:

@@ -37,7 +37,7 @@ under the License.
     <version>${revision}</version>
 
     <packaging>pom</packaging>
-    <name>fesod-parent</name>
+    <name>Fesod Parent</name>
     <description>
         Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
@@ -100,9 +100,9 @@ under the License.
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/apache/fesod.git</connection>
-        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/fesod.git</developerConnection>
-        <url>scm:git:git@github.com:apache/fesod.git</url>
+        <connection>scm:git:https://github.com/apache/fesod.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/fesod.git</developerConnection>
+        <url>https://github.com/apache/fesod</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -110,6 +110,17 @@ under the License.
         <name>The Apache Software Foundation</name>
         <url>https://www.apache.org</url>
     </organization>
+
+    <developers>
+        <developer>
+            <id>fesod</id>
+            <name>The Apache Fesod (Incubating) Team</name>
+            <email>dev@fesod.apache.org</email>
+            <url>https://fesod.apache.org</url>
+            <organization>The Apache Software Foundation</organization>
+            <organizationUrl>https://www.apache.org</organizationUrl>
+        </developer>
+    </developers>
 
     <issueManagement>
         <system>GitHub</system>
@@ -298,15 +309,6 @@ under the License.
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- test -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
@@ -522,8 +524,6 @@ under the License.
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>oss</flattenMode>
                     <pomElements>
-                        <url>remove</url>
-                        <scm>remove</scm>
                         <distributionManagement>remove</distributionManagement>
                         <repositories>remove</repositories>
                     </pomElements>
@@ -635,6 +635,12 @@ under the License.
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>apache-release</id>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+            </properties>
+        </profile>
         <profile>
             <id>jdk9plus</id>
             <activation>

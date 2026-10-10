@@ -35,6 +35,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,12 @@ public class DateUtils {
     private static final int MAX_LOCALE_CACHE_SIZE = 8;
 
     private static final int MAX_FORMAT_CACHE_SIZE = 64;
+
+    /**
+     * Prefix marking strict-parsing formatters in the format cache, so they never collide with the
+     * non-strict formatter of an equal pattern.
+     */
+    private static final String STRICT_CACHE_PREFIX = "strict:";
 
     /**
      * Is a cache of dates
@@ -136,7 +143,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        return LocalDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
+        return LocalDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local, true));
     }
 
     /**
@@ -151,7 +158,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        return LocalDate.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
+        return LocalDate.parse(dateString, getCacheDateTimeFormat(dateFormat, local, true));
     }
 
     /**
@@ -166,7 +173,7 @@ public class DateUtils {
         if (StringUtils.isEmpty(timeFormat)) {
             timeFormat = switchTimeFormat(timeString);
         }
-        return LocalTime.parse(timeString, getCacheDateTimeFormat(timeFormat, local));
+        return LocalTime.parse(timeString, getCacheDateTimeFormat(timeFormat, local, true));
     }
 
     /**
@@ -451,6 +458,10 @@ public class DateUtils {
     }
 
     private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
+        return getCacheDateTimeFormat(dateFormat, locale, false);
+    }
+
+    private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale, boolean strictParsing) {
         Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
         Map<Locale, Map<String, DateTimeFormatter>> localeCache = DATE_TIME_FORMATTER_THREAD_LOCAL.get();
         if (localeCache == null) {
@@ -462,12 +473,59 @@ public class DateUtils {
             formatCache = MapUtils.newBoundedMap(MAX_FORMAT_CACHE_SIZE);
             localeCache.put(actualLocale, formatCache);
         }
-        DateTimeFormatter formatter = formatCache.get(dateFormat);
+        String cacheKey = strictParsing ? STRICT_CACHE_PREFIX + toStrictParsePattern(dateFormat) : dateFormat;
+        DateTimeFormatter formatter = formatCache.get(cacheKey);
         if (formatter == null) {
-            formatter = DateTimeFormatter.ofPattern(dateFormat, actualLocale);
-            formatCache.put(dateFormat, formatter);
+            String pattern = strictParsing ? cacheKey.substring(STRICT_CACHE_PREFIX.length()) : dateFormat;
+            formatter = DateTimeFormatter.ofPattern(pattern, actualLocale);
+            if (strictParsing) {
+                formatter = formatter.withResolverStyle(ResolverStyle.STRICT);
+            }
+            formatCache.put(cacheKey, formatter);
         }
         return formatter;
+    }
+
+    /**
+     * Rewrites a date pattern for strict parsing. The year-of-era letter {@code y} cannot be
+     * resolved without era information that simple patterns do not carry, so it is replaced by the
+     * proleptic-year letter {@code u} unless the pattern already contains an era section. Quoted
+     * literals are kept as-is.
+     *
+     * @param dateFormat the original pattern
+     * @return a pattern equivalent to the original one but resolvable under {@code STRICT}
+     */
+    private static String toStrictParsePattern(String dateFormat) {
+        boolean containsEra = false;
+        boolean containsYearOfEra = false;
+        boolean inQuote = false;
+        for (int i = 0; i < dateFormat.length(); i++) {
+            char currentChar = dateFormat.charAt(i);
+            if (currentChar == '\'') {
+                inQuote = !inQuote;
+            } else if (!inQuote) {
+                if (currentChar == 'G') {
+                    containsEra = true;
+                } else if (currentChar == 'y') {
+                    containsYearOfEra = true;
+                }
+            }
+        }
+        if (!containsYearOfEra || containsEra) {
+            return dateFormat;
+        }
+        StringBuilder strictPattern = new StringBuilder(dateFormat.length());
+        inQuote = false;
+        for (int i = 0; i < dateFormat.length(); i++) {
+            char currentChar = dateFormat.charAt(i);
+            if (currentChar == '\'') {
+                inQuote = !inQuote;
+            } else if (!inQuote && currentChar == 'y') {
+                currentChar = 'u';
+            }
+            strictPattern.append(currentChar);
+        }
+        return strictPattern.toString();
     }
 
     private static DateFormat getCacheDateFormat(String dateFormat) {
@@ -482,6 +540,8 @@ public class DateUtils {
             }
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        // Strictly match the format, e.g. "2024-02-31" is invalid instead of being normalized to 2024-03-02.
+        simpleDateFormat.setLenient(false);
         dateFormatMap.put(dateFormat, simpleDateFormat);
         return simpleDateFormat;
     }

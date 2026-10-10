@@ -280,6 +280,7 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
             } else {
                 saxFactory = SAXParserFactory.newInstance(xlsxSAXParserFactoryName, null);
             }
+            saxFactory.setNamespaceAware(true);
             try {
                 saxFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             } catch (Throwable ignore) {

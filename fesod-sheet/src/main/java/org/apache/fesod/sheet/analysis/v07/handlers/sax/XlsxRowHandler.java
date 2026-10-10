@@ -50,6 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XlsxRowHandler extends DefaultHandler {
     private final XlsxReadContext xlsxReadContext;
     private static final Map<String, XlsxTagHandler> XLSX_CELL_HANDLER_MAP = new HashMap<>(64);
+    private int ignoredElementDepth;
 
     static {
         CellFormulaTagHandler cellFormulaTagHandler = new CellFormulaTagHandler();
@@ -92,16 +93,28 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-        XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(name);
+        if (ignoredElementDepth > 0) {
+            ignoredElementDepth++;
+            return;
+        }
+        if (!isSpreadsheetNamespace(uri)) {
+            ignoredElementDepth = 1;
+            return;
+        }
+        String tagName = tagName(localName, name);
+        XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(tagName);
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
         }
-        xlsxReadContext.xlsxReadSheetHolder().getTagDeque().push(name);
-        handler.startElement(xlsxReadContext, name, attributes);
+        xlsxReadContext.xlsxReadSheetHolder().getTagDeque().push(tagName);
+        handler.startElement(xlsxReadContext, tagName, attributes);
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+        if (ignoredElementDepth > 0) {
+            return;
+        }
         String currentTag = xlsxReadContext.xlsxReadSheetHolder().getTagDeque().peek();
         if (currentTag == null) {
             return;
@@ -115,11 +128,37 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
-        XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(name);
+        if (ignoredElementDepth > 0) {
+            ignoredElementDepth--;
+            return;
+        }
+        if (!isSpreadsheetNamespace(uri)) {
+            return;
+        }
+        String tagName = tagName(localName, name);
+        XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(tagName);
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
         }
-        handler.endElement(xlsxReadContext, name);
+        handler.endElement(xlsxReadContext, tagName);
         xlsxReadContext.xlsxReadSheetHolder().getTagDeque().pop();
+    }
+
+    private static String tagName(String localName, String name) {
+        if (localName != null && !localName.isEmpty()) {
+            return localName;
+        }
+        if (name == null) {
+            return null;
+        }
+        int prefixIndex = name.indexOf(':');
+        if (prefixIndex >= 0) {
+            return name.substring(prefixIndex + 1);
+        }
+        return name;
+    }
+
+    private static boolean isSpreadsheetNamespace(String uri) {
+        return uri == null || ExcelXmlConstants.NAMESPACE_SPREADSHEETML.equals(uri);
     }
 }

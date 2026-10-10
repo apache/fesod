@@ -29,6 +29,8 @@ package org.apache.fesod.sheet.constant;
  *
  */
 public class ExcelXmlConstants {
+    public static final String NAMESPACE_SPREADSHEETML = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+
     public static final String DIMENSION_TAG = "dimension";
     public static final String ROW_TAG = "row";
     public static final String CELL_FORMULA_TAG = "f";

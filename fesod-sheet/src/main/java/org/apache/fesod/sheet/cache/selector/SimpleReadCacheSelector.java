@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.cache.selector;
 
 import java.io.IOException;
+import java.io.InputStream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -98,8 +99,8 @@ public class SimpleReadCacheSelector implements ReadCacheSelector {
     public ReadCache readCache(PackagePart sharedStringsTablePackagePart) {
         long size = sharedStringsTablePackagePart.getSize();
         if (size < 0) {
-            try {
-                size = sharedStringsTablePackagePart.getInputStream().available();
+            try (InputStream inputStream = sharedStringsTablePackagePart.getInputStream()) {
+                size = inputStream.available();
             } catch (IOException e) {
                 log.warn("Unable to get file size, default used MapCache");
                 return new MapCache();

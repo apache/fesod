@@ -48,9 +48,11 @@ import org.apache.fesod.sheet.converters.charconverter.CharacterStringConverter;
 import org.apache.fesod.sheet.converters.date.DateDateConverter;
 import org.apache.fesod.sheet.converters.date.DateNumberConverter;
 import org.apache.fesod.sheet.converters.date.DateStringConverter;
+import org.apache.fesod.sheet.converters.dayofweek.DayOfWeekStringConverter;
 import org.apache.fesod.sheet.converters.doubleconverter.DoubleBooleanConverter;
 import org.apache.fesod.sheet.converters.doubleconverter.DoubleNumberConverter;
 import org.apache.fesod.sheet.converters.doubleconverter.DoubleStringConverter;
+import org.apache.fesod.sheet.converters.duration.DurationStringConverter;
 import org.apache.fesod.sheet.converters.file.FileImageConverter;
 import org.apache.fesod.sheet.converters.floatconverter.FloatBooleanConverter;
 import org.apache.fesod.sheet.converters.floatconverter.FloatNumberConverter;
@@ -71,9 +73,11 @@ import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongBooleanConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongNumberConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongStringConverter;
+import org.apache.fesod.sheet.converters.month.MonthStringConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeDateConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeNumberConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeStringConverter;
+import org.apache.fesod.sheet.converters.period.PeriodStringConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortBooleanConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortNumberConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortStringConverter;
@@ -124,10 +128,16 @@ public class DefaultConverterLoader {
         putAllConverter(new DateNumberConverter());
         putAllConverter(new DateStringConverter());
 
+        putAllConverter(new DayOfWeekStringConverter());
+
         putAllConverter(new LocalDateNumberConverter());
         putAllConverter(new LocalDateStringConverter());
 
+        putAllConverter(new MonthStringConverter());
+        putAllConverter(new PeriodStringConverter());
+
         putAllConverter(new LocalDateTimeNumberConverter());
+        putAllConverter(new DurationStringConverter());
         putAllConverter(new LocalDateTimeStringConverter());
 
         putAllConverter(new LocalTimeNumberConverter());
@@ -173,6 +183,10 @@ public class DefaultConverterLoader {
         putWriteConverter(new BooleanBooleanConverter());
         putWriteConverter(new ByteNumberConverter());
         putWriteConverter(new CharacterStringConverter());
+        putWriteConverter(new DayOfWeekStringConverter());
+        putWriteConverter(new MonthStringConverter());
+        putWriteConverter(new PeriodStringConverter());
+        putWriteConverter(new DurationStringConverter());
         putWriteConverter(new DateDateConverter());
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
@@ -198,6 +212,10 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new BooleanStringConverter());
         putWriteStringConverter(new ByteStringConverter());
         putWriteStringConverter(new CharacterStringConverter());
+        putWriteStringConverter(new DayOfWeekStringConverter());
+        putWriteStringConverter(new DurationStringConverter());
+        putWriteStringConverter(new MonthStringConverter());
+        putWriteStringConverter(new PeriodStringConverter());
         putWriteStringConverter(new DateStringConverter());
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());

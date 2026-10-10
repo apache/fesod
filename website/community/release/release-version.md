@@ -316,6 +316,7 @@ For example, to release version `2.0.0-incubating`, follow these steps:
 
 - Create a new branch `2.0.0-incubating` as the release branch.
 - Update the version number in `pom.xml` to `2.0.0-incubating`.
+- Set a fixed `project.build.outputTimestamp` in `pom.xml` to ensure [reproducible builds](https://maven.apache.org/guides/mini/guide-reproducible-builds.html).
 - Push the RC (Release Candidate) version tag.
 
 ```bash
@@ -327,6 +328,15 @@ git tag -s 2.0.0-incubating-rc1 -m "release: release for 2.0.0-incubating RC1"
 
 # Push the tag to the remote repository
 git push origin 2.0.0-incubating-rc1
+```
+
+When the version is updated, also set a fixed build timestamp:
+
+```bash
+# Set a fixed build timestamp so every build produces identical artifacts
+mvn versions:set-property -Dproperty=project.build.outputTimestamp -DnewVersion=2026-09-10T00:00:00Z
+# Or edit pom.xml directly:
+#   <project.build.outputTimestamp>2026-09-10T00:00:00Z</project.build.outputTimestamp>
 ```
 
 #### 3.3.2 Push Binary Packages

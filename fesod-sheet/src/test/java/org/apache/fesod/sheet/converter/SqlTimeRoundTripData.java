@@ -17,31 +17,16 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
+package org.apache.fesod.sheet.converter;
 
-package org.apache.fesod.sheet.cache;
+import java.sql.Time;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.fesod.sheet.annotation.ExcelProperty;
 
-import org.apache.poi.hssf.record.SSTRecord;
-
-/**
- *
- * Use SSTRecord.
- *
- *
- */
-public class XlsCache implements ReadCache {
-    private final SSTRecord sstRecord;
-
-    public XlsCache(SSTRecord sstRecord) {
-        this.sstRecord = sstRecord;
-    }
-
-    @Override
-    public String get(Integer key) {
-        return sstRecord.getString(key).toString();
-    }
+@Getter
+@Setter
+public class SqlTimeRoundTripData {
+    @ExcelProperty("time")
+    private Time time;
 }

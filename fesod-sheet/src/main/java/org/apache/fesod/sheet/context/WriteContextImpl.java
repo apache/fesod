@@ -30,7 +30,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -537,25 +536,17 @@ public class WriteContextImpl implements WriteContext {
     private void writeAndCloseWorkbook(boolean onException) {
         WorkbookEncryption encryption = new WorkbookEncryption(writeWorkbookHolder);
         ExceptionCollector collector = new ExceptionCollector();
-        AtomicBoolean outputStreamEncrypted = new AtomicBoolean(false);
-        // Determine if you need to write excel
-        boolean writeExcel = !onException;
-        if (writeWorkbookHolder.getWriteExcelOnException()) {
-            writeExcel = Boolean.TRUE;
-        }
-        // No data is written if an exception is thrown
+        boolean writeExcel = !onException || writeWorkbookHolder.getWriteExcelOnException();
         if (writeExcel) {
-            collector.run(() -> outputStreamEncrypted.set(encryption.doOutputStreamEncrypt07()));
-            if (collector.hasFailure()) {
-                writeExcel = false;
+            if (encryption.encryptsOutputStream()) {
+                collector.run(encryption::doOutputStreamEncrypt07);
+            } else {
+                collector.run(this::writeWorkbook);
             }
-        }
-        if (!outputStreamEncrypted.get() && writeExcel) {
-            collector.run(this::writeWorkbook);
         }
         collector.run(this::disposeSxssfWorkbook);
         collector.run(this::closeOutputStream);
-        if (writeExcel && !outputStreamEncrypted.get()) {
+        if (writeExcel && encryption.encryptsFile()) {
             collector.run(encryption::doFileEncrypt07);
         }
         collector.run(this::closeTemplateInputStream);

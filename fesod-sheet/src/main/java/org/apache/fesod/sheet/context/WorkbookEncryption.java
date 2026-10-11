@@ -48,10 +48,24 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 final class WorkbookEncryption {
 
+    private enum Target {
+        NONE,
+        OUTPUT_STREAM,
+        FILE
+    }
+
     private final WriteWorkbookHolder writeWorkbookHolder;
+    private final Target target;
 
     WorkbookEncryption(WriteWorkbookHolder writeWorkbookHolder) {
         this.writeWorkbookHolder = writeWorkbookHolder;
+        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
+            target = Target.NONE;
+        } else if (writeWorkbookHolder.getFile() == null) {
+            target = Target.OUTPUT_STREAM;
+        } else {
+            target = Target.FILE;
+        }
     }
 
     /**
@@ -72,18 +86,22 @@ final class WorkbookEncryption {
                 && excelType.equals(writeWorkbookHolder.getExcelType());
     }
 
+    boolean encryptsOutputStream() {
+        return target == Target.OUTPUT_STREAM;
+    }
+
+    boolean encryptsFile() {
+        return target == Target.FILE;
+    }
+
     /**
      * Encrypts the output stream for newer Excel formats.
      *
-     * @return True if encryption is successful, otherwise false.
      * @throws Exception If an error occurs during encryption.
      */
-    boolean doOutputStreamEncrypt07() throws Exception {
-        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
-            return false;
-        }
-        if (writeWorkbookHolder.getFile() != null) {
-            return false;
+    void doOutputStreamEncrypt07() throws Exception {
+        if (!encryptsOutputStream()) {
+            return;
         }
         File tempXlsx = FileUtils.createTmpFile(UUID.randomUUID() + ".xlsx");
         try {
@@ -102,19 +120,13 @@ final class WorkbookEncryption {
                 throw new ExcelGenerateException("Can not delete temp File!");
             }
         }
-        return true;
     }
 
     /**
      * To encrypt
      */
     void doFileEncrypt07() throws Exception {
-        // Check if the password is empty or the file type is not xlsx, if so, return directly
-        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
-            return;
-        }
-        // Check if the file is null, if so, return directly
-        if (writeWorkbookHolder.getFile() == null) {
+        if (!encryptsFile()) {
             return;
         }
         try {

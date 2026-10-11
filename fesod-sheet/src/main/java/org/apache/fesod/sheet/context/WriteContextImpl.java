@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -44,6 +45,7 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.apache.fesod.sheet.util.ExceptionCollector;
 import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
 import org.apache.fesod.sheet.util.NumberUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
@@ -534,8 +536,8 @@ public class WriteContextImpl implements WriteContext {
      */
     private void writeAndCloseWorkbook(boolean onException) {
         WorkbookEncryption encryption = new WorkbookEncryption(writeWorkbookHolder);
-        Throwable throwable = null;
-        boolean isOutputStreamEncrypt = false;
+        ExceptionCollector collector = new ExceptionCollector();
+        AtomicBoolean outputStreamEncrypted = new AtomicBoolean(false);
         // Determine if you need to write excel
         boolean writeExcel = !onException;
         if (writeWorkbookHolder.getWriteExcelOnException()) {
@@ -543,28 +545,23 @@ public class WriteContextImpl implements WriteContext {
         }
         // No data is written if an exception is thrown
         if (writeExcel) {
-            try {
-                isOutputStreamEncrypt = encryption.doOutputStreamEncrypt07();
-            } catch (Throwable t) {
-                throwable = recordFailure(throwable, t);
+            collector.run(() -> outputStreamEncrypted.set(encryption.doOutputStreamEncrypt07()));
+            if (collector.hasFailure()) {
                 writeExcel = false;
             }
         }
-        boolean writePlainWorkbook = writeExcel;
-        if (!isOutputStreamEncrypt) {
-            throwable = runStep(throwable, () -> writeWorkbook(writePlainWorkbook));
+        if (!outputStreamEncrypted.get() && writeExcel) {
+            collector.run(this::writeWorkbook);
         }
-        throwable = runStep(throwable, this::disposeSxssfWorkbook);
-        throwable = runStep(throwable, this::closeOutputStream);
-        if (writeExcel && !isOutputStreamEncrypt) {
-            throwable = runStep(throwable, encryption::doFileEncrypt07);
+        collector.run(this::disposeSxssfWorkbook);
+        collector.run(this::closeOutputStream);
+        if (writeExcel && !outputStreamEncrypted.get()) {
+            collector.run(encryption::doFileEncrypt07);
         }
-        throwable = runStep(throwable, this::closeTemplateInputStream);
+        collector.run(this::closeTemplateInputStream);
         encryption.clearEncrypt03();
         removeThreadLocalCache();
-        if (throwable != null) {
-            throw new ExcelGenerateException("Can not close IO.", throwable);
-        }
+        collector.throwIfPresent(t -> new ExcelGenerateException("Can not close IO.", t));
         if (log.isDebugEnabled()) {
             log.debug("Finished write.");
         }
@@ -573,10 +570,8 @@ public class WriteContextImpl implements WriteContext {
     /**
      * Writes the unencrypted workbook to the output stream if requested, then closes the workbook.
      */
-    private void writeWorkbook(boolean writeExcel) throws IOException {
-        if (writeExcel) {
-            writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
-        }
+    private void writeWorkbook() throws IOException {
+        writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
         writeWorkbookHolder.getWorkbook().close();
     }
 
@@ -606,37 +601,6 @@ public class WriteContextImpl implements WriteContext {
         if (writeWorkbookHolder.getTempTemplateInputStream() != null) {
             writeWorkbookHolder.getTempTemplateInputStream().close();
         }
-    }
-
-    @FunctionalInterface
-    private interface FinishStep {
-        void run() throws Exception;
-    }
-
-    /**
-     * Runs one step of the finishing sequence. A failure is recorded instead of stopping the sequence, and only the
-     * first failure is kept.
-     */
-    private static Throwable runStep(Throwable throwable, FinishStep step) {
-        try {
-            step.run();
-        } catch (Throwable t) {
-            return recordFailure(throwable, t);
-        }
-        return throwable;
-    }
-
-    /**
-     * Returns the first recorded failure, attaching any later one to it as a suppressed exception.
-     */
-    private static Throwable recordFailure(Throwable recorded, Throwable t) {
-        if (recorded == null) {
-            return t;
-        }
-        if (t != null && recorded != t) {
-            recorded.addSuppressed(t);
-        }
-        return recorded;
     }
 
     /**

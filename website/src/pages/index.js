@@ -69,15 +69,9 @@ function HomepageHeader() {
                         to="/docs/quickstart/guide">
                         <Translate>quickstart</Translate>
                     </Link>
-
                     <Link
-                        className={clsx("button button--secondary button--lg", styles.buttonWidth, styles.buttonWithIcon)}
+                        className={clsx("button button--secondary button--lg", styles.buttonWidth)}
                         to="https://github.com/apache/fesod">
-                        <img
-                            src="img/github_icon.svg"
-                            alt="GitHub"
-                            className={styles.buttonIcon}
-                        />
                         <Translate>github</Translate>
                     </Link>
                 </div>

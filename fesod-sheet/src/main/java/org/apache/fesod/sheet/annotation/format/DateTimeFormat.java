@@ -42,7 +42,7 @@ import org.apache.fesod.sheet.enums.BooleanEnum;
  *
  *
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface DateTimeFormat {

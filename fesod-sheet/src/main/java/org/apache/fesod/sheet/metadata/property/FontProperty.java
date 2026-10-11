@@ -25,9 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.annotation.write.style.ContentFontStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadFontStyle;
@@ -42,8 +40,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
  *
  */
 @Getter
-@Setter
-@EqualsAndHashCode
 public class FontProperty {
     /**
      * The name for the font (i.e. Arial)
@@ -108,26 +104,26 @@ public class FontProperty {
         }
         FontProperty styleProperty = new FontProperty();
         if (StringUtils.isNotBlank(headFontStyle.fontName())) {
-            styleProperty.setFontName(headFontStyle.fontName());
+            styleProperty.fontName = headFontStyle.fontName();
         }
         if (headFontStyle.fontHeightInPoints() >= 0) {
-            styleProperty.setFontHeightInPoints(headFontStyle.fontHeightInPoints());
+            styleProperty.fontHeightInPoints = headFontStyle.fontHeightInPoints();
         }
-        styleProperty.setItalic(headFontStyle.italic().getBooleanValue());
-        styleProperty.setStrikeout(headFontStyle.strikeout().getBooleanValue());
+        styleProperty.italic = headFontStyle.italic().getBooleanValue();
+        styleProperty.strikeout = headFontStyle.strikeout().getBooleanValue();
         if (headFontStyle.color() >= 0) {
-            styleProperty.setColor(headFontStyle.color());
+            styleProperty.color = headFontStyle.color();
         }
         if (headFontStyle.typeOffset() >= 0) {
-            styleProperty.setTypeOffset(headFontStyle.typeOffset());
+            styleProperty.typeOffset = headFontStyle.typeOffset();
         }
         if (headFontStyle.underline() >= 0) {
-            styleProperty.setUnderline(headFontStyle.underline());
+            styleProperty.underline = headFontStyle.underline();
         }
         if (headFontStyle.charset() >= 0) {
-            styleProperty.setCharset(headFontStyle.charset());
+            styleProperty.charset = headFontStyle.charset();
         }
-        styleProperty.setBold(headFontStyle.bold().getBooleanValue());
+        styleProperty.bold = headFontStyle.bold().getBooleanValue();
         return styleProperty;
     }
 
@@ -137,26 +133,26 @@ public class FontProperty {
         }
         FontProperty styleProperty = new FontProperty();
         if (StringUtils.isNotBlank(contentFontStyle.fontName())) {
-            styleProperty.setFontName(contentFontStyle.fontName());
+            styleProperty.fontName = contentFontStyle.fontName();
         }
         if (contentFontStyle.fontHeightInPoints() >= 0) {
-            styleProperty.setFontHeightInPoints(contentFontStyle.fontHeightInPoints());
+            styleProperty.fontHeightInPoints = contentFontStyle.fontHeightInPoints();
         }
-        styleProperty.setItalic(contentFontStyle.italic().getBooleanValue());
-        styleProperty.setStrikeout(contentFontStyle.strikeout().getBooleanValue());
+        styleProperty.italic = contentFontStyle.italic().getBooleanValue();
+        styleProperty.strikeout = contentFontStyle.strikeout().getBooleanValue();
         if (contentFontStyle.color() >= 0) {
-            styleProperty.setColor(contentFontStyle.color());
+            styleProperty.color = contentFontStyle.color();
         }
         if (contentFontStyle.typeOffset() >= 0) {
-            styleProperty.setTypeOffset(contentFontStyle.typeOffset());
+            styleProperty.typeOffset = contentFontStyle.typeOffset();
         }
         if (contentFontStyle.underline() >= 0) {
-            styleProperty.setUnderline(contentFontStyle.underline());
+            styleProperty.underline = contentFontStyle.underline();
         }
         if (contentFontStyle.charset() >= 0) {
-            styleProperty.setCharset(contentFontStyle.charset());
+            styleProperty.charset = contentFontStyle.charset();
         }
-        styleProperty.setBold(contentFontStyle.bold().getBooleanValue());
+        styleProperty.bold = contentFontStyle.bold().getBooleanValue();
         return styleProperty;
     }
 }

@@ -45,6 +45,9 @@ public abstract class AnalysisEventListener<T> implements ReadListener<T> {
     /**
      * Returns the header as a map.Override the current method to receive header data.
      *
+     * <p>The values are the raw header text: converters registered by the user apply to data cells
+     * only and are not involved in header parsing.
+     *
      * @param headMap
      * @param context
      */

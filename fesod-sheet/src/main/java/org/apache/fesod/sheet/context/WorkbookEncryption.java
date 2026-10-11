@@ -100,9 +100,6 @@ final class WorkbookEncryption {
      * @throws Exception If an error occurs during encryption.
      */
     void doOutputStreamEncrypt07() throws Exception {
-        if (!encryptsOutputStream()) {
-            return;
-        }
         File tempXlsx = FileUtils.createTmpFile(UUID.randomUUID() + ".xlsx");
         try {
             try (FileOutputStream tempFileOutputStream = new FileOutputStream(tempXlsx)) {
@@ -126,9 +123,6 @@ final class WorkbookEncryption {
      * To encrypt
      */
     void doFileEncrypt07() throws Exception {
-        if (!encryptsFile()) {
-            return;
-        }
         try {
             // Use try-with-resources to automatically close resources, encrypt and write the file
             try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(writeWorkbookHolder.getFile());

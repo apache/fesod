@@ -137,6 +137,23 @@ public class WildcardConverterWriteTest extends AbstractExcelTest {
     }
 
     @Test
+    void csvExplicitStringKeyRegisteredAfterWildcardStillWins() throws Exception {
+        File file = new File(tempDir, "wildcard-converter-explicit-last.csv");
+        FesodSheet.write(file)
+                .excelType(ExcelTypeEnum.CSV)
+                .charset(StandardCharsets.UTF_8)
+                .registerConverter(new BooleanYesNoConverter())
+                .registerConverter(new BooleanExplicitStringConverter())
+                .sheet()
+                .doWrite(booleans(Boolean.TRUE, Boolean.FALSE));
+
+        String csvContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+        Assertions.assertTrue(
+                csvContent.contains("explicit-yes") && csvContent.contains("explicit-no"),
+                "Explicit STRING-key converter registered after the wildcard should still win, but was: " + csvContent);
+    }
+
+    @Test
     void wildcardConverterIsRegisteredUnderBothKeysInWorkbookAndSheetHolders() throws Exception {
         File file = new File(tempDir, "wildcard-converter-map.csv");
         BooleanYesNoConverter converter = new BooleanYesNoConverter();

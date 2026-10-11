@@ -546,7 +546,7 @@ public class WriteContextImpl implements WriteContext {
             try {
                 isOutputStreamEncrypt = encryption.doOutputStreamEncrypt07();
             } catch (Throwable t) {
-                throwable = t;
+                throwable = recordFailure(throwable, t);
                 writeExcel = false;
             }
         }
@@ -621,9 +621,22 @@ public class WriteContextImpl implements WriteContext {
         try {
             step.run();
         } catch (Throwable t) {
-            return throwable != null ? throwable : t;
+            return recordFailure(throwable, t);
         }
         return throwable;
+    }
+
+    /**
+     * Returns the first recorded failure, attaching any later one to it as a suppressed exception.
+     */
+    private static Throwable recordFailure(Throwable recorded, Throwable t) {
+        if (recorded == null) {
+            return t;
+        }
+        if (t != null && recorded != t) {
+            recorded.addSuppressed(t);
+        }
+        return recorded;
     }
 
     /**

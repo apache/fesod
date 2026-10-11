@@ -57,5 +57,7 @@ class WriteContextImplTest {
                         .sheet()
                         .doWrite(TestDataBuilder.simpleData(10)));
         Assertions.assertEquals("write failed", e.getCause().getMessage());
+        Assertions.assertEquals(1, e.getCause().getSuppressed().length);
+        Assertions.assertEquals("close failed", e.getCause().getSuppressed()[0].getMessage());
     }
 }

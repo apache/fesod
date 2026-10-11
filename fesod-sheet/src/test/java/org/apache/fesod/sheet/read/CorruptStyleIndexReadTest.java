@@ -110,7 +110,7 @@ class CorruptStyleIndexReadTest {
             + "  <sheetData>\n"
             + "    <row r=\"1\"><c r=\"A1\" t=\"n\" s=\"0\"><v>1</v></c></row>\n"
             + "    <row r=\"2\"><c r=\"A2\" t=\"n\" s=\"abc\"><v>2</v></c></row>\n"
-            + "    <row r=\"3\"><c r=\"A3\" t=\"n\" s=\"1\"><v>3</v></c></row>\n"
+            + "    <row r=\"3\"><c r=\"A3\" t=\"n\" s=\"0\"><v>3</v></c></row>\n"
             + "  </sheetData>\n"
             + "</worksheet>\n";
 

@@ -33,6 +33,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -78,6 +79,7 @@ public class DateUtils {
     public static final LocalDate EPOCH = LocalDate.of(1970, 1, 1);
 
     public static final String DATE_FORMAT_10 = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_10_FORWARD_SLASH = "yyyy/MM/dd";
     public static final String DATE_FORMAT_14 = "yyyyMMddHHmmss";
     public static final String DATE_FORMAT_16 = "yyyy-MM-dd HH:mm";
     public static final String DATE_FORMAT_16_FORWARD_SLASH = "yyyy/MM/dd HH:mm";
@@ -91,6 +93,8 @@ public class DateUtils {
     public static String defaultDateFormat = DATE_FORMAT_19;
 
     public static String defaultLocalDateFormat = DATE_FORMAT_10;
+
+    public static String defaultYearFormat = "yyyy";
 
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 
@@ -217,7 +221,11 @@ public class DateUtils {
             case 14:
                 return DATE_FORMAT_14;
             case 10:
-                return DATE_FORMAT_10;
+                if (dateString.contains(MINUS)) {
+                    return DATE_FORMAT_10;
+                } else {
+                    return DATE_FORMAT_10_FORWARD_SLASH;
+                }
             default:
                 throw new IllegalArgumentException("can not find date format for：" + dateString);
         }
@@ -342,6 +350,39 @@ public class DateUtils {
             timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
         }
         return time.format(getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * convert string to year
+     *
+     * @param yearString
+     * @param yearFormat
+     * @param local
+     * @return
+     */
+    public static Year parseYear(String yearString, String yearFormat, Locale local) {
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = defaultYearFormat;
+        }
+        return Year.parse(yearString, getCacheDateTimeFormat(yearFormat, local));
+    }
+
+    /**
+     * Format year
+     *
+     * @param year Year
+     * @param yearFormat year format
+     * @param local local
+     * @return format string
+     */
+    public static String format(Year year, String yearFormat, Locale local) {
+        if (year == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = defaultYearFormat;
+        }
+        return year.format(getCacheDateTimeFormat(yearFormat, local));
     }
 
     /**

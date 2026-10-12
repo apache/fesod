@@ -67,7 +67,7 @@ public final class ExceptionCollector {
         if (recorded == null) {
             return t;
         }
-        if (t != null && recorded != t) {
+        if (recorded != t) {
             recorded.addSuppressed(t);
         }
         return recorded;

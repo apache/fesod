@@ -93,7 +93,8 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
         FesodSheet.write(outFile)
                 .withTemplate(template)
                 .sheet()
-                .doFill(new FillWrapper("data", buildData(3)),
+                .doFill(
+                        new FillWrapper("data", buildData(3)),
                         FillConfig.builder().forceNewRow(true).build());
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
@@ -118,10 +119,7 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
         File template = createTemplate();
         File outFile = createTempFile(ExcelFormat.XLSX);
 
-        FesodSheet.write(outFile)
-                .withTemplate(template)
-                .sheet()
-                .doFill(new FillWrapper("data", buildData(3)));
+        FesodSheet.write(outFile).withTemplate(template).sheet().doFill(new FillWrapper("data", buildData(3)));
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
             Sheet sheet = workbook.getSheetAt(0);

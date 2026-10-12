@@ -65,8 +65,8 @@ import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -119,8 +119,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
     /**
      * Formula cells inside the collection template rows, carried over to the created rows
      */
-    private final Map<UniqueDataFlagKey, List<TemplateFormulaCell>> templateFormulaCellsCache =
-            MapUtils.newHashMap();
+    private final Map<UniqueDataFlagKey, List<TemplateFormulaCell>> templateFormulaCellsCache = MapUtils.newHashMap();
 
     private final Map<UniqueDataFlagKey, Integer> relativeRowIndexMap = MapUtils.newHashMap();
     /**
@@ -586,9 +585,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         Sheet sheet = writeContext.writeSheetHolder().getSheet();
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         for (TemplateFormulaCell templateFormulaCell : formulaCellList) {
-            int targetRowIndex = vertical
-                    ? templateFormulaCell.getRowIndex() + relativeRowIndex
-                    : templateFormulaCell.getRowIndex();
+            int targetRowIndex =
+                    vertical ? templateFormulaCell.getRowIndex() + relativeRowIndex : templateFormulaCell.getRowIndex();
             int targetColumnIndex = vertical
                     ? templateFormulaCell.getColumnIndex()
                     : templateFormulaCell.getColumnIndex() + relativeRowIndex;
@@ -608,8 +606,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     targetCell.setCellStyle(templateCell.getCellStyle());
                 }
             }
-            String translatedFormula = translateFormula(
-                    cachedSheet, templateFormulaCell, targetRowIndex, targetColumnIndex, vertical);
+            String translatedFormula =
+                    translateFormula(cachedSheet, templateFormulaCell, targetRowIndex, targetColumnIndex, vertical);
             try {
                 targetCell.setCellFormula(translatedFormula);
             } catch (FormulaParseException e) {

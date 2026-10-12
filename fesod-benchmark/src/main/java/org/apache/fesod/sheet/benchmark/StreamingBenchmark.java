@@ -93,7 +93,7 @@ import org.xml.sax.XMLReader;
 @Warmup(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 5, time = 5, timeUnit = TimeUnit.SECONDS)
 @Fork(
-        value = 1,
+        value = 3,
         jvmArgs = {"-Xms2g", "-Xmx2g"})
 public class StreamingBenchmark {
 

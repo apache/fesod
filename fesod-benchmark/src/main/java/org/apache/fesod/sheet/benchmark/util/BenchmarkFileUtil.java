@@ -24,17 +24,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Central place for the scratch directory benchmark files are written to
  * ({@code target/benchmark-testdata}), so all suites share one location that
  * Maven cleans up on {@code mvn clean}.
  */
+@Slf4j
 public class BenchmarkFileUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(BenchmarkFileUtil.class);
 
     private static final String TEST_DATA_DIR = "target/benchmark-testdata";
 
@@ -71,7 +69,7 @@ public class BenchmarkFileUtil {
         try {
             Files.deleteIfExists(file.toPath());
         } catch (IOException e) {
-            logger.warn("Failed to delete benchmark file {}: {}", file, e.getMessage());
+            log.warn("Failed to delete benchmark file {}: {}", file, e.getMessage());
         }
     }
 }

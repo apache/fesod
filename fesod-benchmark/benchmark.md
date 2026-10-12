@@ -59,8 +59,14 @@ results collected at different times stay comparable:
 | Suite | Mode | Forks | Warmup | Measurement | JVM args |
 |---|---|---|---|---|---|
 | `FesodBenchmark` | avgt, ms/op | 3 | 3 × 1s | 5 × 2s | `-Xms1g -Xmx1g -XX:+UseG1GC` |
-| `FesodVsPoiBenchmark` | avgt, ms/op | 1 | 3 × 5s | 5 × 5s | `-Xms2g -Xmx2g` |
-| `StreamingBenchmark` | avgt, ms/op | 1 | 3 × 5s | 5 × 5s | `-Xms2g -Xmx2g` |
+| `FesodVsPoiBenchmark` | avgt, ms/op | 3 | 3 × 5s | 5 × 5s | `-Xms2g -Xmx2g` |
+| `StreamingBenchmark` | avgt, ms/op | 3 | 3 × 5s | 5 × 5s | `-Xms2g -Xmx2g` |
+
+All suites use 3 forks so cross-fork JVM/JIT variability is visible in the
+error bars. The core suite deliberately keeps a smaller fixed heap (`1g`,
+G1GC) — a roomy constant heap removes GC adaptivity from the timing signal —
+while the comparison suites use `2g` so POI's in-memory workloads are not the
+constraint being measured.
 
 ## Notes on interpreting results
 

@@ -22,12 +22,16 @@ package org.apache.fesod.sheet.benchmark.data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 
 /**
  * Standard benchmark data model with various data types for comprehensive testing
  */
+@Data
+@NoArgsConstructor
 public class BenchmarkData {
 
     @ExcelProperty(value = "ID", index = 0)
@@ -91,193 +95,4 @@ public class BenchmarkData {
 
     @ExcelProperty(value = "Extra Data 5", index = 19)
     private String extraData5;
-
-    // Default constructor
-    public BenchmarkData() {}
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStringData() {
-        return stringData;
-    }
-
-    public void setStringData(String stringData) {
-        this.stringData = stringData;
-    }
-
-    public Integer getIntValue() {
-        return intValue;
-    }
-
-    public void setIntValue(Integer intValue) {
-        this.intValue = intValue;
-    }
-
-    public Long getLongValue() {
-        return longValue;
-    }
-
-    public void setLongValue(Long longValue) {
-        this.longValue = longValue;
-    }
-
-    public Double getDoubleValue() {
-        return doubleValue;
-    }
-
-    public void setDoubleValue(Double doubleValue) {
-        this.doubleValue = doubleValue;
-    }
-
-    public BigDecimal getBigDecimalValue() {
-        return bigDecimalValue;
-    }
-
-    public void setBigDecimalValue(BigDecimal bigDecimalValue) {
-        this.bigDecimalValue = bigDecimalValue;
-    }
-
-    public Boolean getBooleanFlag() {
-        return booleanFlag;
-    }
-
-    public void setBooleanFlag(Boolean booleanFlag) {
-        this.booleanFlag = booleanFlag;
-    }
-
-    public LocalDate getDateValue() {
-        return dateValue;
-    }
-
-    public void setDateValue(LocalDate dateValue) {
-        this.dateValue = dateValue;
-    }
-
-    public LocalDateTime getDateTimeValue() {
-        return dateTimeValue;
-    }
-
-    public void setDateTimeValue(LocalDateTime dateTimeValue) {
-        this.dateTimeValue = dateTimeValue;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Float getFloatValue() {
-        return floatValue;
-    }
-
-    public void setFloatValue(Float floatValue) {
-        this.floatValue = floatValue;
-    }
-
-    public Short getShortValue() {
-        return shortValue;
-    }
-
-    public void setShortValue(Short shortValue) {
-        this.shortValue = shortValue;
-    }
-
-    public Byte getByteValue() {
-        return byteValue;
-    }
-
-    public void setByteValue(Byte byteValue) {
-        this.byteValue = byteValue;
-    }
-
-    public String getExtraData1() {
-        return extraData1;
-    }
-
-    public void setExtraData1(String extraData1) {
-        this.extraData1 = extraData1;
-    }
-
-    public String getExtraData2() {
-        return extraData2;
-    }
-
-    public void setExtraData2(String extraData2) {
-        this.extraData2 = extraData2;
-    }
-
-    public String getExtraData3() {
-        return extraData3;
-    }
-
-    public void setExtraData3(String extraData3) {
-        this.extraData3 = extraData3;
-    }
-
-    public String getExtraData4() {
-        return extraData4;
-    }
-
-    public void setExtraData4(String extraData4) {
-        this.extraData4 = extraData4;
-    }
-
-    public String getExtraData5() {
-        return extraData5;
-    }
-
-    public void setExtraData5(String extraData5) {
-        this.extraData5 = extraData5;
-    }
-
-    @Override
-    public String toString() {
-        return "BenchmarkData{" + "id="
-                + id + ", stringData='"
-                + stringData + '\'' + ", intValue="
-                + intValue + ", longValue="
-                + longValue + ", doubleValue="
-                + doubleValue + ", bigDecimalValue="
-                + bigDecimalValue + ", booleanFlag="
-                + booleanFlag + ", dateValue="
-                + dateValue + ", dateTimeValue="
-                + dateTimeValue + ", category='"
-                + category + '\'' + ", description='"
-                + description + '\'' + ", status='"
-                + status + '\'' + ", floatValue="
-                + floatValue + ", shortValue="
-                + shortValue + ", byteValue="
-                + byteValue + ", extraData1='"
-                + extraData1 + '\'' + ", extraData2='"
-                + extraData2 + '\'' + ", extraData3='"
-                + extraData3 + '\'' + ", extraData4='"
-                + extraData4 + '\'' + ", extraData5='"
-                + extraData5 + '\'' + '}';
-    }
 }

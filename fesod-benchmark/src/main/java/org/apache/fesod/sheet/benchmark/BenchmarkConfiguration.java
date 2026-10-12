@@ -19,6 +19,8 @@
 
 package org.apache.fesod.sheet.benchmark;
 
+import lombok.Getter;
+
 /**
  * Shared constants for the benchmark suites.
  */
@@ -30,6 +32,7 @@ public final class BenchmarkConfiguration {
      * Dataset sizes used by the benchmark suites. Rows have 20 columns each
      * (see {@link org.apache.fesod.sheet.benchmark.data.BenchmarkData}).
      */
+    @Getter
     public enum DatasetSize {
         SMALL(1_000, "1K"),
         MEDIUM(10_000, "10K"),
@@ -42,20 +45,13 @@ public final class BenchmarkConfiguration {
             this.rowCount = rowCount;
             this.label = label;
         }
-
-        public int getRowCount() {
-            return rowCount;
-        }
-
-        public String getLabel() {
-            return label;
-        }
     }
 
     /**
      * File formats covered by the benchmark suites. Note that XLS is limited
      * to 65,536 rows per sheet.
      */
+    @Getter
     public enum FileFormat {
         XLSX("xlsx"),
         XLS("xls"),
@@ -65,10 +61,6 @@ public final class BenchmarkConfiguration {
 
         FileFormat(String extension) {
             this.extension = extension;
-        }
-
-        public String getExtension() {
-            return extension;
         }
     }
 }

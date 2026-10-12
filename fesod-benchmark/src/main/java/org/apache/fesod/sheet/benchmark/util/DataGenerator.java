@@ -27,19 +27,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.benchmark.BenchmarkConfiguration;
 import org.apache.fesod.sheet.benchmark.data.BenchmarkData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Generates deterministic benchmark data: a fixed default seed and a fixed date
  * anchor mean the same seed always produces the same rows, so benchmark results
  * from different runs are comparable.
  */
+@Slf4j
 public class DataGenerator {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataGenerator.class);
 
     /** Fixed anchor for generated dates; never uses the wall clock. */
     private static final LocalDate DATE_ANCHOR = LocalDate.of(2024, 1, 1);
@@ -112,7 +110,7 @@ public class DataGenerator {
     }
 
     public List<BenchmarkData> generateData(int rowCount) {
-        logger.info("Generating {} rows of benchmark data", rowCount);
+        log.info("Generating {} rows of benchmark data", rowCount);
 
         List<BenchmarkData> data = new ArrayList<>(rowCount);
         long startTime = System.currentTimeMillis();
@@ -122,7 +120,7 @@ public class DataGenerator {
         }
 
         long duration = System.currentTimeMillis() - startTime;
-        logger.info(
+        log.info(
                 "Generated {} rows in {} ms ({} rows/sec)",
                 rowCount,
                 duration,

@@ -22,14 +22,14 @@ package org.apache.fesod.sheet.util;
 import java.util.function.Function;
 
 /**
- * Collects teardown failures while preserving the first error and attaching later failures as suppressed exceptions.
+ * Collects failures from multiple actions, retaining the first and adding subsequent failures as suppressed exceptions.
  */
 public final class ExceptionCollector {
 
     private Throwable failure;
 
     /**
-     * Runs a step and records any failure without interrupting the remaining teardown sequence.
+     * Runs the action and records any thrown failure, allowing subsequent actions to run.
      */
     public void run(ThrowableRunnable runnable) {
         try {
@@ -39,9 +39,6 @@ public final class ExceptionCollector {
         }
     }
 
-    /**
-     * Returns true if at least one recorded failure exists.
-     */
     public boolean hasFailure() {
         return failure != null;
     }
@@ -60,9 +57,6 @@ public final class ExceptionCollector {
         throw new IllegalStateException("transformer must not return null", failure);
     }
 
-    /**
-     * Returns the first recorded failure while attaching any later errors as suppressed exceptions.
-     */
     private static Throwable recordFailure(Throwable recorded, Throwable t) {
         if (recorded == null) {
             return t;

@@ -53,7 +53,7 @@ final class WorkbookEncryption {
 
     WorkbookEncryption(WriteWorkbookHolder writeWorkbookHolder) {
         this.writeWorkbookHolder = writeWorkbookHolder;
-        if (!isEncrypted(ExcelTypeEnum.XLSX)) {
+        if (!hasPasswordFor(ExcelTypeEnum.XLSX)) {
             target = Target.NONE;
         } else if (writeWorkbookHolder.getFile() == null) {
             target = Target.OUTPUT_STREAM;
@@ -66,7 +66,7 @@ final class WorkbookEncryption {
      * Clears encryption settings for older Excel formats.
      */
     void clearEncrypt03() {
-        if (!isEncrypted(ExcelTypeEnum.XLS)) {
+        if (!hasPasswordFor(ExcelTypeEnum.XLS)) {
             return;
         }
         Biff8EncryptionKey.setCurrentUserPassword(null);
@@ -75,7 +75,7 @@ final class WorkbookEncryption {
     /**
      * Checks whether the workbook is password-protected and written as the given type.
      */
-    private boolean isEncrypted(ExcelTypeEnum excelType) {
+    private boolean hasPasswordFor(ExcelTypeEnum excelType) {
         return !StringUtils.isEmpty(writeWorkbookHolder.getPassword())
                 && excelType.equals(writeWorkbookHolder.getExcelType());
     }

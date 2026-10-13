@@ -163,7 +163,23 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             Iterator<?> iterator = collectionData.iterator();
             if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && fillConfig.getForceNewRow()) {
+                int shiftNumber = collectionData.size();
+                if (collectionLastIndexCache.get(currentUniqueDataFlag) == null) {
+                    shiftNumber--;
+                }
+                int shiftMaxRow = 0;
+                for (AnalysisCell ac : analysisCellList) {
+                    if (ac.getRowIndex() > shiftMaxRow) {
+                        shiftMaxRow = ac.getRowIndex();
+                    }
+                }
                 shiftRows(collectionData.size(), analysisCellList);
+                // POI shiftRows does not update formula references in rows outside the
+                // shifted range. Shift the cached formula text manually so copyFormulaCells
+                // translates the post-shift formula.
+                if (shiftNumber > 0) {
+                    refreshFormulaCacheAfterShift(shiftMaxRow + 1, shiftNumber);
+                }
             }
             while (iterator.hasNext()) {
                 doFill(analysisCellList, iterator.next(), fillConfig, getRelativeRowIndex());
@@ -561,8 +577,12 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             return;
         }
         Set<Integer> collectionRowIndexSet = new HashSet<>();
+        // Columns occupied by the collection placeholders must be excluded: when the
+        // collection fills horizontally those cells carry data, not formulas.
+        Set<Integer> placeholderColumnSet = new HashSet<>();
         for (AnalysisCell analysisCell : collectionAnalysisCellList) {
             collectionRowIndexSet.add(analysisCell.getRowIndex());
+            placeholderColumnSet.add(analysisCell.getColumnIndex());
         }
         List<TemplateFormulaCell> formulaCellList =
                 templateFormulaCellsCache.computeIfAbsent(currentUniqueDataFlag, key -> ListUtils.newArrayList());
@@ -572,6 +592,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 continue;
             }
             for (int j = 0; j < row.getLastCellNum(); j++) {
+                if (placeholderColumnSet.contains(j)) {
+                    // This column holds a data placeholder; skip to avoid a collision
+                    // when the collection fills horizontally and data overwrites the formula.
+                    continue;
+                }
                 Cell cell = row.getCell(j);
                 if (cell == null || !CellType.FORMULA.equals(cell.getCellType())) {
                     continue;
@@ -580,6 +605,51 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
         }
     }
+
+    /**
+     * After shiftRows has moved rows in the live sheet, POI updates formula references in
+     * shifted rows. The cached formula text is pre-shift; refresh it so copyFormulaCells
+     * translates the shifted formula rather than the stale original.
+     */
+    private void refreshFormulaCacheAfterShift(int shiftStartRow, int shiftAmount) {
+        List<TemplateFormulaCell> formulaCellList = templateFormulaCellsCache.get(currentUniqueDataFlag);
+        if (CollectionUtils.isEmpty(formulaCellList)) {
+            return;
+        }
+        for (TemplateFormulaCell tcf : formulaCellList) {
+            String shifted = shiftRowReferencesInFormula(tcf.getFormula(), shiftStartRow, shiftAmount);
+            if (shifted != null && !shifted.equals(tcf.getFormula())) {
+                tcf.setFormula(shifted);
+            }
+        }
+    }
+
+    /**
+     * Shift row references in a formula string by {@code amount} rows when the referenced
+     * row is at or after {@code startRow}. Handles both relative ({@code A4}) and absolute
+     * ({@code $A$4}) references. POI's shiftRows does not update formulas in rows outside
+     * the shifted range, so this is needed for cached template formulas.
+     */
+    private static String shiftRowReferencesInFormula(String formula, int startRow, int amount) {
+        if (formula == null || formula.isEmpty()) {
+            return formula;
+        }
+        java.util.regex.Matcher m = ROW_REF_PATTERN.matcher(formula);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            int rowIdx = Integer.parseInt(m.group(2)) - 1;
+            if (rowIdx >= startRow) {
+                m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(m.group(1) + (rowIdx + amount + 1)));
+            } else {
+                m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(m.group(0)));
+            }
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final java.util.regex.Pattern ROW_REF_PATTERN =
+            java.util.regex.Pattern.compile("(\\$?[A-Z]+\\$?)(\\d+)");
 
     private void copyFormulaCells(FillConfig fillConfig, Integer relativeRowIndex) {
         if (relativeRowIndex == null || relativeRowIndex == 0) {

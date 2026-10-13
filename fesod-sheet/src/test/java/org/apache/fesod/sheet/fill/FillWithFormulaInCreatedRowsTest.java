@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
@@ -181,6 +182,79 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
             // collected on that path too.
             Assertions.assertEquals("A2*2", formulaOf(sheet, 1, 1));
             Assertions.assertEquals("A3*2", formulaOf(sheet, 2, 1));
+        }
+    }
+
+    /**
+     * Horizontal fill: the formula column overlaps a data column — the formula must not
+     * overwrite the data cell.
+     */
+    @Test
+    void horizontalFillDoesNotCollideWithDataColumn() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row templateRow = sheet.createRow(0);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A1*2");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        ExcelWriter writer = FesodSheet.write(outFile).withTemplate(template).build();
+        WriteSheet writeSheet = new WriteSheet();
+        writer.fill(
+                new FillWrapper("data", buildData(3)),
+                FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build(),
+                writeSheet);
+        writer.finish();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // Data fills all three columns in the template row.
+            Assertions.assertEquals("n1", sheet.getRow(0).getCell(0).getStringCellValue());
+            Assertions.assertEquals("n2", sheet.getRow(0).getCell(1).getStringCellValue());
+            Assertions.assertEquals("n3", sheet.getRow(0).getCell(2).getStringCellValue());
+        }
+    }
+
+    /**
+     * forceNewRow with a formula referencing a row below the collection area: after
+     * shiftRows the cached formula text must be refreshed so copyFormulaCells translates
+     * the shifted formula, not the pre-shift original.
+     */
+    @Test
+    void forceNewRowUpdatesFormulaCacheAfterShift() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A4*2");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(2)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // The live sheet's template row keeps the pre-shift formula; what matters is
+            // that the created row translates from the post-shift formula (A5*2 -> A6*2),
+            // not the stale pre-shift text (A4*2 -> A5*2).
+            Assertions.assertEquals("A6*2", formulaOf(sheet, 2, 1));
         }
     }
 }

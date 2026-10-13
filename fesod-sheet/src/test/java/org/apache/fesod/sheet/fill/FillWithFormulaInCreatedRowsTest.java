@@ -26,10 +26,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
 import org.apache.poi.ss.usermodel.Cell;
@@ -127,6 +129,58 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
             Assertions.assertEquals("A3*2", formulaOf(sheet, 2, 1));
             Assertions.assertEquals("A4*2", formulaOf(sheet, 3, 1));
             Assertions.assertEquals("$A$2*10", formulaOf(sheet, 2, 2));
+        }
+    }
+
+    /**
+     * Two collection areas on one sheet: {@code other} sits above {@code data}, so {@code data}
+     * is filled first (full template scan) and {@code other} is filled second (its analysis data
+     * is already cached). Formulas next to both collections must survive.
+     */
+    private File createTwoCollectionTemplate() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row otherRow = sheet.createRow(1);
+            otherRow.createCell(0).setCellValue("{other.name}");
+            otherRow.createCell(1).setCellFormula("A2*2");
+            Row separator = sheet.createRow(2);
+            separator.createCell(0).setCellValue("sep");
+            Row dataRow = sheet.createRow(3);
+            dataRow.createCell(0).setCellValue("{data.name}");
+            dataRow.createCell(1).setCellFormula("A4*2");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        return template;
+    }
+
+    @Test
+    void fillKeepsFormulasForEveryCollectionArea() throws Exception {
+        File template = createTwoCollectionTemplate();
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        // One writer, two fills: builder.doFill() finishes the writer after every call, so two
+        // collection areas need the lower-level fill API.
+        ExcelWriter writer = FesodSheet.write(outFile).withTemplate(template).build();
+        WriteSheet writeSheet = new WriteSheet();
+        writer.fill(new FillWrapper("data", buildData(2)), writeSheet);
+        writer.fill(new FillWrapper("other", buildData(2)), writeSheet);
+        writer.finish();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // The collection filled first keeps its formulas (existing behaviour).
+            Assertions.assertEquals("A4*2", formulaOf(sheet, 3, 1));
+            Assertions.assertEquals("A5*2", formulaOf(sheet, 4, 1));
+            // The collection filled second reaches the cached analysis data; its formulas must be
+            // collected on that path too.
+            Assertions.assertEquals("A2*2", formulaOf(sheet, 1, 1));
+            Assertions.assertEquals("A3*2", formulaOf(sheet, 2, 1));
         }
     }
 }

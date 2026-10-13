@@ -517,6 +517,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
     private List<AnalysisCell> readTemplateData(Map<UniqueDataFlagKey, List<AnalysisCell>> analysisCache) {
         List<AnalysisCell> analysisCellList = analysisCache.get(currentUniqueDataFlag);
         if (analysisCellList != null) {
+            // The full scan below also fills the caches of every other collection on the sheet, so
+            // each later collection reaches this early return. Collect the formula cells here too,
+            // otherwise only the first collection keeps them.
+            collectFormulaTemplateCells(writeContext.writeSheetHolder().getCachedSheet());
             return analysisCellList;
         }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
@@ -549,6 +553,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
     private void collectFormulaTemplateCells(Sheet sheet) {
         List<AnalysisCell> collectionAnalysisCellList = templateCollectionAnalysisCache.get(currentUniqueDataFlag);
         if (CollectionUtils.isEmpty(collectionAnalysisCellList)) {
+            return;
+        }
+        if (templateFormulaCellsCache.containsKey(currentUniqueDataFlag)) {
+            // Already collected for this collection (e.g. the analysis-cache early return in
+            // readTemplateData now also lands here); never append the same formula twice.
             return;
         }
         Set<Integer> collectionRowIndexSet = new HashSet<>();

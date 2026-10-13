@@ -32,6 +32,10 @@ const sidebarsCommunity = {
             type: "doc",
         },
         {
+            id: "team",
+            type: "doc",
+        },
+        {
             id: "feedback",
             type: "doc",
         },

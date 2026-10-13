@@ -114,11 +114,6 @@ const config = {
                     to: '/docs/download',
                 },
                 {
-                    label: 'Team',
-                    position: 'right',
-                    to: '/team',
-                },
-                {
                     label: 'Community',
                     position: 'right',
                     to: '/community',

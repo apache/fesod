@@ -635,7 +635,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             return formula;
         }
         java.util.regex.Matcher m = ROW_REF_PATTERN.matcher(formula);
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         while (m.find()) {
             int rowIdx = Integer.parseInt(m.group(2)) - 1;
             if (rowIdx >= startRow) {

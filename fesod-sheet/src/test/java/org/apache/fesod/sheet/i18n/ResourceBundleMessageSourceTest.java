@@ -19,7 +19,16 @@
 
 package org.apache.fesod.sheet.i18n;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import org.apache.fesod.sheet.exception.NoSuchMessageException;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
@@ -50,8 +59,8 @@ class ResourceBundleMessageSourceTest {
     @BeforeEach
     void setUp() {
         Locale.setDefault(Locale.ENGLISH);
-
-        source = new ResourceBundleMessageSource(BASENAME);
+        // Ensure UTF-8 encoding when loading properties files on JDK 8 (which defaults to ISO-8859-1)
+        source = new ResourceBundleMessageSource(BASENAME, new UTF8ResourceBundleControl());
     }
 
     @Test
@@ -100,5 +109,39 @@ class ResourceBundleMessageSourceTest {
         ResourceBundleMessageSource defaultingSource = new ResourceBundleMessageSource(BASENAME, true);
 
         Assertions.assertEquals(UNKNOWN_CODE, defaultingSource.getMessage(UNKNOWN_CODE, Locale.ENGLISH));
+    }
+
+    public static class UTF8ResourceBundleControl extends ResourceBundle.Control {
+
+        @Override
+        public ResourceBundle newBundle(
+                String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
+                throws IllegalAccessException, InstantiationException, IOException {
+            if (format.equals("java.properties")) {
+                String bundleName = toBundleName(baseName, locale);
+                final String resourceName = toResourceName(bundleName, "properties");
+                InputStream is = null;
+                if (reload) {
+                    URL url = loader.getResource(resourceName);
+                    if (url != null) {
+                        URLConnection connection = url.openConnection();
+                        if (connection != null) {
+                            connection.setUseCaches(false);
+                            is = connection.getInputStream();
+                        }
+                    }
+                } else {
+                    is = loader.getResourceAsStream(resourceName);
+                }
+
+                if (is == null) {
+                    return null;
+                }
+                try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                    return new PropertyResourceBundle(reader);
+                }
+            }
+            return super.newBundle(baseName, locale, format, loader, reload);
+        }
     }
 }

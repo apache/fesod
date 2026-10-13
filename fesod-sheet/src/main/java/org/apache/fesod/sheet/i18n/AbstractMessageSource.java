@@ -103,7 +103,7 @@ public abstract class AbstractMessageSource implements MessageSource {
     }
 
     private String replaceParameters(String message, Locale locale, Set<String> visitedParameters) {
-        if (message == null || message.isEmpty()) {
+        if (StringUtils.isEmpty(message)) {
             return message;
         }
 

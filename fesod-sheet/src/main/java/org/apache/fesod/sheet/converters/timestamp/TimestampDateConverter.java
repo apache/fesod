@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.converters.timestamp;
 
 import java.sql.Timestamp;
@@ -33,14 +27,10 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 
-/**
- * Timestamp and date converter
- *
- *
- */
+/** Timestamp and date converter. */
 public class TimestampDateConverter implements Converter<Timestamp> {
     @Override
-    public Class<Timestamp> supportJavaTypeKey() {
+    public Class<?> supportJavaTypeKey() {
         return Timestamp.class;
     }
 

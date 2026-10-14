@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.converters.timestamp;
 
 import java.math.BigDecimal;
@@ -36,15 +30,11 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
 
-/**
- * Timestamp and number converter
- *
- *
- */
+/** Timestamp and number converter. */
 public class TimestampNumberConverter implements Converter<Timestamp> {
 
     @Override
-    public Class<Timestamp> supportJavaTypeKey() {
+    public Class<?> supportJavaTypeKey() {
         return Timestamp.class;
     }
 
@@ -56,26 +46,14 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
     @Override
     public Timestamp convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return Timestamp.valueOf(DateUtils.getLocalDateTime(
-                    cellData.getNumberValue().doubleValue(), globalConfiguration.getUse1904windowing()));
-        } else {
-            return Timestamp.valueOf(DateUtils.getLocalDateTime(
-                    cellData.getNumberValue().doubleValue(),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing()));
-        }
+        return Timestamp.valueOf(DateUtils.getLocalDateTime(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration)));
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             Timestamp value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(BigDecimal.valueOf(
-                    DateUtil.getExcelDate(value.toLocalDateTime(), globalConfiguration.getUse1904windowing())));
-        } else {
-            return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                    value.toLocalDateTime(),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
-        }
+        return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
+                value.toLocalDateTime(), DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

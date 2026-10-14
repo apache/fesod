@@ -675,6 +675,12 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 continue;
             }
             Cell targetCell = targetRow.getCell(targetColumnIndex);
+            if (targetCell != null && !CellType.BLANK.equals(targetCell.getCellType())) {
+                // The destination cell already holds a value (not a formula from this
+                // fill, but user data from the template or a previous collection area).
+                // Skip to avoid overwriting it with a copied formula.
+                continue;
+            }
             if (targetCell == null) {
                 targetCell = targetRow.createCell(targetColumnIndex);
             }

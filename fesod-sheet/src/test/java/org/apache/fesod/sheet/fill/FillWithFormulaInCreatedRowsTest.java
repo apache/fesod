@@ -299,4 +299,42 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
             Assertions.assertEquals("A6*2", formulaOf(sheet, 2, 1));
         }
     }
+
+    /**
+     * Horizontal fill must not overwrite cells that already hold a value in the
+     * non-data columns. The reviewer's exact case: {data.name} in A1, =A1*2 in C1,
+     * and "Keep" in D1. After filling two items horizontally, D1 must stay "Keep".
+     */
+    @Test
+    void horizontalFillPreservesExistingCellValues() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row row = sheet.createRow(0);
+            row.createCell(0).setCellValue("{data.name}");
+            row.createCell(1).setCellFormula("A1*2");
+            row.createCell(2).setCellValue("Keep");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        ExcelWriter writer = FesodSheet.write(outFile).withTemplate(template).build();
+        WriteSheet writeSheet = new WriteSheet();
+        writer.fill(
+                new FillWrapper("data", buildData(2)),
+                FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build(),
+                writeSheet);
+        writer.finish();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // Data fills columns 0-1 in the template row.
+            Assertions.assertEquals("n1", sheet.getRow(0).getCell(0).getStringCellValue());
+            Assertions.assertEquals("n2", sheet.getRow(0).getCell(1).getStringCellValue());
+            // Column 2 holds the original value, not a copied formula.
+            Assertions.assertEquals("Keep", sheet.getRow(0).getCell(2).getStringCellValue());
+        }
+    }
 }

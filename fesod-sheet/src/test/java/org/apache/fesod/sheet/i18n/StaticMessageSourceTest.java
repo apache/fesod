@@ -77,7 +77,7 @@ class StaticMessageSourceTest {
     }
 
     @Test
-    void shouldResolveNestedMessageReferences() {
+    void shouldResolveNestedMessageValueReferences() {
         source.addMessage(GREETING, "Hello {msg.name}!", Locale.ENGLISH);
         source.addMessage(NAME, "{msg.product} user", Locale.ENGLISH);
         source.addMessage(PRODUCT, "fesod", Locale.ENGLISH);
@@ -90,6 +90,19 @@ class StaticMessageSourceTest {
         source.addMessage(NAME, "fesod", Locale.ENGLISH);
 
         Assertions.assertEquals("Hello fesod!", source.interpolate("Hello {" + NAME + "}!", Locale.ENGLISH));
+    }
+
+    @Test
+    void shouldFailFastOnNestedParametersInTemplate() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class, () -> source.interpolate("Hello {msg.{msg.kind}}!", Locale.ENGLISH));
+    }
+
+    @Test
+    void shouldFailFastOnNestedParametersInResolvedMessage() {
+        source.addMessage(GREETING, "Hi {user.{name}}!", Locale.ENGLISH);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> source.getMessage(GREETING, Locale.ENGLISH));
     }
 
     @Test

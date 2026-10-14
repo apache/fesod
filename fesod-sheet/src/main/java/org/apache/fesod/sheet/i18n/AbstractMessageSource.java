@@ -73,7 +73,7 @@ public abstract class AbstractMessageSource implements MessageSource {
     @Override
     public String interpolate(String messageTemplate, Locale locale) {
         if (StringUtils.isEmpty(messageTemplate)) {
-            return null;
+            return messageTemplate;
         }
         return replaceParameters(messageTemplate, locale, new LinkedHashSet<>(4));
     }
@@ -108,7 +108,6 @@ public abstract class AbstractMessageSource implements MessageSource {
         }
 
         StringBuilder buf = new StringBuilder(message);
-        int parentheses = 0;
         int startIndex = -1;
 
         for (int i = 0; i < buf.length(); i++) {
@@ -123,36 +122,32 @@ public abstract class AbstractMessageSource implements MessageSource {
                 }
             }
             if (c == PREFIX) {
-                if (startIndex == -1) {
-                    startIndex = i;
+                if (startIndex != -1) {
+                    throw new IllegalArgumentException(
+                            String.format("The message template '%s' contains nested parameters", message));
                 }
-                parentheses++;
+                startIndex = i;
             } else if (c == SUFFIX && startIndex != -1) {
-                parentheses--;
-                if (parentheses == 0) {
-                    int endIndex = i;
-                    String parameter = buf.substring(startIndex + 1, endIndex);
+                int endIndex = i;
+                String parameter = buf.substring(startIndex + 1, endIndex);
 
-                    if (!visitedParameters.add(parameter)) {
-                        throw new IllegalArgumentException("Circular reference detected: '{"
-                                + String.join(" -> ", visitedParameters) + " -> " + parameter + "}'");
-                    }
-
-                    try {
-                        // Handle nested parameter
-                        parameter = replaceParameters(parameter, locale, visitedParameters);
-                        String value = getMessageInternal(parameter, locale, visitedParameters);
-
-                        if (value != null) {
-                            buf.replace(startIndex, endIndex + 1, value);
-                            i = startIndex + value.length() - 1;
-                        }
-                    } finally {
-                        visitedParameters.remove(parameter);
-                    }
-
-                    startIndex = -1;
+                if (!visitedParameters.add(parameter)) {
+                    throw new IllegalArgumentException("Circular reference detected: '{"
+                            + String.join(" -> ", visitedParameters) + " -> " + parameter + "}'");
                 }
+
+                try {
+                    String value = getMessageInternal(parameter, locale, visitedParameters);
+
+                    if (value != null) {
+                        buf.replace(startIndex, endIndex + 1, value);
+                        i = startIndex + value.length() - 1;
+                    }
+                } finally {
+                    visitedParameters.remove(parameter);
+                }
+
+                startIndex = -1;
             }
         }
         return buf.toString();

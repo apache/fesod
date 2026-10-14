@@ -17,24 +17,14 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
+package org.apache.fesod.sheet.converters.timestamp;
 
-package org.apache.fesod.sheet.converter;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
-import org.apache.fesod.sheet.converters.timestamp.TimestampDateConverter;
-import org.apache.fesod.sheet.converters.timestamp.TimestampNumberConverter;
-import org.apache.fesod.sheet.converters.timestamp.TimestampStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
@@ -44,6 +34,7 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -52,21 +43,26 @@ import org.junit.jupiter.api.Test;
  * Unit tests for java.sql.Timestamp converter implementations.
  */
 @Tag(Tags.UNIT)
-public class TimestampConverterTest {
+class TimestampConverterTest {
 
     private static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfiguration();
 
+    @AfterEach
+    void tearDown() {
+        DateUtils.removeThreadLocalCache();
+    }
+
     @Test
     void supportKeys() {
-        assertEquals(Timestamp.class, new TimestampDateConverter().supportJavaTypeKey());
+        Assertions.assertEquals(Timestamp.class, new TimestampDateConverter().supportJavaTypeKey());
 
         TimestampNumberConverter numberConverter = new TimestampNumberConverter();
-        assertEquals(Timestamp.class, numberConverter.supportJavaTypeKey());
-        assertEquals(CellDataTypeEnum.NUMBER, numberConverter.supportExcelTypeKey());
+        Assertions.assertEquals(Timestamp.class, numberConverter.supportJavaTypeKey());
+        Assertions.assertEquals(CellDataTypeEnum.NUMBER, numberConverter.supportExcelTypeKey());
 
         TimestampStringConverter stringConverter = new TimestampStringConverter();
-        assertEquals(Timestamp.class, stringConverter.supportJavaTypeKey());
-        assertEquals(CellDataTypeEnum.STRING, stringConverter.supportExcelTypeKey());
+        Assertions.assertEquals(Timestamp.class, stringConverter.supportJavaTypeKey());
+        Assertions.assertEquals(CellDataTypeEnum.STRING, stringConverter.supportExcelTypeKey());
     }
 
     @Test
@@ -77,11 +73,11 @@ public class TimestampConverterTest {
 
         Timestamp javaData = converter.convertToJavaData(
                 new ReadCellData<>(BigDecimal.valueOf(excelDate)), null, GLOBAL_CONFIGURATION);
-        assertEquals(Timestamp.valueOf(localDateTime), javaData);
+        Assertions.assertEquals(Timestamp.valueOf(localDateTime), javaData);
 
         WriteCellData<?> writeCellData =
                 converter.convertToExcelData(Timestamp.valueOf(localDateTime), null, GLOBAL_CONFIGURATION);
-        assertEquals(0, writeCellData.getNumberValue().compareTo(BigDecimal.valueOf(excelDate)));
+        Assertions.assertEquals(0, writeCellData.getNumberValue().compareTo(BigDecimal.valueOf(excelDate)));
     }
 
     @Test
@@ -96,11 +92,40 @@ public class TimestampConverterTest {
         double excelDate1904 = DateUtil.getExcelDate(localDateTime, true);
         Timestamp javaData = converter.convertToJavaData(
                 new ReadCellData<>(BigDecimal.valueOf(excelDate1904)), contentProperty, GLOBAL_CONFIGURATION);
-        assertEquals(Timestamp.valueOf(localDateTime), javaData);
+        Assertions.assertEquals(Timestamp.valueOf(localDateTime), javaData);
 
         WriteCellData<?> writeCellData =
                 converter.convertToExcelData(Timestamp.valueOf(localDateTime), contentProperty, GLOBAL_CONFIGURATION);
-        assertEquals(0, writeCellData.getNumberValue().compareTo(BigDecimal.valueOf(excelDate1904)));
+        Assertions.assertEquals(0, writeCellData.getNumberValue().compareTo(BigDecimal.valueOf(excelDate1904)));
+    }
+
+    @Test
+    void numberConverterFallsBackToGlobalWindowingWhenFormatLeaves1904Unset() throws Exception {
+        TimestampNumberConverter converter = new TimestampNumberConverter();
+        LocalDateTime localDateTime = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
+
+        ExcelContentProperty contentProperty = new ExcelContentProperty();
+        contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy/MM/dd HH:mm:ss", null));
+
+        double excelDate = DateUtil.getExcelDate(localDateTime);
+        Timestamp javaData = converter.convertToJavaData(
+                new ReadCellData<>(BigDecimal.valueOf(excelDate)), contentProperty, GLOBAL_CONFIGURATION);
+        Assertions.assertEquals(Timestamp.valueOf(localDateTime), javaData);
+
+        WriteCellData<?> writeCellData =
+                converter.convertToExcelData(Timestamp.valueOf(localDateTime), contentProperty, GLOBAL_CONFIGURATION);
+        Assertions.assertEquals(0, writeCellData.getNumberValue().compareTo(BigDecimal.valueOf(excelDate)));
+
+        GlobalConfiguration globalConfiguration1904 = new GlobalConfiguration();
+        globalConfiguration1904.setUse1904windowing(Boolean.TRUE);
+        double excelDate1904 = DateUtil.getExcelDate(localDateTime, true);
+        Timestamp javaData1904 = converter.convertToJavaData(
+                new ReadCellData<>(BigDecimal.valueOf(excelDate1904)), contentProperty, globalConfiguration1904);
+        Assertions.assertEquals(Timestamp.valueOf(localDateTime), javaData1904);
+
+        WriteCellData<?> writeCellData1904 = converter.convertToExcelData(
+                Timestamp.valueOf(localDateTime), contentProperty, globalConfiguration1904);
+        Assertions.assertEquals(0, writeCellData1904.getNumberValue().compareTo(BigDecimal.valueOf(excelDate1904)));
     }
 
     @Test
@@ -110,10 +135,10 @@ public class TimestampConverterTest {
 
         Timestamp javaData =
                 converter.convertToJavaData(new ReadCellData<>("2020-01-01 01:01:01"), null, GLOBAL_CONFIGURATION);
-        assertEquals(timestamp, javaData);
+        Assertions.assertEquals(timestamp, javaData);
 
         WriteCellData<?> writeCellData = converter.convertToExcelData(timestamp, null, GLOBAL_CONFIGURATION);
-        assertEquals("2020-01-01 01:01:01", writeCellData.getStringValue());
+        Assertions.assertEquals("2020-01-01 01:01:01", writeCellData.getStringValue());
     }
 
     @Test
@@ -130,10 +155,10 @@ public class TimestampConverterTest {
 
         Timestamp javaData = converter.convertToJavaData(
                 new ReadCellData<>("01 January 2020 01:01:01"), contentProperty, globalConfiguration);
-        assertEquals(timestamp, javaData);
+        Assertions.assertEquals(timestamp, javaData);
 
         WriteCellData<?> writeCellData = converter.convertToExcelData(timestamp, contentProperty, globalConfiguration);
-        assertEquals("01 January 2020 01:01:01", writeCellData.getStringValue());
+        Assertions.assertEquals("01 January 2020 01:01:01", writeCellData.getStringValue());
     }
 
     @Test
@@ -142,9 +167,9 @@ public class TimestampConverterTest {
         Timestamp timestamp = Timestamp.valueOf("2020-01-01 01:01:01");
 
         WriteCellData<?> writeCellData = converter.convertToExcelData(timestamp, null, GLOBAL_CONFIGURATION);
-        assertEquals(CellDataTypeEnum.DATE, writeCellData.getType());
-        assertEquals(timestamp.toLocalDateTime(), writeCellData.getDateValue());
-        assertEquals(
+        Assertions.assertEquals(CellDataTypeEnum.DATE, writeCellData.getType());
+        Assertions.assertEquals(timestamp.toLocalDateTime(), writeCellData.getDateValue());
+        Assertions.assertEquals(
                 DateUtils.defaultDateFormat,
                 writeCellData.getWriteCellStyle().getDataFormatData().getFormat());
     }

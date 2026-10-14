@@ -281,7 +281,11 @@ public class CsvWorkbook implements Workbook {
 
     @Override
     public void write(OutputStream stream) throws IOException {
-        csvSheet.close();
+        // A writer finished without any sheet written has no CsvSheet to flush - like xlsx, that
+        // simply produces an empty output instead of failing.
+        if (csvSheet != null) {
+            csvSheet.close();
+        }
     }
 
     @Override

@@ -173,12 +173,14 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                         shiftMaxRow = ac.getRowIndex();
                     }
                 }
-                shiftRows(collectionData.size(), analysisCellList);
-                // POI shiftRows does not update formula references in rows outside the
-                // shifted range. Shift the cached formula text manually so copyFormulaCells
-                // translates the post-shift formula.
-                if (shiftNumber > 0) {
-                    refreshFormulaCacheAfterShift(shiftMaxRow + 1, shiftNumber);
+                if (shiftRows(collectionData.size(), analysisCellList)) {
+                    // POI shiftRows does not update formula references in rows outside the
+                    // shifted range. Shift the cached formula text so copyFormulaCells
+                    // translates the post-shift formula. Only when rows actually moved.
+                    refreshFormulaCacheAfterShift(
+                            shiftMaxRow + 1,
+                            writeContext.writeSheetHolder().getCachedSheet().getLastRowNum(),
+                            shiftNumber);
                 }
             }
             while (iterator.hasNext()) {
@@ -189,9 +191,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
     }
 
-    private void shiftRows(int size, List<AnalysisCell> analysisCellList) {
+    private boolean shiftRows(int size, List<AnalysisCell> analysisCellList) {
         if (CollectionUtils.isEmpty(analysisCellList)) {
-            return;
+            return false;
         }
         int maxRowIndex = 0;
         Map<AnalysisCell, Integer> collectionLastIndexMap = collectionLastIndexCache.get(currentUniqueDataFlag);
@@ -212,7 +214,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         int lastRowIndex = cachedSheet.getLastRowNum();
         if (maxRowIndex >= lastRowIndex) {
-            return;
+            return false;
         }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
         int number = size;
@@ -220,13 +222,14 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             number--;
         }
         if (number <= 0) {
-            return;
+            return false;
         }
         sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
 
         // The current data is greater than unity rowindex increase
         increaseRowIndex(templateAnalysisCache, number, maxRowIndex);
         increaseRowIndex(templateCollectionAnalysisCache, number, maxRowIndex);
+        return true;
     }
 
     private void increaseRowIndex(
@@ -611,45 +614,43 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
      * shifted rows. The cached formula text is pre-shift; refresh it so copyFormulaCells
      * translates the shifted formula rather than the stale original.
      */
-    private void refreshFormulaCacheAfterShift(int shiftStartRow, int shiftAmount) {
+    /**
+     * After {@code Sheet.shiftRows} has moved rows, POI updates formulas in the shifted
+     * rows but not in rows outside the shifted range (e.g. the collection template row).
+     * Refresh the cached formula text with {@link FormulaShifter} so {@code copyFormulaCells}
+     * translates the post-shift formula. Only called when rows were actually shifted.
+     */
+    private void refreshFormulaCacheAfterShift(int shiftStartRow, int shiftEndRow, int shiftAmount) {
         List<TemplateFormulaCell> formulaCellList = templateFormulaCellsCache.get(currentUniqueDataFlag);
         if (CollectionUtils.isEmpty(formulaCellList)) {
             return;
         }
+        Workbook templateWorkbook = writeContext.writeWorkbookHolder().getCachedWorkbook();
+        FormulaParsingWorkbook parsingWorkbook = createFormulaParsingWorkbook(templateWorkbook);
+        if (parsingWorkbook == null) {
+            return;
+        }
+        Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
+        String sheetName = cachedSheet.getSheetName();
+        int externSheetIndex = parsingWorkbook.getExternalSheetIndex(sheetName);
         for (TemplateFormulaCell tcf : formulaCellList) {
-            String shifted = shiftRowReferencesInFormula(tcf.getFormula(), shiftStartRow, shiftAmount);
-            if (shifted != null && !shifted.equals(tcf.getFormula())) {
-                tcf.setFormula(shifted);
+            try {
+                Ptg[] ptgs = FormulaParser.parse(tcf.getFormula(), parsingWorkbook, FormulaType.CELL, externSheetIndex);
+                FormulaShifter shifter = FormulaShifter.createForRowShift(
+                        externSheetIndex,
+                        sheetName,
+                        shiftStartRow,
+                        shiftEndRow,
+                        shiftAmount,
+                        parsingWorkbook.getSpreadsheetVersion());
+                shifter.adjustFormula(ptgs, externSheetIndex);
+                tcf.setFormula(FormulaRenderer.toFormulaString((FormulaRenderingWorkbook) parsingWorkbook, ptgs));
+            } catch (Exception e) {
+                // Cannot parse/shift; keep the pre-shift formula so copyFormulaCells
+                // can still translate it relative to the target row.
             }
         }
     }
-
-    /**
-     * Shift row references in a formula string by {@code amount} rows when the referenced
-     * row is at or after {@code startRow}. Handles both relative ({@code A4}) and absolute
-     * ({@code $A$4}) references. POI's shiftRows does not update formulas in rows outside
-     * the shifted range, so this is needed for cached template formulas.
-     */
-    private static String shiftRowReferencesInFormula(String formula, int startRow, int amount) {
-        if (formula == null || formula.isEmpty()) {
-            return formula;
-        }
-        java.util.regex.Matcher m = ROW_REF_PATTERN.matcher(formula);
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            int rowIdx = Integer.parseInt(m.group(2)) - 1;
-            if (rowIdx >= startRow) {
-                m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(m.group(1) + (rowIdx + amount + 1)));
-            } else {
-                m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(m.group(0)));
-            }
-        }
-        m.appendTail(sb);
-        return sb.toString();
-    }
-
-    private static final java.util.regex.Pattern ROW_REF_PATTERN =
-            java.util.regex.Pattern.compile("(\\$?[A-Z]+\\$?)(\\d+)");
 
     private void copyFormulaCells(FillConfig fillConfig, Integer relativeRowIndex) {
         if (relativeRowIndex == null || relativeRowIndex == 0) {
@@ -687,6 +688,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             String translatedFormula =
                     translateFormula(cachedSheet, templateFormulaCell, targetRowIndex, targetColumnIndex, vertical);
+            if (translatedFormula == null) {
+                continue;
+            }
             try {
                 targetCell.setCellFormula(translatedFormula);
             } catch (FormulaParseException e) {
@@ -724,7 +728,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         Workbook templateWorkbook = writeContext.writeWorkbookHolder().getCachedWorkbook();
         FormulaParsingWorkbook parsingWorkbook = createFormulaParsingWorkbook(templateWorkbook);
         if (parsingWorkbook == null) {
-            return formula;
+            return null;
         }
         try {
             String sheetName = cachedSheet.getSheetName();
@@ -765,7 +769,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             return FormulaRenderer.toFormulaString((FormulaRenderingWorkbook) parsingWorkbook, ptgs);
         } catch (Exception e) {
-            return formula;
+            // Cannot translate the formula to the target cell; returning the original
+            // would silently point at wrong cells. Return null so copyFormulaCells
+            // skips it rather than writing an incorrect formula.
+            return null;
         }
     }
 

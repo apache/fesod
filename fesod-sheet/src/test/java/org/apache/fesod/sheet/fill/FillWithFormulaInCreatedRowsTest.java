@@ -251,9 +251,51 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
             Sheet sheet = workbook.getSheetAt(0);
-            // The live sheet's template row keeps the pre-shift formula; what matters is
-            // that the created row translates from the post-shift formula (A5*2 -> A6*2),
-            // not the stale pre-shift text (A4*2 -> A5*2).
+            // The template has only rows 0-1, so shiftRows returns early and the formula
+            // cache is NOT refreshed. Copying A4*2 to row 2 should give A5*2.
+            Assertions.assertEquals("A5*2", formulaOf(sheet, 2, 1));
+        }
+    }
+
+    /**
+     * forceNewRow with a populated row below the collection: shiftRows actually moves
+     * rows, so the cached formula text must be refreshed before copying.
+     */
+    @Test
+    void forceNewRowShiftsFormulaCacheWhenRowsMove() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A4*2");
+            // A populated row below the collection so shiftRows has something to move.
+            Row belowRow = sheet.createRow(3);
+            belowRow.createCell(0).setCellValue("below");
+            belowRow.createCell(1).setCellFormula("A4*10");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(2)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // shiftRows(2, ...) moves row 3 down by 1 (number = size-1 = 1).
+            // Template formula A4*2 at row 1 is outside the shifted range (rows 2+),
+            // but its reference to A4 (row 3) moves to row 4 -> A5*2 after refresh.
+            // Created row at row 2: translates A5*2 -> A6*2.
+            Assertions.assertEquals("A5*2", formulaOf(sheet, 1, 1));
             Assertions.assertEquals("A6*2", formulaOf(sheet, 2, 1));
         }
     }

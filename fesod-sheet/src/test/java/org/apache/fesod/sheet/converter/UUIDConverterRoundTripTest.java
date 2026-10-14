@@ -45,13 +45,13 @@ class UUIDConverterRoundTripTest extends AbstractExcelTest {
     @ExcelFormatSource
     void roundTripsUuidAndNullFieldsWithoutCustomRegistration(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
-        UuidData first = new UuidData();
+        UUIDData first = new UUIDData();
         first.setId(UUID.fromString(TEXT));
         first.setLabel("populated");
-        UuidData second = new UuidData();
+        UUIDData second = new UUIDData();
         second.setLabel("null UUID");
-        List<UuidData> expected = Arrays.asList(first, second);
-        Assertions.assertEquals(expected, RoundTripHelper.writeAndRead(file, UuidData.class, expected));
+        List<UUIDData> expected = Arrays.asList(first, second);
+        Assertions.assertEquals(expected, RoundTripHelper.writeAndRead(file, UUIDData.class, expected));
         List<StringData> strings = RoundTripHelper.read(file, StringData.class);
         Assertions.assertEquals(TEXT, strings.get(0).getId());
     }
@@ -67,7 +67,7 @@ class UUIDConverterRoundTripTest extends AbstractExcelTest {
         second.setId("");
         second.setLabel("blank UUID");
         RoundTripHelper.write(file, StringData.class, Arrays.asList(first, second));
-        List<UuidData> rows = RoundTripHelper.read(file, UuidData.class);
+        List<UUIDData> rows = RoundTripHelper.read(file, UUIDData.class);
         Assertions.assertEquals(2, rows.size());
         Assertions.assertEquals(UUID.fromString(TEXT), rows.get(0).getId());
         Assertions.assertNull(rows.get(1).getId());
@@ -82,12 +82,12 @@ class UUIDConverterRoundTripTest extends AbstractExcelTest {
         row.setLabel("invalid");
         RoundTripHelper.write(file, StringData.class, Collections.singletonList(row));
         ExcelDataConvertException error = Assertions.assertThrows(
-                ExcelDataConvertException.class, () -> RoundTripHelper.read(file, UuidData.class));
+                ExcelDataConvertException.class, () -> RoundTripHelper.read(file, UUIDData.class));
         Assertions.assertInstanceOf(IllegalArgumentException.class, error.getCause());
     }
 
     @Data
-    public static class UuidData {
+    public static class UUIDData {
         private UUID id;
         private String label;
     }

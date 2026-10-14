@@ -74,18 +74,17 @@ public class DefaultConverterLoaderTest {
     }
 
     @Test
-    void loadConvertersRegistersUuidFamily() {
+    void loadConvertersRegistersUUIDFamily() {
         Assertions.assertInstanceOf(
                 UUIDStringConverter.class,
                 DefaultConverterLoader.loadDefaultReadConverter()
                         .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(UUID.class)));
         Assertions.assertInstanceOf(
                 UUIDStringConverter.class,
-                DefaultConverterLoader.loadDefaultWriteConverter().get(ConverterKeyBuild.buildKey(UUID.class)));
-        Assertions.assertInstanceOf(
-                UUIDStringConverter.class,
-                DefaultConverterLoader.loadDefaultWriteConverter()
-                        .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
+                writeConverter.get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
     }
 
     @Test

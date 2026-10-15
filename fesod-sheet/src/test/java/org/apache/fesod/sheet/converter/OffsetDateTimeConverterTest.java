@@ -1,0 +1,228 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.apache.fesod.sheet.converter;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
+import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeDateConverter;
+import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeNumberConverter;
+import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeStringConverter;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.metadata.GlobalConfiguration;
+import org.apache.fesod.sheet.metadata.data.ReadCellData;
+import org.apache.fesod.sheet.metadata.data.WriteCellData;
+import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
+import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag(Tags.UNIT)
+class OffsetDateTimeConverterTest {
+    private static final OffsetDateTime VALUE = OffsetDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneOffset.ofHours(8));
+
+    @AfterEach
+    void tearDown() {
+        DateUtils.removeThreadLocalCache();
+    }
+
+    @Test
+    void dateConverterDropsOffsetWhilePreservingLocalDateTime() throws Exception {
+        WriteCellData<?> result =
+                new OffsetDateTimeDateConverter().convertToExcelData(VALUE, null, new GlobalConfiguration());
+        Assertions.assertEquals(CellDataTypeEnum.DATE, result.getType());
+        Assertions.assertEquals(VALUE.toLocalDateTime(), result.getDateValue());
+    }
+
+    @Test
+    void numberConverterDropsOffsetWhilePreservingLocalDateTime() {
+        OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        WriteCellData<?> written = converter.convertToExcelData(VALUE, null, globalConfiguration);
+        OffsetDateTime read =
+                converter.convertToJavaData(new ReadCellData<>(written.getNumberValue()), null, globalConfiguration);
+        Assertions.assertEquals(
+                VALUE.toLocalDateTime().atZone(ZoneId.systemDefault()).toOffsetDateTime(), read);
+    }
+
+    @Test
+    void stringConverterPreservesOffsetInIsoText() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        WriteCellData<?> written = converter.convertToExcelData(VALUE, null, globalConfiguration);
+        Assertions.assertEquals(
+                VALUE,
+                converter.convertToJavaData(new ReadCellData<>(written.getStringValue()), null, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterUsesConfiguredPattern() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss Z", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        Assertions.assertEquals(
+                "2020-01-02 03:04:05 +0800",
+                converter
+                        .convertToExcelData(VALUE, property, globalConfiguration)
+                        .getStringValue());
+    }
+
+    @Test
+    void stringConverterRejectsTextWithoutOffset() {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(
+                        new ReadCellData<>("2020-01-02T03:04:05"), null, globalConfiguration));
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(
+                        new ReadCellData<>("2020-01-02 03:04:05"), null, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterRejectsTextNotMatchingConfiguredPattern() {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy/MM/dd HH:mm:ss XXX", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02T03:04:05");
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(cellData, property, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterReadsBackConfiguredPatternWithOffset() {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss Z", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        ReadCellData<String> cellData = new ReadCellData<>("2020-01-02 03:04:05 +0800");
+        Assertions.assertEquals(VALUE, converter.convertToJavaData(cellData, property, globalConfiguration));
+    }
+
+    @Test
+    void stringConverterUsesDefaultLocaleWhenLocaleIsNull() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss Z", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setLocale(null);
+        Assertions.assertEquals(
+                "2020-01-02 03:04:05 +0800",
+                converter
+                        .convertToExcelData(VALUE, property, globalConfiguration)
+                        .getStringValue());
+    }
+
+    @Test
+    void stringConverterHonoursConfiguredLocale() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("dd MMMM yyyy HH:mm:ss XXX", false));
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setLocale(Locale.GERMAN);
+        WriteCellData<?> written = converter.convertToExcelData(VALUE, property, globalConfiguration);
+        Assertions.assertEquals("02 Januar 2020 03:04:05 +08:00", written.getStringValue());
+        Assertions.assertEquals(
+                VALUE,
+                converter.convertToJavaData(
+                        new ReadCellData<>(written.getStringValue()), property, globalConfiguration));
+    }
+
+    @Test
+    void numberConverterReturnsNullForInvalidExcelDate() {
+        OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        Assertions.assertNull(
+                converter.convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, globalConfiguration));
+    }
+
+    @Test
+    void dateConverterFallsBackToDefaultFormatForEmptyDateTimeFormat() throws Exception {
+        OffsetDateTimeDateConverter converter = new OffsetDateTimeDateConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
+        WriteCellData<?> result = converter.convertToExcelData(VALUE, property, new GlobalConfiguration());
+        Assertions.assertEquals(
+                DateUtils.defaultDateFormat,
+                result.getWriteCellStyle().getDataFormatData().getFormat());
+    }
+
+    @Test
+    void numberConverterDefaultsNullUse1904windowingToFalse() {
+        OffsetDateTimeNumberConverter converter = new OffsetDateTimeNumberConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setUse1904windowing(null);
+        WriteCellData<?> written = converter.convertToExcelData(VALUE, null, globalConfiguration);
+        Assertions.assertNotNull(written.getNumberValue());
+    }
+
+    @Test
+    void stringConverterWithEmptyOrNullPatternFallsBackToIso() throws Exception {
+        OffsetDateTimeStringConverter converter = new OffsetDateTimeStringConverter();
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+
+        ExcelContentProperty emptyProperty = new ExcelContentProperty();
+        emptyProperty.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
+        WriteCellData<?> writtenEmpty = converter.convertToExcelData(VALUE, emptyProperty, globalConfiguration);
+        Assertions.assertEquals(
+                VALUE,
+                converter.convertToJavaData(
+                        new ReadCellData<>(writtenEmpty.getStringValue()), emptyProperty, globalConfiguration));
+
+        ExcelContentProperty nullFormatProperty = new ExcelContentProperty();
+        nullFormatProperty.setDateTimeFormatProperty(new DateTimeFormatProperty(null, false));
+        WriteCellData<?> writtenNullFormat =
+                converter.convertToExcelData(VALUE, nullFormatProperty, globalConfiguration);
+        Assertions.assertEquals(
+                VALUE,
+                converter.convertToJavaData(
+                        new ReadCellData<>(writtenNullFormat.getStringValue()),
+                        nullFormatProperty,
+                        globalConfiguration));
+    }
+
+    @Test
+    void convertersAreRegisteredForSupportedDirections() {
+        Assertions.assertEquals(
+                OffsetDateTimeDateConverter.class,
+                DefaultConverterLoader.loadDefaultWriteConverter()
+                        .get(ConverterKeyBuild.buildKey(OffsetDateTime.class))
+                        .getClass());
+        Assertions.assertEquals(
+                2,
+                DefaultConverterLoader.loadAllConverter().entrySet().stream()
+                        .filter(entry -> entry.getKey().getClazz() == OffsetDateTime.class)
+                        .count());
+    }
+}

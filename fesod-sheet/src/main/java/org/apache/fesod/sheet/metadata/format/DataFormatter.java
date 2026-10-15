@@ -476,7 +476,7 @@ public class DataFormatter {
     }
 
     private static String quoteEscapedPercent(String formatStr) {
-        return formatStr.contains("\\%") ? formatStr.replace("\\%", "'%'") : formatStr;
+        return formatStr.replace("\\%", "'%'");
     }
 
     private String cleanFormatForNumber(String formatStr) {

@@ -86,6 +86,7 @@ import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
+import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.converters.year.YearStringConverter;
 
 /**
@@ -165,6 +166,8 @@ public class DefaultConverterLoader {
         putAllConverter(new StringStringConverter());
         putAllConverter(new StringErrorConverter());
 
+        putAllConverter(new UUIDStringConverter());
+
         putAllConverter(new YearStringConverter());
         allConverter = Collections.unmodifiableMap(allConverter);
     }
@@ -195,6 +198,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new ByteArrayImageConverter());
         putWriteConverter(new BoxingByteArrayImageConverter());
         putWriteConverter(new UrlImageConverter());
+        putWriteConverter(new UUIDStringConverter());
 
         // In some cases, it must be converted to string
         putWriteStringConverter(new BigDecimalStringConverter());
@@ -215,6 +219,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LongStringConverter());
         putWriteStringConverter(new ShortStringConverter());
         putWriteStringConverter(new StringStringConverter());
+        putWriteStringConverter(new UUIDStringConverter());
         putWriteStringConverter(new YearStringConverter());
         defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
     }

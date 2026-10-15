@@ -391,9 +391,30 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
             Assertions.assertNotNull(copy2, "Second copy formula must not be null");
             Assertions.assertFalse(copy1.contains("#REF!"), "First copy must not contain #REF!: " + copy1);
             Assertions.assertFalse(copy2.contains("#REF!"), "Second copy must not contain #REF!: " + copy2);
-            // All three formulas should be consistent with a single row-shift operation:
-            // the relative offset between consecutive rows must be 1.
-            Assertions.assertEquals(sourceFormula, copy1, "Source and first copy must use the same shift");
+            // Verify consistency: the relative offset between consecutive rows must be 1,
+            // meaning every copied formula is exactly one row below the previous one.
+            // The source formula at row 1 is the shifted original; copies at rows 2 and 3
+            // are translated copies with +1 row each step.
+            String row1 = formulaOf(sheet, 1, 1);
+            String row2 = formulaOf(sheet, 2, 1);
+            String row3 = formulaOf(sheet, 3, 1);
+            // Row offsets must be monotonic and consistent: row2 = row1 + 1, row3 = row2 + 1.
+            // Verify by checking the row numbers in the formulas increase by 1 each row.
+            java.util.regex.Matcher m1 =
+                    java.util.regex.Pattern.compile("A(\\d+)").matcher(row1);
+            java.util.regex.Matcher m2 =
+                    java.util.regex.Pattern.compile("A(\\d+)").matcher(row2);
+            java.util.regex.Matcher m3 =
+                    java.util.regex.Pattern.compile("A(\\d+)").matcher(row3);
+            if (m1.find() && m2.find() && m3.find()) {
+                int r1 = Integer.parseInt(m1.group(1));
+                int r2 = Integer.parseInt(m2.group(1));
+                int r3 = Integer.parseInt(m3.group(1));
+                Assertions.assertEquals(1, r2 - r1, "Row offset between source and first copy must be 1");
+                Assertions.assertEquals(1, r3 - r2, "Row offset between first and second copy must be 1");
+            } else {
+                Assertions.fail("Could not parse row numbers from formulas: " + row1 + ", " + row2 + ", " + row3);
+            }
         }
     }
 }

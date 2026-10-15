@@ -43,7 +43,8 @@ public class TimestampDateConverter implements Converter<Timestamp> {
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             format = contentProperty.getDateTimeFormatProperty().getFormat();
         }
-        WorkBookUtil.fillDataFormat(cellData, format, DateUtils.defaultDateFormat);
+        WorkBookUtil.fillDataFormat(
+                cellData, format == null || format.isEmpty() ? null : format, DateUtils.defaultDateFormat);
         return cellData;
     }
 }

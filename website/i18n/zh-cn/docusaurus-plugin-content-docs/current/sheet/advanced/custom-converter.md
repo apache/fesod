@@ -68,7 +68,7 @@ public class CustomStringStringConverter implements Converter<String> {
 ### 转换器解析优先级
 
 1. 字段级转换器（`@ExcelProperty(converter = ...)`）— 最高优先级
-2. 构建器级转换器（`.registerConverter(...)`）
+2. 查找键匹配的构建器级转换器（`.registerConverter(...)`）
 3. 内置默认转换器 — 最低优先级
 
 ---
@@ -77,13 +77,26 @@ public class CustomStringStringConverter implements Converter<String> {
 
 ### 使用全局转换器写入
 
+普通 XLSX/XLS 写入按 Java 类型和 `null` Excel 类型键查找全局转换器，因此需要使用上述转换器的以下变体。输出单元格类型仍由返回的 `WriteCellData` 决定；此处返回 `null` 仅改变查找键。
+
+```java
+public class GlobalStringWriteConverter extends CustomStringStringConverter {
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return null;
+    }
+}
+```
+
+写入 CSV 或读取字符串单元格时，请注册返回 `CellDataTypeEnum.STRING` 的原始 `CustomStringStringConverter`。
+
 ```java
 @Test
 public void customConverterWrite() {
     String fileName = "customConverterWrite" + System.currentTimeMillis() + ".xlsx";
 
     FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new CustomStringStringConverter())
+        .registerConverter(new GlobalStringWriteConverter())
         .sheet()
         .doWrite(data());
 }

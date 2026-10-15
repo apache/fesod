@@ -187,7 +187,7 @@ public class DataFormatter {
             this.locale = locale;
         }
 
-        if (use1904windowing == null) {
+        if (useScientificFormat == null) {
             this.useScientificFormat = Boolean.FALSE;
         } else {
             this.useScientificFormat = useScientificFormat;

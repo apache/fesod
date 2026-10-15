@@ -163,24 +163,13 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             Iterator<?> iterator = collectionData.iterator();
             if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && fillConfig.getForceNewRow()) {
-                int shiftNumber = collectionData.size();
-                if (collectionLastIndexCache.get(currentUniqueDataFlag) == null) {
-                    shiftNumber--;
-                }
-                int shiftMaxRow = 0;
-                for (AnalysisCell ac : analysisCellList) {
-                    if (ac.getRowIndex() > shiftMaxRow) {
-                        shiftMaxRow = ac.getRowIndex();
-                    }
-                }
-                if (shiftRows(collectionData.size(), analysisCellList)) {
+                RowShiftSpec shiftSpec = shiftRows(collectionData.size(), analysisCellList);
+                if (shiftSpec != null) {
                     // POI shiftRows does not update formula references in rows outside the
                     // shifted range. Shift the cached formula text so copyFormulaCells
-                    // translates the post-shift formula. Only when rows actually moved.
-                    refreshFormulaCacheAfterShift(
-                            shiftMaxRow + 1,
-                            writeContext.writeSheetHolder().getCachedSheet().getLastRowNum(),
-                            shiftNumber);
+                    // translates the post-shift formula. The spec was computed from the
+                    // same pre-shift state that Sheet.shiftRows consumed.
+                    refreshFormulaCacheAfterShift(shiftSpec.startRow, shiftSpec.endRow, shiftSpec.amount);
                 }
             }
             while (iterator.hasNext()) {
@@ -191,9 +180,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
     }
 
-    private boolean shiftRows(int size, List<AnalysisCell> analysisCellList) {
+    private RowShiftSpec shiftRows(int size, List<AnalysisCell> analysisCellList) {
         if (CollectionUtils.isEmpty(analysisCellList)) {
-            return false;
+            return null;
         }
         int maxRowIndex = 0;
         Map<AnalysisCell, Integer> collectionLastIndexMap = collectionLastIndexCache.get(currentUniqueDataFlag);
@@ -214,7 +203,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         int lastRowIndex = cachedSheet.getLastRowNum();
         if (maxRowIndex >= lastRowIndex) {
-            return false;
+            return null;
         }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
         int number = size;
@@ -222,14 +211,17 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             number--;
         }
         if (number <= 0) {
-            return false;
+            return null;
         }
-        sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+        // Compute the spec from the pre-shift sheet state — both Sheet.shiftRows
+        // and refreshFormulaCacheAfterShift consume this same instance.
+        RowShiftSpec spec = new RowShiftSpec(maxRowIndex + 1, lastRowIndex, number);
+        sheet.shiftRows(spec.startRow, spec.endRow, spec.amount, true, false);
 
         // The current data is greater than unity rowindex increase
         increaseRowIndex(templateAnalysisCache, number, maxRowIndex);
         increaseRowIndex(templateCollectionAnalysisCache, number, maxRowIndex);
-        return true;
+        return spec;
     }
 
     private void increaseRowIndex(
@@ -963,5 +955,23 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         private Integer sheetNo;
         private String sheetName;
         private String wrapperName;
+    }
+
+    /**
+     * Immutable snapshot of the row-shift parameters computed before
+     * {@code Sheet.shiftRows} mutates the sheet. Both the worksheet shift
+     * and the cached-formula refresh consume the same instance so the two
+     * operations can never disagree on the affected range.
+     */
+    private static final class RowShiftSpec {
+        final int startRow;
+        final int endRow;
+        final int amount;
+
+        RowShiftSpec(int startRow, int endRow, int amount) {
+            this.startRow = startRow;
+            this.endRow = endRow;
+            this.amount = amount;
+        }
     }
 }

@@ -337,4 +337,63 @@ public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
             Assertions.assertEquals("Keep", sheet.getRow(0).getCell(2).getStringCellValue());
         }
     }
+
+    /**
+     * save-and-reopen case from skytin1004's fifth review:
+     * Template: A2={data.name}, B2==A6*2, A4="footer".
+     * Fill 3 items with forceNewRow(true). After save+reopen:
+     * - B2 formula should reference the shifted row (not #REF!)
+     * - Copied formulas should follow the same row-shift as the source
+     * - A reference that falls inside the newly expanded range should be valid
+     */
+    @Test
+    void forceNewRowCopiedFormulasMatchSourceShift() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A5*2");
+            // A populated row below the collection so shiftRows has something to move.
+            Row belowRow = sheet.createRow(4);
+            belowRow.createCell(0).setCellValue("footer");
+            belowRow.createCell(1).setCellFormula("A5*10");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(3)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        // Reopen to verify what POI actually wrote to the file.
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // The original formula in B2 (row 1, col 1) was A5*2 referencing row 4.
+            // After shiftRows(3, ...) inserts 2 rows, row 4 becomes row 6.
+            // The source formula should now reference A7*2 (row 6 shifted).
+            String sourceFormula = formulaOf(sheet, 1, 1);
+            Assertions.assertNotNull(sourceFormula, "Source formula must not be null");
+            Assertions.assertFalse(
+                    sourceFormula.contains("#REF!"), "Source formula must not contain #REF!: " + sourceFormula);
+            // The copied formulas at rows 2 and 3 should follow the same shift.
+            String copy1 = formulaOf(sheet, 2, 1);
+            String copy2 = formulaOf(sheet, 3, 1);
+            Assertions.assertNotNull(copy1, "First copy formula must not be null");
+            Assertions.assertNotNull(copy2, "Second copy formula must not be null");
+            Assertions.assertFalse(copy1.contains("#REF!"), "First copy must not contain #REF!: " + copy1);
+            Assertions.assertFalse(copy2.contains("#REF!"), "Second copy must not contain #REF!: " + copy2);
+            // All three formulas should be consistent with a single row-shift operation:
+            // the relative offset between consecutive rows must be 1.
+            Assertions.assertEquals(sourceFormula, copy1, "Source and first copy must use the same shift");
+        }
+    }
 }

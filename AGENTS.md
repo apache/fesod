@@ -1,4 +1,6 @@
-# Apache Fesod (Incubating) — Copilot Repository Instructions
+# Apache Fesod (Incubating) AI Agent Instructions
+
+This file provides guidance for AI coding agents working with the Apache Fesod (Incubating) codebase.
 
 ## Project Overview
 

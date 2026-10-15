@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.converters.timestamp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -46,8 +47,9 @@ public class TimestampNumberConverter implements Converter<Timestamp> {
     @Override
     public Timestamp convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return Timestamp.valueOf(DateUtils.getLocalDateTime(
-                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration)));
+        LocalDateTime localDateTime = DateUtils.getLocalDateTime(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
+        return localDateTime == null ? null : Timestamp.valueOf(localDateTime);
     }
 
     @Override

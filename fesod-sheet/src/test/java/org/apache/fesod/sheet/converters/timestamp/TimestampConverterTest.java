@@ -129,6 +129,13 @@ class TimestampConverterTest {
     }
 
     @Test
+    void numberConverterReturnsNullForInvalidExcelDate() throws Exception {
+        TimestampNumberConverter converter = new TimestampNumberConverter();
+        Assertions.assertNull(
+                converter.convertToJavaData(new ReadCellData<>(BigDecimal.valueOf(-1)), null, GLOBAL_CONFIGURATION));
+    }
+
+    @Test
     void stringConverterReadAndWrite() throws Exception {
         TimestampStringConverter converter = new TimestampStringConverter();
         Timestamp timestamp = Timestamp.valueOf("2020-01-01 01:01:01");
@@ -169,6 +176,20 @@ class TimestampConverterTest {
         WriteCellData<?> writeCellData = converter.convertToExcelData(timestamp, null, GLOBAL_CONFIGURATION);
         Assertions.assertEquals(CellDataTypeEnum.DATE, writeCellData.getType());
         Assertions.assertEquals(timestamp.toLocalDateTime(), writeCellData.getDateValue());
+        Assertions.assertEquals(
+                DateUtils.defaultDateFormat,
+                writeCellData.getWriteCellStyle().getDataFormatData().getFormat());
+    }
+
+    @Test
+    void dateConverterFallsBackToDefaultFormatForEmptyDateTimeFormat() throws Exception {
+        TimestampDateConverter converter = new TimestampDateConverter();
+        Timestamp timestamp = Timestamp.valueOf("2020-01-01 01:01:01");
+
+        ExcelContentProperty contentProperty = new ExcelContentProperty();
+        contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
+
+        WriteCellData<?> writeCellData = converter.convertToExcelData(timestamp, contentProperty, GLOBAL_CONFIGURATION);
         Assertions.assertEquals(
                 DateUtils.defaultDateFormat,
                 writeCellData.getWriteCellStyle().getDataFormatData().getFormat());

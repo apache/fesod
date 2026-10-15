@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.converters;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.Map;
+import java.util.UUID;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
@@ -29,6 +30,7 @@ import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeStringConverter;
+import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,6 +71,20 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 LocalTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersUUIDFamily() {
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class,
+                DefaultConverterLoader.loadDefaultReadConverter()
+                        .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(UUID.class)));
+        Assertions.assertInstanceOf(
+                UUIDStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
     }
 
     @Test

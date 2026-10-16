@@ -124,8 +124,6 @@ public class DataFormatter {
      */
     private static final String invalidDateTimeString;
 
-    private static final BigDecimal TEN = new BigDecimal(10);
-
     static {
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < 255; i++) {
@@ -204,7 +202,7 @@ public class DataFormatter {
         // String[] formatBits = formatStrIn.split(";");
         // int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2;
         // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
-        String formatStr = dataFormatString;
+        String formatStr = convertExclamationEscapes(dataFormatString);
 
         // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
@@ -327,10 +325,96 @@ public class DataFormatter {
             return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
         }
 
+        // DecimalFormat cannot show literal text between digit placeholders, e.g. the
+        // escaped dot in "0\\.0," which displays 12345 as "1.2", so let CellFormat handle it
+        if (hasLiteralBetweenDigits(formatStr)) {
+            try {
+                return new CellFormatWrapper(CellFormat.getInstance(locale, formatStr.replace("'%'", "\\%")));
+            } catch (Exception e) {
+                log.warn("Formatting failed for format {}, falling back", formatStr, e);
+            }
+        }
+
         if (numPattern.matcher(formatStr).find()) {
             return createNumberFormat(formatStr);
         }
         return getDefaultFormat();
+    }
+
+    /**
+     * Excel treats {@code !} like {@code \}: it displays the next character literally.
+     * Rewrite such escapes as {@code \}, which the rest of the formatting code understands.
+     * Quoted text, bracketed sections and the operands of {@code _} and {@code *} are left alone.
+     */
+    private static String convertExclamationEscapes(String formatStr) {
+        if (formatStr == null || formatStr.indexOf('!') < 0) {
+            return formatStr;
+        }
+        StringBuilder sb = new StringBuilder(formatStr.length());
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            if (c == '"' || c == '[') {
+                int end = formatStr.indexOf(c == '"' ? '"' : ']', i + 1);
+                end = end < 0 ? formatStr.length() - 1 : end;
+                sb.append(formatStr, i, end + 1);
+                i = end;
+            } else if ((c == '\\' || c == '_' || c == '*') && i < formatStr.length() - 1) {
+                sb.append(c).append(formatStr.charAt(++i));
+            } else if (c == '!' && i < formatStr.length() - 1) {
+                sb.append('\\').append(formatStr.charAt(++i));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Whether any section of the number format has quoted or escaped text with a digit
+     * placeholder both before and after it, e.g. {@code 0\.0} or {@code 0"-"00}.
+     */
+    private static boolean hasLiteralBetweenDigits(String formatStr) {
+        boolean seenDigit = false;
+        boolean literalAfterDigit = false;
+        for (int i = 0; i < formatStr.length(); i++) {
+            char c = formatStr.charAt(i);
+            switch (c) {
+                case '"': {
+                    int end = formatStr.indexOf('"', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                    literalAfterDigit |= seenDigit;
+                    break;
+                }
+                case '[': {
+                    int end = formatStr.indexOf(']', i + 1);
+                    i = end < 0 ? formatStr.length() : end;
+                    break;
+                }
+                case '\\':
+                    i++;
+                    literalAfterDigit |= seenDigit;
+                    break;
+                case '_':
+                case '*':
+                    i++;
+                    break;
+                case ';':
+                    seenDigit = false;
+                    literalAfterDigit = false;
+                    break;
+                case '0':
+                case '#':
+                case '?':
+                    if (literalAfterDigit) {
+                        return true;
+                    }
+                    seenDigit = true;
+                    break;
+                default:
+                    // other characters don't affect the result
+            }
+        }
+        return false;
     }
 
     private Format checkSpecialConverter(String dataFormatString) {
@@ -539,16 +623,10 @@ public class DataFormatter {
             setExcelStyleRoundingMode(df);
             Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
             if (endsWithCommasMatcher.find()) {
-                int index_point = pattern.indexOf(".");
-                int index_comma = pattern.indexOf(",");
-                int cnt = index_comma - index_point - 1;
                 String commas = (endsWithCommasMatcher.group(1));
                 BigDecimal temp = BigDecimal.ONE;
                 for (int i = 0; i < commas.length(); ++i) {
                     temp = temp.multiply(ONE_THOUSAND);
-                }
-                for (int i = 0; i < cnt; i++) {
-                    temp = temp.multiply(TEN);
                 }
                 divider = temp;
             } else {
@@ -559,7 +637,8 @@ public class DataFormatter {
         private Object scaleInput(Object obj) {
             if (divider != null) {
                 if (obj instanceof BigDecimal) {
-                    obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
+                    // dividing by a power of ten is exact, so keep all the digits until formatting
+                    obj = ((BigDecimal) obj).divide(divider);
                 } else if (obj instanceof Double) {
                     obj = (Double) obj / divider.doubleValue();
                 } else {
@@ -860,6 +939,27 @@ public class DataFormatter {
         @Override
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
+        }
+    }
+
+    /**
+     * Cachable wrapper around a {@link CellFormat}, used for number formats that DecimalFormat cannot handle
+     */
+    private static final class CellFormatWrapper extends Format {
+        private final CellFormat cellFormat;
+
+        private CellFormatWrapper(CellFormat cellFormat) {
+            this.cellFormat = cellFormat;
+        }
+
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            return toAppendTo.append(cellFormat.apply(obj).text.trim());
+        }
+
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            return null; // Not supported
         }
     }
 

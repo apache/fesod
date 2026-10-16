@@ -138,10 +138,14 @@ class DataFormatterTest {
                 "   1234567 | #,##0.00,, | 1.23",
                 // a decimal point escaped or quoted as literal text does not start a decimal part
                 "   1234567 | 0\\.0,     | 123.5",
+                "   1234567 | 0!.0,     | 123.5",
                 "      9234 | 0\\.0,     | 0.9",
+                "      9234 | 0!.0,      | 0.9",
                 "   1234567 | 0\".\"0,   | 123.5",
                 "   1234567 | 0\\.00,,   | 0.01",
+                "   1234567 | 0!.00,,   | 0.01",
                 "   1234567 | 0\\.000,   | 1.235",
+                "   1234567 | 0!.000,   | 1.235",
             })
     void scalesByTrailingCommas(String data, String pattern, String expected) {
         Assertions.assertEquals(expected, format(data, pattern));

@@ -486,7 +486,7 @@ public class DataFormatter {
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
             if (c == '_' || c == '*') {
-                if (i > 0 && sb.charAt((i - 1)) == '\\') {
+                if (i > 0 && (sb.charAt(i - 1) == '\\' || sb.charAt(i - 1) == '!')) {
                     // It's escaped, don't worry
                     continue;
                 }
@@ -506,8 +506,8 @@ public class DataFormatter {
         // quoting and scientific notation
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
-            // remove quotes and back slashes
-            if (c == '\\' || c == '"') {
+            // remove quotes and escape characters
+            if (c == '\\' || c == '!' || c == '"') {
                 sb.deleteCharAt(i);
                 i--;
 
@@ -540,7 +540,7 @@ public class DataFormatter {
             boolean quoted = false;
             for (int i = 0; i < formatStr.length(); i++) {
                 char c = formatStr.charAt(i);
-                boolean escaped = c == '\\' && i < formatStr.length() - 1;
+                boolean escaped = (c == '\\' || c == '!') && i < formatStr.length() - 1;
                 if (escaped) {
                     c = formatStr.charAt(++i);
                 } else if (c == '"') {

@@ -344,7 +344,7 @@ mvn versions:set-property -Dproperty=project.build.outputTimestamp -DnewVersion=
 编译预发布RC版本分支源码，并推送二进制包到 [预发仓库](https://repository.apache.org/#stagingRepositories)
 
 ```bash
-mvn clean deploy -Papache-release -DskipTests -Dgpg.skip=false
+mvn clean deploy -Papache-release -Dgpg.skip=false
 ```
 
 使用 Apache ID 登录 ASF Nexus 仓库，找到发布的版本并点击 **Close**。
@@ -476,7 +476,7 @@ which can be found in the keys file:
 https://downloads.apache.org/incubator/fesod/KEYS
 
 Build Environment: JDK 8+, Apache Maven 3.6.0+.
-./mvnw clean package -DskipTests
+./mvnw clean package
 
 The vote will be open for at least 72 hours.
 
@@ -608,7 +608,7 @@ to [ xxxx@apache.org ] which can be found in the keys file:
 https://downloads.apache.org/incubator/fesod/KEYS
 
 Build Environment: JDK 8+, Apache Maven 3.6.0+.
-./mvnw clean package -DskipTests
+./mvnw clean package
 
 The vote will be open for at least 72 hours.
 

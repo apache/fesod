@@ -34,9 +34,10 @@ import java.util.Map;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.common.beans.BeanWrappers;
 import org.apache.fesod.common.util.MemberUtils;
 import org.apache.fesod.common.util.StringUtils;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
 import org.apache.fesod.sheet.metadata.NullObject;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -46,9 +47,18 @@ public class FieldUtils {
 
     private static final int START_RESOLVE_FIELD_LENGTH = 2;
 
+    /**
+     * @deprecated use {@link FieldUtils#getFieldClass(BeanWrapper, String, Object)}
+     */
+    @Deprecated
     public static Class<?> getFieldClass(Map dataMap, String fieldName, Object value) {
-        if (dataMap instanceof BeanMap) {
-            Class<?> fieldClass = ((BeanMap) dataMap).getPropertyType(fieldName);
+        BeanWrapper beanWrapper = BeanWrappers.create(dataMap);
+        return getFieldClass(beanWrapper, fieldName, value);
+    }
+
+    public static Class<?> getFieldClass(BeanWrapper beanWrapper, String fieldName, Object value) {
+        if (beanWrapper != null) {
+            Class<?> fieldClass = beanWrapper.getPropertyType(fieldName);
             if (fieldClass != null) {
                 return fieldClass;
             }

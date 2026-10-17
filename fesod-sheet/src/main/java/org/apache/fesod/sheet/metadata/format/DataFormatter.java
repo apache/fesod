@@ -253,7 +253,7 @@ public class DataFormatter {
     }
 
     private Format createFormat(Short dataFormat, String dataFormatString) {
-        String formatStr = dataFormatString;
+        String formatStr = quoteEscapedPercent(dataFormatString);
 
         Format format = checkSpecialConverter(formatStr);
         if (format != null) {
@@ -475,6 +475,10 @@ public class DataFormatter {
         }
     }
 
+    private static String quoteEscapedPercent(String formatStr) {
+        return formatStr.replace("\\%", "'%'");
+    }
+
     private String cleanFormatForNumber(String formatStr) {
         StringBuilder sb = new StringBuilder(formatStr);
         // If they requested spacers, with "_",
@@ -677,7 +681,11 @@ public class DataFormatter {
      */
     public String format(BigDecimal data, Short dataFormat, String dataFormatString) {
         if (DateUtils.isADateFormat(dataFormat, dataFormatString)) {
-            return getFormattedDateString(data.doubleValue(), dataFormat, dataFormatString);
+            if (DateUtils.isValidExcelDate(data.doubleValue())) {
+                return getFormattedDateString(data.doubleValue(), dataFormat, dataFormatString);
+            }
+
+            return getDefaultFormat().format(data);
         }
         return getFormattedNumberString(data, dataFormat, dataFormatString);
     }

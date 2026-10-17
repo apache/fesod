@@ -159,6 +159,22 @@ class DataFormatterTest {
     @CsvSource(
             delimiter = '|',
             value = {
+                "   5 | 0%              | 500%",
+                "   5 | 0\\%            | 5%",
+                "0.05 | 0\\%            | 0%",
+                "  -5 | 0\\%            | -5%",
+                "   5 | 0.00\\%         | 5.00%",
+                "   5 | 0\\%;[Red]0\\%  | 5%",
+                "   5 | 0\\%;-0\\%;0\\% | 5%",
+            })
+    void doesNotScaleEscapedPercent(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
                 "12345.678 | 0.00E00  | 1.23E+04",
                 " 0.000123 | 0.00E+00 | 1.23E-04",
             })
@@ -230,6 +246,18 @@ class DataFormatterTest {
                 "  42000 | 14 | mm\"-\"dd\"-\"yyyy    | 12-27-2014",
             })
     void unescapesQuotedLiteralsInDatePatterns(String data, short dataFormat, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, dataFormat, pattern));
+    }
+
+    @ParameterizedTest(name = DATE_PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                "               -1 | 14 | yyyy-mm-dd                   | -1",
+                "-123456.789012345 | 14 | yyyy-mm-dd                   | -123456.789",
+                "               -1 | 14 | [>=1]yyyy-mm-dd;\"negative\" | -1",
+            })
+    void fallsBackToGeneralForNegativeDateSerials(String data, short dataFormat, String pattern, String expected) {
         Assertions.assertEquals(expected, format(data, dataFormat, pattern));
     }
 

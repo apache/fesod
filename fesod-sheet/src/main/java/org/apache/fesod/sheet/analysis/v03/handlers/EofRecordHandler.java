@@ -28,8 +28,10 @@ package org.apache.fesod.sheet.analysis.v03.handlers;
 import java.util.LinkedHashMap;
 import org.apache.fesod.common.util.BooleanUtils;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.Cell;
+import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.ReadRowHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadSheetHolder;
 import org.apache.poi.hssf.record.Record;
@@ -57,10 +59,28 @@ public class EofRecordHandler extends AbstractXlsRecordHandler {
         // Sometimes tables lack the end record of the last column
         if (!xlsReadContext.xlsReadSheetHolder().getCellMap().isEmpty()) {
             XlsReadSheetHolder xlsReadSheetHolder = xlsReadContext.xlsReadSheetHolder();
+            RowTypeEnum rowType = xlsReadSheetHolder.getTempRowType();
+            if (rowType == RowTypeEnum.DATA) {
+                boolean hasData = false;
+                for (Cell cell : xlsReadSheetHolder.getCellMap().values()) {
+                    if (!(cell instanceof ReadCellData)) {
+                        hasData = true;
+                        break;
+                    }
+                    ReadCellData<?> readCellData = (ReadCellData<?>) cell;
+                    if (readCellData.getType() != CellDataTypeEnum.EMPTY) {
+                        hasData = true;
+                        break;
+                    }
+                }
+                if (!hasData) {
+                    rowType = RowTypeEnum.EMPTY;
+                }
+            }
             // Forge a termination data
             xlsReadContext.readRowHolder(new ReadRowHolder(
                     xlsReadContext.xlsReadSheetHolder().getRowIndex() + 1,
-                    xlsReadSheetHolder.getTempRowType(),
+                    rowType,
                     xlsReadContext.readSheetHolder().getGlobalConfiguration(),
                     xlsReadSheetHolder.getCellMap()));
             xlsReadContext.analysisEventProcessor().endRow(xlsReadContext);

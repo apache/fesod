@@ -212,6 +212,23 @@ class DataFormatterTest {
     @CsvSource(
             delimiter = '|',
             value = {
+                // literal text after trailing commas, a quoted comma is not a scaler
+                " 1234567 | 0.0,\"万\"       | 1234.6万",
+                " 1234567 | #,##0,,\"M\"     | 1M",
+                " 1234567 | #,##0.0,\",\"    | 1,234.6,",
+                " 1234567 | #,##0.0,\\K     | 1,234.6K",
+                "-1234567 | #,##0,\"K\"      | -1,235K",
+                // grouping commas are not trailing commas
+                " 1234567 | #,##0\" units\"  | 1,234,567 units",
+            })
+    void keepsLiteralTextAfterTrailingCommas(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
                 // '!' displays the next character literally, like '\'
                 " 9234 | 0!.0          | 923.4",
                 " 9234 | 0!.0,         | 0.9",

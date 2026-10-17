@@ -70,6 +70,11 @@ public class EscapedPlaceholderTest extends AbstractExcelTest {
         Assertions.assertEquals(VALUE, fillTemplateWith("{foo}"));
     }
 
+    @Test
+    void escapedPlaceholderBeforeNormalPlaceholderIsHandledIndependently() throws IOException {
+        Assertions.assertEquals("{foo\\} second_value", fillTemplateWith("{foo\\} {bar}"));
+    }
+
     /**
      * Fills a single-cell template holding {@code cellText} and returns the filled value read back
      * from the output file.
@@ -79,6 +84,7 @@ public class EscapedPlaceholderTest extends AbstractExcelTest {
         File output = createTempFile("escaped-placeholder-out", ExcelFormat.XLSX);
         Map<String, Object> data = new HashMap<>();
         data.put(VARIABLE, VALUE);
+        data.put("bar", "second_value");
         FesodSheet.write(output).withTemplate(template).sheet().doFill(data);
         List<Map<Integer, String>> rows =
                 FesodSheet.read(output).sheet().headRowNumber(0).doReadSync();

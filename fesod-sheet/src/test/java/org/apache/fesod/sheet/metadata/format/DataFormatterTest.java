@@ -175,6 +175,79 @@ class DataFormatterTest {
     @CsvSource(
             delimiter = '|',
             value = {
+                // each trailing comma divides by 1000, and the decimal places are kept
+                " 1234567 | #,##0.0, | 1,234.6",
+                "    9234 | 0.0,     | 9.2",
+                " 1234567 | 0.00,,   | 1.23",
+                "-1234567 | #,##0.0, | -1,234.6",
+                " 1234567 | 0,       | 1235",
+                " 1234567 | #,,      | 1",
+                " 1234567 | 0.#,     | 1234.6",
+            })
+    void scalesByTrailingCommas(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                // a literal dot is not a decimal point, the digits either side of it are all integer digits
+                "    9234 | 0\\.0             | 923.4",
+                " 1234567 | 0\\.0,            | 123.5",
+                "    9234 | 0\\.0,            | 0.9",
+                "   -9234 | 0\\.0,            | -0.9",
+                "  123456 | 0\\.0,            | 12.3",
+                " 1234567 | 0\".\"0,          | 123.5",
+                " 1230000 | 0\\.#,            | 123.0",
+                " 1234567 | 0\".0\"0,         | 123.05",
+                " 1234567 | 0\\.00,;-0\\.0,   | 12.35",
+                "-1234567 | 0\\.00,;-0\\.0,   | -123.5",
+            })
+    void keepsLiteralTextBetweenDigits(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                // literal text after trailing commas, a quoted comma is not a scaler
+                " 1234567 | 0.0,\"万\"       | 1234.6万",
+                " 1234567 | #,##0,,\"M\"     | 1M",
+                " 1234567 | #,##0.0,\",\"    | 1,234.6,",
+                " 1234567 | #,##0.0,\\K     | 1,234.6K",
+                "-1234567 | #,##0,\"K\"      | -1,235K",
+                // grouping commas are not trailing commas
+                " 1234567 | #,##0\" units\"  | 1,234,567 units",
+            })
+    void keepsLiteralTextAfterTrailingCommas(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
+                // '!' displays the next character literally, like '\'
+                " 9234 | 0!.0          | 923.4",
+                " 9234 | 0!.0,         | 0.9",
+                "12345 | 0!.0000       | 1.2345",
+                "50000 | 0!.0,\"万\"   | 5.0万",
+                "12345 | [Red]0!.0,    | 1.2",
+                "    5 | 0!!           | 5!",
+                // a '!' that is quoted or escaped is a literal
+                "    5 | 0\\!          | 5!",
+                "    5 | 0\" Hi!\"     | 5 Hi!",
+            })
+    void treatsExclamationMarkAsEscape(String data, String pattern, String expected) {
+        Assertions.assertEquals(expected, format(data, pattern));
+    }
+
+    @ParameterizedTest(name = PATTERN_AND_RESULT)
+    @CsvSource(
+            delimiter = '|',
+            value = {
                 "12345.678 | 0.00E00  | 1.23E+04",
                 " 0.000123 | 0.00E+00 | 1.23E-04",
             })

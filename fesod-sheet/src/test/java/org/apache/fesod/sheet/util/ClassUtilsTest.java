@@ -74,9 +74,7 @@ class ClassUtilsTest {
     @AfterEach
     void tearDown() {
         ClassUtils.removeThreadLocalCache();
-        ClassUtils.FIELD_CACHE.clear();
-        ClassUtils.CONTENT_CACHE.clear();
-        ClassUtils.CLASS_CONTENT_CACHE.clear();
+        ClassUtils.removeInMemoryCache();
     }
 
     private static class SimpleEntity {
@@ -121,10 +119,57 @@ class ClassUtilsTest {
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
 
-        Assertions.assertFalse(ClassUtils.FIELD_CACHE.isEmpty());
+        Assertions.assertFalse(ClassUtils.getFieldCache().isEmpty());
 
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertSame(cache1, cache2);
+    }
+
+    @Test
+    void test_getFieldCache_unmodifiableViewOfTheLiveCache() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
+        ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
+
+        Map<?, ?> fieldCache = ClassUtils.getFieldCache();
+        Assertions.assertFalse(fieldCache.isEmpty());
+        Assertions.assertThrows(UnsupportedOperationException.class, fieldCache::clear);
+
+        ClassUtils.removeInMemoryCache();
+        Assertions.assertTrue(fieldCache.isEmpty());
+    }
+
+    @Test
+    void test_getClassContentCache_unmodifiableViewOfTheLiveCache() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
+        ClassUtils.declaredExcelContentProperty(null, FormatEntity.class, "date", writeHolder);
+
+        Map<Class<?>, Map<String, ExcelContentProperty>> classContentCache = ClassUtils.getClassContentCache();
+        Assertions.assertEquals(
+                "yyyy-MM-dd",
+                classContentCache
+                        .get(FormatEntity.class)
+                        .get("date")
+                        .getDateTimeFormatProperty()
+                        .getFormat());
+        Assertions.assertThrows(UnsupportedOperationException.class, classContentCache::clear);
+
+        ClassUtils.removeInMemoryCache();
+        Assertions.assertTrue(classContentCache.isEmpty());
+    }
+
+    @Test
+    void test_getContentCache_unmodifiableViewOfTheLiveCache() {
+        Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
+        ExcelContentProperty property =
+                ClassUtils.declaredExcelContentProperty(null, FormatEntity.class, "date", writeHolder);
+
+        Map<ClassUtils.ContentPropertyKey, ExcelContentProperty> contentCache = ClassUtils.getContentCache();
+        Assertions.assertSame(
+                property, contentCache.get(new ClassUtils.ContentPropertyKey(null, FormatEntity.class, "date")));
+        Assertions.assertThrows(UnsupportedOperationException.class, contentCache::clear);
+
+        ClassUtils.removeInMemoryCache();
+        Assertions.assertTrue(contentCache.isEmpty());
     }
 
     @Test
@@ -134,7 +179,7 @@ class ClassUtilsTest {
         FieldCache cache1 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertNotNull(cache1);
 
-        Assertions.assertTrue(ClassUtils.FIELD_CACHE.isEmpty());
+        Assertions.assertTrue(ClassUtils.getFieldCache().isEmpty());
 
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
         Assertions.assertSame(cache1, cache2);
@@ -148,7 +193,7 @@ class ClassUtilsTest {
         FieldCache cache2 = ClassUtils.declaredFields(SimpleEntity.class, writeHolder);
 
         Assertions.assertNotSame(cache1, cache2);
-        Assertions.assertTrue(ClassUtils.FIELD_CACHE.isEmpty());
+        Assertions.assertTrue(ClassUtils.getFieldCache().isEmpty());
     }
 
     @Test

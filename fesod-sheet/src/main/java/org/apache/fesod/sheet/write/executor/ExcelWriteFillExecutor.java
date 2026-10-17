@@ -535,6 +535,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             return null;
         }
         StringBuilder preparedData = new StringBuilder();
+        StringBuilder rawPrepareData = new StringBuilder();
         AnalysisCell analysisCell = null;
 
         int startIndex = 0;
@@ -553,19 +554,38 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     continue;
                 }
             }
+            startIndex = prefixIndex + 1;
             int suffixIndex = -1;
-            while (suffixIndex == -1 && startIndex < length) {
-                suffixIndex = value.indexOf(FILL_SUFFIX, startIndex + 1);
-                if (suffixIndex < 0) {
-                    break out;
+            boolean escapedSuffixSeen = false;
+            while (startIndex < length) {
+                int candidateIndex = value.indexOf(FILL_SUFFIX, startIndex);
+                if (candidateIndex < 0) {
+                    break;
                 }
-                startIndex = suffixIndex + 1;
-                char prefixSuffixChar = value.charAt(suffixIndex - 1);
-                if (prefixSuffixChar == IGNORE_CHAR) {
-                    suffixIndex = -1;
+                startIndex = candidateIndex + 1;
+                if (value.charAt(candidateIndex - 1) != IGNORE_CHAR) {
+                    suffixIndex = candidateIndex;
+                    break;
+                }
+                escapedSuffixSeen = true;
+                int nextPrefixIndex = value.indexOf(FILL_PREFIX, startIndex);
+                int nextSuffixIndex = value.indexOf(FILL_SUFFIX, startIndex);
+                if (nextPrefixIndex >= 0 && (nextSuffixIndex < 0 || nextPrefixIndex < nextSuffixIndex)) {
+                    // The opener has no closing brace of its own: keep it and resume at the next placeholder.
+                    rawPrepareData.append(convertPrepareData(value.substring(lastPrepareDataIndex, prefixIndex)));
+                    rawPrepareData.append(value, prefixIndex, candidateIndex + 1);
+                    lastPrepareDataIndex = candidateIndex + 1;
+                    startIndex = lastPrepareDataIndex;
+                    continue out;
                 }
             }
             if (suffixIndex < 0) {
+                if (escapedSuffixSeen) {
+                    // Only escaped closing braces remain in the cell: keep the rest literal.
+                    rawPrepareData.append(convertPrepareData(value.substring(lastPrepareDataIndex, prefixIndex)));
+                    rawPrepareData.append(value.substring(prefixIndex));
+                    lastPrepareDataIndex = length;
+                }
                 break out;
             }
             if (analysisCell == null) {
@@ -588,12 +608,23 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             }
             analysisCell.getVariableList().add(variable);
             if (lastPrepareDataIndex == prefixIndex) {
-                analysisCell.getPrepareDataList().add(StringUtils.EMPTY);
-                if (lastPrepareDataIndex != 0) {
+                if (rawPrepareData.length() > 0) {
+                    String data = rawPrepareData.toString();
+                    rawPrepareData.setLength(0);
+                    preparedData.append(data);
+                    analysisCell.getPrepareDataList().add(data);
                     analysisCell.setOnlyOneVariable(Boolean.FALSE);
+                } else {
+                    analysisCell.getPrepareDataList().add(StringUtils.EMPTY);
+                    if (lastPrepareDataIndex != 0) {
+                        analysisCell.setOnlyOneVariable(Boolean.FALSE);
+                    }
                 }
             } else {
-                String data = convertPrepareData(value.substring(lastPrepareDataIndex, prefixIndex));
+                String data = rawPrepareData
+                        .append(convertPrepareData(value.substring(lastPrepareDataIndex, prefixIndex)))
+                        .toString();
+                rawPrepareData.setLength(0);
                 preparedData.append(data);
                 analysisCell.getPrepareDataList().add(data);
                 analysisCell.setOnlyOneVariable(Boolean.FALSE);
@@ -606,7 +637,14 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             cell.setBlank();
         }
         return dealAnalysisCell(
-                analysisCell, value, rowIndex, lastPrepareDataIndex, length, firstRowCache, preparedData);
+                analysisCell,
+                value,
+                rowIndex,
+                lastPrepareDataIndex,
+                length,
+                firstRowCache,
+                preparedData,
+                rawPrepareData);
     }
 
     private String dealAnalysisCell(
@@ -616,12 +654,21 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             int lastPrepareDataIndex,
             int length,
             Map<UniqueDataFlagKey, Set<Integer>> firstRowCache,
-            StringBuilder preparedData) {
+            StringBuilder preparedData,
+            StringBuilder rawPrepareData) {
         if (analysisCell != null) {
             if (lastPrepareDataIndex == length) {
-                analysisCell.getPrepareDataList().add(StringUtils.EMPTY);
+                if (rawPrepareData.length() > 0) {
+                    analysisCell.getPrepareDataList().add(rawPrepareData.toString());
+                    analysisCell.setOnlyOneVariable(Boolean.FALSE);
+                } else {
+                    analysisCell.getPrepareDataList().add(StringUtils.EMPTY);
+                }
             } else {
-                analysisCell.getPrepareDataList().add(convertPrepareData(value.substring(lastPrepareDataIndex)));
+                String data = rawPrepareData
+                        .append(convertPrepareData(value.substring(lastPrepareDataIndex)))
+                        .toString();
+                analysisCell.getPrepareDataList().add(data);
                 analysisCell.setOnlyOneVariable(Boolean.FALSE);
             }
             UniqueDataFlagKey uniqueDataFlag =

@@ -26,16 +26,29 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.annotation.ExcelProperty;
+import org.apache.fesod.sheet.exception.ExcelWriteDataConvertException;
 import org.apache.fesod.sheet.metadata.csv.CsvCell;
 import org.apache.fesod.sheet.metadata.csv.CsvRow;
 import org.apache.fesod.sheet.metadata.csv.CsvSheet;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.apache.fesod.sheet.write.handler.CellWriteHandler;
+import org.apache.fesod.sheet.write.handler.RowWriteHandler;
+import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
+import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -106,6 +119,208 @@ public class CsvRowTest {
 
         Cell actualCell2 = csvRow.getCell(-1);
         Assertions.assertNull(actualCell2);
+    }
+
+    /**
+     * POI {@link Row#getLastCellNum()} semantics: {@code -1} for a row without
+     * any cell.
+     */
+    @Test
+    void testGetLastCellNumWithEmptyRowShouldReturnMinusOne() {
+        CsvRow row = new CsvRow(csvWorkbook, csvSheet, 0);
+        Assertions.assertEquals(-1, row.getLastCellNum());
+    }
+
+    /**
+     * POI {@link Row#getLastCellNum()} semantics: index of the last cell plus
+     * one. For a dense row with cells at columns 0..2 this equals the cell
+     * count (3).
+     */
+    @Test
+    void testGetLastCellNumWithDenseRowShouldReturnLastColumnPlusOne() {
+        Assertions.assertEquals(3, csvRow.getLastCellNum());
+    }
+
+    /**
+     * POI {@link Row#getLastCellNum()} semantics for sparse rows: cells only
+     * at columns 0 and 5 must yield 6 (index of the last cell plus one), not
+     * the physical cell count (2).
+     * <p>
+     * The canonical POI iteration {@code for (int j = 0; j < row.getLastCellNum(); j++)}
+     * relies on this: before the fix the loop stopped at j = 2 and never reached column 5.
+     */
+    @Test
+    void testGetLastCellNumWithSparseRowShouldReachEveryColumn() {
+        CsvRow row = new CsvRow(csvWorkbook, csvSheet, 0);
+        Cell cell0 = row.createCell(0, CellType.STRING);
+        cell0.setCellValue("ZERO");
+        Cell cell5 = row.createCell(5, CellType.STRING);
+        cell5.setCellValue("FIVE");
+
+        Assertions.assertEquals(6, row.getLastCellNum());
+
+        // Canonical POI iteration must visit the column-5 cell
+        Cell visitedColumn5 = null;
+        for (int j = 0; j < row.getLastCellNum(); j++) {
+            Cell cell = row.getCell(j);
+            if (j == 5) {
+                visitedColumn5 = cell;
+            }
+        }
+        Assertions.assertNotNull(visitedColumn5, "iteration must reach the cell at column 5");
+        Assertions.assertEquals("FIVE", visitedColumn5.getStringCellValue());
+    }
+
+    /**
+     * POI {@link Row} semantics: cells are addressed by column index, not by
+     * their position in the internal storage. Creating cells out of order must
+     * still allow each one to be retrieved from its own column index, and
+     * absent columns must return {@code null}.
+     */
+    @Test
+    void testGetCellWithOutOfOrderCreationShouldReturnCellByColumnIndex() {
+        CsvRow row = new CsvRow(csvWorkbook, csvSheet, 0);
+        Cell cell5 = row.createCell(5, CellType.STRING);
+        cell5.setCellValue("FIVE");
+        Cell cell0 = row.createCell(0, CellType.STRING);
+        cell0.setCellValue("ZERO");
+        Cell cell3 = row.createCell(3, CellType.STRING);
+        cell3.setCellValue("THREE");
+
+        Assertions.assertEquals(0, row.getCell(0).getColumnIndex());
+        Assertions.assertEquals("ZERO", row.getCell(0).getStringCellValue());
+        Assertions.assertEquals(3, row.getCell(3).getColumnIndex());
+        Assertions.assertEquals("THREE", row.getCell(3).getStringCellValue());
+        Assertions.assertEquals(5, row.getCell(5).getColumnIndex());
+        Assertions.assertEquals("FIVE", row.getCell(5).getStringCellValue());
+
+        // Absent columns must not return a neighbor cell
+        Assertions.assertNull(row.getCell(1));
+        Assertions.assertNull(row.getCell(2));
+        Assertions.assertNull(row.getCell(4));
+        Assertions.assertNull(row.getCell(6));
+        Assertions.assertEquals(3, row.getPhysicalNumberOfCells());
+    }
+
+    /**
+     * POI {@link Row#createCell(int)} must replace an existing cell at the same
+     * column instead of appending a second physical cell.
+     */
+    @Test
+    void testCreateCellTwiceOnSameColumnShouldReplaceExistingCell() {
+        CsvRow row = new CsvRow(csvWorkbook, csvSheet, 0);
+        Cell first = row.createCell(5, CellType.STRING);
+        first.setCellValue("first");
+        Cell second = row.createCell(5, CellType.STRING);
+        second.setCellValue("second");
+
+        Assertions.assertEquals(1, row.getPhysicalNumberOfCells());
+        Assertions.assertSame(second, row.getCell(5));
+        Assertions.assertEquals(5, row.getCell(5).getColumnIndex());
+        Assertions.assertEquals("second", row.getCell(5).getStringCellValue());
+    }
+
+    /**
+     * POI {@link Row#removeCell(Cell)} semantics: removing one cell must leave
+     * the remaining cells addressable under their original column indexes.
+     */
+    @Test
+    void testRemoveCellWithMiddleCellShouldKeepRemainingCellsAddressable() {
+        Cell middleCell = csvRow.getCell(1);
+        csvRow.removeCell(middleCell);
+
+        Assertions.assertEquals(2, csvRow.getPhysicalNumberOfCells());
+        Assertions.assertEquals(0, csvRow.getCell(0).getColumnIndex());
+        Assertions.assertEquals("No", csvRow.getCell(0).getStringCellValue());
+        Assertions.assertNull(csvRow.getCell(1));
+        Assertions.assertEquals(2, csvRow.getCell(2).getColumnIndex());
+        Assertions.assertEquals("Age", csvRow.getCell(2).getStringCellValue());
+    }
+
+    /**
+     * A row handler that masks a column by re-creating its cell must replace the cell, as it does on xlsx.
+     */
+    @Test
+    void csvWrite_rowHandlerRecreatingCellShouldReplaceIt() throws Exception {
+        File csvFile = new File(tempDir, "csv-recreate-cell.csv");
+        FastExcel.write(csvFile)
+                .head(head())
+                .registerWriteHandler(new RowWriteHandler() {
+                    @Override
+                    public void afterRowDispose(RowWriteHandlerContext context) {
+                        if (!Boolean.TRUE.equals(context.getHead())) {
+                            context.getRow().createCell(1).setCellValue("***");
+                        }
+                    }
+                })
+                .csv()
+                .doWrite(data());
+
+        List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
+        Assertions.assertEquals(Arrays.asList("1,***,20", "2,***,21", "3,***,20"), lines.subList(1, lines.size()));
+    }
+
+    /**
+     * With {@code @ExcelProperty(index)} gaps the row is sparse, so a row handler must find cells by column index.
+     */
+    @Test
+    void csvWrite_rowHandlerOnSparseRowShouldAddressCellsByColumnIndex() throws Exception {
+        File csvFile = new File(tempDir, "csv-sparse-row.csv");
+        FastExcel.write(csvFile, IndexGapData.class)
+                .registerWriteHandler(new RowWriteHandler() {
+                    @Override
+                    public void afterRowDispose(RowWriteHandlerContext context) {
+                        if (!Boolean.TRUE.equals(context.getHead())) {
+                            Row row = context.getRow();
+                            Cell last = row.getCell(3);
+                            row.createCell(2)
+                                    .setCellValue(last == null ? "missing" : "before " + last.getStringCellValue());
+                        }
+                    }
+                })
+                .csv()
+                .doWrite(Collections.singletonList(new IndexGapData("a", "b", "d")));
+
+        List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
+        Assertions.assertEquals(2, lines.size());
+        Assertions.assertEquals("a,b,before d,d", lines.get(1));
+    }
+
+    /**
+     * Real-file integration test: verifies that out-of-order cell creation,
+     * replacement of an existing column, and sparse rows are flushed as a
+     * single CSV record with exactly one field per column.
+     * <p>
+     * Without the fix, {@code createCell} appends without replacing and
+     * {@code CsvSheet#flushData} receives cells in non-ascending order, which
+     * corrupts the output (extra fields / shifted values).
+     */
+    @Test
+    void csvWrite_withOutOfOrderAndReplacedCells_producesCorrectFile() throws Exception {
+        File csvFile = new File(tempDir, "out-of-order-test.csv");
+
+        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+            CsvRow row = (CsvRow) sheet.createRow(0);
+
+            Cell cell5 = row.createCell(5, CellType.STRING);
+            cell5.setCellValue("FIVE");
+            Cell cell0 = row.createCell(0, CellType.STRING);
+            cell0.setCellValue("ZERO");
+            // Re-create column 5: must replace, not append a second physical cell
+            Cell cell5Replaced = row.createCell(5, CellType.STRING);
+            cell5Replaced.setCellValue("FIVE-REPLACED");
+            Cell cell2 = row.createCell(2, CellType.STRING);
+            cell2.setCellValue("TWO");
+
+            sheet.close();
+        }
+
+        List<String> lines = Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8);
+        Assertions.assertEquals(1, lines.size());
+        // Columns: 0=ZERO, 1=empty, 2=TWO, 3=empty, 4=empty, 5=FIVE-REPLACED
+        Assertions.assertEquals("ZERO,,TWO,,,FIVE-REPLACED", lines.get(0));
     }
 
     @Test
@@ -248,6 +463,63 @@ public class CsvRowTest {
                 line.contains("2024-01-15"), "CSV should contain the calendar date 2024-01-15, got: " + line);
     }
 
+    @Test
+    void csvWrite_convertFailureExceptionShouldBeHashable() {
+        File csvFile = new File(tempDir, "csv-convert-failure.csv");
+        List<OptionalCsvData> data = Collections.singletonList(new OptionalCsvData("1", Optional.of("abc")));
+
+        // The context held by the exception references the CSV workbook, sheet, row and cell. JUnit hashes
+        // exceptions when it collects nested throwables, so a recursive hashCode hides the real error.
+        ExcelWriteDataConvertException e = Assertions.assertThrows(
+                ExcelWriteDataConvertException.class,
+                () -> FastExcel.write(csvFile, OptionalCsvData.class).csv().doWrite(data));
+        Assertions.assertDoesNotThrow(e::hashCode);
+    }
+
+    @Test
+    void csvWrite_cellsAndRowsCollectedInHashSetsShouldStayDistinct() {
+        File csvFile = new File(tempDir, "csv-hash-set.csv");
+        List<Cell> cellList = new ArrayList<>();
+        Set<Cell> cellSet = new HashSet<>();
+        Set<Row> rowSet = new HashSet<>();
+        FastExcel.write(csvFile)
+                .head(head())
+                .registerWriteHandler(new CellWriteHandler() {
+                    @Override
+                    public void afterCellDispose(CellWriteHandlerContext context) {
+                        cellList.add(context.getCell());
+                        cellSet.add(context.getCell());
+                    }
+                })
+                .registerWriteHandler(new RowWriteHandler() {
+                    @Override
+                    public void afterRowCreate(RowWriteHandlerContext context) {
+                        rowSet.add(context.getRow());
+                    }
+                })
+                .csv()
+                .doWrite(Arrays.asList(Arrays.asList("1", "Jackson", "20"), Arrays.asList("1", "Jackson", "20")));
+
+        // a header row and two identical data rows, each cell and row a distinct object
+        Assertions.assertEquals(9, cellList.size());
+        Assertions.assertEquals(9, cellSet.size());
+        Assertions.assertEquals(3, rowSet.size());
+        for (Cell cell : cellList) {
+            Assertions.assertTrue(cellSet.contains(cell));
+            Assertions.assertTrue(rowSet.contains(cell.getRow()));
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OptionalCsvData {
+        @ExcelProperty("No")
+        private String no;
+
+        @ExcelProperty("Description")
+        private Optional<String> description;
+    }
+
     private static List<SimpleCsvData> modelData() {
         List<SimpleCsvData> data = new ArrayList<>();
         data.add(new SimpleCsvData("1", "Jackson", "20"));
@@ -270,5 +542,18 @@ public class CsvRowTest {
         head.add(Arrays.asList("Name"));
         head.add(Arrays.asList("Age"));
         return head;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class IndexGapData {
+        @ExcelProperty(value = "A", index = 0)
+        private String a;
+
+        @ExcelProperty(value = "B", index = 1)
+        private String b;
+
+        @ExcelProperty(value = "D", index = 3)
+        private String d;
     }
 }

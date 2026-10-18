@@ -709,7 +709,7 @@ Hello everyone,
 
 The Apache Fesod(Incubating) ${RELEASE_VERSION} has been released!
 
-Apache Fesod is an easy-to-use, high-performance, open source distributed transaction solution.
+Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing spreadsheet files, designed to simplify development and ensure reliability.
 
 Download Links:
 https://fesod.apache.org/download/fesod/

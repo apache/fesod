@@ -712,7 +712,7 @@ The Apache Fesod(Incubating) ${RELEASE_VERSION} has been released!
 Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing spreadsheet files, designed to simplify development and ensure reliability.
 
 Download Links:
-https://fesod.apache.org/download/fesod/
+https://fesod.apache.org/docs/download
 
 Release Notes:
 https://github.com/apache/fesod/releases/tag/x.x.x/

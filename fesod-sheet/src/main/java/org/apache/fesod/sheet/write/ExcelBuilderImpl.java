@@ -60,7 +60,7 @@ public class ExcelBuilderImpl implements ExcelBuilder {
         } catch (RuntimeException e) {
             finishOnException();
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             finishOnException();
             throw new ExcelGenerateException(e);
         }
@@ -83,7 +83,7 @@ public class ExcelBuilderImpl implements ExcelBuilder {
         } catch (RuntimeException e) {
             finishOnException();
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             finishOnException();
             throw new ExcelGenerateException(e);
         }
@@ -106,7 +106,7 @@ public class ExcelBuilderImpl implements ExcelBuilder {
         } catch (RuntimeException e) {
             finishOnException();
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             finishOnException();
             throw new ExcelGenerateException(e);
         }

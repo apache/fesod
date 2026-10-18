@@ -540,7 +540,7 @@ public class WriteContextImpl implements WriteContext {
         if (writeExcel) {
             try {
                 isOutputStreamEncrypt = doOutputStreamEncrypt07();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 throwable = recordFailure(throwable, t);
             }
         }
@@ -550,7 +550,7 @@ public class WriteContextImpl implements WriteContext {
                     writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
                 }
                 writeWorkbookHolder.getWorkbook().close();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 throwable = recordFailure(throwable, t);
             }
         }
@@ -559,20 +559,20 @@ public class WriteContextImpl implements WriteContext {
             if (workbook instanceof SXSSFWorkbook) {
                 ((SXSSFWorkbook) workbook).dispose();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = recordFailure(throwable, t);
         }
         try {
             if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
                 writeWorkbookHolder.getOutputStream().close();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = recordFailure(throwable, t);
         }
         if (writeExcel && !isOutputStreamEncrypt) {
             try {
                 doFileEncrypt07();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 throwable = recordFailure(throwable, t);
             }
         }
@@ -580,7 +580,7 @@ public class WriteContextImpl implements WriteContext {
             if (writeWorkbookHolder.getTempTemplateInputStream() != null) {
                 writeWorkbookHolder.getTempTemplateInputStream().close();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = recordFailure(throwable, t);
         }
         clearEncrypt03();

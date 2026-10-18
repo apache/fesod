@@ -98,7 +98,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
         } catch (RuntimeException e) {
             finish();
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             finish();
             throw new ExcelAnalysisException(e);
         }
@@ -203,7 +203,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
         } catch (RuntimeException e) {
             finish();
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             finish();
             throw new ExcelAnalysisException(e);
         }
@@ -230,7 +230,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
             if (readWorkbookHolder.getReadCache() != null) {
                 readWorkbookHolder.getReadCache().destroy();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = t;
         }
         try {
@@ -238,7 +238,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                     && ((XlsxReadWorkbookHolder) readWorkbookHolder).getOpcPackage() != null) {
                 ((XlsxReadWorkbookHolder) readWorkbookHolder).getOpcPackage().revert();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = t;
         }
         try {
@@ -248,7 +248,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                         .getPoifsFileSystem()
                         .close();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = t;
         }
 
@@ -259,7 +259,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                     && analysisContext.readWorkbookHolder().getAutoCloseStream()) {
                 ((CsvReadWorkbookHolder) readWorkbookHolder).getCsvParser().close();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = t;
         }
 
@@ -268,14 +268,14 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                     && readWorkbookHolder.getInputStream() != null) {
                 readWorkbookHolder.getInputStream().close();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = t;
         }
         try {
             if (readWorkbookHolder.getTempFile() != null) {
                 FileUtils.delete(readWorkbookHolder.getTempFile());
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throwable = t;
         }
 

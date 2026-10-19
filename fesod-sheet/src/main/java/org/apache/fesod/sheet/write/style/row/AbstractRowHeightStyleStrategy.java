@@ -30,11 +30,26 @@ import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.poi.ss.usermodel.Row;
 
 /**
- * Set the row height strategy
+ * Base class for strategies that set the height of rows as they are written.
  *
+ * <p>The framework invokes {@link #afterRowDispose(RowWriteHandlerContext)} once per row after all
+ * cells in that row have been disposed. This implementation dispatches to
+ * {@link #setHeadColumnHeight(Row, int)} for header rows and to
+ * {@link #setContentColumnHeight(Row, int)} for content rows, so subclasses only need to implement
+ * the sides they care about.</p>
  *
+ * <p>Note that the two abstract methods keep the historical {@code Column} in their names even
+ * though they configure a {@link Row}'s height; only the Javadoc has been clarified to avoid
+ * breaking existing subclasses.</p>
  */
 public abstract class AbstractRowHeightStyleStrategy implements RowWriteHandler {
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation skips rows whose {@code isHead} flag is {@code null} (for example when
+     * filling data) and otherwise dispatches to {@link #setHeadColumnHeight(Row, int)} or
+     * {@link #setContentColumnHeight(Row, int)}.</p>
+     */
     @Override
     public void afterRowDispose(RowWriteHandlerContext context) {
         if (context.getHead() == null) {
@@ -48,18 +63,22 @@ public abstract class AbstractRowHeightStyleStrategy implements RowWriteHandler 
     }
 
     /**
-     * Sets the height of header
+     * Sets the height of a header row. Called by {@link #afterRowDispose(RowWriteHandlerContext)}
+     * for every row that is flagged as a header row.
      *
-     * @param row
-     * @param relativeRowIndex
+     * @param row              the header row whose height should be set; never {@code null}
+     * @param relativeRowIndex the row index relative to the current header block, starting from
+     *                         {@code 0}; useful for distinguishing multi-level headers
      */
     protected abstract void setHeadColumnHeight(Row row, int relativeRowIndex);
 
     /**
-     * Sets the height of content
+     * Sets the height of a content row. Called by {@link #afterRowDispose(RowWriteHandlerContext)}
+     * for every row that is not a header row.
      *
-     * @param row
-     * @param relativeRowIndex
+     * @param row              the content row whose height should be set; never {@code null}
+     * @param relativeRowIndex the row index relative to the current write batch, starting from
+     *                         {@code 0}; useful for styling the first data row differently
      */
     protected abstract void setContentColumnHeight(Row row, int relativeRowIndex);
 }

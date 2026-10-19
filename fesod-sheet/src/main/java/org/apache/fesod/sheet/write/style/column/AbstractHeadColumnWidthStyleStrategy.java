@@ -32,12 +32,25 @@ import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * Returns the column width according to each column header
+ * A {@link AbstractColumnWidthStyleStrategy} that sizes each column from its header, so a whole
+ * column shares one width regardless of the content cells written into it.
  *
- *
+ * <p>Subclasses only need to implement {@link #columnWidth(Head, Integer)}; the base class takes
+ * care of calling it at the right moments and of converting the returned width into POI's
+ * {@code 1/256-character} unit before applying it via
+ * {@link org.apache.poi.ss.usermodel.Sheet#setColumnWidth(int, int)}.</p>
  */
 public abstract class AbstractHeadColumnWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation only acts on header cells and on the very first data row (so that the
+     * width is applied once per column when there is no header). It queries
+     * {@link #columnWidth(Head, Integer)} and, if a non-{@code null} width is returned, scales it
+     * by {@code 256} and applies it to the sheet via
+     * {@link org.apache.poi.ss.usermodel.Sheet#setColumnWidth(int, int)}.</p>
+     */
     @Override
     protected void setColumnWidth(
             WriteSheetHolder writeSheetHolder,
@@ -58,16 +71,17 @@ public abstract class AbstractHeadColumnWidthStyleStrategy extends AbstractColum
     }
 
     /**
-     * Returns the column width corresponding to each column head.
+     * Returns the width, in characters, that should be applied to the given column.
      *
-     * <p>
-     * if return null, ignore
+     * <p>Returning {@code null} means "do not change the width" and the base class will leave the
+     * column untouched. Non-{@code null} values are multiplied by {@code 256} internally to match
+     * POI's column-width unit before being handed to the underlying sheet.</p>
      *
-     * @param head
-     *            Nullable.
-     * @param columnIndex
-     *            Not null.
-     * @return
+     * @param head        the head metadata for the column; may be {@code null} when writing
+     *                    without a header
+     * @param columnIndex the zero-based index of the column being sized; never {@code null}
+     * @return the desired column width measured in characters, or {@code null} to keep the
+     *         column's existing width unchanged
      */
     protected abstract Integer columnWidth(Head head, Integer columnIndex);
 }

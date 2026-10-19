@@ -317,7 +317,7 @@ public class WriteContextImpl implements WriteContext {
                 i++, relativeRowIndex++) {
 
             RowWriteHandlerContext rowWriteHandlerContext =
-                    WriteHandlerUtils.createRowWriteHandlerContext(this, newRowIndex, relativeRowIndex, Boolean.TRUE);
+                    WriteHandlerUtils.createRowWriteHandlerContext(this, i, relativeRowIndex, Boolean.TRUE);
             WriteHandlerUtils.beforeRowCreate(rowWriteHandlerContext);
 
             Row row = WorkBookUtil.createRow(writeSheetHolder.getSheet(), i);

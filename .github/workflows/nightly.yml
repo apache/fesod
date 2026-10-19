@@ -49,7 +49,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
       - name: Test with Maven
-        run: ./mvnw clean install -B -V -Dmaven.test.skip=false
+        run: ./mvnw clean install -B -V
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: (!cancelled())

@@ -48,22 +48,6 @@ pnpm start --locale zh-cn
 This command starts a local development server and opens up a browser window. Most changes are reflected live without
 having to restart the server.
 
-## Team Page
-
-### Member
-
-Update the member information in `src/pages/team/data/member.json` File.
-
-### Avatar
-
-```console
-pnpm github-avatar
-```
-
-This command will fetch the base64 string of the GitHub avatar from file
-`src/pages/team/data/member.json`, and store the result in the `src/pages/team/data/` directory. The operation might
-take a little while.
-
 ## Internationalization
 
 To write Chinese translation files, run:

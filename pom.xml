@@ -61,33 +61,33 @@ under the License.
         <module>fesod-common</module>
         <module>fesod-shaded</module>
         <module>fesod-sheet</module>
+        <module>fesod-benchmark</module>
     </modules>
 
     <properties>
-        <revision>2.1.0-incubating</revision>
+        <revision>dev-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-09-10T00:00:00Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-10-07T00:00:00Z</project.build.outputTimestamp>
         <java.version>1.8</java.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven-compiler-plugin>3.14.1</maven-compiler-plugin>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.test.skip>true</maven.test.skip>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <poi.version>5.5.1</poi.version>
         <ehcache.version>3.9.11</ehcache.version>
         <commons-io.version>2.21.0</commons-io.version>
-        <slf4j-api.version>2.0.19</slf4j-api.version>
+        <slf4j-api.version>2.0.20</slf4j-api.version>
         <lombok.version>1.18.44</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
         <fastjson2.version>2.0.65</fastjson2.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
-        <slf4j-simple.version>2.0.19</slf4j-simple.version>
-        <jcl-over-slf4j.version>2.0.19</jcl-over-slf4j.version>
-        <log4j-over-slf4j.version>2.0.19</log4j-over-slf4j.version>
+        <slf4j-simple.version>2.0.20</slf4j-simple.version>
+        <jcl-over-slf4j.version>2.0.20</jcl-over-slf4j.version>
+        <log4j-over-slf4j.version>2.0.20</log4j-over-slf4j.version>
         <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
         <jacoco.version>0.8.15</jacoco.version>
         <junit.version>5.13.4</junit.version>
@@ -361,6 +361,25 @@ under the License.
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${maven.multiModuleProjectDirectory}</directory>
+                <includes>
+                    <include>DISCLAIMER</include>
+                </includes>
+                <targetPath>META-INF</targetPath>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -399,6 +418,11 @@ under the License.
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.21.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
@@ -566,6 +590,25 @@ under the License.
                         </indent>
                     </pom>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>${maven.multiModuleProjectDirectory}/tools/checkstyle/checkstyle.xml</configLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-check</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

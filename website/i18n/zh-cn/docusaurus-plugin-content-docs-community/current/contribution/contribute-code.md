@@ -117,10 +117,10 @@ git push origin <your_branch_name>
 
 ## 编译
 
-运行以下命令编译
+运行以下命令编译（默认会运行单元测试）
 
 ```bash
-mvn clean install -DskipTests
+mvn clean install
 ```
 
 为了加快构建速度，您可以：

@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.StringUtils;
+import org.apache.fesod.common.util.ThrowableUtils;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.enums.WriteTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
@@ -540,8 +541,8 @@ public class WriteContextImpl implements WriteContext {
         if (writeExcel) {
             try {
                 isOutputStreamEncrypt = doOutputStreamEncrypt07();
-            } catch (Exception t) {
-                throwable = recordFailure(throwable, t);
+            } catch (Throwable t) {
+                throwable = ThrowableUtils.recordFailure(throwable, t);
             }
         }
         if (!isOutputStreamEncrypt) {
@@ -550,8 +551,8 @@ public class WriteContextImpl implements WriteContext {
                     writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
                 }
                 writeWorkbookHolder.getWorkbook().close();
-            } catch (Exception t) {
-                throwable = recordFailure(throwable, t);
+            } catch (Throwable t) {
+                throwable = ThrowableUtils.recordFailure(throwable, t);
             }
         }
         try {
@@ -559,51 +560,41 @@ public class WriteContextImpl implements WriteContext {
             if (workbook instanceof SXSSFWorkbook) {
                 ((SXSSFWorkbook) workbook).dispose();
             }
-        } catch (Exception t) {
-            throwable = recordFailure(throwable, t);
+        } catch (Throwable t) {
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
         try {
             if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
                 writeWorkbookHolder.getOutputStream().close();
             }
-        } catch (Exception t) {
-            throwable = recordFailure(throwable, t);
+        } catch (Throwable t) {
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
         if (writeExcel && !isOutputStreamEncrypt) {
             try {
                 doFileEncrypt07();
-            } catch (Exception t) {
-                throwable = recordFailure(throwable, t);
+            } catch (Throwable t) {
+                throwable = ThrowableUtils.recordFailure(throwable, t);
             }
         }
         try {
             if (writeWorkbookHolder.getTempTemplateInputStream() != null) {
                 writeWorkbookHolder.getTempTemplateInputStream().close();
             }
-        } catch (Exception t) {
-            throwable = recordFailure(throwable, t);
+        } catch (Throwable t) {
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
         clearEncrypt03();
         removeThreadLocalCache();
         if (throwable != null) {
+            if (throwable instanceof Error) {
+                throw (Error) throwable;
+            }
             throw new ExcelGenerateException("Can not close IO.", throwable);
         }
         if (log.isDebugEnabled()) {
             log.debug("Finished write.");
         }
-    }
-
-    /**
-     * Returns the first recorded failure, attaching any later one to it as a suppressed exception.
-     */
-    private static Throwable recordFailure(Throwable recorded, Throwable t) {
-        if (recorded == null) {
-            return t;
-        }
-        if (t != null && recorded != t) {
-            recorded.addSuppressed(t);
-        }
-        return recorded;
     }
 
     /**

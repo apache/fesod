@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.write;
 
 import java.util.Collection;
+import org.apache.fesod.common.util.ThrowableUtils;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.context.WriteContextImpl;
 import org.apache.fesod.sheet.enums.WriteTypeEnum;
@@ -57,12 +58,8 @@ public class ExcelBuilderImpl implements ExcelBuilder {
     public ExcelBuilderImpl(WriteWorkbook writeWorkbook) {
         try {
             context = new WriteContextImpl(writeWorkbook);
-        } catch (RuntimeException e) {
-            finishOnException();
-            throw e;
-        } catch (Exception e) {
-            finishOnException();
-            throw new ExcelGenerateException(e);
+        } catch (Throwable e) {
+            throw finishOnExceptionAndPropagate(e);
         }
     }
 
@@ -80,12 +77,8 @@ public class ExcelBuilderImpl implements ExcelBuilder {
                 excelWriteAddExecutor = new ExcelWriteAddExecutor(context);
             }
             excelWriteAddExecutor.add(data);
-        } catch (RuntimeException e) {
-            finishOnException();
-            throw e;
-        } catch (Exception e) {
-            finishOnException();
-            throw new ExcelGenerateException(e);
+        } catch (Throwable e) {
+            throw finishOnExceptionAndPropagate(e);
         }
     }
 
@@ -103,13 +96,32 @@ public class ExcelBuilderImpl implements ExcelBuilder {
                 excelWriteFillExecutor = new ExcelWriteFillExecutor(context);
             }
             excelWriteFillExecutor.fill(data, fillConfig);
-        } catch (RuntimeException e) {
-            finishOnException();
-            throw e;
-        } catch (Exception e) {
-            finishOnException();
-            throw new ExcelGenerateException(e);
+        } catch (Throwable e) {
+            throw finishOnExceptionAndPropagate(e);
         }
+    }
+
+    /**
+     * Releases resources and hands {@code e} back to the caller: runtime exceptions and errors propagate as
+     * they are, checked exceptions are wrapped in an {@link ExcelGenerateException}. A failure during cleanup
+     * never replaces {@code e}; it is attached to it as a suppressed exception.
+     *
+     * @return the exception to throw when {@code e} is a checked exception; runtime exceptions and errors are
+     *         rethrown from inside this method
+     */
+    private RuntimeException finishOnExceptionAndPropagate(Throwable e) {
+        try {
+            finishOnException();
+        } catch (Throwable cleanupFailure) {
+            ThrowableUtils.addSuppressedQuietly(e, cleanupFailure);
+        }
+        if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+        }
+        if (e instanceof Error) {
+            throw (Error) e;
+        }
+        return new ExcelGenerateException(e);
     }
 
     private void finishOnException() {

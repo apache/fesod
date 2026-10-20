@@ -187,7 +187,7 @@ public class ExcelWriter implements Closeable {
     protected void finalize() {
         try {
             finish();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn("Destroy object failed", e);
         }
     }

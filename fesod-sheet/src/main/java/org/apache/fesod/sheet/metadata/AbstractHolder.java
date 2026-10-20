@@ -33,6 +33,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.util.DateUtils;
 
 /**
  * Write/read holder
@@ -124,6 +125,35 @@ public abstract class AbstractHolder implements ConfigurationHolder {
             }
         } else {
             globalConfiguration.setFiledCacheLocation(basicParameter.getFiledCacheLocation());
+        }
+
+        // Date patterns resolve eagerly: a workbook snapshots the process-wide default once so every cell in it uses
+        // one consistent value, while sheet/table holders inherit the workbook's snapshot.
+        if (basicParameter.getDefaultDateFormat() == null) {
+            globalConfiguration.setDefaultDateFormat(
+                    prentAbstractHolder != null
+                            ? prentAbstractHolder.getGlobalConfiguration().getDefaultDateFormat()
+                            : DateUtils.getDefaultDateFormat());
+        } else {
+            globalConfiguration.setDefaultDateFormat(basicParameter.getDefaultDateFormat());
+        }
+
+        if (basicParameter.getDefaultLocalDateFormat() == null) {
+            globalConfiguration.setDefaultLocalDateFormat(
+                    prentAbstractHolder != null
+                            ? prentAbstractHolder.getGlobalConfiguration().getDefaultLocalDateFormat()
+                            : DateUtils.getDefaultLocalDateFormat());
+        } else {
+            globalConfiguration.setDefaultLocalDateFormat(basicParameter.getDefaultLocalDateFormat());
+        }
+
+        if (basicParameter.getDefaultYearFormat() == null) {
+            globalConfiguration.setDefaultYearFormat(
+                    prentAbstractHolder != null
+                            ? prentAbstractHolder.getGlobalConfiguration().getDefaultYearFormat()
+                            : DateUtils.getDefaultYearFormat());
+        } else {
+            globalConfiguration.setDefaultYearFormat(basicParameter.getDefaultYearFormat());
         }
     }
 

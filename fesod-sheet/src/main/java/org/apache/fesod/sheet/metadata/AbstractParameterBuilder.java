@@ -184,6 +184,49 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
         return self();
     }
 
+    /**
+     * Default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime} fields without a
+     * {@code @DateTimeFormat} pattern.
+     * <p>
+     * default is the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultDateFormat()}),
+     * {@code yyyy-MM-dd HH:mm:ss} unless changed.
+     *
+     * @param defaultDateFormat
+     * @return
+     */
+    public T defaultDateFormat(String defaultDateFormat) {
+        parameter().setDefaultDateFormat(defaultDateFormat);
+        return self();
+    }
+
+    /**
+     * Default pattern for {@code LocalDate} fields without a {@code @DateTimeFormat} pattern.
+     * <p>
+     * default is the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultLocalDateFormat()}),
+     * {@code yyyy-MM-dd} unless changed.
+     *
+     * @param defaultLocalDateFormat
+     * @return
+     */
+    public T defaultLocalDateFormat(String defaultLocalDateFormat) {
+        parameter().setDefaultLocalDateFormat(defaultLocalDateFormat);
+        return self();
+    }
+
+    /**
+     * Default pattern for {@code Year} fields without a {@code @DateTimeFormat} pattern.
+     * <p>
+     * default is the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultYearFormat()}),
+     * {@code yyyy} unless changed.
+     *
+     * @param defaultYearFormat
+     * @return
+     */
+    public T defaultYearFormat(String defaultYearFormat) {
+        parameter().setDefaultYearFormat(defaultYearFormat);
+        return self();
+    }
+
     @SuppressWarnings("unchecked")
     protected T self() {
         return (T) this;

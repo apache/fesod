@@ -25,8 +25,9 @@
 
 package org.apache.fesod.sheet.write.metadata.holder;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,7 +41,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString.Exclude;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fesod.common.util.IoUtils;
+import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.HolderEnum;
@@ -48,7 +49,6 @@ import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.DateUtils;
-import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.StyleUtil;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
@@ -129,9 +129,9 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
      */
     private File templateFile;
     /**
-     * Temporary template file stream.
+     * Buffered template stream, closed after workbook creation.
      * <p>
-     * A temporary file stream needs to be created in order not to modify the original template file.
+     * Kept non-null after closing because it also marks the presence of a template.
      */
     private InputStream tempTemplateInputStream;
     /**
@@ -242,7 +242,7 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         // init handler
         try {
             initHandler(writeWorkbook, null);
-            copyTemplate();
+            prepareTemplate();
         } catch (IOException e) {
             closeOutputStreamOnFailure();
             throw new ExcelGenerateException("Copy template failure.", e);
@@ -289,26 +289,21 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         }
     }
 
-    private void copyTemplate() throws IOException {
+    private void prepareTemplate() throws IOException {
         if (writeWorkbook.getTemplateFile() == null && writeWorkbook.getTemplateInputStream() == null) {
             return;
         }
         if (this.excelType == ExcelTypeEnum.CSV) {
             throw new ExcelGenerateException("csv cannot use template.");
         }
-        byte[] templateFileByte = null;
         if (writeWorkbook.getTemplateFile() != null) {
-            templateFileByte = FileUtils.readFileToByteArray(writeWorkbook.getTemplateFile());
-        } else if (writeWorkbook.getTemplateInputStream() != null) {
-            try {
-                templateFileByte = IoUtils.toByteArray(writeWorkbook.getTemplateInputStream());
-            } finally {
-                if (autoCloseStream) {
-                    writeWorkbook.getTemplateInputStream().close();
-                }
-            }
+            this.tempTemplateInputStream =
+                    new BufferedInputStream(new FileInputStream(writeWorkbook.getTemplateFile()));
+        } else {
+            InputStream template = writeWorkbook.getTemplateInputStream();
+            this.tempTemplateInputStream =
+                    new BufferedInputStream(autoCloseStream ? template : CloseShieldInputStream.wrap(template));
         }
-        this.tempTemplateInputStream = new ByteArrayInputStream(templateFileByte);
     }
 
     @Override

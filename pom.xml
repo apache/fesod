@@ -61,6 +61,7 @@ under the License.
         <module>fesod-common</module>
         <module>fesod-shaded</module>
         <module>fesod-sheet</module>
+        <module>fesod-benchmark</module>
     </modules>
 
     <properties>
@@ -73,7 +74,6 @@ under the License.
         <maven-compiler-plugin>3.14.1</maven-compiler-plugin>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.test.skip>true</maven.test.skip>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>

@@ -29,9 +29,11 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -350,6 +352,88 @@ public class DateUtils {
             timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
         }
         return time.format(getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * convert string to month. Without a custom format, accepts the 1-12 numeric form and the
+     * English month name, case-insensitively.
+     *
+     * @param monthString
+     * @param monthFormat
+     * @param local
+     * @return
+     */
+    public static Month parseMonth(String monthString, String monthFormat, Locale local) {
+        if (StringUtils.isEmpty(monthFormat)) {
+            String trimmedMonthString = monthString.trim();
+            try {
+                return Month.of(Integer.parseInt(trimmedMonthString));
+            } catch (NumberFormatException numberFormatException) {
+                return Month.valueOf(trimmedMonthString.toUpperCase(Locale.ROOT));
+            }
+        }
+        return Month.from(getCacheDateTimeFormat(monthFormat, local).parse(monthString));
+    }
+
+    /**
+     * Format month. Without a custom format, renders the locale-independent numeric form (1-12),
+     * so a written file reads back under any default locale; text rendering stays available via a
+     * custom pattern like {@code MMMM}.
+     *
+     * @param month Month
+     * @param monthFormat month format
+     * @param local local
+     * @return format string
+     */
+    public static String format(Month month, String monthFormat, Locale local) {
+        if (month == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(monthFormat)) {
+            return String.valueOf(month.getValue());
+        }
+        return getCacheDateTimeFormat(monthFormat, local).format(month);
+    }
+
+    /**
+     * convert string to day of week. Without a custom format, accepts the ISO-8601 1-7 numeric
+     * form (Monday=1) and the English day name, case-insensitively.
+     *
+     * @param dayOfWeekString
+     * @param dayOfWeekFormat
+     * @param local
+     * @return
+     */
+    public static DayOfWeek parseDayOfWeek(String dayOfWeekString, String dayOfWeekFormat, Locale local) {
+        if (StringUtils.isEmpty(dayOfWeekFormat)) {
+            String trimmedDayOfWeekString = dayOfWeekString.trim();
+            try {
+                return DayOfWeek.of(Integer.parseInt(trimmedDayOfWeekString));
+            } catch (NumberFormatException numberFormatException) {
+                return DayOfWeek.valueOf(trimmedDayOfWeekString.toUpperCase(Locale.ROOT));
+            }
+        }
+        return DayOfWeek.from(getCacheDateTimeFormat(dayOfWeekFormat, local).parse(dayOfWeekString));
+    }
+
+    /**
+     * Format day of week. Without a custom format, renders the locale-independent ISO numeric form
+     * (Monday=1), so a written file reads back under any default locale; text rendering stays
+     * available via a custom pattern like {@code EEEE}.
+     *
+     * @param dayOfWeek DayOfWeek
+     * @param dayOfWeekFormat day of week format
+     * @param local local
+     * @return format string
+     */
+    public static String format(DayOfWeek dayOfWeek, String dayOfWeekFormat, Locale local) {
+        if (dayOfWeek == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(dayOfWeekFormat)) {
+            return String.valueOf(dayOfWeek.getValue());
+        }
+        return getCacheDateTimeFormat(dayOfWeekFormat, local).format(dayOfWeek);
     }
 
     /**

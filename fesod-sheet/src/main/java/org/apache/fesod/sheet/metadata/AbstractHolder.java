@@ -31,6 +31,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.util.DateUtils;
@@ -128,8 +129,10 @@ public abstract class AbstractHolder implements ConfigurationHolder {
         }
 
         // Date patterns resolve eagerly: a workbook snapshots the process-wide default once so every cell in it uses
-        // one consistent value, while sheet/table holders inherit the workbook's snapshot.
-        if (basicParameter.getDefaultDateFormat() == null) {
+        // one consistent value, while sheet/table holders inherit the workbook's snapshot. A blank value is treated as
+        // "not set" here rather than stored as-is: the resolvers read an empty pattern as a fallback signal, so
+        // keeping it in the snapshot would let a later global change leak into an in-flight workbook.
+        if (StringUtils.isBlank(basicParameter.getDefaultDateFormat())) {
             globalConfiguration.setDefaultDateFormat(
                     prentAbstractHolder != null
                             ? prentAbstractHolder.getGlobalConfiguration().getDefaultDateFormat()
@@ -138,7 +141,7 @@ public abstract class AbstractHolder implements ConfigurationHolder {
             globalConfiguration.setDefaultDateFormat(basicParameter.getDefaultDateFormat());
         }
 
-        if (basicParameter.getDefaultLocalDateFormat() == null) {
+        if (StringUtils.isBlank(basicParameter.getDefaultLocalDateFormat())) {
             globalConfiguration.setDefaultLocalDateFormat(
                     prentAbstractHolder != null
                             ? prentAbstractHolder.getGlobalConfiguration().getDefaultLocalDateFormat()
@@ -147,7 +150,7 @@ public abstract class AbstractHolder implements ConfigurationHolder {
             globalConfiguration.setDefaultLocalDateFormat(basicParameter.getDefaultLocalDateFormat());
         }
 
-        if (basicParameter.getDefaultYearFormat() == null) {
+        if (StringUtils.isBlank(basicParameter.getDefaultYearFormat())) {
             globalConfiguration.setDefaultYearFormat(
                     prentAbstractHolder != null
                             ? prentAbstractHolder.getGlobalConfiguration().getDefaultYearFormat()

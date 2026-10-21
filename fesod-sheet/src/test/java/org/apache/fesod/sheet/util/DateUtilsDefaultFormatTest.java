@@ -175,6 +175,38 @@ class DateUtilsDefaultFormatTest {
                 PARAM_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultDateFormat());
     }
 
+    @Test
+    void blankPerCallFormatsFallBackToTheSnapshot() {
+        DateUtils.setDefaultDateFormat(GLOBAL_FORMAT);
+        DateUtils.setDefaultLocalDateFormat(GLOBAL_FORMAT);
+        DateUtils.setDefaultYearFormat(GLOBAL_FORMAT);
+
+        WriteWorkbook writeWorkbook = new WriteWorkbook();
+        writeWorkbook.setDefaultDateFormat("");
+        writeWorkbook.setDefaultLocalDateFormat("   ");
+        writeWorkbook.setDefaultYearFormat("\t");
+        WriteWorkbookHolder workbookHolder = new WriteWorkbookHolder(writeWorkbook);
+
+        Assertions.assertEquals(
+                GLOBAL_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultDateFormat());
+        Assertions.assertEquals(
+                GLOBAL_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultLocalDateFormat());
+        Assertions.assertEquals(
+                GLOBAL_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultYearFormat());
+
+        // A blank per-call value must not leave the snapshot open to a later global change.
+        DateUtils.setDefaultDateFormat(PARAM_FORMAT);
+        DateUtils.setDefaultLocalDateFormat(PARAM_FORMAT);
+        DateUtils.setDefaultYearFormat(PARAM_FORMAT);
+
+        Assertions.assertEquals(
+                GLOBAL_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultDateFormat());
+        Assertions.assertEquals(
+                GLOBAL_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultLocalDateFormat());
+        Assertions.assertEquals(
+                GLOBAL_FORMAT, workbookHolder.getGlobalConfiguration().getDefaultYearFormat());
+    }
+
     private static ExcelContentProperty contentProperty(String format) {
         ExcelContentProperty contentProperty = new ExcelContentProperty();
         contentProperty.setDateTimeFormatProperty(new DateTimeFormatProperty(format, null));

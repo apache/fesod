@@ -155,6 +155,26 @@ public class DefaultDateFormatWriteTest extends AbstractExcelTest {
         Assertions.assertTrue(csv.contains("2026/01/15"));
     }
 
+    @Test
+    void builderParametersRejectBlankPatterns() throws IOException {
+        File file = createTempFile(ExcelFormat.XLSX);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            FesodSheet.write(file).defaultDateFormat("");
+        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            FesodSheet.write(file).defaultLocalDateFormat("   ");
+        });
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            FesodSheet.write(file).defaultYearFormat("\t");
+        });
+
+        // null keeps its "not set" meaning, matching the sibling builder parameters.
+        Assertions.assertDoesNotThrow(() -> {
+            FesodSheet.write(file).defaultDateFormat(null);
+        });
+    }
+
     @Getter
     @Setter
     static class DateRow {

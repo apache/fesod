@@ -36,7 +36,7 @@ under the License.
 
     <properties>
         <jmh.version>1.37</jmh.version>
-        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.1.1</exec-maven-plugin.version>
         <uberjar.name>benchmarks</uberjar.name>
         <!-- Internal benchmarks, not a published artifact: keep out of Maven releases -->
         <maven.deploy.skip>true</maven.deploy.skip>

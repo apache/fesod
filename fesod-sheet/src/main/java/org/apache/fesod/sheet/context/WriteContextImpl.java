@@ -542,7 +542,7 @@ public class WriteContextImpl implements WriteContext {
             try {
                 isOutputStreamEncrypt = doOutputStreamEncrypt07();
             } catch (Throwable t) {
-                throwable = t;
+                throwable = recordFailure(throwable, t);
             }
         }
         if (!isOutputStreamEncrypt) {
@@ -552,7 +552,7 @@ public class WriteContextImpl implements WriteContext {
                 }
                 writeWorkbookHolder.getWorkbook().close();
             } catch (Throwable t) {
-                throwable = t;
+                throwable = recordFailure(throwable, t);
             }
         }
         try {
@@ -561,20 +561,20 @@ public class WriteContextImpl implements WriteContext {
                 ((SXSSFWorkbook) workbook).dispose();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         try {
             if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
                 writeWorkbookHolder.getOutputStream().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         if (writeExcel && !isOutputStreamEncrypt) {
             try {
                 doFileEncrypt07();
             } catch (Throwable t) {
-                throwable = t;
+                throwable = recordFailure(throwable, t);
             }
         }
         try {
@@ -582,7 +582,7 @@ public class WriteContextImpl implements WriteContext {
                 writeWorkbookHolder.getTempTemplateInputStream().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         clearEncrypt03();
         removeThreadLocalCache();
@@ -592,6 +592,19 @@ public class WriteContextImpl implements WriteContext {
         if (log.isDebugEnabled()) {
             log.debug("Finished write.");
         }
+    }
+
+    /**
+     * Returns the first recorded failure, attaching any later one to it as a suppressed exception.
+     */
+    private static Throwable recordFailure(Throwable recorded, Throwable t) {
+        if (recorded == null) {
+            return t;
+        }
+        if (t != null && recorded != t) {
+            recorded.addSuppressed(t);
+        }
+        return recorded;
     }
 
     /**

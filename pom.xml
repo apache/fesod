@@ -83,7 +83,6 @@ under the License.
         <slf4j-api.version>2.0.20</slf4j-api.version>
         <lombok.version>1.18.44</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
-        <fastjson2.version>2.0.65</fastjson2.version>
         <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>2.0.20</slf4j-simple.version>
         <jcl-over-slf4j.version>2.0.20</jcl-over-slf4j.version>
@@ -207,11 +206,6 @@ under the License.
                 <version>${spring-core.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2</artifactId>
-                <version>${fastjson2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${jcl-over-slf4j.version}</version>
@@ -308,11 +302,6 @@ under the License.
             <scope>provided</scope>
         </dependency>
         <!-- test -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

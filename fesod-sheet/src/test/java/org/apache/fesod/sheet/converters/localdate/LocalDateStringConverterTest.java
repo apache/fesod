@@ -25,6 +25,8 @@ import java.time.format.DateTimeParseException;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +40,11 @@ class LocalDateStringConverterTest {
 
     private static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfiguration();
     private final LocalDateStringConverter converter = new LocalDateStringConverter();
+
+    @AfterEach
+    void tearDown() {
+        DateUtils.removeThreadLocalCache();
+    }
 
     @ParameterizedTest
     @ValueSource(strings = {"2024-02-31", "2023-02-29", "2024-13-01"})

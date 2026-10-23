@@ -33,6 +33,8 @@ import java.util.function.Consumer;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
+import org.apache.fesod.sheet.i18n.LocalizationContext;
+import org.apache.fesod.sheet.i18n.MessageSource;
 
 /**
  * ExcelBuilder
@@ -149,6 +151,28 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
      */
     public T locale(Locale locale) {
         parameter().setLocale(locale);
+        return self();
+    }
+
+    /**
+     * Configure localization for spreadsheet headers.
+     *
+     * @param messageSource the {@link MessageSource} to use
+     * @return this builder
+     */
+    public T localizeHead(MessageSource messageSource) {
+        return localizeHead(messageSource, Locale.getDefault());
+    }
+
+    /**
+     * Configure localization for spreadsheet headers.
+     *
+     * @param messageSource the {@link MessageSource} to use
+     * @param locale        the target locale to use
+     * @return this builder
+     */
+    public T localizeHead(MessageSource messageSource, Locale locale) {
+        parameter().setLocalizationContext(new LocalizationContext(messageSource, locale));
         return self();
     }
 

@@ -36,6 +36,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
+import org.apache.fesod.sheet.i18n.LocalizationContext;
+import org.apache.fesod.sheet.i18n.MessageSource;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.metadata.FieldWrapper;
@@ -90,7 +92,7 @@ public class ExcelHeadProperty {
         }
         // convert headClazz to head
         initColumnProperties(configurationHolder);
-
+        localizeHead(configurationHolder);
         initHeadRowNumber();
         if (log.isDebugEnabled()) {
             log.debug("The initialization sheet/table 'ExcelHeadProperty' is complete , head kind is {}", headKind);
@@ -157,6 +159,30 @@ public class ExcelHeadProperty {
         }
         Head head = new Head(index, field.getField(), field.getFieldName(), tmpHeadList, forceIndex, !notForceName);
         headMap.put(index, head);
+    }
+
+    /**
+     * Perform i18n and localization on spreadsheet header names.
+     */
+    private void localizeHead(ConfigurationHolder configurationHolder) {
+        LocalizationContext context = configurationHolder.globalConfiguration().getLocalizationContext();
+        if (context == null || context == LocalizationContext.DEFAULT) {
+            return;
+        }
+
+        MessageSource messageSource = context.getMessageSource();
+        for (Head head : headMap.values()) {
+            List<String> headNames = head.getHeadNameList();
+            if (headNames == null || headNames.isEmpty()) {
+                continue;
+            }
+
+            List<String> localized = new ArrayList<>(headNames.size());
+            for (String headName : headNames) {
+                localized.add(messageSource.interpolate(headName, context.getLocale()));
+            }
+            head.setHeadNameList(localized);
+        }
     }
 
     public boolean hasHead() {

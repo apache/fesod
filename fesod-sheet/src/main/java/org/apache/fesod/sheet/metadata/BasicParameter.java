@@ -32,6 +32,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
+import org.apache.fesod.sheet.i18n.LocalizationContext;
 
 /**
  * Basic parameter
@@ -72,6 +73,10 @@ public class BasicParameter {
      */
     private Locale locale;
 
+    /**
+     * Context for i18n and header localization.
+     */
+    private LocalizationContext localizationContext;
     /**
      * Whether to use scientific Format.
      *

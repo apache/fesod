@@ -44,6 +44,11 @@ under the License.
 
     <dependencies>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.fesod</groupId>
             <artifactId>fesod-sheet</artifactId>
             <version>${project.version}</version>

@@ -27,8 +27,10 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.fesod.sheet.testkit.Tags;
@@ -36,6 +38,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -268,6 +271,79 @@ class FileUtilsTest {
         FileUtils.delete(root);
 
         Assertions.assertFalse(root.exists());
+    }
+
+    @Test
+    void test_delete_doesNotFollowSymbolicLinks() throws IOException {
+        // outside/
+        //   - keep.txt
+        // root/
+        //   - link -> outside/
+        File outside = tempDir.resolve("outside").toFile();
+        FileUtils.createDirectory(outside);
+        File keep = new File(outside, "keep.txt");
+        Files.write(keep.toPath(), "content".getBytes());
+
+        File root = tempDir.resolve("root").toFile();
+        FileUtils.createDirectory(root);
+        Path link = root.toPath().resolve("link");
+        try {
+            Files.createSymbolicLink(link, outside.toPath());
+        } catch (IOException | UnsupportedOperationException e) {
+            Assumptions.assumeTrue(false, "Symbolic links are not supported: " + e.getMessage());
+        }
+
+        FileUtils.delete(root);
+
+        Assertions.assertFalse(root.exists());
+        Assertions.assertFalse(Files.exists(link, LinkOption.NOFOLLOW_LINKS));
+        Assertions.assertTrue(keep.exists());
+    }
+
+    @Test
+    void test_delete_doesNotFollowDirectoryJunctions() throws IOException {
+        Assumptions.assumeTrue(isWindows(), "Directory junctions are only available on Windows");
+        // outside/
+        //   - keep.txt
+        // root/
+        //   - junction -> outside/
+        File outside = tempDir.resolve("junction-outside").toFile();
+        FileUtils.createDirectory(outside);
+        File keep = new File(outside, "keep.txt");
+        Files.write(keep.toPath(), "content".getBytes(StandardCharsets.UTF_8));
+
+        File root = tempDir.resolve("junction-root").toFile();
+        FileUtils.createDirectory(root);
+        Path junction = root.toPath().resolve("junction");
+        Assumptions.assumeTrue(createJunction(junction, outside), "Directory junctions are not supported");
+
+        FileUtils.delete(root);
+
+        Assertions.assertFalse(root.exists());
+        Assertions.assertFalse(Files.exists(junction, LinkOption.NOFOLLOW_LINKS));
+        Assertions.assertTrue(keep.exists());
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name").startsWith("Windows");
+    }
+
+    private static boolean createJunction(Path link, File target) {
+        try {
+            Process process = new ProcessBuilder("cmd", "/c", "mklink", "/J", link.toString(), target.getAbsolutePath())
+                    .redirectErrorStream(true)
+                    .start();
+            if (!process.waitFor(30, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                return false;
+            }
+            return process.exitValue() == 0;
+        } catch (IOException e) {
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
     }
 
     @Test

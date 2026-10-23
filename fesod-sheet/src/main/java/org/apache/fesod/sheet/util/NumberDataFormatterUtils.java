@@ -63,6 +63,10 @@ public class NumberDataFormatterUtils {
         }
     }
 
+    static {
+        ThreadLocalCleaner.register(DATA_FORMATTER_THREAD_LOCAL::remove);
+    }
+
     /**
      * Format number data.
      *

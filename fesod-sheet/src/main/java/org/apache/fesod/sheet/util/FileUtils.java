@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.UUID;
 import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
@@ -188,10 +189,16 @@ public class FileUtils {
 
     /**
      * delete file
+     * <p>
+     * Symbolic links are deleted themselves and never followed, so the deletion cannot escape the given directory.
      *
      * @param file
      */
     public static void delete(File file) {
+        if (Files.isSymbolicLink(file.toPath())) {
+            file.delete();
+            return;
+        }
         if (file.isFile()) {
             file.delete();
             return;

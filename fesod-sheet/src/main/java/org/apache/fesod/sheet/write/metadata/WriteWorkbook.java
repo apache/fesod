@@ -73,15 +73,16 @@ public class WriteWorkbook extends WriteBasicParameter {
     private Boolean withBom;
 
     /**
-     * Template input stream
+     * Template input stream, read through a bounded buffer when the writer is built.
+     * The parsed workbook still resides in memory.
      * <p>
      * If 'inputStream' and 'file' all not empty, file first
      */
     private InputStream templateInputStream;
 
     /**
-     * Template file.
-     * This file is read into memory, excessive cases can lead to OOM.
+     * Template file, read through a bounded buffer when the writer is built.
+     * The parsed workbook still resides in memory, so large templates can lead to OOM.
      * <p>
      * If 'inputStream' and 'file' all not empty, file first
      */

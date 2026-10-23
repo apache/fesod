@@ -98,3 +98,14 @@ Converts number cells to formatted strings when the field type is `String`.
 |:---|:---|:---|
 | `value` | Empty | Number format pattern, refer to `java.text.DecimalFormat` |
 | `roundingMode` | `HALF_UP` | Rounding mode when formatting |
+
+---
+
+## Default Date Formats on Read
+
+Reading rarely needs a default pattern: `String` cells are parsed by length-based pattern detection, and date-formatted numeric cells use the format stored in the file. The default patterns matter on read in two edge cases:
+
+- `Year` fields: a `String` cell is parsed with the resolved `Year` pattern (`@DateTimeFormat` over the per-call `defaultYearFormat` parameter over the process-wide default, `yyyy`).
+- `String` fields with an empty `@DateTimeFormat` reading a numeric date cell: the resolved date pattern renders the value.
+
+The full cascade, the builder parameters and the process-wide setters are documented in [write format - Default Date Formats](../write/format.md#default-date-formats); each read context snapshots the process-wide defaults at creation.

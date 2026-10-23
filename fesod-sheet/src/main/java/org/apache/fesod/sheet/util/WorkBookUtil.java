@@ -106,6 +106,8 @@ public class WorkBookUtil {
                         writeWorkbookHolder.getGlobalConfiguration().getUseScientificFormat(),
                         writeWorkbookHolder.getCharset(),
                         writeWorkbookHolder.getWithBom());
+                csvWorkbook.setDefaultDateFormat(
+                        writeWorkbookHolder.getGlobalConfiguration().getDefaultDateFormat());
                 if (writeWorkbookHolder.getWriteWorkbook().getCsvFormat() != null) {
                     csvWorkbook.setCsvFormat(
                             writeWorkbookHolder.getWriteWorkbook().getCsvFormat());
@@ -146,6 +148,10 @@ public class WorkBookUtil {
         Cell cell = row.createCell(colNum);
         cell.setCellValue(cellValue);
         return cell;
+    }
+
+    public static void fillDataFormat(WriteCellData<?> cellData, String format) {
+        fillDataFormat(cellData, format, null);
     }
 
     public static void fillDataFormat(WriteCellData<?> cellData, String format, String defaultFormat) {

@@ -42,15 +42,10 @@ public class TimestampStringConverter implements Converter<Timestamp> {
     public WriteCellData<?> convertToExcelData(
             Timestamp value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         WriteCellData<String> cellData = new WriteCellData<>();
-        String cellValue;
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            cellValue = DateUtils.format(value.toLocalDateTime(), null, globalConfiguration.getLocale());
-        } else {
-            cellValue = DateUtils.format(
-                    value.toLocalDateTime(),
-                    contentProperty.getDateTimeFormatProperty().getFormat(),
-                    globalConfiguration.getLocale());
-        }
+        String cellValue = DateUtils.format(
+                value.toLocalDateTime(),
+                DateUtils.resolveDateTimeFormat(contentProperty, globalConfiguration),
+                globalConfiguration.getLocale());
         cellData.setType(CellDataTypeEnum.STRING);
         cellData.setStringValue(cellValue);
         cellData.setData(cellValue);

@@ -98,3 +98,14 @@ public void converterRead() {
 |:---|:---|:---|
 | `value` | 空 | 数字格式模式，参考 `java.text.DecimalFormat` |
 | `roundingMode` | `HALF_UP` | 格式化时的舍入模式 |
+
+---
+
+## 读侧的默认日期格式
+
+读取通常不需要默认格式：`String` 单元格按长度嗅探模式解析，带日期格式的数字单元格使用文件中存储的格式。默认格式在读侧只影响两个边缘场景：
+
+- `Year` 字段：`String` 单元格按解析出的 `Year` 格式解析（`@DateTimeFormat` 优先，其次是按调用的 `defaultYearFormat` 参数，最后是进程级默认值 `yyyy`）。
+- 带空 `@DateTimeFormat` 的 `String` 字段读取数字日期单元格：按解析出的日期格式渲染值。
+
+完整的级联规则、构建器参数与进程级 setter 见[写侧文档 - 默认日期格式](../write/format.md#默认日期格式)；每个读上下文在创建时对进程级默认值做快照。

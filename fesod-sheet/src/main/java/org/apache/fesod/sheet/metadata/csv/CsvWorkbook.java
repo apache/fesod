@@ -79,6 +79,12 @@ public class CsvWorkbook implements Workbook {
     private Locale locale;
 
     /**
+     * Per-call default pattern for date values without an explicit cell style format; {@code null} falls back to the
+     * process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultDateFormat()}).
+     */
+    private String defaultDateFormat;
+
+    /**
      * Whether to use scientific Format.
      * <p>
      * default is false

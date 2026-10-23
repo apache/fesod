@@ -49,11 +49,7 @@ public class LocalDateTimeDateConverter implements Converter<LocalDateTime> {
             LocalDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws Exception {
         WriteCellData<?> cellData = new WriteCellData<>(value);
-        String format = null;
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            format = contentProperty.getDateTimeFormatProperty().getFormat();
-        }
-        WorkBookUtil.fillDataFormat(cellData, format, DateUtils.defaultDateFormat);
+        WorkBookUtil.fillDataFormat(cellData, DateUtils.resolveDateTimeFormat(contentProperty, globalConfiguration));
         return cellData;
     }
 }

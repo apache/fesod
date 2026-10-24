@@ -683,12 +683,9 @@ public class WriteContextImpl implements WriteContext {
         }
         File tempXlsx = FileUtils.createTmpFile(UUID.randomUUID() + ".xlsx");
         try {
-            try (FileOutputStream tempFileOutputStream = new FileOutputStream(tempXlsx)) {
-                try {
-                    writeWorkbookHolder.getWorkbook().write(tempFileOutputStream);
-                } finally {
-                    writeWorkbookHolder.getWorkbook().close();
-                }
+            try (FileOutputStream tempFileOutputStream = new FileOutputStream(tempXlsx);
+                    Workbook workbook = writeWorkbookHolder.getWorkbook()) {
+                workbook.write(tempFileOutputStream);
             }
             try (POIFSFileSystem fileSystem = openFileSystemAndEncrypt(tempXlsx)) {
                 fileSystem.writeFilesystem(writeWorkbookHolder.getOutputStream());

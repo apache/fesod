@@ -86,6 +86,9 @@ import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
+import org.apache.fesod.sheet.converters.yearmonth.YearMonthDateConverter;
+import org.apache.fesod.sheet.converters.yearmonth.YearMonthNumberConverter;
+import org.apache.fesod.sheet.converters.yearmonth.YearMonthStringConverter;
 import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.converters.year.YearStringConverter;
 
@@ -125,6 +128,9 @@ public class DefaultConverterLoader {
 
         putAllConverter(new DateNumberConverter());
         putAllConverter(new DateStringConverter());
+
+        putAllConverter(new YearMonthNumberConverter());
+        putAllConverter(new YearMonthStringConverter());
 
         putAllConverter(new LocalDateNumberConverter());
         putAllConverter(new LocalDateStringConverter());
@@ -180,6 +186,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new ByteNumberConverter());
         putWriteConverter(new CharacterStringConverter());
         putWriteConverter(new DateDateConverter());
+        putWriteConverter(new YearMonthDateConverter());
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
@@ -207,6 +214,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new ByteStringConverter());
         putWriteStringConverter(new CharacterStringConverter());
         putWriteStringConverter(new DateStringConverter());
+        putWriteStringConverter(new YearMonthStringConverter());
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());

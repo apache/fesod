@@ -25,6 +25,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.metadata.csv.CsvConstant;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
@@ -61,6 +62,10 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
 
     /**
      * Sets the quote character
+     * <p>
+     * If set to {@link org.apache.fesod.sheet.metadata.csv.CsvConstant#NONE_QUOTE}, quoting is disabled and values are
+     * always written unquoted. This is equivalent to setting {@code quote} to {@code null} in Apache Commons CSV.
+     * </p>
      *
      * @param quote the quote character
      * @return Returns a CsvWriterBuilder object, enabling method chaining
@@ -78,7 +83,7 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
      */
     public CsvWriterBuilder quote(Character quote, QuoteMode quoteMode) {
         if (quote != null) {
-            this.csvFormatBuilder.setQuote(quote);
+            this.csvFormatBuilder.setQuote(CsvConstant.NONE_QUOTE == quote ? null : quote);
         }
         if (quoteMode != null) {
             this.csvFormatBuilder.setQuoteMode(quoteMode);

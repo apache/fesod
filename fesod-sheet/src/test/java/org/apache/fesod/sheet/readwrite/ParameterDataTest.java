@@ -68,6 +68,21 @@ public class ParameterDataTest extends AbstractExcelTest {
         readAndWrite7(file, type);
     }
 
+    @ParameterizedTest
+    @ExcelFormatSource
+    void numRowsZeroReadsAllRows(ExcelFormat format) throws Exception {
+        File file = createTempFile("numRowsZero", format);
+        FesodSheet.write(file, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(3));
+
+        List<SimpleData> workbookLimitRows =
+                FesodSheet.read(file, SimpleData.class, null).numRows(0).sheet().doReadSync();
+        Assertions.assertEquals(3, workbookLimitRows.size());
+
+        List<SimpleData> sheetLimitRows =
+                FesodSheet.read(file, SimpleData.class, null).sheet().numRows(0).doReadSync();
+        Assertions.assertEquals(3, sheetLimitRows.size());
+    }
+
     private void readAndWrite1(File file, ExcelTypeEnum type) {
         FesodSheet.write(file.getPath()).head(SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(10));
         List<SimpleData> dataList =

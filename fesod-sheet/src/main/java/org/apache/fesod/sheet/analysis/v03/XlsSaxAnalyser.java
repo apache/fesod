@@ -60,7 +60,6 @@ import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadWorkbookHolder;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder;
-import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
@@ -182,7 +181,7 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
     public void execute() {
         XlsReadWorkbookHolder xlsReadWorkbookHolder = xlsReadContext.xlsReadWorkbookHolder();
         MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(this);
-        xlsReadWorkbookHolder.setFormatTrackingHSSFListener(new FormatTrackingHSSFListener(listener));
+        xlsReadWorkbookHolder.setFormatTrackingHSSFListener(new XlsFormatTrackingListener(listener));
         EventWorkbookBuilder.SheetRecordCollectingListener workbookBuildingListener =
                 new EventWorkbookBuilder.SheetRecordCollectingListener(
                         xlsReadWorkbookHolder.getFormatTrackingHSSFListener());

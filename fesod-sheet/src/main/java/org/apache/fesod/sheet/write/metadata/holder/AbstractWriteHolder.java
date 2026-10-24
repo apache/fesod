@@ -42,6 +42,7 @@ import org.apache.fesod.sheet.constant.OrderConstant;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.event.NotRepeatExecutor;
@@ -273,11 +274,7 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
             setConverterMap(new HashMap<>(parentAbstractWriteHolder.getConverterMap()));
             if (CollectionUtils.isNotEmpty(parentAbstractWriteHolder.getCustomConverterList())) {
                 for (Converter<?> converter : parentAbstractWriteHolder.getCustomConverterList()) {
-                    getConverterMap()
-                            .put(
-                                    ConverterKeyBuild.buildKey(
-                                            converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                    converter);
+                    putCustomConverter(converter);
                 }
             }
         }
@@ -285,11 +282,36 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
                 && !writeBasicParameter.getCustomConverterList().isEmpty()) {
             this.customConverterList = writeBasicParameter.getCustomConverterList();
             for (Converter<?> converter : writeBasicParameter.getCustomConverterList()) {
-                getConverterMap()
-                        .put(
-                                ConverterKeyBuild.buildKey(
-                                        converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                converter);
+                putCustomConverter(converter);
+            }
+        }
+    }
+
+    /**
+     * Registers a custom converter under the key it declares.
+     *
+     * <p>A custom converter declaring a {@code null} excel type key is additionally registered under the
+     * {@link CellDataTypeEnum#STRING} key. The xlsx write path looks converters up with a {@code null}
+     * target cell data type, while the CSV write path forces the target to {@code STRING}; registering
+     * only the wildcard key would make the converter silently shadowed by the built-in string converter
+     * in CSV mode. See issues #1045 and #1056.
+     *
+     * <p>The {@code STRING} registration only takes over the slot when it is still held by the built-in
+     * default converter, so an explicitly registered converter for the same {@code STRING} key is never
+     * displaced, regardless of registration order.
+     */
+    private void putCustomConverter(Converter<?> converter) {
+        Class<?> javaTypeKey = converter.supportJavaTypeKey();
+        CellDataTypeEnum excelTypeKey = converter.supportExcelTypeKey();
+        getConverterMap().put(ConverterKeyBuild.buildKey(javaTypeKey, excelTypeKey), converter);
+        if (excelTypeKey == null) {
+            ConverterKeyBuild.ConverterKey stringKey = ConverterKeyBuild.buildKey(javaTypeKey, CellDataTypeEnum.STRING);
+            Converter<?> occupant = getConverterMap().get(stringKey);
+            if (occupant == null
+                    || occupant
+                            == DefaultConverterLoader.loadDefaultWriteConverter()
+                                    .get(stringKey)) {
+                getConverterMap().put(stringKey, converter);
             }
         }
     }

@@ -51,6 +51,12 @@ public class WriteSheetWorkbookWriteHandler implements WorkbookWriteHandler {
             return;
         }
         Workbook workbook = writeWorkbookHolder.getWorkbook();
+        // Only reorder when this write initialized every sheet of the workbook. A partial write
+        // (for example filling one sheet of a template) must leave sheets it never touched in the
+        // author's order instead of moving the written ones ahead of them.
+        if (writeSheetHolderMap.size() != workbook.getNumberOfSheets()) {
+            return;
+        }
         // sort by sheetNo.
         List<Integer> sheetNoSortList = writeSheetHolderMap.keySet().stream()
                 .filter(Objects::nonNull)

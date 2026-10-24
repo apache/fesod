@@ -131,18 +131,34 @@ public class ClassUtils {
                     contentCacheMap = MapUtils.newHashMap();
                     CONTENT_THREAD_LOCAL.set(contentCacheMap);
                 }
-                return contentCacheMap.computeIfAbsent(buildKey(clazz, headClass, fieldName), key -> {
-                    return doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder);
-                });
+                return cachedExcelContentProperty(contentCacheMap, clazz, headClass, fieldName, configurationHolder);
             case MEMORY:
-                return CONTENT_CACHE.computeIfAbsent(buildKey(clazz, headClass, fieldName), key -> {
-                    return doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder);
-                });
+                return cachedExcelContentProperty(CONTENT_CACHE, clazz, headClass, fieldName, configurationHolder);
             case NONE:
                 return doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder);
             default:
                 throw new UnsupportedOperationException("unsupported enum");
         }
+    }
+
+    /**
+     * Plain get-then-put instead of {@code computeIfAbsent}: a lambda capturing clazz/headClass/fieldName is
+     * allocated per call on the per-cell hot path even on cache hits, while this shape allocates nothing
+     * beyond the lookup key when the value is already cached.
+     */
+    private static ExcelContentProperty cachedExcelContentProperty(
+            Map<ContentPropertyKey, ExcelContentProperty> cache,
+            Class<?> clazz,
+            Class<?> headClass,
+            String fieldName,
+            ConfigurationHolder configurationHolder) {
+        ContentPropertyKey key = buildKey(clazz, headClass, fieldName);
+        ExcelContentProperty property = cache.get(key);
+        if (property == null) {
+            property = doGetExcelContentProperty(clazz, headClass, fieldName, configurationHolder);
+            cache.put(key, property);
+        }
+        return property;
     }
 
     private static ExcelContentProperty doGetExcelContentProperty(

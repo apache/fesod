@@ -45,7 +45,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
  *
  *
  */
-@Target({ElementType.FIELD, ElementType.TYPE})
+@Target({ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface HeadStyle {

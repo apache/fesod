@@ -19,8 +19,8 @@
 
 package org.apache.fesod.sheet.util;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
@@ -31,7 +31,7 @@ import org.apache.commons.lang3.Validate;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ThreadLocalCleaner {
 
-    private static final List<Runnable> cleanTasks = new ArrayList<>();
+    private static final List<Runnable> cleanTasks = new CopyOnWriteArrayList<>();
 
     /**
      * Registers a cleanup task.

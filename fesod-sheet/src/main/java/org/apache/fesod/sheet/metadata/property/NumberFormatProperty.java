@@ -26,8 +26,8 @@
 package org.apache.fesod.sheet.metadata.property;
 
 import java.math.RoundingMode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.fesod.sheet.annotation.format.NumberFormat;
 
 /**
@@ -36,15 +36,10 @@ import org.apache.fesod.sheet.annotation.format.NumberFormat;
  *
  */
 @Getter
-@Setter
+@AllArgsConstructor
 public class NumberFormatProperty {
-    private String format;
-    private RoundingMode roundingMode;
-
-    public NumberFormatProperty(String format, RoundingMode roundingMode) {
-        this.format = format;
-        this.roundingMode = roundingMode;
-    }
+    private final String format;
+    private final RoundingMode roundingMode;
 
     public static NumberFormatProperty build(NumberFormat numberFormat) {
         if (numberFormat == null) {

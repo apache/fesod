@@ -28,6 +28,7 @@ package org.apache.fesod.sheet.format;
 import com.alibaba.fastjson2.JSON;
 import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -139,13 +140,13 @@ public class CompatibilityTest extends AbstractExcelTest {
         Assertions.assertEquals(10L, list.size());
 
         // Save file content before deleting the system temp dir (which also removes @TempDir)
-        byte[] fileContent = java.nio.file.Files.readAllBytes(file.toPath());
+        byte[] fileContent = Files.readAllBytes(file.toPath());
 
         FileUtils.delete(new File(System.getProperty(TempFile.JAVA_IO_TMPDIR)));
 
         // Recreate the file after temp dir deletion to continue the test
         file.getParentFile().mkdirs();
-        java.nio.file.Files.write(file.toPath(), fileContent);
+        Files.write(file.toPath(), fileContent);
 
         list = FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         Assertions.assertEquals(10L, list.size());

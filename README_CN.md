@@ -65,7 +65,7 @@ Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最�
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>version</version>
+    <version>2.1.0-incubating</version>
 </dependency>
 ```
 
@@ -75,9 +75,11 @@ Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最�
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod-sheet:version'
+    implementation 'org.apache.fesod:fesod-sheet:2.1.0-incubating'
 }
 ```
+
+最新版本见 [Maven Central](https://search.maven.org/artifact/org.apache.fesod/fesod-sheet)。
 
 ## 快速开始
 

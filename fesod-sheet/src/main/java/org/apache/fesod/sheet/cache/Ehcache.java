@@ -33,6 +33,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.util.FileUtils;
+import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -66,11 +67,11 @@ public class Ehcache implements ReadCache {
     /**
      * Bulk storage data
      */
-    private org.ehcache.Cache<Integer, ArrayList> fileCache;
+    private Cache<Integer, ArrayList> fileCache;
     /**
      * Currently active cache
      */
-    private org.ehcache.Cache<Integer, ArrayList> activeCache;
+    private Cache<Integer, ArrayList> activeCache;
 
     private String cacheAlias;
     /**

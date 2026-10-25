@@ -83,7 +83,6 @@ under the License.
         <slf4j-api.version>2.0.20</slf4j-api.version>
         <lombok.version>1.18.44</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
-        <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>2.0.20</slf4j-simple.version>
         <jcl-over-slf4j.version>2.0.20</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>2.0.20</log4j-over-slf4j.version>
@@ -224,17 +223,6 @@ under the License.
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j-simple.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

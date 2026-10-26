@@ -289,6 +289,26 @@ class FileUtilsTest {
     }
 
     @Test
+    void test_delete_failure_doesNotThrow() throws IOException {
+        File root = tempDir.resolve("root").toFile();
+        File file = new File(root, "file.txt");
+        FileUtils.createDirectory(root);
+        Files.write(file.toPath(), "content".getBytes());
+        // Hide the child so the still non-empty directory is deleted first, which must fail
+        File rootHidingChild = new File(root.getPath()) {
+            @Override
+            public File[] listFiles() {
+                return new File[0];
+            }
+        };
+
+        FileUtils.delete(rootHidingChild);
+
+        Assertions.assertTrue(root.exists());
+        Assertions.assertTrue(file.exists());
+    }
+
+    @Test
     void test_GetterSetter() {
         String originalPrefix = FileUtils.getTempFilePrefix();
         String newPrefix = tempDir.toString() + File.separator;

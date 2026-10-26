@@ -32,14 +32,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
 import org.apache.poi.util.TempFile;
 
+@Slf4j
 public class FileUtils {
     public static final String POI_FILES = "poifiles";
     public static final String EX_CACHE = "excache";
@@ -191,19 +194,27 @@ public class FileUtils {
      */
     public static void delete(File file) {
         if (file.isFile()) {
-            file.delete();
+            deleteOrWarn(file);
             return;
         }
         if (file.isDirectory()) {
             File[] childFiles = file.listFiles();
             if (childFiles == null || childFiles.length == 0) {
-                file.delete();
+                deleteOrWarn(file);
                 return;
             }
             for (int i = 0; i < childFiles.length; i++) {
                 delete(childFiles[i]);
             }
-            file.delete();
+            deleteOrWarn(file);
+        }
+    }
+
+    private static void deleteOrWarn(File file) {
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            log.warn("Can not delete file: {}", file.getAbsolutePath(), e);
         }
     }
 }

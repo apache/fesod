@@ -83,11 +83,11 @@ public class FileUtils {
     }
 
     /**
-     * Reads the contents of a file into a byte array. * The file is always closed.
+     * Reads the contents of a file into a byte array. The file is always closed.
      *
-     * @param file
-     * @return
-     * @throws IOException
+     * @param file The file to read.
+     * @return The contents of the file.
+     * @throws IOException If the file does not exist, is a directory, cannot be read, or reading fails.
      */
     public static byte[] readFileToByteArray(final File file) throws IOException {
         try (InputStream in = openInputStream(file)) {
@@ -105,9 +105,10 @@ public class FileUtils {
      * An exception is thrown if the file does not exist. An exception is thrown if the file object exists but is a
      * directory. An exception is thrown if the file exists but cannot be read.
      *
-     * @param file
-     * @return
-     * @throws IOException
+     * @param file The file to open.
+     * @return A new input stream for the file.
+     * @throws FileNotFoundException If the file does not exist.
+     * @throws IOException           If the file is a directory or cannot be read.
      */
     public static FileInputStream openInputStream(final File file) throws IOException {
         if (file.exists()) {
@@ -124,21 +125,26 @@ public class FileUtils {
     }
 
     /**
-     * Write inputStream to file
+     * Copies the input stream into the file, then closes the stream.
      *
-     * @param file        file
-     * @param inputStream inputStream
+     * @param file        The file to write, created or overwritten.
+     * @param inputStream The stream to copy from.
+     * @throws ExcelAnalysisException If the file cannot be written or the stream cannot be closed.
      */
     public static void writeToFile(File file, InputStream inputStream) {
         writeToFile(file, inputStream, true);
     }
 
     /**
-     * Write inputStream to file
+     * Copies the input stream into the file.
+     * <p>
+     * If both the copy and closing the stream fail, the copy failure is thrown and the close failure is attached
+     * to it as suppressed.
      *
-     * @param file             file
-     * @param inputStream      inputStream
-     * @param closeInputStream closeInputStream
+     * @param file             The file to write, created or overwritten.
+     * @param inputStream      The stream to copy from.
+     * @param closeInputStream Whether to close the stream afterwards; it stays open when {@code false}.
+     * @throws ExcelAnalysisException If the file cannot be written, or the stream should be closed and cannot be.
      */
     public static void writeToFile(File file, InputStream inputStream, boolean closeInputStream) {
         if (!closeInputStream) {
@@ -152,6 +158,9 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Copies the input stream into the file without closing the stream.
+     */
     private static void copyToFile(File file, InputStream inputStream) {
         try (OutputStream outputStream = new FileOutputStream(file)) {
             int bytesRead;
@@ -164,21 +173,42 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Installs {@link FesodTempFileCreationStrategy} as the strategy POI uses to create its temporary files.
+     */
     public static void createPoiFilesDirectory() {
         TempFile.setTempFileCreationStrategy(new FesodTempFileCreationStrategy());
     }
 
+    /**
+     * Creates a new, uniquely named directory under the cache path.
+     *
+     * @return The created directory.
+     * @throws ExcelCommonException If the directory cannot be created.
+     */
     public static File createCacheTmpFile() {
         return createDirectory(new File(cachePath + UUID.randomUUID().toString()));
     }
 
+    /**
+     * Returns a file with the given name in the temporary directory, creating the directory if needed. The file
+     * itself is not created.
+     *
+     * @param fileName The name of the file.
+     * @return The file in the temporary directory.
+     * @throws ExcelCommonException If the temporary directory cannot be created.
+     */
     public static File createTmpFile(String fileName) {
         File directory = createDirectory(new File(tempFilePrefix));
         return new File(directory, fileName);
     }
 
     /**
-     * @param directory
+     * Creates the directory, including any missing parents, unless it already exists.
+     *
+     * @param directory The directory to create.
+     * @return The same directory.
+     * @throws ExcelCommonException If the directory cannot be created.
      */
     public static File createDirectory(File directory) {
         if (!directory.exists() && !directory.mkdirs()) {
@@ -188,9 +218,11 @@ public class FileUtils {
     }
 
     /**
-     * delete file
+     * Deletes the file, or the directory and everything in it.
+     * <p>
+     * Best effort: anything that cannot be deleted is logged as a warning, never thrown.
      *
-     * @param file
+     * @param file The file or directory to delete.
      */
     public static void delete(File file) {
         if (file.isFile()) {

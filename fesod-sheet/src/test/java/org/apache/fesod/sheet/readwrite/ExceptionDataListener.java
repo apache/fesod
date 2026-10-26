@@ -27,6 +27,7 @@ package org.apache.fesod.sheet.readwrite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.context.AnalysisContext;
@@ -63,7 +64,7 @@ public class ExceptionDataListener extends AnalysisEventListener<SimpleData> {
     }
 
     @Override
-    public void invokeHeadMap(java.util.Map<Integer, String> headMap, AnalysisContext context) {
+    public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
         headName = headMap.get(0);
     }
 

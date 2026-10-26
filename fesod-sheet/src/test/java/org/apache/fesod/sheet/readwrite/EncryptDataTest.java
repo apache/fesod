@@ -246,16 +246,12 @@ public class EncryptDataTest extends AbstractExcelTest {
         File tempFileDir = new File(tempDir, "fesod-temp");
         Assertions.assertTrue(tempFileDir.mkdirs());
         Assertions.assertTrue(tempFileDir.setWritable(false));
-        try {
-            // Root and some file systems ignore the flag, so the open would not fail there
-            Assumptions.assumeFalse(tempFileDir.canWrite());
-            OutputStream outputStream = new ByteArrayOutputStream();
-            ExcelGenerateException e = Assertions.assertThrows(
-                    ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, null));
-            Assertions.assertInstanceOf(FileNotFoundException.class, e.getCause());
-        } finally {
-            Assertions.assertTrue(tempFileDir.setWritable(true));
-        }
+        // Root and some file systems ignore the flag, so the open would not fail there
+        Assumptions.assumeFalse(tempFileDir.canWrite());
+        OutputStream outputStream = new ByteArrayOutputStream();
+        ExcelGenerateException e = Assertions.assertThrows(
+                ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, null));
+        Assertions.assertInstanceOf(FileNotFoundException.class, e.getCause());
     }
 
     private static WorkbookWriteHandler swapWorkbook(SXSSFWorkbook workbook) {

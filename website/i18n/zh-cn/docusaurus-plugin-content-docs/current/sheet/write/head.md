@@ -90,13 +90,8 @@ public void complexHeadWrite() {
 public void dynamicHeadWrite() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
-    List<List<String>> head = Arrays.asList(
-            Collections.singletonList("动态字符串标题"),
-            Collections.singletonList("动态数字标题"),
-            Collections.singletonList("动态日期标题"));
-
     FesodSheet.write(fileName)
-            .head(head)
+            .head(HeadBuilder.forSimple("动态字符串标题", "动态数字标题", "动态日期标题"))
             .sheet()
             .doWrite(data());
 }
@@ -144,15 +139,12 @@ public void dynamicHeadWrite() {
 public void dynamicHeadWriteWithStrategy() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
-    List<List<String>> head = Arrays.asList(
-        Arrays.asList("主标题", "编号", "编号"),
-        Arrays.asList("主标题", "A 组", "姓名"),
-        Arrays.asList("主标题", "A 组", "年龄"),
-        Arrays.asList("主标题", "B 组", "姓名"),
-        Arrays.asList("主标题", "B 组", "年龄"));
-
     FesodSheet.write(fileName)
-        .head(head)
+        .head(builder -> builder.column("主标题", "编号", "编号")
+                .column("主标题", "A 组", "姓名")
+                .column("主标题", "A 组", "年龄")
+                .column("主标题", "B 组", "姓名")
+                .column("主标题", "B 组", "年龄"))
         .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
         .sheet()
         .doWrite(data());

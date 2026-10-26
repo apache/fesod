@@ -20,7 +20,7 @@ title: '问题反馈'
 - limitations under the License.
 -->
 
-我们非常欢迎社区用户对项目提出宝贵的反馈和意见。如果您在使用过程中发现任何问题，您可以通过 [NEW ISSUE](https://github.com/apach/fesod/issues/new/choose) 页面提交问题。
+我们非常欢迎社区用户对项目提出宝贵的反馈和意见。如果您在使用过程中发现任何问题，您可以通过 [NEW ISSUE](https://github.com/apache/fesod/issues/new/choose) 页面提交问题。
 
 ## 提交之前
 

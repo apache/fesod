@@ -20,8 +20,11 @@
 package org.apache.fesod.sheet.format;
 
 import java.io.File;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,7 +142,7 @@ public class CsvRowTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2023, Calendar.JUNE, 15, 23, 30, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        java.sql.Date sqlDate = new java.sql.Date(cal.getTimeInMillis());
+        Date sqlDate = new Date(cal.getTimeInMillis());
 
         Cell cell = csvRow.createCell(0, CellType.NUMERIC);
         cell.setCellValue(sqlDate);
@@ -161,7 +164,7 @@ public class CsvRowTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2023, Calendar.JUNE, 15, 12, 30, 45);
         cal.set(Calendar.MILLISECOND, 0);
-        java.sql.Time sqlTime = new java.sql.Time(cal.getTimeInMillis());
+        Time sqlTime = new Time(cal.getTimeInMillis());
 
         Cell cell = csvRow.createCell(0, CellType.NUMERIC);
         cell.setCellValue(sqlTime);
@@ -184,18 +187,18 @@ public class CsvRowTest {
     void csvWrite_withSqlDateAndTime_producesCorrectFile() throws Exception {
         File csvFile = new File(tempDir, "sql-date-test.csv");
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);
 
             // java.sql.Date — without fix: UnsupportedOperationException
             Cell dateCell = row.createCell(0, CellType.NUMERIC);
-            dateCell.setCellValue(java.sql.Date.valueOf("2024-01-15"));
+            dateCell.setCellValue(Date.valueOf("2024-01-15"));
 
             // java.sql.Time — without fix: UnsupportedOperationException
             Cell timeCell = row.createCell(1, CellType.NUMERIC);
-            timeCell.setCellValue(java.sql.Time.valueOf("12:30:45"));
+            timeCell.setCellValue(Time.valueOf("12:30:45"));
 
             sheet.close();
         }
@@ -229,7 +232,7 @@ public class CsvRowTest {
         cal.set(2024, Calendar.JANUARY, 15, 12, 30, 45);
         cal.set(Calendar.MILLISECOND, 0);
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);

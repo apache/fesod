@@ -42,6 +42,7 @@ import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
@@ -153,15 +154,16 @@ public class EncryptDataTest extends AbstractExcelTest {
     void xlsxStreamPasswordWrite_encryptionFails_writesNothing() throws Exception {
         // A temp directory under a regular file cannot be created, so the encryption step fails
         File regularFile = createTempFile("enc-blocker", ExcelFormat.XLSX);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         String originalPrefix = FileUtils.getTempFilePrefix();
         FileUtils.setTempFilePrefix(regularFile.getAbsolutePath() + File.separator + "sub" + File.separator);
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Assertions.assertThrows(ExcelGenerateException.class, () -> FesodSheet.write(out, SimpleData.class)
+            List<SimpleData> data = TestDataBuilder.simpleData(10);
+            ExcelWriterSheetBuilder sheet = FesodSheet.write(out, SimpleData.class)
                     .excelType(ExcelTypeEnum.XLSX)
                     .password(PASSWORD)
-                    .sheet()
-                    .doWrite(TestDataBuilder.simpleData(10)));
+                    .sheet();
+            Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
             Assertions.assertEquals(0, out.size());
         } finally {
             FileUtils.setTempFilePrefix(originalPrefix);
@@ -185,12 +187,14 @@ public class EncryptDataTest extends AbstractExcelTest {
             }
         };
 
-        Assertions.assertThrows(ExcelGenerateException.class, () -> FesodSheet.write(file, SimpleData.class)
+        List<SimpleData> data = TestDataBuilder.simpleData(10);
+        ExcelWriterSheetBuilder sheet = FesodSheet.write(file, SimpleData.class)
                 .excelType(ExcelTypeEnum.XLSX)
                 .password(PASSWORD)
                 .registerWriteHandler(makeReadOnly)
-                .sheet()
-                .doWrite(TestDataBuilder.simpleData(10)));
+                .sheet();
+
+        Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
         Assertions.assertFalse(file.exists());
     }
 }

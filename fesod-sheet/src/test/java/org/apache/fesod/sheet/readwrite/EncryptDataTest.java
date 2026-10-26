@@ -151,6 +151,16 @@ public class EncryptDataTest extends AbstractExcelTest {
     }
 
     /**
+     * Verifies that after a successful XLSX stream write, the temp file is deleted.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_succeeds_deletesTempFile() {
+        File tempFileDir = new File(tempDir, "fesod-temp");
+        writeWithPassword(tempFileDir, new ByteArrayOutputStream(), null);
+        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+    }
+
+    /**
      * Verifies that when writing the unencrypted temp file for an XLSX stream write fails, the temp file is deleted.
      */
     @Test

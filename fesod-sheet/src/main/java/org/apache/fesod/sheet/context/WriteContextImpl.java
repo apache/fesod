@@ -27,7 +27,9 @@ package org.apache.fesod.sheet.context;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -575,12 +577,13 @@ public class WriteContextImpl implements WriteContext {
                 doFileEncrypt07();
             } catch (Throwable t) {
                 Throwable failure = t;
-                // The workbook was written to the file before encryption, so the file still holds the unprotected
-                // workbook and must not be left behind.
                 File file = writeWorkbookHolder.getFile();
-                if (file.exists() && !file.delete()) {
+                try {
+                    Files.deleteIfExists(file.toPath());
+                } catch (IOException e) {
                     failure =
                             new ExcelGenerateException("Can not delete unencrypted file: " + file.getAbsolutePath(), t);
+                    failure.addSuppressed(e);
                 }
                 throwable = recordFailure(throwable, failure);
             }

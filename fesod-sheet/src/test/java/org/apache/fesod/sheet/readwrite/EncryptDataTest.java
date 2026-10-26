@@ -174,9 +174,9 @@ public class EncryptDataTest extends AbstractExcelTest {
                 throw new IOException("write failed");
             }
         });
+        OutputStream outputStream = new ByteArrayOutputStream();
         Assertions.assertThrows(
-                ExcelGenerateException.class,
-                () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
+                ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, failingWorkbook));
         AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
     }
 
@@ -193,9 +193,9 @@ public class EncryptDataTest extends AbstractExcelTest {
                 throw new IOException("close failed");
             }
         });
+        OutputStream outputStream = new ByteArrayOutputStream();
         Assertions.assertThrows(
-                ExcelGenerateException.class,
-                () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
+                ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, failingWorkbook));
         AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
     }
 
@@ -221,9 +221,9 @@ public class EncryptDataTest extends AbstractExcelTest {
                 throw new IOException("close failed");
             }
         });
+        OutputStream outputStream = new ByteArrayOutputStream();
         Assertions.assertThrows(
-                ExcelGenerateException.class,
-                () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
+                ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, failingWorkbook));
         Assertions.assertThrows(IOException.class, () -> tempFileStream[0].write(0));
     }
 
@@ -249,9 +249,9 @@ public class EncryptDataTest extends AbstractExcelTest {
         try {
             // Root and some file systems ignore the flag, so the open would not fail there
             Assumptions.assumeFalse(tempFileDir.canWrite());
+            OutputStream outputStream = new ByteArrayOutputStream();
             ExcelGenerateException e = Assertions.assertThrows(
-                    ExcelGenerateException.class,
-                    () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), null));
+                    ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, null));
             Assertions.assertInstanceOf(FileNotFoundException.class, e.getCause());
         } finally {
             Assertions.assertTrue(tempFileDir.setWritable(true));

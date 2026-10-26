@@ -50,6 +50,7 @@ import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
@@ -157,7 +158,7 @@ public class EncryptDataTest extends AbstractExcelTest {
     void xlsxStreamPasswordWrite_succeeds_deletesTempFile() {
         File tempFileDir = new File(tempDir, "fesod-temp");
         writeWithPassword(tempFileDir, new ByteArrayOutputStream(), null);
-        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**
@@ -176,7 +177,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         Assertions.assertThrows(
                 ExcelGenerateException.class,
                 () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
-        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**
@@ -195,7 +196,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         Assertions.assertThrows(
                 ExcelGenerateException.class,
                 () -> writeWithPassword(tempFileDir, new ByteArrayOutputStream(), failingWorkbook));
-        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**
@@ -234,7 +235,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         File tempFileDir = new File(tempDir, "fesod-temp");
         Assertions.assertThrows(
                 ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, BrokenOutputStream.INSTANCE, null));
-        Assertions.assertArrayEquals(new String[0], tempFileDir.list());
+        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**

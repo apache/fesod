@@ -108,7 +108,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
-        System.out.println("Parsed a data entry" + JSON.toJSONString(data));
+        System.out.println("Parsed a data entry" + data);
     }
 
     @Override

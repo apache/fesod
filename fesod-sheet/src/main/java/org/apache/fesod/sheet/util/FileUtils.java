@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.exception.ExcelCommonException;
@@ -46,17 +48,21 @@ public class FileUtils {
      * the temporary directory, but each project is run by a different user, so there is a permission problem, so each
      * project creates a unique UUID as a separate Temporary Files.
      */
-    private static String tempFilePrefix = System.getProperty(TempFile.JAVA_IO_TMPDIR)
-            + File.separator
-            + UUID.randomUUID().toString()
-            + File.separator;
+    @Getter
+    @Setter
+    private static String tempFilePrefix =
+            System.getProperty(TempFile.JAVA_IO_TMPDIR) + File.separator + UUID.randomUUID() + File.separator;
     /**
      * Used to store poi temporary files.
      */
+    @Getter
+    @Setter
     private static String poiFilesPath = tempFilePrefix + POI_FILES + File.separator;
     /**
      * Used to store easy excel temporary files.
      */
+    @Getter
+    @Setter
     private static String cachePath = tempFilePrefix + EX_CACHE + File.separator;
 
     private static final int WRITE_BUFF_SIZE = 8192;
@@ -105,7 +111,7 @@ public class FileUtils {
             if (file.isDirectory()) {
                 throw new IOException("File '" + file + "' exists but is a directory");
             }
-            if (file.canRead() == false) {
+            if (!file.canRead()) {
                 throw new IOException("File '" + file + "' cannot be read");
             }
         } else {
@@ -199,29 +205,5 @@ public class FileUtils {
             }
             file.delete();
         }
-    }
-
-    public static String getTempFilePrefix() {
-        return tempFilePrefix;
-    }
-
-    public static void setTempFilePrefix(String tempFilePrefix) {
-        FileUtils.tempFilePrefix = tempFilePrefix;
-    }
-
-    public static String getPoiFilesPath() {
-        return poiFilesPath;
-    }
-
-    public static void setPoiFilesPath(String poiFilesPath) {
-        FileUtils.poiFilesPath = poiFilesPath;
-    }
-
-    public static String getCachePath() {
-        return cachePath;
-    }
-
-    public static void setCachePath(String cachePath) {
-        FileUtils.cachePath = cachePath;
     }
 }

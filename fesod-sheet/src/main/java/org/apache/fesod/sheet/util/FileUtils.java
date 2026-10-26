@@ -81,12 +81,9 @@ public class FileUtils {
      * @throws IOException
      */
     public static byte[] readFileToByteArray(final File file) throws IOException {
-        InputStream in = openInputStream(file);
-        try {
+        try (InputStream in = openInputStream(file)) {
             final long fileLength = file.length();
             return fileLength > 0 ? IoUtils.toByteArray(in, (int) fileLength) : IoUtils.toByteArray(in);
-        } finally {
-            in.close();
         }
     }
 
@@ -135,9 +132,19 @@ public class FileUtils {
      * @param closeInputStream closeInputStream
      */
     public static void writeToFile(File file, InputStream inputStream, boolean closeInputStream) {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(file);
+        if (!closeInputStream) {
+            copyToFile(file, inputStream);
+            return;
+        }
+        try (InputStream in = inputStream) {
+            copyToFile(file, in);
+        } catch (IOException e) {
+            throw new ExcelAnalysisException("Can not close 'inputStream'", e);
+        }
+    }
+
+    private static void copyToFile(File file, InputStream inputStream) {
+        try (OutputStream outputStream = new FileOutputStream(file)) {
             int bytesRead;
             byte[] buffer = new byte[WRITE_BUFF_SIZE];
             while ((bytesRead = inputStream.read(buffer, 0, WRITE_BUFF_SIZE)) != -1) {
@@ -145,21 +152,6 @@ public class FileUtils {
             }
         } catch (Exception e) {
             throw new ExcelAnalysisException("Can not create temporary file!", e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    throw new ExcelAnalysisException("Can not close 'outputStream'!", e);
-                }
-            }
-            if (inputStream != null && closeInputStream) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    throw new ExcelAnalysisException("Can not close 'inputStream'", e);
-                }
-            }
         }
     }
 

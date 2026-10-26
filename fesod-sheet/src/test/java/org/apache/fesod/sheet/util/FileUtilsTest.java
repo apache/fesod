@@ -143,6 +143,24 @@ class FileUtilsTest {
     }
 
     @Test
+    void test_finally_inputStream_readAndCloseException() throws IOException {
+        File file = tempDir.resolve("read_close_ex_test.txt").toFile();
+        InputStream mockInputStream = Mockito.mock(InputStream.class);
+        IOException readFailure = new IOException("Read failed");
+        IOException closeFailure = new IOException("Close failed");
+        Mockito.when(mockInputStream.read(Mockito.any(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenThrow(readFailure);
+        Mockito.doThrow(closeFailure).when(mockInputStream).close();
+
+        ExcelAnalysisException ex = Assertions.assertThrows(ExcelAnalysisException.class, () -> {
+            FileUtils.writeToFile(file, mockInputStream, true);
+        });
+        Assertions.assertSame(readFailure, ex.getCause());
+        Assertions.assertEquals(1, ex.getSuppressed().length);
+        Assertions.assertSame(closeFailure, ex.getSuppressed()[0]);
+    }
+
+    @Test
     void test_openInputStream_notFound() {
         File nonExistentFile = tempDir.resolve(UUID.randomUUID().toString()).toFile();
 

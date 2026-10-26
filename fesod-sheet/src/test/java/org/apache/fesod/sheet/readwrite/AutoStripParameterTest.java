@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import com.alibaba.fastjson2.JSON;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +110,7 @@ public class AutoStripParameterTest extends AbstractExcelTest {
                 .registerReadListenerIfNotNull(new AnalysisEventListener<SimpleData>() {
                     @Override
                     public void invoke(SimpleData data, AnalysisContext context) {
-                        log.info("Read one record: {}", JSON.toJSONString(data));
+                        log.info("Read one record: {}", data);
                     }
 
                     @Override
@@ -175,7 +174,7 @@ public class AutoStripParameterTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
 
-        log.info("Read records: {}", JSON.toJSONString(dataList));
+        log.info("Read records: {}", dataList);
         Assertions.assertEquals(2, dataList.size());
         if (Boolean.TRUE.equals(autoStrip)) {
             Assertions.assertEquals(

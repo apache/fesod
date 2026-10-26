@@ -203,8 +203,8 @@ public class FileUtils {
                 deleteOrWarn(file);
                 return;
             }
-            for (int i = 0; i < childFiles.length; i++) {
-                delete(childFiles[i]);
+            for (File childFile : childFiles) {
+                delete(childFile);
             }
             deleteOrWarn(file);
         }

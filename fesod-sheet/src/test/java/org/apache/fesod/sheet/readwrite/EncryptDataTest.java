@@ -176,8 +176,9 @@ public class EncryptDataTest extends AbstractExcelTest {
     @Test
     void xlsxFilePasswordWrite_encryptionFails_leavesNoFile() throws Exception {
         File file = createTempFile("enc-readonly", ExcelFormat.XLSX);
-        // Root ignores file permissions, so the failure forced below cannot happen
-        Assumptions.assumeTrue(file.setReadOnly() && !file.canWrite(), "file permissions are not enforced");
+        Assertions.assertTrue(file.setReadOnly());
+        // Root and some file systems ignore the flag, so the encryption would not fail there
+        Assumptions.assumeFalse(file.canWrite());
         Assertions.assertTrue(file.setWritable(true));
         // Once the write stream is open, making the file read-only makes the encrypt-in-place step fail
         WorkbookWriteHandler makeReadOnly = new WorkbookWriteHandler() {

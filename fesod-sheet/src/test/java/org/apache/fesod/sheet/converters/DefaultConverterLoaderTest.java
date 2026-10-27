@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converters;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.Map;
@@ -32,6 +33,9 @@ import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeStringConverter;
+import org.apache.fesod.sheet.converters.timestamp.TimestampDateConverter;
+import org.apache.fesod.sheet.converters.timestamp.TimestampNumberConverter;
+import org.apache.fesod.sheet.converters.timestamp.TimestampStringConverter;
 import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.junit.jupiter.api.Assertions;
@@ -119,6 +123,24 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 SqlTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersTimestampFamily() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                TimestampNumberConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.NUMBER)));
+        Assertions.assertInstanceOf(
+                TimestampStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                TimestampDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class)));
+        Assertions.assertInstanceOf(
+                TimestampStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.STRING)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
@@ -74,8 +75,7 @@ public class UnCamelDataTest extends AbstractExcelTest {
         List<Map<Integer, String>> headMaps = new ArrayList<>();
         FesodSheet.read(file, UnCamelData.class, new CollectingReadListener<UnCamelData>() {
                     @Override
-                    public void invokeHeadMap(
-                            Map<Integer, String> headMap, org.apache.fesod.sheet.context.AnalysisContext context) {
+                    public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
                         headMaps.add(headMap);
                     }
                 })

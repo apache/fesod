@@ -106,9 +106,9 @@ public class ReadSheetHolder extends AbstractReadHolder {
 
     /**
      * Approximate total number of rows.
-     * use: getApproximateTotalRowNumber()
      *
      * @return
+     * @deprecated use {@link #getApproximateTotalRowNumber()} instead
      */
     @Deprecated
     public Integer getTotal() {

@@ -1,5 +1,5 @@
 ---
-title: "Becoming an Apache Fesod Committer"
+title: "Becoming a Committer"
 description: "Reflections on joining the Apache Fesod (Incubating) team as a committer, lessons learned along the way, and what's next."
 authors: [nkuprins]
 tags: [opensource, apache, committer, fesod]
@@ -22,9 +22,9 @@ tags: [opensource, apache, committer, fesod]
 - limitations under the License.
 -->
 
-![Apache Fesod New Committer](/img/blog/apache-fesod-new-committer.svg)
+![Apache Fesod (Incubating) New Committer](/img/blog/apache-fesod-new-committer.svg)
 
-> I'm glad to share that I've become a Committer for Apache Fesod. I'm looking forward to contributing even more to the project and its community.
+> I'm glad to share that I've become a Committer for Apache Fesod (Incubating). I'm looking forward to contributing even more to the project and its community.
 
 <!--truncate-->
 
@@ -38,7 +38,7 @@ Thank you as well to the rest of the PPMC and the broader community for placing 
 
 ## How It Started
 
-My background is in software performance and energy efficiency - during my studies, I researched how design choices affect a system's energy consumption. That curiosity about where software wastes resources is what eventually led me to Fesod. My first contribution was a small cleanup: stripping out a redundant buffer copy in a utility class.
+My background is in software performance and energy efficiency - during my studies, I researched how design choices affect a system's energy consumption. That curiosity about where software wastes resources is what eventually led me to Apache Fesod (Incubating). My first contribution was a small cleanup: stripping out a redundant buffer copy in a utility class.
 
 The fix itself was only a few lines of code, but the process gave me a clear picture of how the project operates - discussing the issue upfront, agreeing on the approach, and submitting a tight, well-tested PR. Once that first commit was merged, I was hooked.
 
@@ -54,7 +54,7 @@ Over the past few months, I focused primarily on correctness, testing, and devel
 
 ## Key Takeaways
 
-Working on Fesod has shaped how I approach software design in general:
+Working on Apache Fesod (Incubating) has shaped how I approach software design in general:
 
 1. **Small fixes build trust faster than big ones.** My first PR was a tiny cleanup, not an impressive feature - but it's what opened the door to everything that came after.
 2. **Review is a two-way skill.** Once I started reviewing other contributors' PRs, I learned what makes a change easy or hard to review from the other side of the process.
@@ -64,4 +64,4 @@ Working on Fesod has shaped how I approach software design in general:
 
 Becoming a committer isn't a destination - it's just a shift in responsibility.
 
-Moving forward, alongside continuing to contribute to Fesod's codebase, I plan to spend more time reviewing pull requests, working through reported issues, and helping new contributors get their first PRs over the finish line.
+Moving forward, alongside continuing to contribute to Apache Fesod (Incubating)'s codebase, I plan to spend more time reviewing pull requests, working through reported issues, and helping new contributors get their first PRs over the finish line.

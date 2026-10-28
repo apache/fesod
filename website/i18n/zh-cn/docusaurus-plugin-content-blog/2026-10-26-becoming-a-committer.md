@@ -1,5 +1,5 @@
 ---
-title: "成为 Apache Fesod Committer"
+title: "成为 Committer"
 description: 记录加入 Apache Fesod (Incubating) 成为 Committer 的心路历程、学到的经验，以及接下来的计划
 authors: [nkuprins]
 tags: [opensource, apache, committer, fesod]
@@ -22,9 +22,9 @@ tags: [opensource, apache, committer, fesod]
 - limitations under the License.
 -->
 
-![Apache Fesod New Committer](/img/blog/apache-fesod-new-committer.svg)
+![Apache Fesod (Incubating) New Committer](/img/blog/apache-fesod-new-committer.svg)
 
-> 很高兴与大家分享，我已经成为 Apache Fesod 的 Committer，期待继续为项目和社区做出更多贡献。
+> 很高兴与大家分享，我已经成为 Apache Fesod (Incubating) 的 Committer，期待继续为项目和社区做出更多贡献。
 
 <!--truncate-->
 
@@ -38,7 +38,7 @@ tags: [opensource, apache, committer, fesod]
 
 ## 一切是怎么开始的
 
-我的背景是软件性能与能效方向 —— 读书期间，我研究过不同的设计选择如何影响系统的能耗。正是这种对软件资源浪费的好奇心，最终把我带到了 Fesod。我的第一个贡献只是一次很小的清理：去掉了某个工具类中一次多余的缓冲区拷贝。
+我的背景是软件性能与能效方向 —— 读书期间，我研究过不同的设计选择如何影响系统的能耗。正是这种对软件资源浪费的好奇心，最终把我带到了 Apache Fesod (Incubating)。我的第一个贡献只是一次很小的清理：去掉了某个工具类中一次多余的缓冲区拷贝。
 
 修复本身只有几行代码，但整个过程让我清楚地看到了项目的运作方式——先在 Issue 中讨论清楚问题，确认好方案，再提交一个范围明确、测试完善的 PR。第一次提交被合并之后，我就彻底上瘾了。
 
@@ -54,7 +54,7 @@ tags: [opensource, apache, committer, fesod]
 
 ## 心得体会
 
-在 Fesod 上的工作，也在潜移默化地影响着我对软件设计的整体看法：
+在 Apache Fesod (Incubating) 上的工作，也在潜移默化地影响着我对软件设计的整体看法：
 
 1. **小改动比大改动更快赢得信任。** 我的第一个 PR 只是一次很小的清理，而不是什么亮眼的新功能——但正是它为后面的一切打开了大门。
 2. **评审是一项双向的技能。** 当我开始评审其他贡献者的 PR 之后，我才从“另一侧”理解了什么样的改动容易评审、什么样的改动很难评审。
@@ -64,4 +64,4 @@ tags: [opensource, apache, committer, fesod]
 
 成为 Committer 并不是终点，而只是责任的一次转变。
 
-接下来，除了继续为 Fesod 的代码库做贡献之外，我也打算把更多时间投入到评审 PR、处理已报告的 Issue，以及帮助新贡献者让自己的第一个 PR 顺利合并。
+接下来，除了继续为 Apache Fesod (Incubating) 的代码库做贡献之外，我也打算把更多时间投入到评审 PR、处理已报告的 Issue，以及帮助新贡献者让自己的第一个 PR 顺利合并。

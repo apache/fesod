@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.testkit.base;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -127,7 +128,7 @@ public abstract class AbstractExcelTest {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(normalized)) {
             if (in == null) {
                 throw new UncheckedIOException(
-                        new java.io.FileNotFoundException("classpath resource not found: " + normalized));
+                        new FileNotFoundException("classpath resource not found: " + normalized));
             }
             Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

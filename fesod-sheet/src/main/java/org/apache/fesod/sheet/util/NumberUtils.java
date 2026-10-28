@@ -285,7 +285,8 @@ public class NumberUtils {
             decimalFormat = new DecimalFormat(format, DecimalFormatSymbols.getInstance(locale));
             formatCache.put(format, decimalFormat);
         }
-        if (decimalFormat.getRoundingMode() != roundingMode) {
+        // A null rounding mode keeps the DecimalFormat default instead of failing the mode check.
+        if (roundingMode != null && decimalFormat.getRoundingMode() != roundingMode) {
             decimalFormat.setRoundingMode(roundingMode);
         }
         return decimalFormat;

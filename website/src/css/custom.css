@@ -101,7 +101,8 @@ article header h2 {
     font-weight: bold;
 }
 
-.team table {
+.team table,
+.built-in-converters table {
     display: table;
     width: 100%;
     table-layout: auto;

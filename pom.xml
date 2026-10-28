@@ -599,7 +599,6 @@ under the License.
                     <excludes>
                         <exclude>website/**</exclude>
                         <exclude>logo.svg</exclude>
-                        <exclude>**/*.md</exclude>
                         <exclude>dist/**</exclude>
                         <exclude>**/*.xlsx</exclude>
                         <exclude>**/*.xls</exclude>

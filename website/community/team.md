@@ -51,6 +51,7 @@ Apache Fesod (Incubating) team comprises Members and Contributors. We embrace th
 | Public Name     | GitHub Username                                                  | Apache ID                                                                       | Role        |
 |-----------------|------------------------------------------------------------------|---------------------------------------------------------------------------------|-------------|
 | Zhongqiang Gong | [@GOODBOY008](https://github.com/GOODBOY008)                     | [gongzhongqiang](https://people.apache.org/committer-index.html#gongzhongqiang) | Committer   |
+| Nikita Kuprins  | [@nkuprins](https://github.com/nkuprins)                         | [nkuprins](https://people.apache.org/committer-index.html#nkuprins)             | Committer   |
 
 </div>
 

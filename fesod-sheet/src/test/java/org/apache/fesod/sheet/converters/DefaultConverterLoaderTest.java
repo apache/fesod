@@ -142,9 +142,9 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 TimestampDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class)));
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                TimestampStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.STRING)));
+                TimestampStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(Timestamp.class)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

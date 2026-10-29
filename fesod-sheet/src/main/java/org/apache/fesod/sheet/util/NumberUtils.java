@@ -285,8 +285,13 @@ public class NumberUtils {
             decimalFormat = new DecimalFormat(format, DecimalFormatSymbols.getInstance(locale));
             formatCache.put(format, decimalFormat);
         }
-        // A null rounding mode keeps the DecimalFormat default instead of failing the mode check.
-        if (roundingMode != null && decimalFormat.getRoundingMode() != roundingMode) {
+        // The cached format is shared per pattern, so an explicit mode from an earlier call must not
+        // leak into calls that request none: a null rounding mode restores the DecimalFormat default.
+        if (roundingMode == null) {
+            if (decimalFormat.getRoundingMode() != RoundingMode.HALF_EVEN) {
+                decimalFormat.setRoundingMode(RoundingMode.HALF_EVEN);
+            }
+        } else if (decimalFormat.getRoundingMode() != roundingMode) {
             decimalFormat.setRoundingMode(roundingMode);
         }
         return decimalFormat;

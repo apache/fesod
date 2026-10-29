@@ -26,7 +26,7 @@ title: '密码保护'
 
 ## 概述
 
-Fesod 支持 Excel 内置的密码保护功能，适用于读取和写入操作。在构建器上使用 `.password("xxx")` 即可加密输出文件或解密输入文件。对于 `.xlsx` 文件，Fesod 使用 Apache POI 的加密实现（基于 AES），大文件加密时内存开销较高。对于旧版 `.xls` 文件，密码保护表现为写保护而非完整的内容加密，因此其行为和安全性与 `.xlsx` 有所不同。
+Apache Fesod (Incubating) 支持 Excel 内置的密码保护功能，适用于读取和写入操作。在构建器上使用 `.password("xxx")` 配置密码。对于 `.xlsx` 输出，设置非空密码并成功完成写入后，Apache Fesod (Incubating) 使用 Apache POI 的加密实现（基于 AES），大文件加密时内存开销较高。旧版 `.xls` 的保护行为与 `.xlsx` 加密不同，不应假定其具有相同的保密性。
 
 ## 带密码写入
 
@@ -67,6 +67,10 @@ public void passwordRead() {
 
 ## 安全说明
 
-- Excel 密码保护会加密文件内容，没有密码将无法读取。
+- XLSX 密码保护适用于成功完成的输出，不代表处理期间的临时文件、缓存或 JVM 内存也已加密。
+- 保护临时目录和输出目录，禁止不可信主体访问。文件输出在处理期间可能包含明文，必须在整个写入流程成功后再交付。
+- 写入或加密失败后的结果应按未完成的敏感数据处理，不得交付。
 - 如果密码不正确，读取时会抛出 `EncryptedDocumentException` 异常。
 - 在生产环境中，请避免硬编码密码 — 建议使用配置文件或密钥管理服务。
+
+请参阅[安全模型](/community/security-model#password-protection)，了解加密边界、[临时文件保护要求](/community/security-model#temporary-files-and-caches)，以及 [Apache POI 的作用与限制](/community/security-model#apache-poi)。

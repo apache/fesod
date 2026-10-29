@@ -64,9 +64,6 @@ class ConverterUtilsTest {
     @Mock
     private Converter stringConverter;
 
-    @Mock
-    private Converter integerConverter;
-
     private CellDataConverterRegistry converterRegistry;
 
     @BeforeEach

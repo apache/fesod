@@ -73,8 +73,8 @@ public class CustomConverterTest extends AbstractExcelTest {
             WriteConverter<?> toStringConverter = converterRegistry.findWriteConverter(Timestamp.class, 0);
             WriteConverter<?> toNumberConverter = converterRegistry.findWriteConverter(Timestamp.class, 1);
 
-            Assertions.assertEquals(toStringConverter, timestampStringConverter);
-            Assertions.assertEquals(toNumberConverter, timestampNumberConverter);
+            Assertions.assertEquals(timestampStringConverter, toStringConverter);
+            Assertions.assertEquals(timestampNumberConverter, toNumberConverter);
         }
     }
 

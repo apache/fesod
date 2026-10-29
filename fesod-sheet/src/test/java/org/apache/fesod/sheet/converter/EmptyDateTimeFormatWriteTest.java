@@ -20,7 +20,6 @@
 package org.apache.fesod.sheet.converter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -29,6 +28,7 @@ import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -73,45 +73,41 @@ public class EmptyDateTimeFormatWriteTest extends AbstractExcelTest {
 
     @Test
     public void localDateTimeWithEmptyFormatFallsBackToDefaultDateFormat() throws Exception {
-        File file = createTempFile("emptyFmtLocalDateTime", org.apache.fesod.sheet.testkit.enums.ExcelFormat.XLSX);
+        File file = createTempFile("emptyFmtLocalDateTime", ExcelFormat.XLSX);
         LocalDateTimeModel model = new LocalDateTimeModel();
         model.setWhen(LocalDateTime.of(2020, 1, 2, 3, 4, 5));
 
         FesodSheet.write(file, LocalDateTimeModel.class).sheet().doWrite(Collections.singletonList(model));
 
-        Cell cell = readCell(file);
         Assertions.assertEquals(
                 DEFAULT_DATE_TIME_FORMAT,
-                cell.getCellStyle().getDataFormatString(),
+                readCellDataFormat(file),
                 "an empty pattern must fall back to the default date format, not an empty one");
     }
 
     @Test
     public void offsetDateTimeWithEmptyFormatFallsBackToDefaultDateFormat() throws Exception {
-        File file = createTempFile("emptyFmtOffsetDateTime", org.apache.fesod.sheet.testkit.enums.ExcelFormat.XLSX);
+        File file = createTempFile("emptyFmtOffsetDateTime", ExcelFormat.XLSX);
         OffsetDateTimeModel model = new OffsetDateTimeModel();
         model.setWhen(OffsetDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneOffset.UTC));
 
         FesodSheet.write(file, OffsetDateTimeModel.class).sheet().doWrite(Collections.singletonList(model));
 
-        Cell cell = readCell(file);
         Assertions.assertEquals(
                 DEFAULT_DATE_TIME_FORMAT,
-                cell.getCellStyle().getDataFormatString(),
+                readCellDataFormat(file),
                 "the offset converter already normalizes empty patterns");
     }
 
     @Test
     public void explicitFormatIsStillApplied() throws Exception {
-        File file = createTempFile("explicitFmt", org.apache.fesod.sheet.testkit.enums.ExcelFormat.XLSX);
+        File file = createTempFile("explicitFmt", ExcelFormat.XLSX);
         ExplicitFormatModel model = new ExplicitFormatModel();
         model.setWhen(LocalDateTime.of(2020, 1, 2, 3, 4, 5));
 
         FesodSheet.write(file, ExplicitFormatModel.class).sheet().doWrite(Collections.singletonList(model));
 
-        Cell cell = readCell(file);
-        Assertions.assertEquals(
-                "yyyy/MM/dd", cell.getCellStyle().getDataFormatString(), "an explicit pattern is applied as-is");
+        Assertions.assertEquals("yyyy/MM/dd", readCellDataFormat(file), "an explicit pattern is applied as-is");
     }
 
     public static class ExplicitFormatModel {
@@ -127,9 +123,10 @@ public class EmptyDateTimeFormatWriteTest extends AbstractExcelTest {
         }
     }
 
-    private Cell readCell(File file) throws Exception {
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(file))) {
-            return workbook.getSheetAt(0).getRow(1).getCell(0);
+    private String readCellDataFormat(File file) throws Exception {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            Cell cell = workbook.getSheetAt(0).getRow(1).getCell(0);
+            return cell.getCellStyle().getDataFormatString();
         }
     }
 }

@@ -96,6 +96,22 @@ class NumberUtilsTest {
     }
 
     @Test
+    void test_format_nullRoundingModeResetsPreviousModeFromCache() {
+        Mockito.when(contentProperty.getNumberFormatProperty())
+                .thenReturn(new NumberFormatProperty("0.00", RoundingMode.UP));
+
+        // The UP mode is cached with the "0.00" format.
+        Assertions.assertEquals("1.01", NumberUtils.format(new BigDecimal("1.001"), contentProperty));
+
+        // A later call without an explicit mode must not inherit UP from the cached format.
+        Mockito.when(contentProperty.getNumberFormatProperty()).thenReturn(new NumberFormatProperty("0.00", null));
+        Assertions.assertEquals(
+                "1.00",
+                NumberUtils.format(new BigDecimal("1.001"), contentProperty),
+                "a null rounding mode must restore the DecimalFormat default");
+    }
+
+    @Test
     void test_format_nullRoundingModeDoesNotThrow() {
         Mockito.when(contentProperty.getNumberFormatProperty()).thenReturn(new NumberFormatProperty("0.00", null));
 

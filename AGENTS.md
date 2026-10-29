@@ -54,8 +54,9 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 
 ## Code Style & Conventions
 
-- **Formatter**: Palantir Java Format (enforced by Spotless, no checkstyle)
+- **Formatter**: Palantir Java Format (enforced by Spotless); Checkstyle checks import restrictions during Maven's `validate` phase
 - **Imports**: Static imports first, then regular imports; no unused imports (enforced by Spotless `importOrder` with `\#|` separator)
+- **Import restrictions**: Static imports are allowed only in `src/test/java` for named members of JUnit `Assertions`/`Assumptions`, Mockito `Mockito`/`ArgumentMatchers`, and AssertJ `Assertions`. Production static imports and all wildcard imports remain forbidden by Checkstyle.
 - **Indent**: 4 spaces
 - **License header**: ASF Apache 2.0 header required on all `.java`, `.xml`, `.yml`, `.toml` files. Header template at `tools/spotless/license-header.txt`; enforced by the Hawkeye workflow (`.github/workflows/license-check.yml`), not Spotless
 - **Lombok**: Allowed; config in `lombok.config` (`toString.callSuper = CALL`, `equalsAndHashCode.callSuper = CALL`)

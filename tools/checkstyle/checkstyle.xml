@@ -23,9 +23,9 @@ under the License.
     "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <!--
-  Minimal checkstyle ruleset for Apache Fesod (incubating): forbids
-  static imports (AvoidStaticImport) and wildcard imports
-  (AvoidStarImport) in main and test sources.
+  Minimal checkstyle ruleset for Apache Fesod (incubating). Static imports
+  are forbidden except named members of the listed test-library classes
+  in src/test/java. Wildcard imports remain forbidden in all sources.
 -->
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
@@ -33,5 +33,23 @@ under the License.
     <module name="TreeWalker">
         <module name="AvoidStaticImport"/>
         <module name="AvoidStarImport"/>
+        <!-- Only named members of test libraries are allowed in test sources. -->
+        <module name="SuppressionXpathSingleFilter">
+            <property name="files" value="[\\/]src[\\/]test[\\/]java[\\/]"/>
+            <property name="checks" value="AvoidStaticImport"/>
+            <property name="query"
+                      value="//STATIC_IMPORT/DOT[
+                        DOT[IDENT[@text='Assertions' or @text='Assumptions']
+                          and DOT[IDENT[@text='api']
+                            and DOT[IDENT[@text='jupiter']
+                              and DOT[IDENT[1][@text='org'] and IDENT[2][@text='junit']]]]]
+                        or DOT[IDENT[@text='Mockito' or @text='ArgumentMatchers']
+                          and DOT[IDENT[1][@text='org'] and IDENT[2][@text='mockito']]]
+                        or DOT[IDENT[@text='Assertions']
+                          and DOT[IDENT[@text='api']
+                            and DOT[IDENT[@text='core']
+                              and DOT[IDENT[1][@text='org'] and IDENT[2][@text='assertj']]]]]
+                      ]"/>
+        </module>
     </module>
 </module>

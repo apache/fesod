@@ -30,26 +30,24 @@ under the License.
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
     <property name="severity" value="error"/>
+    <!-- Keep the strict rule outside test sources; apply the library allowlist only to tests. -->
+    <module name="SuppressionSingleFilter">
+        <property name="id" value="productionStaticImports"/>
+        <property name="files" value="[\\/]src[\\/]test[\\/]java[\\/]"/>
+    </module>
+    <module name="SuppressionSingleFilter">
+        <property name="id" value="testStaticImports"/>
+        <property name="files" value="^(?!.*[\\/]src[\\/]test[\\/]java[\\/]).*$"/>
+    </module>
     <module name="TreeWalker">
-        <module name="AvoidStaticImport"/>
-        <module name="AvoidStarImport"/>
-        <!-- Only named members of test libraries are allowed in test sources. -->
-        <module name="SuppressionXpathSingleFilter">
-            <property name="files" value="[\\/]src[\\/]test[\\/]java[\\/]"/>
-            <property name="checks" value="AvoidStaticImport"/>
-            <property name="query"
-                      value="//STATIC_IMPORT/DOT[
-                        DOT[IDENT[@text='Assertions' or @text='Assumptions']
-                          and DOT[IDENT[@text='api']
-                            and DOT[IDENT[@text='jupiter']
-                              and DOT[IDENT[1][@text='org'] and IDENT[2][@text='junit']]]]]
-                        or DOT[IDENT[@text='Mockito' or @text='ArgumentMatchers']
-                          and DOT[IDENT[1][@text='org'] and IDENT[2][@text='mockito']]]
-                        or DOT[IDENT[@text='Assertions']
-                          and DOT[IDENT[@text='api']
-                            and DOT[IDENT[@text='core']
-                              and DOT[IDENT[1][@text='org'] and IDENT[2][@text='assertj']]]]]
-                      ]"/>
+        <module name="AvoidStaticImport">
+            <property name="id" value="productionStaticImports"/>
         </module>
+        <module name="AvoidStaticImport">
+            <property name="id" value="testStaticImports"/>
+            <property name="excludes"
+                      value="org.junit.jupiter.api.Assertions.*,org.junit.jupiter.api.Assumptions.*,org.mockito.Mockito.*,org.mockito.ArgumentMatchers.*,org.assertj.core.api.Assertions.*"/>
+        </module>
+        <module name="AvoidStarImport"/>
     </module>
 </module>

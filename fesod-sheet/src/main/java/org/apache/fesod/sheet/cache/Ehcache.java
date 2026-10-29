@@ -79,6 +79,10 @@ public class Ehcache implements ReadCache {
      */
     private int cacheMiss = 0;
 
+    /**
+     * @param maxCacheActivateSize maximum size of the activated cache
+     * @deprecated use {@link #Ehcache(Integer, Integer)} instead, which also accepts a batch count
+     */
     @Deprecated
     public Ehcache(Integer maxCacheActivateSize) {
         this(maxCacheActivateSize, null);

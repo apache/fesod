@@ -31,10 +31,9 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.context.AnalysisContext;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.CellDataConverterRegistry;
 import org.apache.fesod.sheet.converters.NullableObjectConverter;
+import org.apache.fesod.sheet.converters.ReadConverter;
 import org.apache.fesod.sheet.converters.ReadConverterContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelDataConvertException;
@@ -77,8 +76,8 @@ public class ConverterUtils {
                 stringMap.put(key, null);
                 continue;
             }
-            Converter<?> converter =
-                    readSheetHolder.converterMap().get(ConverterKeyBuild.buildKey(String.class, cellData.getType()));
+            ReadConverter<?> converter =
+                    readSheetHolder.converterRegistry().findReadConverter(String.class, cellData.getType(), key);
             if (converter == null) {
                 throw new ExcelDataConvertException(
                         context.readRowHolder().getRowIndex(),
@@ -109,7 +108,7 @@ public class ConverterUtils {
      * @param cellData
      * @param field
      * @param contentProperty
-     * @param converterMap
+     * @param converterRegistry
      * @param context
      * @param rowIndex
      * @param columnIndex
@@ -119,12 +118,12 @@ public class ConverterUtils {
             ReadCellData<?> cellData,
             Field field,
             ExcelContentProperty contentProperty,
-            Map<ConverterKey, Converter<?>> converterMap,
+            CellDataConverterRegistry converterRegistry,
             AnalysisContext context,
             Integer rowIndex,
             Integer columnIndex) {
         return convertToJavaObject(
-                cellData, field, null, null, contentProperty, converterMap, context, rowIndex, columnIndex);
+                cellData, field, null, null, contentProperty, converterRegistry, context, rowIndex, columnIndex);
     }
 
     /**
@@ -134,7 +133,7 @@ public class ConverterUtils {
      * @param field
      * @param clazz
      * @param contentProperty
-     * @param converterMap
+     * @param converterRegistry
      * @param context
      * @param rowIndex
      * @param columnIndex
@@ -146,7 +145,7 @@ public class ConverterUtils {
             Class<?> clazz,
             Class<?> classGeneric,
             ExcelContentProperty contentProperty,
-            Map<ConverterKey, Converter<?>> converterMap,
+            CellDataConverterRegistry converterRegistry,
             AnalysisContext context,
             Integer rowIndex,
             Integer columnIndex) {
@@ -163,13 +162,14 @@ public class ConverterUtils {
                     cellData,
                     getClassGeneric(field, classGeneric),
                     contentProperty,
-                    converterMap,
+                    converterRegistry,
                     context,
                     rowIndex,
                     columnIndex));
             return cellDataReturn;
         }
-        return doConvertToJavaObject(cellData, clazz, contentProperty, converterMap, context, rowIndex, columnIndex);
+        return doConvertToJavaObject(
+                cellData, clazz, contentProperty, converterRegistry, context, rowIndex, columnIndex);
     }
 
     private static Class<?> getClassGeneric(Field field, Class<?> classGeneric) {
@@ -199,7 +199,7 @@ public class ConverterUtils {
      * @param cellData
      * @param clazz
      * @param contentProperty
-     * @param converterMap
+     * @param converterRegistry
      * @param context
      * @param rowIndex
      * @param columnIndex
@@ -209,11 +209,11 @@ public class ConverterUtils {
             ReadCellData<?> cellData,
             Class<?> clazz,
             ExcelContentProperty contentProperty,
-            Map<ConverterKey, Converter<?>> converterMap,
+            CellDataConverterRegistry converterRegistry,
             AnalysisContext context,
             Integer rowIndex,
             Integer columnIndex) {
-        Converter<?> converter = null;
+        ReadConverter<?> converter = null;
         if (contentProperty != null) {
             converter = contentProperty.getConverter();
         }
@@ -225,7 +225,7 @@ public class ConverterUtils {
         }
 
         if (converter == null) {
-            converter = converterMap.get(ConverterKeyBuild.buildKey(clazz, cellData.getType()));
+            converter = converterRegistry.findReadConverter(clazz, cellData.getType(), columnIndex);
         }
         if (converter == null) {
             throw new ExcelDataConvertException(

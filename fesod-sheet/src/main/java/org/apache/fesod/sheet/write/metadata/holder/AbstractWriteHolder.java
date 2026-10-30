@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.write.metadata.holder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +38,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.sheet.constant.OrderConstant;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
-import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.converters.WriteConverter;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.event.NotRepeatExecutor;
@@ -130,11 +127,6 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
      * Default is {@code false}.
      */
     private Boolean orderByIncludeColumn;
-
-    /**
-     * Custom converters for this holder
-     */
-    private List<Converter<?>> customConverterList;
 
     /**
      * Write handler
@@ -266,30 +258,11 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
         // Initialization property
         this.excelWriteHeadProperty = new ExcelWriteHeadProperty(this, getClazz(), getHead());
 
-        // Set converterMap
-        if (parentAbstractWriteHolder == null) {
-            setConverterMap(DefaultConverterLoader.copyDefaultWriteConverter());
-        } else {
-            setConverterMap(new HashMap<>(parentAbstractWriteHolder.getConverterMap()));
-            if (CollectionUtils.isNotEmpty(parentAbstractWriteHolder.getCustomConverterList())) {
-                for (Converter<?> converter : parentAbstractWriteHolder.getCustomConverterList()) {
-                    getConverterMap()
-                            .put(
-                                    ConverterKeyBuild.buildKey(
-                                            converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                    converter);
-                }
-            }
-        }
+        // register converters (custom)
         if (writeBasicParameter.getCustomConverterList() != null
                 && !writeBasicParameter.getCustomConverterList().isEmpty()) {
-            this.customConverterList = writeBasicParameter.getCustomConverterList();
-            for (Converter<?> converter : writeBasicParameter.getCustomConverterList()) {
-                getConverterMap()
-                        .put(
-                                ConverterKeyBuild.buildKey(
-                                        converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                converter);
+            for (WriteConverter<?> converter : writeBasicParameter.getCustomConverterList()) {
+                getConverterRegistry().addCustomWriteConverter(converter);
             }
         }
     }

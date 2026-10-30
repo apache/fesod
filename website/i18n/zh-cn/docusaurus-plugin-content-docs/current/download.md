@@ -41,8 +41,6 @@ title: '下载'
 
 在这里查看所有历史已归档版本: [archive](https://archive.apache.org/dist/incubator/fesod/).
 
-在这里查看所有 non-Apache 版本: [non-apache releases](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/).
-
 ## 验证 Apache 发布版本
 
 在使用前，请参考这份[官方指南](https://www.apache.org/info/verification.html)验证所有 Apache 发布版本，包括验证源码发布的完整性和真实性。

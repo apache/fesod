@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
+import org.apache.fesod.sheet.i18n.LocalizationContext;
 
 /**
  * Global configuration
@@ -77,6 +78,13 @@ public class GlobalConfiguration {
      */
     private Boolean autoStrip;
 
+    /**
+     * Context for i18n and header localization.
+     *
+     * Defaults to {@link LocalizationContext#DEFAULT}
+     */
+    private LocalizationContext localizationContext;
+
     public GlobalConfiguration() {
         this.autoTrim = Boolean.TRUE;
         this.autoStrip = Boolean.FALSE;
@@ -84,5 +92,6 @@ public class GlobalConfiguration {
         this.locale = Locale.getDefault();
         this.useScientificFormat = Boolean.FALSE;
         this.filedCacheLocation = CacheLocationEnum.THREAD_LOCAL;
+        this.localizationContext = LocalizationContext.DEFAULT;
     }
 }

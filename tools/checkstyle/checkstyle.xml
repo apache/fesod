@@ -22,16 +22,15 @@ under the License.
     "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
     "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
-<!--
-  Minimal checkstyle ruleset for Apache Fesod (incubating): forbids
-  static imports (AvoidStaticImport) and wildcard imports
-  (AvoidStarImport) in main and test sources.
--->
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
     <property name="severity" value="error"/>
     <module name="TreeWalker">
-        <module name="AvoidStaticImport"/>
+        <!-- Excludes also apply to main sources: list only test-scoped libraries. -->
+        <module name="AvoidStaticImport">
+            <property name="excludes"
+                      value="org.junit.jupiter.api.Assertions.*,org.junit.jupiter.api.Assumptions.*,org.mockito.Mockito.*,org.mockito.ArgumentMatchers.*,org.assertj.core.api.Assertions.*"/>
+        </module>
         <module name="AvoidStarImport"/>
     </module>
 </module>

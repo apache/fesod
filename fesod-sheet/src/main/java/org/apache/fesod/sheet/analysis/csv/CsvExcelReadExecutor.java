@@ -220,9 +220,9 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
         Iterator<String> cellIterator = record.iterator();
         int columnIndex = 0;
         Boolean autoTrim =
-                csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoTrim();
+                csvReadContext.currentReadHolder().globalConfiguration().getAutoTrim();
         Boolean autoStrip =
-                csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoStrip();
+                csvReadContext.currentReadHolder().globalConfiguration().getAutoStrip();
 
         while (cellIterator.hasNext()) {
             String cellString = cellIterator.next();

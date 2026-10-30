@@ -23,28 +23,16 @@ under the License.
     "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <!--
-  Minimal checkstyle ruleset for Apache Fesod (incubating). Static imports
-  are forbidden except named members of the listed test-library classes
-  in src/test/java. Wildcard imports remain forbidden in all sources.
+  Minimal checkstyle ruleset for Apache Fesod (incubating). Named static
+  imports from the listed test-library classes are allowed; Maven test
+  scope keeps those libraries out of production compilation. All other
+  static imports and all wildcard imports remain forbidden.
 -->
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
     <property name="severity" value="error"/>
-    <!-- Keep the strict rule outside test sources; apply the library allowlist only to tests. -->
-    <module name="SuppressionSingleFilter">
-        <property name="id" value="productionStaticImports"/>
-        <property name="files" value="[\\/]src[\\/]test[\\/]java[\\/]"/>
-    </module>
-    <module name="SuppressionSingleFilter">
-        <property name="id" value="testStaticImports"/>
-        <property name="files" value="^(?!.*[\\/]src[\\/]test[\\/]java[\\/]).*$"/>
-    </module>
     <module name="TreeWalker">
         <module name="AvoidStaticImport">
-            <property name="id" value="productionStaticImports"/>
-        </module>
-        <module name="AvoidStaticImport">
-            <property name="id" value="testStaticImports"/>
             <property name="excludes"
                       value="org.junit.jupiter.api.Assertions.*,org.junit.jupiter.api.Assumptions.*,org.mockito.Mockito.*,org.mockito.ArgumentMatchers.*,org.assertj.core.api.Assertions.*"/>
         </module>

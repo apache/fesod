@@ -25,6 +25,8 @@
 
 package org.apache.fesod.sheet.readwrite;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +52,6 @@ import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
@@ -158,7 +159,7 @@ public class EncryptDataTest extends AbstractExcelTest {
     void xlsxStreamPasswordWrite_succeeds_deletesTempFile() {
         File tempFileDir = new File(tempDir, "fesod-temp");
         writeWithPassword(tempFileDir, new ByteArrayOutputStream(), null);
-        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
+        assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**
@@ -177,7 +178,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         OutputStream outputStream = new ByteArrayOutputStream();
         Assertions.assertThrows(
                 ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, failingWorkbook));
-        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
+        assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**
@@ -196,7 +197,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         OutputStream outputStream = new ByteArrayOutputStream();
         Assertions.assertThrows(
                 ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, failingWorkbook));
-        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
+        assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**
@@ -235,7 +236,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         File tempFileDir = new File(tempDir, "fesod-temp");
         Assertions.assertThrows(
                 ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, BrokenOutputStream.INSTANCE, null));
-        AssertionsForClassTypes.assertThat(tempFileDir).isEmptyDirectory();
+        assertThat(tempFileDir).isEmptyDirectory();
     }
 
     /**

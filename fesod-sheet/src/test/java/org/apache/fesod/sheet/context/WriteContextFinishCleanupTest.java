@@ -95,11 +95,7 @@ class WriteContextFinishCleanupTest {
                             output.closed, "owned output stream must close even after callback failure"),
                     () -> Mockito.verify(workbook).close());
         } finally {
-            workbook.close();
-            if (workbook instanceof SXSSFWorkbook) {
-                ((SXSSFWorkbook) workbook).dispose();
-            }
-            output.close();
+            closeWorkbookAndStream(workbook, output);
         }
     }
 
@@ -118,11 +114,7 @@ class WriteContextFinishCleanupTest {
             Assertions.assertAll(() -> Assertions.assertTrue(output.closed), () -> Mockito.verify(workbook)
                     .close());
         } finally {
-            workbook.close();
-            if (workbook instanceof SXSSFWorkbook) {
-                ((SXSSFWorkbook) workbook).dispose();
-            }
-            output.close();
+            closeWorkbookAndStream(workbook, output);
         }
     }
 
@@ -143,11 +135,7 @@ class WriteContextFinishCleanupTest {
                     () -> Assertions.assertTrue(output.closed, "owned output stream must close after write failure"),
                     () -> Mockito.verify(workbook).close());
         } finally {
-            workbook.close();
-            if (workbook instanceof SXSSFWorkbook) {
-                ((SXSSFWorkbook) workbook).dispose();
-            }
-            output.close();
+            closeWorkbookAndStream(workbook, output);
         }
     }
 
@@ -203,6 +191,14 @@ class WriteContextFinishCleanupTest {
             workbook.close();
             output.close();
         }
+    }
+
+    private void closeWorkbookAndStream(Workbook workbook, OutputStream output) throws IOException {
+        workbook.close();
+        if (workbook instanceof SXSSFWorkbook) {
+            ((SXSSFWorkbook) workbook).dispose();
+        }
+        output.close();
     }
 
     private static class TrackingStream extends OutputStream {

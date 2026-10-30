@@ -588,7 +588,7 @@ public class WriteContextImpl implements WriteContext {
      * Invokes completion callbacks before writing the workbook.
      */
     private void finishCallbacks(boolean onException) {
-        // executes the callback after all sheets has been fully written.
+        // Execute callbacks after all sheets have been fully written.
         boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();
         Map<Integer, WriteSheetHolder> writeSheetHolderMap =
                 shouldSkip ? null : writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();

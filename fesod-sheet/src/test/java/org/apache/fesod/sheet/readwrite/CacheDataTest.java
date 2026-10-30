@@ -37,7 +37,7 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
 import org.apache.fesod.sheet.metadata.FieldCache;
-import org.apache.fesod.sheet.read.listener.PageReadListener;
+import org.apache.fesod.sheet.read.metadata.holder.ReadHolder;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
@@ -57,17 +57,16 @@ public class CacheDataTest extends AbstractExcelTest {
     @Test
     void clearsThreadLocalFieldCacheAfterRead() throws Exception {
         File file07 = createTempFile("cache", ExcelFormat.XLSX);
-        Field field = FieldUtils.getField(ClassUtils.class, "FIELD_THREAD_LOCAL", true);
-        ThreadLocal<Map<Class<?>, FieldCache>> fieldThreadLocal =
-                (ThreadLocal<Map<Class<?>, FieldCache>>) field.get(ClassUtils.class.newInstance());
-        Assertions.assertNull(fieldThreadLocal.get());
         FesodSheet.write(file07, CacheData.class).sheet().doWrite(TestDataBuilder.cacheData(10));
-        FesodSheet.read(file07, CacheData.class, new PageReadListener<CacheData>(dataList -> {
-                    Assertions.assertNotNull(fieldThreadLocal.get());
-                }))
-                .sheet()
-                .doRead();
-        Assertions.assertNull(fieldThreadLocal.get());
+        FieldCacheCapturingListener listener = new FieldCacheCapturingListener();
+        FesodSheet.read(file07, CacheData.class, listener).sheet().doRead();
+        try {
+            Assertions.assertNotNull(listener.getFieldCache());
+            Assertions.assertNotSame(
+                    listener.getFieldCache(), ClassUtils.declaredFields(CacheData.class, listener.getReadHolder()));
+        } finally {
+            ClassUtils.removeThreadLocalCache();
+        }
     }
 
     @Test
@@ -145,6 +144,22 @@ public class CacheDataTest extends AbstractExcelTest {
 
         @Override
         public void invoke(CacheData data, AnalysisContext context) {}
+
+        @Override
+        public void doAfterAllAnalysed(AnalysisContext context) {}
+    }
+
+    @Getter
+    private static class FieldCacheCapturingListener extends AnalysisEventListener<CacheData> {
+        private ReadHolder readHolder;
+        private FieldCache fieldCache;
+
+        @Override
+        public void invoke(CacheData data, AnalysisContext context) {
+            readHolder = context.currentReadHolder();
+            fieldCache = ClassUtils.declaredFields(CacheData.class, readHolder);
+            Assertions.assertSame(fieldCache, ClassUtils.declaredFields(CacheData.class, readHolder));
+        }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {}

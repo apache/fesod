@@ -31,7 +31,6 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.sheet.enums.NumericCellTypeEnum;
@@ -55,7 +54,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CsvCell extends CellBase {
 
     /**

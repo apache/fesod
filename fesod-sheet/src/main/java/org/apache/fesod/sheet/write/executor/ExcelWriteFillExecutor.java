@@ -50,11 +50,13 @@ import org.apache.fesod.sheet.enums.WriteTemplateAnalysisCellTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.apache.fesod.sheet.util.PoiUtils;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
+import org.apache.fesod.sheet.util.XlsxEscapeUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.fill.AnalysisCell;
@@ -317,7 +319,13 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     }
                 }
                 cellValueBuild.append(analysisCell.getPrepareDataList().get(index));
-                cell.setCellValue(cellValueBuild.toString());
+                String joined = cellValueBuild.toString();
+                if (writeContext.writeWorkbookHolder().getExcelType() == ExcelTypeEnum.XLSX) {
+                    // The variable values above never passed through afterCellDataConverted, so the
+                    // joined literal still needs the default xlsx hex escaping before it is stored.
+                    joined = XlsxEscapeUtils.escape(joined);
+                }
+                cell.setCellValue(joined);
                 cellWriteHandlerContext.setCellDataList(cellDataList);
                 if (CollectionUtils.isNotEmpty(cellDataList)) {
                     cellWriteHandlerContext.setFirstCellData(cellDataList.get(0));

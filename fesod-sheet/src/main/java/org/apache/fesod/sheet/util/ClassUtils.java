@@ -102,6 +102,14 @@ public class ClassUtils {
     private static final ThreadLocal<Map<ContentPropertyKey, ExcelContentProperty>> CONTENT_THREAD_LOCAL =
             new ThreadLocal<>();
 
+    static {
+        ThreadLocalCleaner.register(() -> {
+            FIELD_THREAD_LOCAL.remove();
+            CLASS_CONTENT_THREAD_LOCAL.remove();
+            CONTENT_THREAD_LOCAL.remove();
+        });
+    }
+
     /**
      * Calculate the configuration information for the class
      *

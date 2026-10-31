@@ -90,6 +90,7 @@ import org.apache.fesod.sheet.converters.timestamp.TimestampNumberConverter;
 import org.apache.fesod.sheet.converters.timestamp.TimestampStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
 import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
+import org.apache.fesod.sheet.converters.year.YearNumberConverter;
 import org.apache.fesod.sheet.converters.year.YearStringConverter;
 
 /**
@@ -173,6 +174,7 @@ public class DefaultConverterLoader {
 
         putAllConverter(new UUIDStringConverter());
 
+        putAllConverter(new YearNumberConverter());
         putAllConverter(new YearStringConverter());
         allConverter = Collections.unmodifiableMap(allConverter);
     }

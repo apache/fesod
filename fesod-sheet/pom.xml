@@ -54,7 +54,7 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod-shaded</artifactId>
+            <artifactId>fesod-beans-cglib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

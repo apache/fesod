@@ -46,20 +46,17 @@ public class YearStringConverter implements Converter<Year> {
     public Year convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         return DateUtils.parseYear(
-                cellData.getStringValue(), getYearFormat(contentProperty), globalConfiguration.getLocale());
+                cellData.getStringValue(),
+                DateUtils.resolveYearFormat(contentProperty, globalConfiguration),
+                globalConfiguration.getLocale());
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             Year value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return new WriteCellData<>(
-                DateUtils.format(value, getYearFormat(contentProperty), globalConfiguration.getLocale()));
-    }
-
-    private static String getYearFormat(ExcelContentProperty contentProperty) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return null;
-        }
-        return contentProperty.getDateTimeFormatProperty().getFormat();
+        return new WriteCellData<>(DateUtils.format(
+                value,
+                DateUtils.resolveYearFormat(contentProperty, globalConfiguration),
+                globalConfiguration.getLocale()));
     }
 }

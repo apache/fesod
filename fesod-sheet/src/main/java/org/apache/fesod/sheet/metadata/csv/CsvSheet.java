@@ -709,7 +709,10 @@ public class CsvSheet implements Sheet, Closeable {
                     }
                     // date
                     if (dataFormat == null) {
-                        dataFormatString = DateUtils.defaultDateFormat;
+                        String defaultDateFormat = csvWorkbook.getDefaultDateFormat();
+                        dataFormatString = !StringUtils.isEmpty(defaultDateFormat)
+                                ? defaultDateFormat
+                                : DateUtils.getDefaultDateFormat();
                         dataFormat = csvWorkbook.createDataFormat().getFormat(dataFormatString);
                     }
                     if (dataFormatString == null) {

@@ -315,12 +315,11 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
     private void fillProperty(WriteCellData<?> cellDataValue, ExcelContentProperty excelContentProperty) {
         switch (cellDataValue.getType()) {
             case DATE:
-                String dateFormat = null;
-                if (excelContentProperty != null && excelContentProperty.getDateTimeFormatProperty() != null) {
-                    dateFormat =
-                            excelContentProperty.getDateTimeFormatProperty().getFormat();
-                }
-                WorkBookUtil.fillDataFormat(cellDataValue, dateFormat, DateUtils.defaultDateFormat);
+                WorkBookUtil.fillDataFormat(
+                        cellDataValue,
+                        DateUtils.resolveDateTimeFormat(
+                                excelContentProperty,
+                                writeContext.currentWriteHolder().globalConfiguration()));
                 return;
             case NUMBER:
                 String numberFormat = null;

@@ -238,23 +238,41 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
 
             readCellData.setColumnIndex(targetColumnIndex);
 
-            if (StringUtils.isNotBlank(cellString)) {
-                readCellData.setType(CellDataTypeEnum.STRING);
-                if (autoStrip) {
-                    readCellData.setStringValue(StringUtils.strip(cellString));
-                } else if (autoTrim) {
-                    readCellData.setStringValue(cellString.trim());
-                } else {
-                    readCellData.setStringValue(cellString);
+            if (cellString != null) {
+                if (Boolean.TRUE.equals(autoStrip)) {
+                    cellString = StringUtils.strip(cellString);
+                } else if (Boolean.TRUE.equals(autoTrim)) {
+                    cellString = cellString.trim();
                 }
-            } else {
+            }
+            if (StringUtils.isEmpty(cellString)) {
                 readCellData.setType(CellDataTypeEnum.EMPTY);
+            } else {
+                readCellData.setType(CellDataTypeEnum.STRING);
+                readCellData.setStringValue(cellString);
             }
 
             cellMap.put(targetColumnIndex, readCellData);
         }
 
         RowTypeEnum rowType = MapUtils.isEmpty(cellMap) ? RowTypeEnum.EMPTY : RowTypeEnum.DATA;
+        if (rowType == RowTypeEnum.DATA) {
+            boolean hasData = false;
+            for (Cell cell : cellMap.values()) {
+                if (!(cell instanceof ReadCellData)) {
+                    hasData = true;
+                    break;
+                }
+                ReadCellData<?> readCellData = (ReadCellData<?>) cell;
+                if (readCellData.getType() != CellDataTypeEnum.EMPTY) {
+                    hasData = true;
+                    break;
+                }
+            }
+            if (!hasData) {
+                rowType = RowTypeEnum.EMPTY;
+            }
+        }
         ReadRowHolder readRowHolder = new ReadRowHolder(
                 rowIndex, rowType, csvReadContext.readWorkbookHolder().getGlobalConfiguration(), cellMap);
         csvReadContext.readRowHolder(readRowHolder);

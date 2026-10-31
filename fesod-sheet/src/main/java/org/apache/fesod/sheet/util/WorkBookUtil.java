@@ -156,7 +156,7 @@ public class WorkBookUtil {
             cellData.getWriteCellStyle().setDataFormatData(new DataFormatData());
         }
         if (cellData.getWriteCellStyle().getDataFormatData().getFormat() == null) {
-            if (format == null) {
+            if (format == null || format.isEmpty()) {
                 cellData.getWriteCellStyle().getDataFormatData().setFormat(defaultFormat);
             } else {
                 cellData.getWriteCellStyle().getDataFormatData().setFormat(format);

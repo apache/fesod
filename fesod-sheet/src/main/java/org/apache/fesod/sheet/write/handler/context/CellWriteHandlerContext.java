@@ -44,6 +44,12 @@ import org.apache.poi.ss.usermodel.Row;
 /**
  * cell context
  *
+ * <p>The write path recycles one instance across all cells of a write session: it is
+ * {@link #reset(WriteContext, Row, Integer, Head, Integer, Integer, Boolean, ExcelContentProperty)
+ * reset} before every cell instead of allocating a fresh context each time. A context is
+ * therefore only valid for the duration of a single cell's handler chain — handlers must
+ * not retain it (or rely on its identity) beyond {@code afterCellDispose}.
+ *
  *
  */
 @Getter
@@ -161,5 +167,49 @@ public class CellWriteHandlerContext {
         this.firstCellData = firstCellData;
         this.head = head;
         this.excelContentProperty = excelContentProperty;
+    }
+
+    /**
+     * Re-initializes this context for the next cell of the same write session, restoring
+     * every field to the state a freshly built context would have. The holder fields are
+     * derived from {@code writeContext} the same way
+     * {@code WriteHandlerUtils.createCellWriteHandlerContext} does.
+     *
+     * @param writeContext         write context
+     * @param row                  row
+     * @param rowIndex             row index
+     * @param headData             head data of the cell, nullable
+     * @param columnIndex          column index
+     * @param relativeRowIndex     relative row index, nullable
+     * @param isHead               whether the cell is a header cell
+     * @param excelContentProperty field annotation configuration, nullable
+     */
+    public void reset(
+            WriteContext writeContext,
+            Row row,
+            Integer rowIndex,
+            Head headData,
+            Integer columnIndex,
+            Integer relativeRowIndex,
+            Boolean isHead,
+            ExcelContentProperty excelContentProperty) {
+        this.writeContext = writeContext;
+        this.writeWorkbookHolder = writeContext.writeWorkbookHolder();
+        this.writeSheetHolder = writeContext.writeSheetHolder();
+        this.writeTableHolder = writeContext.writeTableHolder();
+        this.row = row;
+        this.rowIndex = rowIndex;
+        this.cell = null;
+        this.columnIndex = columnIndex;
+        this.relativeRowIndex = relativeRowIndex;
+        this.headData = headData;
+        this.cellDataList = null;
+        this.firstCellData = null;
+        this.head = isHead;
+        this.excelContentProperty = excelContentProperty;
+        this.originalValue = null;
+        this.originalFieldClass = null;
+        this.targetCellDataType = null;
+        this.ignoreFillStyle = null;
     }
 }

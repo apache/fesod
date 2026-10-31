@@ -60,4 +60,34 @@ class WriteContextImplTest {
         Assertions.assertEquals(1, e.getCause().getSuppressed().length);
         Assertions.assertEquals("close failed", e.getCause().getSuppressed()[0].getMessage());
     }
+
+    /**
+     * An Error thrown while the workbook is written does not stop the remaining cleanup steps, and reaches the
+     * caller unwrapped once they have run.
+     */
+    @Test
+    void finish_writeThrowsError_runsRemainingCleanupAndRethrowsTheSameError() {
+        AssertionError failure = new AssertionError("write failed");
+        boolean[] closed = new boolean[1];
+        OutputStream brokenStream = new OutputStream() {
+            @Override
+            public void write(int b) {
+                throw failure;
+            }
+
+            @Override
+            public void close() {
+                closed[0] = true;
+            }
+        };
+
+        AssertionError thrown =
+                Assertions.assertThrows(AssertionError.class, () -> FesodSheet.write(brokenStream, SimpleData.class)
+                        .excelType(ExcelTypeEnum.XLSX)
+                        .sheet()
+                        .doWrite(TestDataBuilder.simpleData(10)));
+
+        Assertions.assertSame(failure, thrown);
+        Assertions.assertTrue(closed[0], "the output stream should still be closed after the Error");
+    }
 }

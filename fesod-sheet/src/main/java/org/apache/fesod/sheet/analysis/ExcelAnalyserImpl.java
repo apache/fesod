@@ -31,6 +31,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.StringUtils;
+import org.apache.fesod.common.util.ThrowableUtils;
 import org.apache.fesod.sheet.analysis.csv.CsvExcelReadExecutor;
 import org.apache.fesod.sheet.analysis.v03.XlsSaxAnalyser;
 import org.apache.fesod.sheet.analysis.v07.XlsxSaxAnalyser;
@@ -96,12 +97,8 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
     public ExcelAnalyserImpl(ReadWorkbook readWorkbook) {
         try {
             chooseExcelExecutor(readWorkbook);
-        } catch (RuntimeException e) {
-            finish();
-            throw e;
         } catch (Throwable e) {
-            finish();
-            throw new ExcelAnalysisException(e);
+            throw finishAndPropagate(e);
         }
     }
 
@@ -201,13 +198,32 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                     log.debug("Custom stop!");
                 }
             }
-        } catch (RuntimeException e) {
-            finish();
-            throw e;
         } catch (Throwable e) {
-            finish();
-            throw new ExcelAnalysisException(e);
+            throw finishAndPropagate(e);
         }
+    }
+
+    /**
+     * Releases resources and hands {@code e} back to the caller: runtime exceptions and errors propagate as
+     * they are, checked exceptions are wrapped in an {@link ExcelAnalysisException}. A failure during cleanup
+     * never replaces {@code e}; it is attached to it as a suppressed exception.
+     *
+     * @return the exception to throw when {@code e} is a checked exception; runtime exceptions and errors are
+     *         rethrown from inside this method
+     */
+    private RuntimeException finishAndPropagate(Throwable e) {
+        try {
+            finish();
+        } catch (Throwable cleanupFailure) {
+            ThrowableUtils.addSuppressedQuietly(e, cleanupFailure);
+        }
+        if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+        }
+        if (e instanceof Error) {
+            throw (Error) e;
+        }
+        return new ExcelAnalysisException(e);
     }
 
     /**
@@ -232,7 +248,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 readWorkbookHolder.getReadCache().destroy();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
         try {
             if ((readWorkbookHolder instanceof XlsxReadWorkbookHolder)
@@ -240,7 +256,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 ((XlsxReadWorkbookHolder) readWorkbookHolder).getOpcPackage().revert();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
         try {
             if ((readWorkbookHolder instanceof XlsReadWorkbookHolder)
@@ -250,7 +266,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                         .close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
 
         // close csv.
@@ -261,7 +277,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 ((CsvReadWorkbookHolder) readWorkbookHolder).getCsvParser().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
 
         try {
@@ -270,14 +286,14 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 readWorkbookHolder.getInputStream().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
         try {
             if (readWorkbookHolder.getTempFile() != null) {
                 FileUtils.delete(readWorkbookHolder.getTempFile());
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = ThrowableUtils.recordFailure(throwable, t);
         }
 
         clearEncrypt03();
@@ -285,6 +301,9 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
         removeThreadLocalCache();
 
         if (throwable != null) {
+            if (throwable instanceof Error) {
+                throw (Error) throwable;
+            }
             throw new ExcelAnalysisException("Can not close IO.", throwable);
         }
     }

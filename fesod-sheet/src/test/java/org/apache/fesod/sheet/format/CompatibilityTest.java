@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.format;
 
-import com.alibaba.fastjson2.JSON;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -67,7 +66,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     public void readXlsxWithSharedStringNamespace() {
         // Exist in `sharedStrings.xml` `x:t` start tag, need to be compatible
         List<Map<Integer, Object>> list = readCompatibilityFile("t02.xlsx", 0);
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals(3, list.size());
         Map<Integer, Object> row2 = list.get(2);
         Assertions.assertEquals("1，2-戊二醇", row2.get(2));
@@ -77,7 +76,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     public void readXlsxIgnoreNullColumns() {
         // In the presence of the first line of a lot of null columns, ignore null columns
         List<Map<Integer, Object>> list = readCompatibilityFile("t03.xlsx");
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals(1, list.size());
         Map<Integer, Object> row0 = list.get(0);
         Assertions.assertEquals(12, row0.size());
@@ -87,7 +86,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     public void readXlsxWithNamespacedTag() {
         // Exist in `sheet1.xml` `ns2:t` start tag, need to be compatible
         List<Map<Integer, Object>> list = readCompatibilityFile("t04.xlsx");
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals(56, list.size());
         Map<Integer, Object> row0 = list.get(0);
         Assertions.assertEquals("QQSJK28F152A012242S0081", row0.get(5));
@@ -97,7 +96,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     public void readXlsxDateRounding() {
         // Excel read date needs to be rounded
         List<Map<Integer, String>> list = readCompatibilityFile("t05.xlsx");
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals("2023-01-01 00:00:00", list.get(0).get(0));
         Assertions.assertEquals("2023-01-01 00:00:00", list.get(1).get(0));
         Assertions.assertEquals("2023-01-01 00:00:00", list.get(2).get(0));
@@ -109,7 +108,7 @@ public class CompatibilityTest extends AbstractExcelTest {
     public void readXlsxPrecisionFormat() {
         // Keep error precision digital format
         List<Map<Integer, String>> list = readCompatibilityFile("t06.xlsx", 0);
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals("2087.03", list.get(0).get(2));
     }
 
@@ -120,12 +119,12 @@ public class CompatibilityTest extends AbstractExcelTest {
                 .readDefaultReturn(ReadDefaultReturnEnum.ACTUAL_DATA)
                 .sheet()
                 .doReadSync();
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals(0, new BigDecimal("24.1998124").compareTo((BigDecimal)
                         list.get(0).get(11)));
 
         list = readCompatibilityFile("t07.xlsx");
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals("24.20", list.get(0).get(11));
     }
 
@@ -158,7 +157,7 @@ public class CompatibilityTest extends AbstractExcelTest {
         File file = compatibilityFile("t09.xlsx");
         List<Map<Integer, Object>> list =
                 FesodSheet.read(file).headRowNumber(0).sheet().doReadSync();
-        log.info("data:{}", JSON.toJSONString(list));
+        log.info("data:{}", list);
         Assertions.assertEquals(1, list.size());
 
         Assertions.assertEquals("SH_x000D_Z002", list.get(0).get(0));

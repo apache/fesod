@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import com.alibaba.fastjson2.JSON;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class ExceptionDataListener extends AnalysisEventListener<SimpleData> {
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         if (!list.isEmpty()) {
-            log.debug("First row:{}", JSON.toJSONString(list.get(0)));
+            log.debug("First row:{}", list.get(0));
         }
     }
 }

@@ -34,7 +34,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.Year;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Calendar;
 import java.util.Date;
@@ -183,6 +186,25 @@ public class DateUtils {
             return OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         }
         return OffsetDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
+    }
+
+    /**
+     * Convert string to a zoned date-time.
+     *
+     * @param dateTimeString
+     * @param dateTimeFormat
+     * @param local
+     * @return
+     */
+    public static ZonedDateTime parseZonedDateTime(String dateTimeString, String dateTimeFormat, Locale local) {
+        DateTimeFormatter formatter = StringUtils.isEmpty(dateTimeFormat)
+                ? DateTimeFormatter.ISO_ZONED_DATE_TIME
+                : getCacheDateTimeFormat(dateTimeFormat, local);
+        try {
+            return ZonedDateTime.parse(dateTimeString, formatter);
+        } catch (DateTimeParseException e) {
+            return LocalDateTime.parse(dateTimeString, formatter).atZone(ZoneId.systemDefault());
+        }
     }
 
     /**
@@ -405,6 +427,24 @@ public class DateUtils {
     }
 
     /**
+     * Format a zoned date-time.
+     *
+     * @param dateTime
+     * @param dateTimeFormat
+     * @param local
+     * @return format string
+     */
+    public static String format(ZonedDateTime dateTime, String dateTimeFormat, Locale local) {
+        if (dateTime == null) {
+            return null;
+        }
+        DateTimeFormatter formatter = StringUtils.isEmpty(dateTimeFormat)
+                ? DateTimeFormatter.ISO_ZONED_DATE_TIME
+                : getCacheDateTimeFormat(dateTimeFormat, local);
+        return dateTime.format(formatter);
+    }
+
+    /**
      * Format date
      *
      * @param date
@@ -451,6 +491,13 @@ public class DateUtils {
         return globalUse1904windowing != null && globalUse1904windowing;
     }
 
+    /**
+     * Get a cached date-time formatter for the supplied pattern and locale.
+     *
+     * @param dateFormat date-time pattern
+     * @param locale locale used to resolve the pattern
+     * @return cached formatter
+     */
     private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {
         Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
         Map<Locale, Map<String, DateTimeFormatter>> localeCache = DATE_TIME_FORMATTER_THREAD_LOCAL.get();

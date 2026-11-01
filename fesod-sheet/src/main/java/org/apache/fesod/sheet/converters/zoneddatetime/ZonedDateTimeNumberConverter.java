@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converters.zoneddatetime;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import org.apache.fesod.sheet.converters.Converter;
@@ -46,10 +47,11 @@ public class ZonedDateTimeNumberConverter implements Converter<ZonedDateTime> {
     @Override
     public ZonedDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return DateUtils.getLocalDateTime(
+        LocalDateTime localDateTime =
+                DateUtils.getLocalDateTime(
                         cellData.getNumberValue().doubleValue(),
-                        DateUtils.isDate1904(contentProperty, globalConfiguration))
-                .atZone(ZoneId.systemDefault());
+                        DateUtils.isDate1904(contentProperty, globalConfiguration));
+        return localDateTime == null ? null : localDateTime.atZone(ZoneId.systemDefault());
     }
 
     @Override

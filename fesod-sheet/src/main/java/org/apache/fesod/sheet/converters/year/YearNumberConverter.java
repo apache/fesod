@@ -20,7 +20,7 @@
 package org.apache.fesod.sheet.converters.year;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -53,10 +53,10 @@ public class YearNumberConverter implements Converter<Year> {
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         DataFormatData dataFormatData = cellData.getDataFormatData();
         if (dataFormatData != null && DateUtils.isADateFormat(dataFormatData.getIndex(), dataFormatData.getFormat())) {
-            LocalDate date = DateUtils.getLocalDate(
+            LocalDateTime dateTime = DateUtils.getLocalDateTime(
                     cellData.getNumberValue().doubleValue(),
                     DateUtils.isDate1904(contentProperty, globalConfiguration));
-            return date == null ? null : Year.of(date.getYear());
+            return dateTime == null ? null : Year.of(dateTime.getYear());
         }
         return Year.of(NumberUtils.toInt(cellData.getNumberValue()));
     }

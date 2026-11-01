@@ -53,13 +53,11 @@ public class YearNumberConverter implements Converter<Year> {
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         DataFormatData dataFormatData = cellData.getDataFormatData();
         if (dataFormatData != null && DateUtils.isADateFormat(dataFormatData.getIndex(), dataFormatData.getFormat())) {
-            // A date-formatted cell carries an Excel date serial; use the year of the date it represents.
             LocalDate date = DateUtils.getLocalDate(
                     cellData.getNumberValue().doubleValue(),
                     DateUtils.isDate1904(contentProperty, globalConfiguration));
             return Year.of(date.getYear());
         }
-        // Any other numeric cell holds the year itself.
         return Year.of(NumberUtils.toInt(cellData.getNumberValue()));
     }
 

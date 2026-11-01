@@ -63,68 +63,68 @@ public abstract class AbstractHolder implements ConfigurationHolder {
 
     private CellDataConverterRegistry converterRegistry;
 
-    public AbstractHolder(BasicParameter basicParameter, AbstractHolder prentAbstractHolder) {
+    public AbstractHolder(BasicParameter basicParameter, AbstractHolder parentAbstractHolder) {
         this.newInitialization = Boolean.TRUE;
-        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && prentAbstractHolder != null) {
-            this.head = prentAbstractHolder.getHead();
+        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && parentAbstractHolder != null) {
+            this.head = parentAbstractHolder.getHead();
         } else {
             this.head = basicParameter.getHead();
         }
-        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && prentAbstractHolder != null) {
-            this.clazz = prentAbstractHolder.getClazz();
+        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && parentAbstractHolder != null) {
+            this.clazz = parentAbstractHolder.getClazz();
         } else {
             this.clazz = basicParameter.getClazz();
         }
         this.globalConfiguration = new GlobalConfiguration();
         if (basicParameter.getAutoTrim() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setAutoTrim(
-                        prentAbstractHolder.getGlobalConfiguration().getAutoTrim());
+                        parentAbstractHolder.getGlobalConfiguration().getAutoTrim());
             }
         } else {
             globalConfiguration.setAutoTrim(basicParameter.getAutoTrim());
         }
 
         if (basicParameter.getAutoStrip() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setAutoStrip(
-                        prentAbstractHolder.getGlobalConfiguration().getAutoStrip());
+                        parentAbstractHolder.getGlobalConfiguration().getAutoStrip());
             }
         } else {
             globalConfiguration.setAutoStrip(basicParameter.getAutoStrip());
         }
 
         if (basicParameter.getUse1904windowing() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setUse1904windowing(
-                        prentAbstractHolder.getGlobalConfiguration().getUse1904windowing());
+                        parentAbstractHolder.getGlobalConfiguration().getUse1904windowing());
             }
         } else {
             globalConfiguration.setUse1904windowing(basicParameter.getUse1904windowing());
         }
 
         if (basicParameter.getLocale() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setLocale(
-                        prentAbstractHolder.getGlobalConfiguration().getLocale());
+                        parentAbstractHolder.getGlobalConfiguration().getLocale());
             }
         } else {
             globalConfiguration.setLocale(basicParameter.getLocale());
         }
 
         if (basicParameter.getFiledCacheLocation() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setFiledCacheLocation(
-                        prentAbstractHolder.getGlobalConfiguration().getFiledCacheLocation());
+                        parentAbstractHolder.getGlobalConfiguration().getFiledCacheLocation());
             }
         } else {
             globalConfiguration.setFiledCacheLocation(basicParameter.getFiledCacheLocation());
         }
 
-        if (prentAbstractHolder == null) {
+        if (parentAbstractHolder == null) {
             this.converterRegistry = new CellDataConverterRegistry();
         } else {
-            this.converterRegistry = new CellDataConverterRegistry(prentAbstractHolder.getConverterRegistry());
+            this.converterRegistry = new CellDataConverterRegistry(parentAbstractHolder.getConverterRegistry());
         }
     }
 

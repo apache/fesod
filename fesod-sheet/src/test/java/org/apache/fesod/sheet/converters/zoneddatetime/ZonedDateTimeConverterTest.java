@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.fesod.sheet.converter;
+package org.apache.fesod.sheet.converters.zoneddatetime;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -36,6 +36,7 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,11 @@ import org.junit.jupiter.api.Test;
 @Tag(Tags.UNIT)
 class ZonedDateTimeConverterTest {
     private static final ZonedDateTime VALUE = ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("UTC"));
+
+    @AfterEach
+    void tearDown() {
+        DateUtils.removeThreadLocalCache();
+    }
 
     @Test
     void dateConverterDropsZoneWhilePreservingLocalDateTime() throws Exception {
@@ -117,6 +123,25 @@ class ZonedDateTimeConverterTest {
                 new ReadCellData<>(writtenProperty1904.getNumberValue()), property1904, global1900);
         Assertions.assertEquals(VALUE.toLocalDateTime(), readProperty1904.toLocalDateTime());
         Assertions.assertEquals(ZoneId.systemDefault(), readProperty1904.getZone());
+    }
+
+    @Test
+    void numberConverterReturnsNullForInvalidExcelDate() {
+        ZonedDateTimeNumberConverter converter = new ZonedDateTimeNumberConverter();
+        Assertions.assertNull(converter.convertToJavaData(
+                new ReadCellData<>(BigDecimal.valueOf(-1)), null, new GlobalConfiguration()));
+    }
+
+    @Test
+    void stringConverterReadsPatternWithoutZoneAtSystemZone() {
+        ZonedDateTimeStringConverter converter = new ZonedDateTimeStringConverter();
+        ExcelContentProperty property = new ExcelContentProperty();
+        property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss", false));
+
+        ZonedDateTime read = converter.convertToJavaData(
+                new ReadCellData<>("2020-01-02 03:04:05"), property, new GlobalConfiguration());
+        Assertions.assertEquals(VALUE.toLocalDateTime(), read.toLocalDateTime());
+        Assertions.assertEquals(ZoneId.systemDefault(), read.getZone());
     }
 
     @Test

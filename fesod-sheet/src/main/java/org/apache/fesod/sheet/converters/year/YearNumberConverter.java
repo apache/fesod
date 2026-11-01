@@ -56,7 +56,7 @@ public class YearNumberConverter implements Converter<Year> {
             LocalDate date = DateUtils.getLocalDate(
                     cellData.getNumberValue().doubleValue(),
                     DateUtils.isDate1904(contentProperty, globalConfiguration));
-            return Year.of(date.getYear());
+            return date == null ? null : Year.of(date.getYear());
         }
         return Year.of(NumberUtils.toInt(cellData.getNumberValue()));
     }

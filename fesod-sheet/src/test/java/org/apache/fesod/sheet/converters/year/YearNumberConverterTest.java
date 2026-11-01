@@ -67,6 +67,18 @@ class YearNumberConverterTest {
     }
 
     @Test
+    void convertToJavaDataReturnsNullForInvalidDateSerial() {
+        // Negative serials are not valid Excel dates, so the date branch has no year to take.
+        ReadCellData<?> cellData = new ReadCellData<>(new BigDecimal("-1"));
+        DataFormatData dataFormatData = new DataFormatData();
+        dataFormatData.setIndex((short) 14);
+        dataFormatData.setFormat("yyyy-mm-dd");
+        cellData.setDataFormatData(dataFormatData);
+
+        Assertions.assertNull(converter.convertToJavaData(cellData, null, GLOBAL_CONFIGURATION));
+    }
+
+    @Test
     void convertToJavaDataTruncatesFractionalNumber() {
         Assertions.assertEquals(
                 Year.of(2026),

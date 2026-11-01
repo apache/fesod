@@ -29,6 +29,7 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,11 +37,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 @Tag(Tags.ROUND_TRIP)
 class ZonedDateTimeRoundTripTest extends AbstractExcelTest {
     @ParameterizedTest
-    @ExcelFormatSource
+    @ExcelFormatSource(FormatScope.BINARY)
     void roundTrip(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         ZonedDateTimeRoundTripData input = new ZonedDateTimeRoundTripData();
-        input.setZoned(ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("UTC")));
+        input.setZoned(ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("Asia/Shanghai")));
         List<ZonedDateTimeRoundTripData> result =
                 RoundTripHelper.writeAndRead(file, ZonedDateTimeRoundTripData.class, Collections.singletonList(input));
 

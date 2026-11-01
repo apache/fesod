@@ -34,10 +34,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.Year;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Calendar;
 import java.util.Date;
@@ -197,14 +195,10 @@ public class DateUtils {
      * @return
      */
     public static ZonedDateTime parseZonedDateTime(String dateTimeString, String dateTimeFormat, Locale local) {
-        DateTimeFormatter formatter = StringUtils.isEmpty(dateTimeFormat)
-                ? DateTimeFormatter.ISO_ZONED_DATE_TIME
-                : getCacheDateTimeFormat(dateTimeFormat, local);
-        try {
-            return ZonedDateTime.parse(dateTimeString, formatter);
-        } catch (DateTimeParseException e) {
-            return LocalDateTime.parse(dateTimeString, formatter).atZone(ZoneId.systemDefault());
+        if (StringUtils.isEmpty(dateTimeFormat)) {
+            return ZonedDateTime.parse(dateTimeString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
         }
+        return ZonedDateTime.parse(dateTimeString, getCacheDateTimeFormat(dateTimeFormat, local));
     }
 
     /**

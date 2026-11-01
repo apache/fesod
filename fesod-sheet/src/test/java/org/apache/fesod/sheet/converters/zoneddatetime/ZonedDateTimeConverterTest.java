@@ -22,6 +22,7 @@ package org.apache.fesod.sheet.converters.zoneddatetime;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -40,7 +41,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag(Tags.UNIT)
 class ZonedDateTimeConverterTest {
-    private static final ZonedDateTime VALUE = ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("UTC"));
+    private static final ZonedDateTime VALUE = ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("Asia/Shanghai"));
 
     @AfterEach
     void tearDown() {
@@ -130,15 +131,15 @@ class ZonedDateTimeConverterTest {
     }
 
     @Test
-    void stringConverterReadsPatternWithoutZoneAtSystemZone() {
+    void stringConverterRejectsTextWithoutZone() {
         ZonedDateTimeStringConverter converter = new ZonedDateTimeStringConverter();
         ExcelContentProperty property = new ExcelContentProperty();
         property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss", false));
 
-        ZonedDateTime read = converter.convertToJavaData(
-                new ReadCellData<>("2020-01-02 03:04:05"), property, new GlobalConfiguration());
-        Assertions.assertEquals(VALUE.toLocalDateTime(), read.toLocalDateTime());
-        Assertions.assertEquals(ZoneId.systemDefault(), read.getZone());
+        Assertions.assertThrows(
+                DateTimeParseException.class,
+                () -> converter.convertToJavaData(
+                        new ReadCellData<>("2020-01-02 03:04:05"), property, new GlobalConfiguration()));
     }
 
     @Test
@@ -158,7 +159,7 @@ class ZonedDateTimeConverterTest {
         property.setDateTimeFormatProperty(new DateTimeFormatProperty("yyyy-MM-dd HH:mm:ss Z", false));
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         Assertions.assertEquals(
-                "2020-01-02 03:04:05 +0000",
+                "2020-01-02 03:04:05 +0800",
                 converter
                         .convertToExcelData(VALUE, property, globalConfiguration)
                         .getStringValue());

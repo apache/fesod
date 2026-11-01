@@ -1,6 +1,6 @@
 ---
 id: 'converter'
-title: '格式转换'
+title: '读取数据转换'
 ---
 
 <!--
@@ -20,15 +20,13 @@ title: '格式转换'
 - limitations under the License.
 -->
 
-# 格式转换
+# 读取数据转换
 
-Fesod 支持日期、数字、自定义格式转换。
+Fesod 支持读取数据过程中的格式转换，允许用户自定义数据转换规则，以满足各种业务需求。
 
-## 概述
+## 字段级转换器
 
-在使用过程中，我们可能需要对读取或写入的数据进行特定格式的转换。Fesod 提供了灵活的转换器机制，允许用户自定义数据转换规则，以满足各种业务需求。
-
-## 示例
+通过 `@ExcelProperty(converter = ...)` 注解对特定字段应用转换器。出于向后兼容的考虑，该注解要求实现组合的 `Converter` 接口。
 
 ### POJO 类
 
@@ -36,11 +34,11 @@ Fesod 支持日期、数字、自定义格式转换。
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ConverterData {
+public class DemoData {
     @ExcelProperty(converter = CustomStringStringConverter.class)
     private String string;
 
-    @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
+    @DateTimeFormat("yyyyMMddHHmmss")
     private String date;
 
     @NumberFormat("#.##%")
@@ -69,7 +67,7 @@ public class CustomStringStringConverter implements Converter<String> {
 
     @Override
     public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
-        return new WriteCellData<>(context.getValue());
+        return new WriteCellData<>("自定义：" + context.getValue());
     }
 }
 ```
@@ -79,10 +77,111 @@ public class CustomStringStringConverter implements Converter<String> {
 ```java
 @Test
 public void converterRead() {
-    String fileName = "path/to/demo.xlsx";
+    String fileName = "path/from/demo.xlsx";
 
-    FesodSheet.read(fileName, ConverterData.class, new DemoDataListener())
-            .registerConverter(new CustomStringStringConverter()) // 注册自定义转换器
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .sheet()
+            .doRead();
+}
+```
+
+---
+
+## 全局转换器注册
+
+在构建器上注册转换器，使其应用于所有匹配 Java 类型和 Spreadsheet 单元格类型的字段。
+
+仅读取场景推荐实现 `ReadConverter<T>`。
+
+### POJO 类
+
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class DemoData {
+    @ExcelProperty("字符串标题")
+    private String string;
+}
+```
+
+### 转换器
+
+```java
+public class CustomStringReadConverter implements ReadConverter<String> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return CellDataTypeEnum.STRING;
+    }
+
+    @Override
+    public String convertToJavaData(ReadConverterContext<?> context) {
+        return "自定义：" + context.getReadCellData().getStringValue();
+    }
+}
+```
+
+### 代码示例
+
+```java
+@Test
+public void globalConverterRead() {
+    String fileName = "path/from/demo.xlsx";
+
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .registerReadConverter(new CustomStringReadConverter())
+            .sheet()
+            .doRead();
+}
+```
+
+---
+
+## 列绑定转换器
+
+在无法使用字段注解的无实体类场景下，实现 `ColumnBinding` 可以将读取转换器限定到特定列（从 0 开始）：
+
+### 转换器
+
+```java
+public class ColumnZeroStringReadConverter implements ReadConverter<String>, ColumnBinding {
+    @Override
+    public Integer columnIndex() {
+        return 0; // 仅应用于第 0 列
+    }
+
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return CellDataTypeEnum.STRING;
+    }
+
+    @Override
+    public String convertToJavaData(ReadConverterContext<?> context) {
+        return "第0列：" + context.getReadCellData().getStringValue();
+    }
+}
+```
+
+### 代码示例
+
+```java
+@Test
+public void columnBoundRead() {
+    String fileName = "path/from/demo.xlsx";
+
+    FesodSheet.read(fileName, new NoModelDataListener())
+            .head(HeadBuilder.forSimple("自定义字符串标题", "字符串标题"))
+            .registerReadConverter(new ColumnZeroStringReadConverter())
             .sheet()
             .doRead();
 }

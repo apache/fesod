@@ -20,19 +20,33 @@ title: 'Converter'
 - limitations under the License.
 -->
 
-# Converter
+# Write Data Conversion
 
-This chapter introduces how to use custom converters when writing data.
-
-## Overview
-
-Fesod supports custom data converters for write operations. You can transform Java field values before they are written to Excel cells, enabling custom formatting, encryption, or any data transformation logic.
+Fesod supports format conversion during data writing, allowing users to define custom data conversion rules to meet various business requirements.
 
 ## Per-Field Converter
 
-### Overview
+Apply a converter to a specific field using the `@ExcelProperty(converter = ...)` annotation. The annotation requires the combined `Converter` interface due to backward compatibility.
 
-Apply a converter to a specific field using the `@ExcelProperty(converter = ...)` annotation.
+### POJO Class
+
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class DemoData {
+    @ExcelProperty(value = "String Title", converter = CustomStringStringConverter.class)
+    private String string;
+
+    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
+    @ExcelProperty("Date Title")
+    private Date date;
+
+    @NumberFormat("#.##%")
+    @ExcelProperty("Number Title")
+    private Double doubleData;
+}
+```
 
 ### Converter
 
@@ -60,33 +74,14 @@ public class CustomStringStringConverter implements Converter<String> {
 }
 ```
 
-### POJO Class
-
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class ConverterData {
-    @ExcelProperty(value = "String Title", converter = CustomStringStringConverter.class)
-    private String string;
-
-    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
-    @ExcelProperty("Date Title")
-    private Date date;
-
-    @NumberFormat("#.##%")
-    @ExcelProperty("Number Title")
-    private Double doubleData;
-}
-```
-
 ### Code Example
 
 ```java
 @Test
 public void converterWrite() {
-    String fileName = "converterWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, ConverterData.class)
+    String fileName = "path/to/demo.xlsx";
+
+    FesodSheet.write(fileName, DemoData.class)
         .sheet()
         .doWrite(data());
 }
@@ -96,31 +91,47 @@ public void converterWrite() {
 
 ## Global Converter Registration
 
-### Overview
+Register a `WriteConverter<T>` on the builder to apply it globally to all fields of matching Java type.
 
-Register a converter at the builder level to apply it to ALL fields matching the Java type and Excel type. This is useful when you want the same transformation applied globally without annotating each field.
+For write-only, implementing `WriteConverter<T>` is recommended.
 
-For ordinary XLSX/XLS writes, global converter lookup uses the Java type and a `null` Excel type key. Use the following variant of the converter above. The returned `WriteCellData` still determines the output cell type; returning `null` here only changes the lookup key.
+### POJO Class
 
 ```java
-public class GlobalStringWriteConverter extends CustomStringStringConverter {
-    @Override
-    public CellDataTypeEnum supportExcelTypeKey() {
-        return null;
-    }
+@Getter
+@Setter
+@EqualsAndHashCode
+public class DemoData {
+    @ExcelProperty("String Title")
+    private String string;
 }
 ```
 
-For CSV writing and reading string cells, register the original `CustomStringStringConverter`, which returns `CellDataTypeEnum.STRING`.
+### Converter
+
+```java
+public class CustomStringWriteConverter implements WriteConverter<String> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
+        return new WriteCellData<>("Custom: " + context.getValue());
+    }
+}
+```
 
 ### Code Example
 
 ```java
 @Test
 public void globalConverterWrite() {
-    String fileName = "globalConverterWrite" + System.currentTimeMillis() + ".xlsx";
+    String fileName = "path/to/demo.xlsx";
+
     FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new GlobalStringWriteConverter())
+        .registerWriteConverter(new CustomStringWriteConverter())
         .sheet()
         .doWrite(data());
 }
@@ -128,10 +139,42 @@ public void globalConverterWrite() {
 
 ---
 
-## Converter Resolution Priority
+## Column-Bound Converter
 
-When multiple converters could apply to a field, Fesod resolves them in this order:
+In no-bean scenarios where annotations cannot be used, implement `ColumnBinding` to restrict a write converter to specific columns (0-based):
 
-1. Field-level converter (`@ExcelProperty(converter = ...)`) — highest priority
-2. Builder-level converter (`.registerConverter(...)`) with a matching lookup key
-3. Built-in default converter — lowest priority
+### Converter
+
+```java
+public class ColumnZeroStringWriteConverter implements WriteConverter<String>, ColumnBinding {
+    @Override
+    public Integer columnIndex() {
+        return 0; // Only applies to column 0
+    }
+
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
+        return new WriteCellData<>("Col0: " + context.getValue());
+    }
+}
+```
+
+### Code Example
+
+```java
+@Test
+public void columnBoundWrite() {
+    String fileName = "path/to/demo.xlsx";
+
+    FesodSheet.write(fileName)
+            .head(HeadBuilder.forSimple("Custom String Title", "String Title"))
+            .registerWriteConverter(new ColumnZeroStringWriteConverter())
+            .sheet()
+            .doWrite(data());
+}
+```

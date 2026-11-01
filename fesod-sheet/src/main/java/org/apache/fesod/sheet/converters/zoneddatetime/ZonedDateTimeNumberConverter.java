@@ -47,10 +47,8 @@ public class ZonedDateTimeNumberConverter implements Converter<ZonedDateTime> {
     @Override
     public ZonedDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        LocalDateTime localDateTime =
-                DateUtils.getLocalDateTime(
-                        cellData.getNumberValue().doubleValue(),
-                        DateUtils.isDate1904(contentProperty, globalConfiguration));
+        LocalDateTime localDateTime = DateUtils.getLocalDateTime(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
         return localDateTime == null ? null : localDateTime.atZone(ZoneId.systemDefault());
     }
 

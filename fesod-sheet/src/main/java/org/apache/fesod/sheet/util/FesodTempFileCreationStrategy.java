@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.util;
 
-import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +34,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.poi.util.DefaultTempFileCreationStrategy;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 
 /**
@@ -92,10 +92,10 @@ public class FesodTempFileCreationStrategy implements TempFileCreationStrategy {
             dirLock.lock();
             try {
                 if (dir == null || !dir.exists()) {
-                    String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
+                    String tmpDir = System.getProperty(TempFile.JAVA_IO_TMPDIR);
                     if (tmpDir == null) {
-                        throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR
-                                + " jvm property!");
+                        throw new IOException("System's temporary directory not defined - set the -D"
+                                + TempFile.JAVA_IO_TMPDIR + " jvm property!");
                     }
                     Path dirPath = Paths.get(tmpDir, POIFILES);
                     dir = Files.createDirectories(dirPath).toFile();

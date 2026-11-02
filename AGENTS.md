@@ -1,4 +1,6 @@
-# Apache Fesod (Incubating) — Copilot Repository Instructions
+# Apache Fesod (Incubating) AI Agent Instructions
+
+This file provides guidance for AI coding agents working with the Apache Fesod (Incubating) codebase.
 
 ## Project Overview
 
@@ -11,11 +13,14 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 ## Build & Test Commands
 
 ```bash
-# Build (skips tests by default)
+# Build (runs tests by default, per Maven/Apache convention)
+./mvnw clean install
+
+# Fast build without running tests
 ./mvnw clean install -DskipTests
 
-# Run tests (must explicitly enable)
-./mvnw clean package -Dmaven.test.skip=false -pl fesod-common,fesod-shaded,fesod-sheet
+# Run tests for the library modules only
+./mvnw clean package -pl fesod-common,fesod-shaded,fesod-sheet
 
 # Format check / auto-format
 ./mvnw spotless:check

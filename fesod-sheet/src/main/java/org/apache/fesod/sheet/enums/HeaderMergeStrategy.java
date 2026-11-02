@@ -27,11 +27,10 @@ package org.apache.fesod.sheet.enums;
  * {@code automaticMergeHead == true} → {@code AUTO}, {@code automaticMergeHead == false} → {@code NONE}.
  * </p>
  *
- * @see org.apache.fesod.sheet.write.metadata.WriteBasicParameter#getHeaderMergeStrategy()
+ * @see org.apache.fesod.sheet.write.metadata.WriteBasicParameter#headerMergeStrategy
  * @see org.apache.fesod.sheet.write.builder.AbstractExcelWriterParameterBuilder#headerMergeStrategy(HeaderMergeStrategy)
  */
 public enum HeaderMergeStrategy {
-
     /**
      * No automatic merge
      */

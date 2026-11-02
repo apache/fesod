@@ -489,3 +489,14 @@ public void compositeFill() {
 </tbody>
 </table>
 </div>
+
+
+### Interleaved Pages
+
+For named lists in separate vertical sections, calls can alternate between lists, for example
+`upper` page 1, `lower` page 1, `upper` page 2, then `lower` page 2. Pass
+`FillConfig.builder().forceNewRow(true).build()` to each vertical list fill to insert rows for
+additional records and move the lower sections down. Each list resumes after its own previous records.
+
+As with other fills using `forceNewRow(true)`, the workbook is retained in memory while rows are shifted;
+choose page and workbook sizes accordingly.

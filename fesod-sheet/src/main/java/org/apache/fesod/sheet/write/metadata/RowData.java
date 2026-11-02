@@ -42,11 +42,10 @@ public interface RowData {
     Object get(int index);
 
     /**
-     * Returns the number of elements in this collection.  If this collection
-     * contains more than <code>Integer.MAX_VALUE</code> elements, returns
-     * <code>Integer.MAX_VALUE</code>.
+     * Returns the number of indexed data positions in this row, including gaps
+     * before the last position in an integer-keyed map.
      *
-     * @return the number of elements in this collection
+     * @return the exclusive upper bound of the data indexes
      */
     int size();
 

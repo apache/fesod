@@ -274,3 +274,16 @@ private List<List<Object>> dataList() {
 </tbody>
 </table>
 </div>
+
+### 稀疏 Map 行
+
+每行也可以使用 `Map<Integer, ?>`。非负整数键表示从 0 开始的数据位置，缺失的位置留空，Map 的迭代顺序不会改变数据位置。不使用自定义索引表头时，下面的代码将 `FIRST` 写入 A1、`THIRD` 写入 C1，B1 留空，无需为间隙显式添加 `null`。XLS、XLSX 和 CSV 均支持此用法。
+
+```java
+Map<Integer, String> row = new HashMap<>();
+row.put(0, "FIRST");
+row.put(2, "THIRD");
+FesodSheet.write("sparse.xlsx").sheet().doWrite(Collections.singletonList(row));
+```
+
+使用显式指定列索引的表头类时，Map 的数据位置与 List 行遵循相同的表头映射规则。

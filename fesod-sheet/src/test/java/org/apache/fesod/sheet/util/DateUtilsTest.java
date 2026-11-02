@@ -528,6 +528,7 @@ class DateUtilsTest {
         Assertions.assertFalse(DateUtils.isADateFormat(null, formatString));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void test_isADateFormat_Cache() throws NoSuchFieldException, IllegalAccessException {
         short formatId = 200;
@@ -538,15 +539,49 @@ class DateUtilsTest {
 
         Field threadLocalField = ExcelDateFormatDetector.class.getDeclaredField("DATE_THREAD_LOCAL");
         threadLocalField.setAccessible(true);
-        ThreadLocal<Map<Short, Boolean>> tl = (ThreadLocal<Map<Short, Boolean>>) threadLocalField.get(null);
+        ThreadLocal<Map<String, Boolean>> tl = (ThreadLocal<Map<String, Boolean>>) threadLocalField.get(null);
 
-        Map<Short, Boolean> cache = tl.get();
+        Map<String, Boolean> cache = tl.get();
         Assertions.assertNotNull(cache);
-        Assertions.assertTrue(cache.containsKey(formatId));
-        Assertions.assertTrue(cache.get(formatId));
+        Assertions.assertEquals(1, cache.size());
+        Assertions.assertTrue(cache.containsValue(true));
 
         boolean res2 = DateUtils.isADateFormat(formatId, formatStr);
         Assertions.assertTrue(res2);
+        Assertions.assertEquals(1, cache.size());
+    }
+
+    @Test
+    void test_isADateFormat_cacheDistinguishesFormatStrings() {
+        short formatId = 201;
+
+        Assertions.assertTrue(DateUtils.isADateFormat(formatId, "yyyy-mm-dd"));
+        Assertions.assertFalse(DateUtils.isADateFormat(formatId, "0.00"));
+        Assertions.assertTrue(DateUtils.isADateFormat(formatId, "yyyy-mm-dd"));
+    }
+
+    @Test
+    void test_isADateFormat_cacheDistinguishesFormatStringsInReverseOrder() {
+        short formatId = 202;
+
+        Assertions.assertFalse(DateUtils.isADateFormat(formatId, "0.00"));
+        Assertions.assertTrue(DateUtils.isADateFormat(formatId, "yyyy-mm-dd"));
+    }
+
+    @Test
+    void test_isADateFormat_cacheDistinguishesNullFormatString() {
+        short formatId = 203;
+
+        Assertions.assertTrue(DateUtils.isADateFormat(formatId, "yyyy-mm-dd"));
+        Assertions.assertFalse(DateUtils.isADateFormat(formatId, null));
+    }
+
+    @Test
+    void test_isADateFormat_internalIndexStillOverridesFormatString() {
+        short internalFormatId = 0x0e;
+
+        Assertions.assertTrue(DateUtils.isADateFormat(internalFormatId, "0.00"));
+        Assertions.assertFalse(DateUtils.isADateFormat((short) (0x0e + 100), "0.00"));
     }
 
     @Test

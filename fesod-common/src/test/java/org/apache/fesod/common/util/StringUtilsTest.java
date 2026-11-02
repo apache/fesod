@@ -212,6 +212,20 @@ class StringUtilsTest {
     }
 
     @Test
+    void test_regionMatches_unicodeIgnoreCase() {
+        final CharSequence[] dottedI = {"İ", new StringBuilder("İ")};
+        final CharSequence[] dotlessI = {"ı", new StringBuilder("ı")};
+        for (final CharSequence source : dottedI) {
+            for (final CharSequence other : dotlessI) {
+                Assertions.assertTrue(StringUtils.regionMatches(source, true, 0, other, 0, 1));
+                Assertions.assertTrue(StringUtils.regionMatches(other, true, 0, source, 0, 1));
+                Assertions.assertFalse(StringUtils.regionMatches(source, false, 0, other, 0, 1));
+                Assertions.assertFalse(StringUtils.regionMatches(other, false, 0, source, 0, 1));
+            }
+        }
+    }
+
+    @Test
     void stripTest() {
         Assertions.assertNull(StringUtils.strip(null));
         Assertions.assertEquals("", StringUtils.strip(""));

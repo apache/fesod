@@ -27,10 +27,29 @@ package org.apache.fesod.common.util;
 
 import java.util.Objects;
 
+/**
+ * Utility methods for validating arguments and state.
+ *
+ * <p>Every method throws an unchecked exception when the check fails. The message pattern and its
+ * values are passed separately and formatted only on failure, so a successful check costs nothing
+ * beyond the comparison itself.
+ */
 public class ValidateUtils {
 
+    /**
+     * Default message used by {@link #isTrue(boolean)}.
+     */
     private static final String DEFAULT_IS_TRUE_EX_MESSAGE = "The validated expression is false";
+
+    /**
+     * Default message used by {@link #notNull(Object)}.
+     */
     private static final String DEFAULT_IS_NULL_EX_MESSAGE = "The validated object is null";
+
+    /**
+     * Utility classes must never be instantiated.
+     */
+    private ValidateUtils() {}
 
     /**
      * <p>Validate that the argument condition is {@code true}; otherwise

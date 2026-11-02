@@ -35,11 +35,9 @@ A core value of open source is **human collaboration, knowledge sharing, and tru
 
 Code review is not just about merging code; it is about engaging with **you as a person** (rather than your AI tool) to help you grow and integrate into the community. Whether opening an issue, describing a PR, or answering questions during review, please express yourself in your own words. **Automated AI-generated comments and copy-pasted AI responses are strictly prohibited when communicating with reviewers.** Reviewers may collapse or hide comments they believe to be AI-generated.
 
-Unreviewed AI replies place the burden of discernment entirely on the reviewer and deny you the opportunity to learn. Common examples of such unhelpful replies include mechanically summarizing the diff instead of addressing the actual question, or listing local commands and checks that CI already covers. For instance, in [this review thread in arrow-rs][arrow-rs-review-example], the reviewer asked a specific design question but received multiple responses that merely listed what code had changed and what commands had been run, without ever answering the question asked.
+Unreviewed AI replies place the burden of discernment entirely on the reviewer and deny you the opportunity to learn. Common examples of such unhelpful replies include mechanically summarizing the diff instead of addressing the actual question, listing local commands and checks that CI already covers, or evading design questions with generic descriptions of code changes.
 
 We fully understand that non-native English speakers may use AI for reading, polishing, or translating comments. Using AI to assist with language is completely acceptable, provided the final text accurately reflects your own voice, ideas, and intent.
-
-[arrow-rs-review-example]: https://github.com/apache/arrow-rs/pull/11209#discussion_r4145512124
 
 ---
 

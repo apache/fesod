@@ -105,3 +105,7 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 3. Multi-JDK test matrix (8/11/17/21/25)
 4. `mvn install` + `mvn javadoc:javadoc`
 5. CodeQL security scan
+
+## AI-assisted contributions
+
+All AI-assisted contributions must adhere to our [AI Policy](./AI_POLICY.md).

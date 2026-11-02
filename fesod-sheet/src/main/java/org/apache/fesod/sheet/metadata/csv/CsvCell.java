@@ -200,12 +200,14 @@ public class CsvCell extends CellBase {
     @Override
     protected void setCellValueImpl(String value) {
         this.stringValue = value;
+        this.richTextString = new CsvRichTextString(value);
         this.cellType = CellType.STRING;
     }
 
     @Override
     protected void setCellValueImpl(RichTextString value) {
         richTextString = value;
+        this.stringValue = value.getString();
         this.cellType = CellType.STRING;
     }
 

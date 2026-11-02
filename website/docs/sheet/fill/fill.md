@@ -490,7 +490,6 @@ public void compositeFill() {
 </table>
 </div>
 
-
 ### Interleaved Pages
 
 For named lists in separate vertical sections, calls can alternate between lists, for example

@@ -420,13 +420,13 @@ title: '内置转换器'
 <tr>
 <td rowspan="2">String</td>
 <td>IMAGE <small>(Drawing)</small></td>
-<td>StringPathnameImageConverter</td>
+<td><a href="/docs/sheet/write/image#string-explicit-declaration">StringPathnameImageConverter <small>&#x26a0;&#xfe0f;</small></a></td>
 <td>&#x274C; 读取<br />&#x2705; 写入</td>
 <td>&#x1f7e2; 已发布</td>
 </tr>
 <tr>
 <td>IMAGE <small>(Drawing)</small></td>
-<td>StringBase64ImageConverter</td>
+<td><a href="/docs/sheet/write/image#string-explicit-declaration">StringBase64ImageConverter <small>&#x26a0;&#xfe0f;</small></a></td>
 <td>&#x274C; 读取<br />&#x2705; 写入</td>
 <td>&#x1f7e2; 已发布</td>
 </tr>

@@ -420,13 +420,13 @@ This section lists the converters provided in the project.
 <tr>
 <td rowspan="2">String</td>
 <td>IMAGE <small>(Drawing)</small></td>
-<td>StringPathnameImageConverter</td>
+<td><a href="/docs/sheet/write/image#string-explicit-declaration">StringPathnameImageConverter <small>&#x26a0;&#xfe0f;</small></a></td>
 <td>&#x274C; Read<br />&#x2705; Write</td>
 <td>&#x1f7e2; YES</td>
 </tr>
 <tr>
 <td>IMAGE <small>(Drawing)</small></td>
-<td>StringBase64ImageConverter</td>
+<td><a href="/docs/sheet/write/image#string-explicit-declaration">StringBase64ImageConverter <small>&#x26a0;&#xfe0f;</small></a></td>
 <td>&#x274C; Read<br />&#x2705; Write</td>
 <td>&#x1f7e2; YES</td>
 </tr>

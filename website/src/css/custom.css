@@ -107,3 +107,8 @@ article header h2 {
     width: 100%;
     table-layout: auto;
 }
+
+#string-explicit-declaration {
+    scroll-margin-top: var(--ifm-navbar-height);
+    display: block;
+}

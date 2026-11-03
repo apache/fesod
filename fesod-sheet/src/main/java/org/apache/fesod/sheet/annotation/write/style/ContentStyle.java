@@ -35,7 +35,6 @@ import org.apache.fesod.sheet.enums.poi.BorderStyleEnum;
 import org.apache.fesod.sheet.enums.poi.FillPatternTypeEnum;
 import org.apache.fesod.sheet.enums.poi.HorizontalAlignmentEnum;
 import org.apache.fesod.sheet.enums.poi.VerticalAlignmentEnum;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;

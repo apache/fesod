@@ -31,17 +31,35 @@ import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
 import org.xml.sax.Attributes;
 
 /**
- * Cell Handler
+ * Handler for the {@code <f>} (cell formula) tag in XLSX sheet XML.
  *
+ * <p>Accumulates the formula text via {@link #characters} into a temporary
+ * {@link StringBuilder}, then attaches the resulting {@link FormulaData} to
+ * the current cell data when the element ends.
  */
 public class CellFormulaTagHandler extends AbstractXlsxTagHandler {
 
+    /**
+     * Invoked when the {@code <f>} element starts. Initializes a temporary
+     * builder to accumulate the formula content.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name
+     * @param attributes      the attributes of the tag (unused)
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
         xlsxReadSheetHolder.setTempFormula(new StringBuilder());
     }
 
+    /**
+     * Invoked when the {@code <f>} element ends. Wraps the accumulated formula
+     * text in a {@link FormulaData} and attaches it to the current cell data.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name (unused)
+     */
     @Override
     public void endElement(XlsxReadContext xlsxReadContext, String name) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
@@ -50,6 +68,15 @@ public class CellFormulaTagHandler extends AbstractXlsxTagHandler {
         xlsxReadSheetHolder.getTempCellData().setFormulaData(formulaData);
     }
 
+    /**
+     * Invoked for the character content of the {@code <f>} element. Appends
+     * the text to the temporary formula builder.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param ch              the character array containing the text
+     * @param start           the start offset in the array
+     * @param length          the number of characters to append
+     */
     @Override
     public void characters(XlsxReadContext xlsxReadContext, char[] ch, int start, int length) {
         xlsxReadContext.xlsxReadSheetHolder().getTempFormula().append(ch, start, length);

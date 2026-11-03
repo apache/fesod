@@ -37,10 +37,23 @@ import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handles the BIFF {@code BOF} (Beginning Of File) record, which marks the start of the workbook stream or of a single
+ * worksheet substream.
+ * <p>
+ * On a workbook-level {@code BOF} the read state is reset. On a sheet-level {@code BOF} the lazy sheet list is
+ * initialised and the next {@link ReadSheet} in line is selected for reading, or marked as ignored when it does not
+ * match the user's sheet selection.
  */
 public class BofRecordHandler extends AbstractXlsRecordHandler {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The {@code record} must be a {@link BOFRecord}; other types are not supported by this handler.
+     *
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the {@link BOFRecord} to process, never {@code null}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BOFRecord br = (BOFRecord) record;
@@ -76,6 +89,17 @@ public class BofRecordHandler extends AbstractXlsRecordHandler {
         xlsReadWorkbookHolder.setReadSheetIndex(xlsReadWorkbookHolder.getReadSheetIndex() + 1);
     }
 
+    /**
+     * Build the actual list of {@link ReadSheet}s from the collected {@link BoundSheetRecord}s, ordered by their
+     * {@code BOF} position.
+     * <p>
+     * This is a no-op when the list has already been initialised. If the caller only requested the sheet list
+     * (see {@code XlsReadWorkbookHolder#needReadSheet()}), an {@link ExcelAnalysisStopException} is thrown right after
+     * the list is built so that parsing stops without reading any cell content.
+     *
+     * @param xlsReadWorkbookHolder the workbook holder holding the bound sheet records, never {@code null}
+     * @throws ExcelAnalysisStopException if only the sheet list was requested and parsing should stop immediately
+     */
     private void initReadSheetDataList(XlsReadWorkbookHolder xlsReadWorkbookHolder) {
         if (xlsReadWorkbookHolder.getActualSheetDataList() != null) {
             return;

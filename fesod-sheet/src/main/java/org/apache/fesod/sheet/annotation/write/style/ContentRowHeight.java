@@ -32,9 +32,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Set the height of each table
- *
- *
+ * Sets the height for each content row, in points.
+ * <p>
+ * Applied at the class level; all content rows share the same height.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -42,11 +42,11 @@ import java.lang.annotation.Target;
 public @interface ContentRowHeight {
 
     /**
-     * Set the content height
+     * The height of each content row, in points.
      * <p>
-     * -1 mean the auto set height
+     * A value of {@code -1} means the height will be adjusted automatically.
      *
-     * @return Content height
+     * @return the content row height in points, or {@code -1} for automatic height
      */
     short value() default -1;
 }

@@ -37,9 +37,14 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
- * Custom header styles.
+ * Customizes the font used when writing the header cells.
+ * <p>
+ * Declare this annotation on a field to style a single column's header, or on a class to style the
+ * headers of every field in that class. An attribute left at its default value ({@code -1}, an empty
+ * name, or {@link BooleanEnum#DEFAULT}) is treated as "not set" and is therefore ignored.
  *
- *
+ * @see HeadStyle
+ * @see ContentFontStyle
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -107,7 +112,7 @@ public @interface HeadFontStyle {
     int charset() default -1;
 
     /**
-     * Bold
+     * Whether the text is rendered in bold.
      */
     BooleanEnum bold() default BooleanEnum.DEFAULT;
 }

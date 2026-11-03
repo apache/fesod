@@ -32,25 +32,27 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The regions of the loop merge
+ * Merges the cells of the annotated field's column repeatedly while writing, so that every
+ * {@code eachRow} rows and {@code columnExtend} columns are combined into one merged region.
  *
- *
+ * <p>At least one of {@link #eachRow()} and {@link #columnExtend()} must be greater than {@code 1}.
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ContentLoopMerge {
+
     /**
-     * Each row
+     * The number of rows to merge in each loop.
      *
-     * @return
+     * @return the row count of a merged region, must be greater than or equal to {@code 1}
      */
     int eachRow() default 1;
 
     /**
-     * Extend column
+     * The number of columns to merge in each loop, starting from the annotated field's column.
      *
-     * @return
+     * @return the column count of a merged region, must be greater than or equal to {@code 1}
      */
     int columnExtend() default 1;
 }

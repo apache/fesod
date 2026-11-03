@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.csv.CSVFormat;
@@ -75,7 +74,6 @@ import org.apache.poi.ss.util.PaneInformation;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CsvSheet implements Sheet, Closeable {
 
     /**

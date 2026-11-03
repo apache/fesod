@@ -80,7 +80,7 @@ If you are using Maven for project building, add the following configuration in 
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>version</version>
+    <version>2.1.0-incubating</version>
 </dependency>
 ```
 
@@ -90,9 +90,11 @@ If you are using Gradle for project building, add the following configuration in
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod-sheet:version'
+    implementation 'org.apache.fesod:fesod-sheet:2.1.0-incubating'
 }
 ```
+
+See [Maven Central](https://search.maven.org/artifact/org.apache.fesod/fesod-sheet) for the latest version.
 
 ## QuickStart
 
@@ -106,7 +108,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
-        System.out.println("Parsed a data entry" + JSON.toJSONString(data));
+        System.out.println("Parsed a data entry" + data);
     }
 
     @Override

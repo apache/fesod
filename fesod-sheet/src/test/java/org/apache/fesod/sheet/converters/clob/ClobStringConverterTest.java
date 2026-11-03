@@ -29,6 +29,7 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 @Tag(Tags.UNIT)
 class ClobStringConverterTest {
@@ -69,6 +70,28 @@ class ClobStringConverterTest {
         WriteCellData<?> written = converter.convertToExcelData(value, null, GLOBAL_CONFIGURATION);
 
         Assertions.assertEquals(expected.toString(), written.getStringValue());
+    }
+
+    @Test
+    void convertsEmptyClobToEmptyCell() throws Exception {
+        Clob value = new SerialClob(new char[0]);
+
+        WriteCellData<?> written = converter.convertToExcelData(value, null, GLOBAL_CONFIGURATION);
+
+        Assertions.assertEquals(CellDataTypeEnum.EMPTY, written.getType());
+    }
+
+    @Test
+    void rejectsClobLengthExceedingIntegerRangeBeforeOpeningStream() throws Exception {
+        Clob value = Mockito.mock(Clob.class);
+        long length = (long) Integer.MAX_VALUE + 1;
+        Mockito.when(value.length()).thenReturn(length);
+
+        IllegalArgumentException exception = Assertions.assertThrows(
+                IllegalArgumentException.class, () -> converter.convertToExcelData(value, null, GLOBAL_CONFIGURATION));
+
+        Assertions.assertTrue(exception.getMessage().contains(Long.toString(length)));
+        Mockito.verify(value, Mockito.never()).getCharacterStream();
     }
 
     @Test

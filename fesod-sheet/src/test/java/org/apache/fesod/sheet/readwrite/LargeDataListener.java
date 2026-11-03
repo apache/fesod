@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.readwrite;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.context.AnalysisContext;
@@ -42,11 +41,11 @@ public class LargeDataListener extends AnalysisEventListener<LargeData> {
     @Override
     public void invoke(LargeData data, AnalysisContext context) {
         if (count == 0) {
-            log.info("First row:{}", JSON.toJSONString(data));
+            log.info("First row:{}", data);
         }
         count++;
         if (count % 100000 == 0) {
-            log.info("Already read:{},{}", count, JSON.toJSONString(data));
+            log.info("Already read:{},{}", count, data);
         }
     }
 

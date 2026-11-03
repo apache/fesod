@@ -26,7 +26,7 @@ This chapter introduces how to read and write password-protected Excel files.
 
 ## Overview
 
-Fesod supports Excel's built-in password protection for both reading and writing. Use `.password("xxx")` on the builder to encrypt/decrypt files. For `.xlsx` output, Fesod uses Apache POI's encryption (AES-based) which can be memory-intensive for large workbooks. For legacy `.xls` files, password protection behaves as write-protection rather than full content encryption, so behavior and security guarantees differ from `.xlsx`.
+Apache Fesod (Incubating) supports Excel's built-in password protection for both reading and writing. Use `.password("xxx")` on the builder to configure the password. Successfully completed `.xlsx` output with a non-empty password uses Apache POI's encryption (AES-based), which can be memory-intensive for large workbooks. Legacy `.xls` protection differs from `.xlsx` encryption and must not be assumed to provide equivalent confidentiality.
 
 ## Writing with Password
 
@@ -67,6 +67,10 @@ public void passwordRead() {
 
 ## Security Notes
 
-- Excel password protection encrypts the file content, making it unreadable without the password.
+- XLSX password protection applies to successfully completed output; it does not encrypt all temporary files, caches, or JVM memory used during processing.
+- Protect temporary and output directories from untrusted access. File output may contain plaintext during processing; publish results only after the entire write succeeds.
+- Treat output from a failed write or encryption operation as incomplete and sensitive, and do not deliver it.
 - Without the correct password, reading will throw an `EncryptedDocumentException`.
 - In production, avoid hardcoding passwords — use configuration files or secrets management.
+
+See the [Security Model](/community/security-model#password-protection) for encryption boundaries, [temporary-file requirements](/community/security-model#temporary-files-and-caches), and [Apache POI's role and limitations](/community/security-model#apache-poi).

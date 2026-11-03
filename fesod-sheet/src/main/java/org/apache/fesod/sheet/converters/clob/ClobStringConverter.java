@@ -51,7 +51,6 @@ public class ClobStringConverter implements Converter<Clob> {
         if (cellData.getStringValue() == null) {
             return null;
         }
-        // Materialize cell text into a detached JDBC Clob, avoiding a database-specific Clob implementation.
         return new SerialClob(cellData.getStringValue().toCharArray());
     }
 
@@ -59,7 +58,15 @@ public class ClobStringConverter implements Converter<Clob> {
     public WriteCellData<?> convertToExcelData(
             Clob value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws Exception {
-        StringBuilder text = new StringBuilder();
+        long length = value.length();
+        if (length == 0) {
+            return new WriteCellData<>(CellDataTypeEnum.EMPTY);
+        }
+        if (length > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(
+                    String.format("Clob length (%d) exceeds maximum allowed: %d", length, Integer.MAX_VALUE));
+        }
+        StringBuilder text = new StringBuilder((int) length);
         char[] buffer = new char[4096];
         try (Reader reader = value.getCharacterStream()) {
             int count;

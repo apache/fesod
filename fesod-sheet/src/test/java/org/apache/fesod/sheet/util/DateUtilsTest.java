@@ -544,7 +544,7 @@ class DateUtilsTest {
         Map<String, Boolean> cache = tl.get();
         Assertions.assertNotNull(cache);
         Assertions.assertEquals(1, cache.size());
-        Assertions.assertTrue(cache.containsValue(true));
+        Assertions.assertEquals(Boolean.TRUE, cache.get(formatId + "\u0000" + formatStr));
 
         boolean res2 = DateUtils.isADateFormat(formatId, formatStr);
         Assertions.assertTrue(res2);

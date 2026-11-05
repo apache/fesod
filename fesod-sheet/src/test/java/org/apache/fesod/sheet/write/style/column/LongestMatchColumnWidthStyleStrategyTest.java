@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Regression tests for the per-instance width cache of {@link LongestMatchColumnWidthStyleStrategy}.
+ * Regression tests for the per-sheet-holder width cache of {@link LongestMatchColumnWidthStyleStrategy}.
  */
 @Tag(Tags.WRITE)
 class LongestMatchColumnWidthStyleStrategyTest {

@@ -88,6 +88,9 @@ public class WriteSheetHolder extends AbstractWriteHolder {
      */
     private Map<Integer, WriteTableHolder> hasBeenInitializedTable;
 
+    /***
+     * Per-sheet-holder cache of maximum column widths, keyed by column index.
+     */
     private Map<Integer, Integer> columnWidthCache;
 
     /**

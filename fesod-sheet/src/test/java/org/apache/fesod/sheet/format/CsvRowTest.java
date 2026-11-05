@@ -257,7 +257,7 @@ public class CsvRowTest {
     void csvSheetPhysicalRowCountShouldMatchCreatedRows() throws Exception {
         File csvFile = new File(tempDir, "physical-row-count.csv");
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
 
@@ -277,7 +277,7 @@ public class CsvRowTest {
     void csvWorkbookShouldReportCreatedSheetThroughPoiMetadata() throws Exception {
         File csvFile = new File(tempDir, "workbook-sheet-metadata.csv");
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
 
             Assertions.assertEquals(0, workbook.getNumberOfSheets());

@@ -165,7 +165,7 @@ public class CsvSheet implements Sheet, Closeable {
 
     @Override
     public int getPhysicalNumberOfRows() {
-        return lastRowIndex - rowCache.size();
+        return lastRowIndex + 1;
     }
 
     @Override

@@ -50,11 +50,8 @@ import org.apache.fesod.sheet.read.metadata.holder.csv.CsvReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadWorkbookHolder;
 import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadWorkbookHolder;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
-import org.apache.fesod.sheet.util.ClassUtils;
-import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
-import org.apache.fesod.sheet.util.NumberUtils;
+import org.apache.fesod.sheet.util.ThreadLocalCleaner;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -282,21 +279,11 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
 
         clearEncrypt03();
 
-        removeThreadLocalCache();
+        ThreadLocalCleaner.clearAllThreadLocals();
 
         if (throwable != null) {
             throw new ExcelAnalysisException("Can not close IO.", throwable);
         }
-    }
-
-    /**
-     * Removes thread-local caches used during the analysis process to free up memory.
-     */
-    private void removeThreadLocalCache() {
-        NumberDataFormatterUtils.removeThreadLocalCache();
-        NumberUtils.removeThreadLocalCache();
-        DateUtils.removeThreadLocalCache();
-        ClassUtils.removeThreadLocalCache();
     }
 
     /**

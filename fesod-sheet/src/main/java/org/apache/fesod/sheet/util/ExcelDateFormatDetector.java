@@ -54,6 +54,10 @@ class ExcelDateFormatDetector {
     // for format which start with "年" or "月" or "日" or "时" or "分" or "秒" could be a Chinese date
     private static final Pattern date_ptrn6 = Pattern.compile("(年|月|日|时|分|秒)+");
 
+    static {
+        ThreadLocalCleaner.register(DATE_THREAD_LOCAL::remove);
+    }
+
     private ExcelDateFormatDetector() {}
 
     /**

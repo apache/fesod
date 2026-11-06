@@ -46,10 +46,8 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.ClassUtils;
-import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
-import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
-import org.apache.fesod.sheet.util.NumberUtils;
+import org.apache.fesod.sheet.util.ThreadLocalCleaner;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
@@ -584,7 +582,7 @@ public class WriteContextImpl implements WriteContext {
             throwable = recordFailure(throwable, t);
         }
         clearEncrypt03();
-        removeThreadLocalCache();
+        ThreadLocalCleaner.clearAllThreadLocals();
         if (throwable != null) {
             throw new ExcelGenerateException("Can not close IO.", throwable);
         }
@@ -604,16 +602,6 @@ public class WriteContextImpl implements WriteContext {
             recorded.addSuppressed(t);
         }
         return recorded;
-    }
-
-    /**
-     * Removes thread-local caches used during the write process.
-     */
-    private void removeThreadLocalCache() {
-        NumberDataFormatterUtils.removeThreadLocalCache();
-        NumberUtils.removeThreadLocalCache();
-        DateUtils.removeThreadLocalCache();
-        ClassUtils.removeThreadLocalCache();
     }
 
     /**

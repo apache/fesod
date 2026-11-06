@@ -73,6 +73,13 @@ public class DateUtils {
     private static final ThreadLocal<Map<Locale, Map<String, DateTimeFormatter>>> DATE_TIME_FORMATTER_THREAD_LOCAL =
             new ThreadLocal<>();
 
+    static {
+        ThreadLocalCleaner.register(() -> {
+            DATE_FORMAT_THREAD_LOCAL.remove();
+            DATE_TIME_FORMATTER_THREAD_LOCAL.remove();
+        });
+    }
+
     /**
      * The epoch date (1970-01-01) used as the date component when converting
      * {@code java.sql.Time} to {@code LocalDateTime}.

@@ -193,6 +193,7 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         this.writeWorkbook = writeWorkbook;
         this.file = writeWorkbook.getFile();
         if (file != null) {
+            checkTemplateAndOutputFileAreDifferent(file, writeWorkbook.getTemplateFile());
             try {
                 this.outputStream = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
@@ -271,6 +272,27 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         this.cellStyleIndexMap = MapUtils.newHashMap();
         this.fontMap = MapUtils.newHashMap();
         this.dataFormatMap = MapUtils.newHashMap();
+    }
+
+    private static void checkTemplateAndOutputFileAreDifferent(File outputFile, File templateFile) {
+        if (templateFile == null) {
+            return;
+        }
+        if (isSameFile(outputFile, templateFile)) {
+            throw new ExcelGenerateException("Template file and output file must be different.");
+        }
+    }
+
+    private static boolean isSameFile(File outputFile, File templateFile) {
+        try {
+            return outputFile.getCanonicalFile().equals(templateFile.getCanonicalFile());
+        } catch (IOException e) {
+            return outputFile
+                    .toPath()
+                    .toAbsolutePath()
+                    .normalize()
+                    .equals(templateFile.toPath().toAbsolutePath().normalize());
+        }
     }
 
     /**

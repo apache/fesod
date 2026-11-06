@@ -22,8 +22,12 @@ package org.apache.fesod.sheet.write.metadata.holder;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.testkit.builders.TestDataBuilder;
+import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,5 +67,35 @@ public class WriteWorkbookHolderOutputStreamTest {
         // autoCloseStream(false) opts into manual stream management, so the holder must not close
         // caller-provided streams — mirroring the success-path contract.
         Assertions.assertDoesNotThrow(() -> writeWorkbook.getOutputStream().write(1));
+    }
+
+    @Test
+    void writeRejectsSameTemplateAndOutputFileWithoutTruncatingTemplate() throws IOException {
+        File template = tempDir.resolve("same-file-template.xlsx").toFile();
+        FesodSheet.write(template, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(1));
+        byte[] before = Files.readAllBytes(template.toPath());
+
+        ExcelGenerateException exception =
+                Assertions.assertThrows(ExcelGenerateException.class, () -> FesodSheet.write(template, SimpleData.class)
+                        .withTemplate(template)
+                        .sheet()
+                        .doWrite(TestDataBuilder.simpleData(1)));
+
+        Assertions.assertEquals("Template file and output file must be different.", exception.getMessage());
+        Assertions.assertArrayEquals(before, Files.readAllBytes(template.toPath()));
+    }
+
+    @Test
+    void writeAllowsDistinctTemplateAndOutputFiles() {
+        File template = tempDir.resolve("template.xlsx").toFile();
+        File output = tempDir.resolve("output.xlsx").toFile();
+        FesodSheet.write(template, SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(1));
+
+        FesodSheet.write(output, SimpleData.class)
+                .withTemplate(template)
+                .sheet()
+                .doWrite(TestDataBuilder.simpleData(1));
+
+        Assertions.assertTrue(output.length() > 0);
     }
 }

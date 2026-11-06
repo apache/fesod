@@ -46,7 +46,13 @@ public interface Converter<T> {
     }
 
     /**
-     * Back to object enum in excel
+     * Excel data type this converter supports.
+     *
+     * <p>Returning {@code null} declares the wildcard key {@code (JavaType, null)}: the converter matches
+     * every target cell data type. The xlsx write path looks converters up with a {@code null} target type,
+     * and a custom converter declaring {@code null} is additionally registered under the
+     * {@link CellDataTypeEnum#STRING} key so that it is honored by the CSV write path, which forces the
+     * lookup key to {@code (JavaType, STRING)}.
      *
      * @return Support for {@link CellDataTypeEnum}
      */

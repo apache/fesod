@@ -142,9 +142,14 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
     }
 
     private ExcelReader buildExcelReader() {
-        this.csvFormatBuilder.setTrim(this.readWorkbook.getAutoTrim() == null
-                || this.readWorkbook.getAutoTrim()
-                || Boolean.TRUE.equals(this.readWorkbook.getAutoStrip()));
+        // The inherited autoTrim()/autoStrip() setters land on the ReadSheet, so the sheet-level
+        // flags must take precedence over the workbook-level ones here.
+        Boolean autoTrim =
+                this.readSheet.getAutoTrim() != null ? this.readSheet.getAutoTrim() : this.readWorkbook.getAutoTrim();
+        Boolean autoStrip = this.readSheet.getAutoStrip() != null
+                ? this.readSheet.getAutoStrip()
+                : this.readWorkbook.getAutoStrip();
+        this.csvFormatBuilder.setTrim(autoTrim == null || autoTrim || Boolean.TRUE.equals(autoStrip));
         if (this.readWorkbook.getIgnoreEmptyRow() != null) {
             this.csvFormatBuilder.setIgnoreEmptyLines(this.readWorkbook.getIgnoreEmptyRow());
         }

@@ -19,6 +19,7 @@
 
 package org.apache.fesod.sheet.metadata.data;
 
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,5 +44,22 @@ public class ReadCellDataTest {
         ReadCellData<?> cellData = new ReadCellData<>();
         cellData.setBooleanValueFromString(str);
         return cellData.getBooleanValue();
+    }
+
+    /**
+     * A clone must describe the same cell, including where the cell is.
+     */
+    @Test
+    void cloneKeepsCoordinates() {
+        ReadCellData<String> cellData = new ReadCellData<>(CellDataTypeEnum.STRING, "value");
+        cellData.setRowIndex(1);
+        cellData.setColumnIndex(2);
+
+        ReadCellData<Object> clone = cellData.clone();
+
+        Assertions.assertEquals(CellDataTypeEnum.STRING, clone.getType());
+        Assertions.assertEquals("value", clone.getStringValue());
+        Assertions.assertEquals(1, clone.getRowIndex());
+        Assertions.assertEquals(2, clone.getColumnIndex());
     }
 }

@@ -33,7 +33,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,6 +94,8 @@ public class DateUtils {
     public static String defaultDateFormat = DATE_FORMAT_19;
 
     public static String defaultLocalDateFormat = DATE_FORMAT_10;
+
+    public static String defaultYearFormat = "yyyy";
 
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 
@@ -350,6 +354,39 @@ public class DateUtils {
     }
 
     /**
+     * convert string to year
+     *
+     * @param yearString
+     * @param yearFormat
+     * @param local
+     * @return
+     */
+    public static Year parseYear(String yearString, String yearFormat, Locale local) {
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = defaultYearFormat;
+        }
+        return Year.parse(yearString, getCacheDateTimeFormat(yearFormat, local));
+    }
+
+    /**
+     * Format year
+     *
+     * @param year Year
+     * @param yearFormat year format
+     * @param local local
+     * @return format string
+     */
+    public static String format(Year year, String yearFormat, Locale local) {
+        if (year == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(yearFormat)) {
+            yearFormat = defaultYearFormat;
+        }
+        return year.format(getCacheDateTimeFormat(yearFormat, local));
+    }
+
+    /**
      * Format date, preserving the offset in the output
      *
      * @param date date
@@ -428,10 +465,41 @@ public class DateUtils {
         }
         DateTimeFormatter formatter = formatCache.get(dateFormat);
         if (formatter == null) {
-            formatter = DateTimeFormatter.ofPattern(dateFormat, actualLocale);
+            formatter = DateTimeFormatter.ofPattern(toStrictPatternIfNecessary(dateFormat), actualLocale)
+                    .withResolverStyle(ResolverStyle.STRICT);
             formatCache.put(dateFormat, formatter);
         }
         return formatter;
+    }
+
+    /**
+     * Resolve years without an explicit era as proleptic years in strict mode. Preserve quoted literals and
+     * year-of-era semantics when the pattern explicitly includes an era.
+     */
+    private static String toStrictPatternIfNecessary(String pattern) {
+        if (pattern == null || pattern.indexOf('y') == -1) {
+            return pattern;
+        }
+        StringBuilder builder = new StringBuilder(pattern);
+        boolean isQuoted = false;
+        for (int i = 0; i < pattern.length(); i++) {
+            char c = pattern.charAt(i);
+            if (c == '\'') {
+                if (i + 1 < pattern.length() && pattern.charAt(i + 1) == '\'') {
+                    i++;
+                } else {
+                    isQuoted = !isQuoted;
+                }
+            } else if (!isQuoted) {
+                if (c == 'G') {
+                    return pattern;
+                }
+                if (c == 'y') {
+                    builder.setCharAt(i, 'u');
+                }
+            }
+        }
+        return builder.toString();
     }
 
     private static DateFormat getCacheDateFormat(String dateFormat) {
@@ -446,6 +514,7 @@ public class DateUtils {
             }
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        simpleDateFormat.setLenient(false);
         dateFormatMap.put(dateFormat, simpleDateFormat);
         return simpleDateFormat;
     }

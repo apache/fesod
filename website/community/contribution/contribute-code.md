@@ -115,10 +115,10 @@ When submitting a PR, please ensure that the changes are based on the `main` bra
 
 ## Compile
 
-Run the following command to compile
+Run the following command to compile (unit tests run by default)
 
 ```bash
-mvn clean install -DskipTests
+mvn clean install
 ```
 
 To speed up the build process, you can:

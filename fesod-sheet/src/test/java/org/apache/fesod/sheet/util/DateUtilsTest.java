@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.Year;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -104,6 +105,20 @@ class DateUtilsTest {
         Assertions.assertEquals(30, cal2.get(Calendar.MINUTE));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-31", "2023-02-29", "2024-13-01"})
+    void test_parseDateRejectsInvalidCalendarDates(String value) {
+        Assertions.assertThrows(ParseException.class, () -> DateUtils.parseDate(value, DateUtils.DATE_FORMAT_10));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-29", "2023-02-28"})
+    void test_parseDateAcceptsValidCalendarDates(String value) throws ParseException {
+        Date parsed = DateUtils.parseDate(value, DateUtils.DATE_FORMAT_10);
+
+        Assertions.assertEquals(value, DateUtils.format(parsed, DateUtils.DATE_FORMAT_10));
+    }
+
     @Test
     void test_parseDateAutoDetectsForwardSlashDateOnly() throws ParseException {
         Date date = DateUtils.parseDate("2026/10/01");
@@ -172,6 +187,44 @@ class DateUtilsTest {
         LocalDate forwardSlashDate = DateUtils.parseLocalDate("2026/10/01", "", null);
 
         Assertions.assertEquals(LocalDate.of(2026, 10, 1), forwardSlashDate);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-31", "2023-02-29", "2024-13-01"})
+    void test_parseLocalDateRejectsInvalidCalendarDates(String value) {
+        Assertions.assertThrows(
+                DateTimeParseException.class, () -> DateUtils.parseLocalDate(value, DateUtils.DATE_FORMAT_10, null));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2024-02-29", "2023-02-28"})
+    void test_parseLocalDateAcceptsValidCalendarDates(String value) {
+        LocalDate parsed = DateUtils.parseLocalDate(value, DateUtils.DATE_FORMAT_10, null);
+
+        Assertions.assertEquals(value, DateUtils.format(parsed, DateUtils.DATE_FORMAT_10));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"uuuu-MM-dd", "yyyy-MM-dd"})
+    void test_parseLocalDateAcceptsProlepticYears(String pattern) {
+        Assertions.assertEquals(LocalDate.of(-1, 1, 2), DateUtils.parseLocalDate("-0001-01-02", pattern, Locale.US));
+        Assertions.assertEquals(LocalDate.of(0, 1, 2), DateUtils.parseLocalDate("0000-01-02", pattern, Locale.US));
+    }
+
+    @Test
+    void test_parseLocalDatePreservesQuotedPatternLiterals() {
+        LocalDate expected = LocalDate.of(2024, 2, 29);
+        Assertions.assertEquals(expected, DateUtils.parseLocalDate("2024-02-29 y", "yyyy-MM-dd 'y'", Locale.US));
+        Assertions.assertEquals(expected, DateUtils.parseLocalDate("2024-02-29 'y", "yyyy-MM-dd '''y'", Locale.US));
+        Assertions.assertEquals(expected, DateUtils.parseLocalDate("2024-02-29 G", "yyyy-MM-dd 'G'", Locale.US));
+    }
+
+    @Test
+    void test_parseLocalDatePreservesExplicitEra() {
+        Assertions.assertEquals(
+                LocalDate.of(0, 1, 2), DateUtils.parseLocalDate("0001-01-02 BC", "yyyy-MM-dd G", Locale.US));
+        Assertions.assertEquals(
+                LocalDate.of(1, 1, 2), DateUtils.parseLocalDate("0001-01-02 AD", "yyyy-MM-dd G", Locale.US));
     }
 
     @Test
@@ -542,5 +595,28 @@ class DateUtilsTest {
         Assertions.assertNull(((ThreadLocal<?>) f1.get(null)).get());
         Assertions.assertNull(((ThreadLocal<?>) f2.get(null)).get());
         Assertions.assertNull(((ThreadLocal<?>) f3.get(null)).get());
+    }
+
+    @Test
+    void test_parseYearUsesDefaultFormat() {
+        Assertions.assertEquals(Year.of(2026), DateUtils.parseYear("2026", null, null));
+        Assertions.assertEquals(Year.of(2026), DateUtils.parseYear("2026", null, Locale.US));
+    }
+
+    @Test
+    void test_parseYearUsesCustomFormat() {
+        Assertions.assertEquals(Year.of(2026), DateUtils.parseYear("26", "uu", null));
+    }
+
+    @Test
+    void test_formatYearUsesDefaultFormat() {
+        Assertions.assertEquals("2026", DateUtils.format(Year.of(2026), null, null));
+        Assertions.assertEquals("2026", DateUtils.format(Year.of(2026), null, Locale.US));
+    }
+
+    @Test
+    void test_formatYearRespectsLocaleForEraPatterns() {
+        Assertions.assertEquals("公元 2026", DateUtils.format(Year.of(2026), "G y", Locale.CHINA));
+        Assertions.assertEquals("AD 2026", DateUtils.format(Year.of(2026), "G y", Locale.US));
     }
 }

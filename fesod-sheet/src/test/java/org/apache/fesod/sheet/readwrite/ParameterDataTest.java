@@ -83,6 +83,58 @@ public class ParameterDataTest extends AbstractExcelTest {
         Assertions.assertEquals(3, sheetLimitRows.size());
     }
 
+    @ParameterizedTest
+    @ExcelFormatSource
+    void numRowsNullReadsAllRows(ExcelFormat format) throws Exception {
+        File file = createTempFile("numRowsNull", format);
+        List<SimpleData> expectedRows = TestDataBuilder.simpleData(3);
+        FesodSheet.write(file, SimpleData.class).sheet().doWrite(expectedRows);
+
+        List<SimpleData> defaultRows =
+                FesodSheet.read(file, SimpleData.class, null).sheet().doReadSync();
+        Assertions.assertEquals(expectedRows, defaultRows);
+
+        List<SimpleData> workbookLimitRows = FesodSheet.read(file, SimpleData.class, null)
+                .numRows(null)
+                .sheet()
+                .doReadSync();
+        Assertions.assertEquals(defaultRows, workbookLimitRows);
+
+        List<SimpleData> sheetLimitRows = FesodSheet.read(file, SimpleData.class, null)
+                .sheet()
+                .numRows(null)
+                .doReadSync();
+        Assertions.assertEquals(defaultRows, sheetLimitRows);
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource
+    void numRowsTwoReadsOneHeaderAndOneDataRow(ExcelFormat format) throws Exception {
+        File file = createTempFile("numRowsTwo", format);
+        List<SimpleData> data = TestDataBuilder.simpleData(3);
+        FesodSheet.write(file, SimpleData.class).sheet().doWrite(data);
+
+        List<SimpleData> workbookLimitRows = FesodSheet.read(file, SimpleData.class, null)
+                .headRowNumber(1)
+                .numRows(2)
+                .sheet()
+                .doReadSync();
+        Assertions.assertEquals(
+                data.subList(0, 1),
+                workbookLimitRows,
+                "The two-row limit must include one header row and only the first data row");
+
+        List<SimpleData> sheetLimitRows = FesodSheet.read(file, SimpleData.class, null)
+                .sheet()
+                .headRowNumber(1)
+                .numRows(2)
+                .doReadSync();
+        Assertions.assertEquals(
+                data.subList(0, 1),
+                sheetLimitRows,
+                "The two-row limit must include one header row and only the first data row");
+    }
+
     private void readAndWrite1(File file, ExcelTypeEnum type) {
         FesodSheet.write(file.getPath()).head(SimpleData.class).sheet().doWrite(TestDataBuilder.simpleData(10));
         List<SimpleData> dataList =

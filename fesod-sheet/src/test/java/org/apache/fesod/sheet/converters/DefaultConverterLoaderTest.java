@@ -19,6 +19,7 @@
 
 package org.apache.fesod.sheet.converters;
 
+import java.sql.Clob;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -26,6 +27,7 @@ import java.time.LocalTime;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.clob.ClobStringConverter;
 import org.apache.fesod.sheet.converters.instant.InstantStringConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
@@ -123,6 +125,21 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 SqlTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersClobStringConverter() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                ClobStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(Clob.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                ClobStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Clob.class)));
+        Assertions.assertInstanceOf(
+                ClobStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(Clob.class, CellDataTypeEnum.STRING)));
     }
 
     @Test

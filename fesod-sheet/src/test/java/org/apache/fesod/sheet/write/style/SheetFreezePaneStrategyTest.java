@@ -65,11 +65,7 @@ class SheetFreezePaneStrategyTest {
 
     @Test
     void constructor_fromProperty_shouldNotThrowException() {
-        SheetFreezePaneProperty property = new SheetFreezePaneProperty();
-        property.setColSplit(1);
-        property.setRowSplit(2);
-        property.setLeftmostColumn(3);
-        property.setTopRow(4);
+        SheetFreezePaneProperty property = new SheetFreezePaneProperty(2, 3, 4, 5);
 
         Assertions.assertDoesNotThrow(() -> new SheetFreezePaneStrategy(property));
     }

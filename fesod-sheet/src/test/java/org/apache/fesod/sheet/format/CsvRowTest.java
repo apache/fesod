@@ -294,6 +294,44 @@ public class CsvRowTest {
         }
     }
 
+    @Test
+    void shouldRejectOutOfOrderRowCreation() throws Exception {
+        File csvFile = new File(tempDir, "out-of-order-rows.csv");
+
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sheet.createRow(1));
+
+            sheet.createRow(0);
+            sheet.createRow(1);
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sheet.createRow(0));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sheet.createRow(3));
+
+            Assertions.assertEquals(2, sheet.createRow(2).getRowNum());
+
+            sheet.close();
+        }
+    }
+
+    @Test
+    void shouldRejectSheetIndexOtherThanZero() throws Exception {
+        File csvFile = new File(tempDir, "sheet-index.csv");
+
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            Sheet sheet = workbook.createSheet();
+
+            Assertions.assertSame(sheet, workbook.getSheetAt(0));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> workbook.getSheetAt(1));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> workbook.getSheetAt(-1));
+
+            ((CsvSheet) sheet).close();
+        }
+    }
+
     private static List<SimpleCsvData> modelData() {
         List<SimpleCsvData> data = new ArrayList<>();
         data.add(new SimpleCsvData("1", "Jackson", "20"));

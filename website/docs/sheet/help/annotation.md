@@ -157,3 +157,12 @@ Define a freeze pane for an Excel sheet. The parameters are as follows:
 | rowSplit       | 0             | Vertical position of freeze pane.                                        |
 | leftmostColumn | -1            | Left column visible in right pane. By default, it's equal to `colSplit`. |
 | topRow         | -1            | Top row visible in bottom pane. By default, it's equal to `rowSplit`.    |
+
+### `@ExcelView`
+
+Defines the view(s) that the field belongs to. During spreadsheet writing, only fields whose declared views match the active view will be included. The parameters are as follows:
+
+| Name    | Default Value | Description                                                                                                                                                                            |
+|---------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| asTypes | Empty         | View or views that annotated element is part of. Views are identified by classes, when <br/> a view type is selected, fields annotated with that type or any of subtypes are included. |
+| asNames | Empty         | View or views that annotated element is part of. Views are identified by strings.                                                                                                      |

@@ -34,6 +34,7 @@ import lombok.Setter;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.BasicParameter;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
+import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 
 /**
  * Write basic parameter
@@ -92,4 +93,9 @@ public class WriteBasicParameter extends BasicParameter {
      * Default is {@code false}.
      */
     private Boolean orderByIncludeColumn;
+
+    /**
+     * view-based matcher for sheet writing.
+     */
+    private WriteViewMatcher writeViewMatcher;
 }

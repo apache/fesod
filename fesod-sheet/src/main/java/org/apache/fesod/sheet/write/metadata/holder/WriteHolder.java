@@ -29,6 +29,7 @@ import java.util.Collection;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.ConfigurationHolder;
 import org.apache.fesod.sheet.write.property.ExcelWriteHeadProperty;
+import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 
 /**
  * Get the corresponding Holder
@@ -115,4 +116,9 @@ public interface WriteHolder extends ConfigurationHolder {
      * @return
      */
     Collection<String> excludeColumnFieldNames();
+
+    /**
+     * view-based matcher for sheet writing.
+     */
+    WriteViewMatcher writeViewMatcher();
 }

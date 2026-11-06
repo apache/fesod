@@ -61,6 +61,19 @@ public class WorkbookAssert {
     }
 
     /**
+     * Navigates to a sheet by name for further assertions.
+     *
+     * @throws AssertionError if it does not exist
+     */
+    public SheetAssert sheet(String name) {
+        Sheet sheet = workbook.getSheet(name);
+        if (null == sheet) {
+            throw new AssertionError("Sheet name " + name + " does not exist");
+        }
+        return new SheetAssert(sheet, workbook, this);
+    }
+
+    /**
      * Returns to the parent assertion chain.
      */
     public ExcelAssertions and() {

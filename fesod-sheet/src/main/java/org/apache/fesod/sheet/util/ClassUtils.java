@@ -66,6 +66,7 @@ import org.apache.fesod.sheet.metadata.property.FontProperty;
 import org.apache.fesod.sheet.metadata.property.NumberFormatProperty;
 import org.apache.fesod.sheet.metadata.property.StyleProperty;
 import org.apache.fesod.sheet.write.metadata.holder.WriteHolder;
+import org.apache.fesod.sheet.write.view.WriteViewMatcher;
 
 public class ClassUtils {
 
@@ -327,23 +328,30 @@ public class ClassUtils {
 
         WriteHolder writeHolder = (WriteHolder) configurationHolder;
 
+        // ignore field by grouping
+        WriteViewMatcher writeViewMatcher = writeHolder.writeViewMatcher();
+        boolean hasViews = (WriteViewMatcher.NOOP != writeViewMatcher);
+        // ignore field by include*/exclude*
         boolean needIgnore = !CollectionUtils.isEmpty(writeHolder.excludeColumnFieldNames())
                 || !CollectionUtils.isEmpty(writeHolder.excludeColumnIndexes())
                 || !CollectionUtils.isEmpty(writeHolder.includeColumnFieldNames())
-                || !CollectionUtils.isEmpty(writeHolder.includeColumnIndexes());
+                || !CollectionUtils.isEmpty(writeHolder.includeColumnIndexes())
+                || hasViews;
 
         if (!needIgnore) {
             return fieldCache;
         }
-        // ignore filed
+        // ignore field
         Map<Integer, FieldWrapper> tempSortedFieldMap = MapUtils.newHashMap();
         int index = 0;
         for (Map.Entry<Integer, FieldWrapper> entry : sortedFieldMap.entrySet()) {
             Integer key = entry.getKey();
             FieldWrapper field = entry.getValue();
 
+            boolean isGroupsMismatch = hasViews && !writeViewMatcher.matches(field.getField());
+
             // The current field needs to be ignored
-            if (writeHolder.ignore(field.getFieldName(), entry.getKey())) {
+            if (isGroupsMismatch || writeHolder.ignore(field.getFieldName(), entry.getKey())) {
                 ignoreSet.add(field.getFieldName());
                 // indexFieldMap is keyed by the field's explicit @ExcelProperty(index), which for
                 // explicit-index fields equals the sortedFieldMap position (entry.getKey()); remove
@@ -560,6 +568,7 @@ public class ClassUtils {
         private Collection<Integer> excludeColumnIndexes;
         private Collection<String> includeColumnFieldNames;
         private Collection<Integer> includeColumnIndexes;
+        private WriteViewMatcher writeViewMatcher;
 
         FieldCacheKey(Class<?> clazz, ConfigurationHolder configurationHolder) {
             this.clazz = clazz;
@@ -569,6 +578,7 @@ public class ClassUtils {
                 this.excludeColumnIndexes = writeHolder.excludeColumnIndexes();
                 this.includeColumnFieldNames = writeHolder.includeColumnFieldNames();
                 this.includeColumnIndexes = writeHolder.includeColumnIndexes();
+                this.writeViewMatcher = writeHolder.writeViewMatcher();
             }
         }
     }

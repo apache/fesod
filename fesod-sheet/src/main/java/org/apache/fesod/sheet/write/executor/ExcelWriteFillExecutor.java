@@ -61,11 +61,18 @@ import org.apache.fesod.sheet.write.metadata.fill.AnalysisCell;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
 
 /**
  * Fill the data into excel
@@ -176,9 +183,6 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         int lastRowIndex = cachedSheet.getLastRowNum();
-        if (maxRowIndex >= lastRowIndex) {
-            return;
-        }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
         int number = size;
         if (collectionLastIndexMap == null) {
@@ -187,11 +191,62 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         if (number <= 0) {
             return;
         }
-        sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+        if (maxRowIndex < lastRowIndex) {
+            sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+        }
+        shiftDataValidationRanges(sheet, maxRowIndex, number);
 
         // The current data is greater than unity rowindex increase
         increaseRowIndex(templateAnalysisCache, number, maxRowIndex);
         increaseRowIndex(templateCollectionAnalysisCache, number, maxRowIndex);
+    }
+
+    private void shiftDataValidationRanges(Sheet sheet, int afterRow, int number) {
+        int lastRow = sheet.getWorkbook().getSpreadsheetVersion().getLastRowIndex();
+        if (sheet instanceof XSSFSheet) {
+            XSSFSheet xssfSheet = (XSSFSheet) sheet;
+            if (!xssfSheet.getCTWorksheet().isSetDataValidations()) {
+                return;
+            }
+            for (CTDataValidation validation :
+                    xssfSheet.getCTWorksheet().getDataValidations().getDataValidationList()) {
+                List<String> shifted = new ArrayList<>();
+                for (Object reference : validation.getSqref()) {
+                    CellRangeAddress range = CellRangeAddress.valueOf(reference.toString());
+                    shiftDataValidationRange(range, afterRow, number, lastRow);
+                    shifted.add(range.formatAsString());
+                }
+                validation.setSqref(shifted);
+            }
+        } else if (sheet instanceof HSSFSheet) {
+            HSSFSheet hssfSheet = (HSSFSheet) sheet;
+            for (RecordBase record : hssfSheet.getSheet().getRecords()) {
+                if (record instanceof DataValidityTable) {
+                    ((DataValidityTable) record).visitContainedRecords(validationRecord -> {
+                        if (validationRecord instanceof DVRecord) {
+                            for (CellRangeAddress range : ((DVRecord) validationRecord)
+                                    .getCellRangeAddress()
+                                    .getCellRangeAddresses()) {
+                                shiftDataValidationRange(range, afterRow, number, lastRow);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private void shiftDataValidationRange(CellRangeAddress range, int afterRow, int number, int lastRow) {
+        if (range.getFirstRow() > afterRow) {
+            int firstRow = range.getFirstRow() + number;
+            if (firstRow > lastRow) {
+                throw new ExcelGenerateException("Cannot shift data validation beyond the last worksheet row.");
+            }
+            range.setFirstRow(firstRow);
+        }
+        if (range.getLastRow() > afterRow) {
+            range.setLastRow(Math.min(range.getLastRow() + number, lastRow));
+        }
     }
 
     private void increaseRowIndex(

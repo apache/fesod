@@ -91,13 +91,45 @@ public class DateUtils {
     public static final String TIME_FORMAT_8 = "HH:mm:ss";
     private static final String MINUS = "-";
 
-    public static String defaultDateFormat = DATE_FORMAT_19;
+    /**
+     * Built-in default pattern for {@code java.time.Year} values ({@value}).
+     */
+    public static final String DEFAULT_YEAR_FORMAT = "yyyy";
 
-    public static String defaultLocalDateFormat = DATE_FORMAT_10;
-
-    public static String defaultYearFormat = "yyyy";
-
+    /**
+     * Built-in default pattern for time-only values ({@value}).
+     */
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
+
+    /**
+     * Process-wide default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime} values when no
+     * explicit pattern applies. Each read/write context snapshots this value at creation time, so a change only
+     * affects contexts created afterwards.
+     *
+     * @deprecated direct field writes make an in-flight workbook nondeterministically mixed between the old and the
+     *             new value. Use {@link #setDefaultDateFormat(String)} to change the process-wide default, the
+     *             per-call {@code defaultDateFormat(...)} builder parameter, or a {@code @DateTimeFormat} field
+     *             annotation. This field will be removed in the next major version.
+     */
+    @Deprecated
+    public static volatile String defaultDateFormat = DATE_FORMAT_19;
+
+    /**
+     * Process-wide default pattern for {@code LocalDate} values when no explicit pattern applies; snapshot semantics
+     * as described on {@link #defaultDateFormat}.
+     *
+     * @deprecated use {@link #setDefaultLocalDateFormat(String)}, the per-call {@code defaultLocalDateFormat(...)}
+     *             builder parameter, or a {@code @DateTimeFormat} field annotation. This field will be removed in
+     *             the next major version.
+     */
+    @Deprecated
+    public static volatile String defaultLocalDateFormat = DATE_FORMAT_10;
+
+    /**
+     * Process-wide default pattern for {@code Year} values when no explicit pattern applies; snapshot semantics as
+     * described on {@link #defaultDateFormat}.
+     */
+    private static volatile String defaultYearFormat = DEFAULT_YEAR_FORMAT;
 
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int MINUTES_PER_HOUR = 60;
@@ -109,6 +141,78 @@ public class DateUtils {
     public static final long DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
 
     private DateUtils() {}
+
+    /**
+     * Returns the process-wide default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime}
+     * values.
+     */
+    public static String getDefaultDateFormat() {
+        return defaultDateFormat;
+    }
+
+    /**
+     * Sets the process-wide default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime}
+     * values. The new value applies to every read/write context created afterwards; an already running context keeps
+     * the pattern it snapshotted at creation.
+     *
+     * @param format the pattern, must not be blank
+     * @throws IllegalArgumentException if the pattern is blank
+     */
+    public static void setDefaultDateFormat(String format) {
+        defaultDateFormat = requireNonBlank(format, "default date format");
+    }
+
+    /**
+     * Returns the process-wide default pattern for {@code LocalDate} values.
+     */
+    public static String getDefaultLocalDateFormat() {
+        return defaultLocalDateFormat;
+    }
+
+    /**
+     * Sets the process-wide default pattern for {@code LocalDate} values; snapshot semantics as described on
+     * {@link #setDefaultDateFormat(String)}.
+     *
+     * @param format the pattern, must not be blank
+     * @throws IllegalArgumentException if the pattern is blank
+     */
+    public static void setDefaultLocalDateFormat(String format) {
+        defaultLocalDateFormat = requireNonBlank(format, "default local date format");
+    }
+
+    /**
+     * Returns the process-wide default pattern for {@code Year} values.
+     */
+    public static String getDefaultYearFormat() {
+        return defaultYearFormat;
+    }
+
+    /**
+     * Sets the process-wide default pattern for {@code Year} values; snapshot semantics as described on
+     * {@link #setDefaultDateFormat(String)}.
+     *
+     * @param format the pattern, must not be blank
+     * @throws IllegalArgumentException if the pattern is blank
+     */
+    public static void setDefaultYearFormat(String format) {
+        defaultYearFormat = requireNonBlank(format, "default year format");
+    }
+
+    /**
+     * Restores every process-wide default date pattern to its built-in value.
+     */
+    public static void resetDefaultDateFormats() {
+        defaultDateFormat = DATE_FORMAT_19;
+        defaultLocalDateFormat = DATE_FORMAT_10;
+        defaultYearFormat = DEFAULT_YEAR_FORMAT;
+    }
+
+    private static String requireNonBlank(String format, String name) {
+        if (StringUtils.isBlank(format)) {
+            throw new IllegalArgumentException(name + " can not be blank");
+        }
+        return format;
+    }
 
     /**
      * convert string to date
@@ -449,6 +553,81 @@ public class DateUtils {
         }
         Boolean globalUse1904windowing = globalConfiguration.getUse1904windowing();
         return globalUse1904windowing != null && globalUse1904windowing;
+    }
+
+    /**
+     * Resolves the pattern for a datetime-typed value ({@code Date}, {@code LocalDateTime}, {@code OffsetDateTime}):
+     * a non-empty {@code @DateTimeFormat} pattern wins, otherwise the per-call configuration, otherwise the
+     * process-wide default. Types whose string form has its own canonical representation (for example ISO-based
+     * formats) should keep that representation instead of routing through this helper.
+     *
+     * @param contentProperty the field's content property, may be null
+     * @param globalConfiguration the per-call configuration, may be null
+     * @return the resolved pattern, never null or empty
+     */
+    public static String resolveDateTimeFormat(
+            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        String format = annotationFormat(contentProperty);
+        if (format != null) {
+            return format;
+        }
+        if (globalConfiguration != null && !StringUtils.isEmpty(globalConfiguration.getDefaultDateFormat())) {
+            return globalConfiguration.getDefaultDateFormat();
+        }
+        return getDefaultDateFormat();
+    }
+
+    /**
+     * Resolves the pattern for a {@code LocalDate} value; precedence as described on
+     * {@link #resolveDateTimeFormat(ExcelContentProperty, GlobalConfiguration)}.
+     *
+     * @param contentProperty the field's content property, may be null
+     * @param globalConfiguration the per-call configuration, may be null
+     * @return the resolved pattern, never null or empty
+     */
+    public static String resolveLocalDateFormat(
+            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        String format = annotationFormat(contentProperty);
+        if (format != null) {
+            return format;
+        }
+        if (globalConfiguration != null && !StringUtils.isEmpty(globalConfiguration.getDefaultLocalDateFormat())) {
+            return globalConfiguration.getDefaultLocalDateFormat();
+        }
+        return getDefaultLocalDateFormat();
+    }
+
+    /**
+     * Resolves the pattern for a {@code Year} value; precedence as described on
+     * {@link #resolveDateTimeFormat(ExcelContentProperty, GlobalConfiguration)}.
+     *
+     * @param contentProperty the field's content property, may be null
+     * @param globalConfiguration the per-call configuration, may be null
+     * @return the resolved pattern, never null or empty
+     */
+    public static String resolveYearFormat(
+            ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
+        String format = annotationFormat(contentProperty);
+        if (format != null) {
+            return format;
+        }
+        if (globalConfiguration != null && !StringUtils.isEmpty(globalConfiguration.getDefaultYearFormat())) {
+            return globalConfiguration.getDefaultYearFormat();
+        }
+        return getDefaultYearFormat();
+    }
+
+    /**
+     * Extracts the {@code @DateTimeFormat} pattern of a field, treating null and empty as "not set".
+     */
+    private static String annotationFormat(ExcelContentProperty contentProperty) {
+        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
+            String format = contentProperty.getDateTimeFormatProperty().getFormat();
+            if (!StringUtils.isEmpty(format)) {
+                return format;
+            }
+        }
+        return null;
     }
 
     private static DateTimeFormatter getCacheDateTimeFormat(String dateFormat, Locale locale) {

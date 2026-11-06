@@ -403,7 +403,7 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
                     .row(1)
                     // col 0 = childDate: subclass shadows parent, no @DateTimeFormat inherited
                     .cell(0)
-                    .hasDataFormatString(DateUtils.defaultDateFormat)
+                    .hasDataFormatString(DateUtils.getDefaultDateFormat())
                     .and()
                     // col 1 = childDoubleValue: subclass shadows parent, no @NumberFormat inherited
                     .cell(1)

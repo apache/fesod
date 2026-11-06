@@ -174,7 +174,7 @@ class OffsetDateTimeConverterTest {
         property.setDateTimeFormatProperty(new DateTimeFormatProperty("", false));
         WriteCellData<?> result = converter.convertToExcelData(VALUE, property, new GlobalConfiguration());
         Assertions.assertEquals(
-                DateUtils.defaultDateFormat,
+                DateUtils.getDefaultDateFormat(),
                 result.getWriteCellStyle().getDataFormatData().getFormat());
     }
 

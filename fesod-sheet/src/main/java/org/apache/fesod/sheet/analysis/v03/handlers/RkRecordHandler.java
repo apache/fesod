@@ -25,29 +25,51 @@
 
 package org.apache.fesod.sheet.analysis.v03.handlers;
 
+import java.math.BigDecimal;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
+import org.apache.fesod.sheet.constant.BuiltinFormats;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.enums.RowTypeEnum;
+import org.apache.fesod.sheet.metadata.data.DataFormatData;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Record handler for BIFF {@link RKRecord}.
+ *
+ * <p>RK is a compact numeric cell used by older Excel files. The event-API path still delivers these
+ * records; they must be decoded like {@link NumberRecordHandler}, not treated as empty cells.
  */
 public class RkRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
     @Override
-    public void processRecord(XlsReadContext xlsReadContext, Record record) {
-        RKRecord re = (RKRecord) record;
+    public void processRecord(XlsReadContext xlsReadContext, Record rec) {
+        RKRecord re = (RKRecord) rec;
 
         Integer targetColumnIndex = xlsReadContext.readSheetHolder().determineTargetColumnIndex(re.getColumn());
         if (targetColumnIndex == null) {
             return;
         }
 
-        xlsReadContext
-                .xlsReadSheetHolder()
-                .getCellMap()
-                .put(targetColumnIndex, ReadCellData.newEmptyInstance(re.getRow(), targetColumnIndex));
+        short dataFormat = (short) xlsReadContext
+                .xlsReadWorkbookHolder()
+                .getFormatTrackingHSSFListener()
+                .getFormatIndex(re);
+        DataFormatData dataFormatData = new DataFormatData();
+        dataFormatData.setIndex(dataFormat);
+        dataFormatData.setFormat(BuiltinFormats.getBuiltinFormat(
+                dataFormat,
+                xlsReadContext
+                        .xlsReadWorkbookHolder()
+                        .getFormatTrackingHSSFListener()
+                        .getFormatString(re),
+                xlsReadContext.readSheetHolder().getGlobalConfiguration().getLocale()));
+
+        ReadCellData<?> cellData =
+                ReadCellData.newInstanceOriginal(BigDecimal.valueOf(re.getRKNumber()), re.getRow(), targetColumnIndex);
+        cellData.setDataFormatData(dataFormatData);
+        xlsReadContext.xlsReadSheetHolder().getCellMap().put(targetColumnIndex, cellData);
+        xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
     }
 }

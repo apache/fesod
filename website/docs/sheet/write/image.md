@@ -42,7 +42,7 @@ The declared field type selects the converter, so most sources need no configura
 | `URL` | `UrlImageConverter` | Downloaded while the file is written, see [URL Sources](#url-sources). |
 | `String` | none by default | Must be declared explicitly, see below. |
 
-<div id="string-explicit-declaration"></div>
+<a id="string-explicit-declaration"></a>
 
 :::warning
 

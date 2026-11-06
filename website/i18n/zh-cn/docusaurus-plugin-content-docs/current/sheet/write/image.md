@@ -40,7 +40,7 @@ title: '图片'
 | `URL` | `UrlImageConverter` | 写文件时通过网络下载，见 [URL 来源](#url-来源)。 |
 | `String` | 默认没有 | 必须显式指定，见下文。 |
 
-<div id="string-explicit-declaration"></div>
+<a id="string-explicit-declaration"></a>
 
 :::warning
 

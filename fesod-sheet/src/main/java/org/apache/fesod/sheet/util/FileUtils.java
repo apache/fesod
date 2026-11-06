@@ -32,6 +32,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
@@ -188,15 +191,30 @@ public class FileUtils {
 
     /**
      * delete file
+     * <p>
+     * Symbolic links and directory junctions are deleted themselves and never followed, so the deletion cannot
+     * escape the given directory.
      *
      * @param file
      */
     public static void delete(File file) {
-        if (file.isFile()) {
+        BasicFileAttributes attributes;
+        try {
+            attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+            return;
+        }
+        // Read attributes without following links: File#isDirectory() resolves a Windows directory junction, while
+        // "no follow" attributes report it as "other" (a regular directory reports isOther() = false).
+        if (attributes.isSymbolicLink() || attributes.isOther()) {
             file.delete();
             return;
         }
-        if (file.isDirectory()) {
+        if (attributes.isRegularFile()) {
+            file.delete();
+            return;
+        }
+        if (attributes.isDirectory()) {
             File[] childFiles = file.listFiles();
             if (childFiles == null || childFiles.length == 0) {
                 file.delete();

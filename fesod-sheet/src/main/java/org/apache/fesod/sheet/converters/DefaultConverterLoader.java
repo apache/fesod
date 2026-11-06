@@ -78,6 +78,9 @@ import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeStringConv
 import org.apache.fesod.sheet.converters.shortconverter.ShortBooleanConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortNumberConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortStringConverter;
+import org.apache.fesod.sheet.converters.sqldate.SqlDateDateConverter;
+import org.apache.fesod.sheet.converters.sqldate.SqlDateNumberConverter;
+import org.apache.fesod.sheet.converters.sqldate.SqlDateStringConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeStringConverter;
@@ -137,6 +140,8 @@ public class DefaultConverterLoader {
 
         putAllConverter(new LocalTimeNumberConverter());
         putAllConverter(new LocalTimeStringConverter());
+        putAllConverter(new SqlDateNumberConverter());
+        putAllConverter(new SqlDateStringConverter());
         putAllConverter(new SqlTimeNumberConverter());
         putAllConverter(new SqlTimeStringConverter());
         putAllConverter(new TimestampNumberConverter());
@@ -189,6 +194,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
         putWriteConverter(new InstantStringConverter());
+        putWriteConverter(new SqlDateDateConverter());
         putWriteConverter(new SqlTimeDateConverter());
         putWriteConverter(new TimestampDateConverter());
         putWriteConverter(new OffsetDateTimeDateConverter());
@@ -217,6 +223,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());
         putWriteStringConverter(new InstantStringConverter());
+        putWriteStringConverter(new SqlDateStringConverter());
         putWriteStringConverter(new SqlTimeStringConverter());
         putWriteStringConverter(new TimestampStringConverter());
         putWriteStringConverter(new OffsetDateTimeStringConverter());

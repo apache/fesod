@@ -28,6 +28,7 @@ import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteTableHolder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 
 /**
  * A cell write handler that escapes _x[0-9A-Fa-f]{4}_ format strings to prevent POI from automatically decoding them.
@@ -86,8 +87,12 @@ public class EscapeHexCellWriteHandler implements CellWriteHandler, NotRepeatExe
             Head head,
             Integer relativeRowIndex,
             Boolean isHead) {
-        // Only process SXSSFCell (cell in xlsx) and cell data of string type
-        if (cellData != null && cell instanceof SXSSFCell && CellDataTypeEnum.STRING.equals(cellData.getType())) {
+        // Only process string cells of the OOXML kinds: streaming SXSSFCell and in-memory XSSFCell.
+        // XLS (HSSFCell) and CSV (CsvCell) have no _xHHHH_ decoding, so escaping there would corrupt
+        // literals.
+        if (cellData != null
+                && CellDataTypeEnum.STRING.equals(cellData.getType())
+                && (cell instanceof SXSSFCell || cell instanceof XSSFCell)) {
             String originalString = cellData.getStringValue();
             if (originalString != null) {
                 String escapedString = escapeHex(originalString);

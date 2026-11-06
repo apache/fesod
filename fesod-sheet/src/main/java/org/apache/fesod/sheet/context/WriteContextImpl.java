@@ -27,6 +27,8 @@ package org.apache.fesod.sheet.context;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
@@ -128,18 +131,35 @@ public class WriteContextImpl implements WriteContext {
         }
         initCurrentWorkbookHolder(writeWorkbook);
 
-        WorkbookWriteHandlerContext workbookWriteHandlerContext =
-                WriteHandlerUtils.createWorkbookWriteHandlerContext(this);
-        WriteHandlerUtils.beforeWorkbookCreate(workbookWriteHandlerContext);
-        try {
-            WorkBookUtil.createWorkBook(writeWorkbookHolder);
-        } catch (Exception e) {
-            throw new ExcelGenerateException("Create workbook failure", e);
+        try (InputStream template = writeWorkbookHolder.getTempTemplateInputStream()) {
+            WorkbookWriteHandlerContext workbookWriteHandlerContext =
+                    WriteHandlerUtils.createWorkbookWriteHandlerContext(this);
+            WriteHandlerUtils.beforeWorkbookCreate(workbookWriteHandlerContext);
+            try {
+                WorkBookUtil.createWorkBook(writeWorkbookHolder);
+            } catch (Exception e) {
+                throw new ExcelGenerateException("Create workbook failure", e);
+            }
+            WriteHandlerUtils.afterWorkbookCreate(workbookWriteHandlerContext);
+        } catch (IOException e) {
+            closeOnInitializationFailure(e);
+            throw new ExcelGenerateException("Close template failure", e);
+        } catch (Throwable e) {
+            closeOnInitializationFailure(e);
+            throw e;
         }
-        WriteHandlerUtils.afterWorkbookCreate(workbookWriteHandlerContext);
         if (log.isDebugEnabled()) {
             log.debug("Initialization 'WriteContextImpl' complete");
         }
+    }
+
+    private void closeOnInitializationFailure(Throwable failure) {
+        IOUtils.closeQuietly(writeWorkbookHolder.getWorkbook(), e -> recordFailure(failure, e));
+        if (writeWorkbookHolder.getAutoCloseStream()) {
+            IOUtils.closeQuietly(writeWorkbookHolder.getOutputStream(), e -> recordFailure(failure, e));
+        }
+        clearEncrypt03();
+        removeThreadLocalCache();
     }
 
     /**

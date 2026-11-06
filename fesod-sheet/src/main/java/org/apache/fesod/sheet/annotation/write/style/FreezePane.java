@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 /**
  * An annotation used to define a freeze pane for an Excel sheet.
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface FreezePane {

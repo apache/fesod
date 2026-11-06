@@ -52,6 +52,7 @@ import org.apache.fesod.sheet.util.NumberDataFormatterUtils;
 import org.apache.fesod.sheet.util.NumberUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
+import org.apache.fesod.sheet.util.XlsxEscapeUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.fesod.sheet.write.handler.context.SheetWriteHandlerContext;
@@ -379,10 +380,19 @@ public class WriteContextImpl implements WriteContext {
 
             WriteCellData<String> writeCellData =
                     new WriteCellData<>(head.getHeadNameList().get(relativeRowIndex));
-            cell.setCellValue(writeCellData.getStringValue());
+            // Head strings are stored outside the converter flow, so the default xlsx hex escaping that
+            // data cells receive through EscapeHexCellWriteHandler is applied here directly. Emitted as
+            // static escaping instead of a handler event to keep the documented CellWriteHandler call
+            // matrix unchanged.
+            String headString = writeCellData.getStringValue();
+            if (writeWorkbookHolder().getExcelType() == ExcelTypeEnum.XLSX) {
+                headString = XlsxEscapeUtils.escape(headString);
+                writeCellData.setStringValue(headString);
+            }
             cellWriteHandlerContext.setCellDataList(ListUtils.newArrayList(writeCellData));
             cellWriteHandlerContext.setFirstCellData(writeCellData);
 
+            cell.setCellValue(writeCellData.getStringValue());
             WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
         }
     }

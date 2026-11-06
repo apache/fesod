@@ -33,14 +33,34 @@ import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handles the XLS {@code HYPERLINK} record and exposes it as a {@link CellExtra} of type
+ * {@link CellExtraTypeEnum#HYPERLINK}, covering the hyperlink's cell range and address.
+ * <p>
+ * Only active when {@link CellExtraTypeEnum#HYPERLINK} is present in the extra read set; otherwise the record is
+ * skipped as an ignorable record.
  */
 public class HyperlinkRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * Determines whether this handler should process the record, i.e. whether hyperlink extras are requested.
+     *
+     * @param xlsReadContext the current XLS read context, not {@code null}
+     * @param record         the record to test
+     * @return {@code true} if the extra read set contains {@link CellExtraTypeEnum#HYPERLINK}
+     */
     @Override
     public boolean support(XlsReadContext xlsReadContext, Record record) {
         return xlsReadContext.readWorkbookHolder().getExtraReadSet().contains(CellExtraTypeEnum.HYPERLINK);
     }
 
+    /**
+     * Builds a {@link CellExtra} from the hyperlink's address and cell range, stores it in the sheet read holder
+     * and notifies the analysis event processor.
+     *
+     * @param xlsReadContext the current XLS read context, not {@code null}
+     * @param record         the record to process, must be a {@link HyperlinkRecord}
+     * @throws ClassCastException if {@code record} is not a {@link HyperlinkRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         HyperlinkRecord hr = (HyperlinkRecord) record;

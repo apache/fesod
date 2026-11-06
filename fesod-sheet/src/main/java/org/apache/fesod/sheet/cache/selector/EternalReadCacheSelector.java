@@ -29,17 +29,36 @@ import org.apache.fesod.sheet.cache.ReadCache;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
- * Choose a eternal cache
- *
- *
- **/
+ * A {@link ReadCacheSelector} that always reuses a single, externally supplied
+ * {@link ReadCache} instance for every requested part.
+ * <p>
+ * Since the same cache is returned regardless of the package part, all shared
+ * string data is kept in memory for the lifetime of the cache. This is suitable
+ * when the cache is small or when the caller wants full control over its lifecycle.
+ */
 public class EternalReadCacheSelector implements ReadCacheSelector {
+
+    /**
+     * The cache instance returned for every request. Never {@code null} after construction.
+     */
     private ReadCache readCache;
 
+    /**
+     * Create a selector that always returns the given cache.
+     *
+     * @param readCache the cache to be reused for all parts; must not be {@code null}
+     */
     public EternalReadCacheSelector(ReadCache readCache) {
         this.readCache = readCache;
     }
 
+    /**
+     * Return the configured cache. The package part is ignored, so the same cache
+     * instance is returned for every call.
+     *
+     * @param sharedStringsTablePackagePart the shared strings part; not used
+     * @return the supplied {@link ReadCache} instance
+     */
     @Override
     public ReadCache readCache(PackagePart sharedStringsTablePackagePart) {
         return readCache;

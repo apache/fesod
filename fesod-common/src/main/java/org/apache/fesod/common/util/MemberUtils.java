@@ -29,6 +29,9 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 
+/**
+ * Utility methods for working with reflective {@link Member} objects.
+ */
 public class MemberUtils {
 
     private static final int ACCESS_TEST = Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
@@ -66,10 +69,11 @@ public class MemberUtils {
     }
 
     /**
-     * Returns whether a given set of modifiers implies package access.
+     * Determines whether the given modifiers imply package access (i.e. no {@code public},
+     * {@code protected}, or {@code private} modifier is set).
      *
-     * @param modifiers to test
-     * @return {@code true} unless {@code package}/{@code protected}/{@code private} modifier detected
+     * @param modifiers the Java modifier bit set to test
+     * @return {@code true} if the modifiers represent package access, {@code false} otherwise
      */
     public static boolean isPackageAccess(final int modifiers) {
         return (modifiers & ACCESS_TEST) == 0;

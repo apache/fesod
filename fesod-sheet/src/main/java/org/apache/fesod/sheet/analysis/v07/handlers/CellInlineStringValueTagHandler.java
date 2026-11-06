@@ -26,7 +26,9 @@
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
 /**
- * Cell inline string value handler
+ * Handler for the XLSX inline string value tag {@code <t>}.
  *
+ * <p>Accumulates the text content of an inline string cell into the temporary data buffer
+ * of the current sheet holder, reusing the behaviour defined by {@link AbstractCellValueTagHandler}.
  */
 public class CellInlineStringValueTagHandler extends AbstractCellValueTagHandler {}

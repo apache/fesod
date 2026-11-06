@@ -33,17 +33,39 @@ import org.apache.fesod.sheet.metadata.CellExtra;
 import org.xml.sax.Attributes;
 
 /**
- * Cell Handler
+ * Handler for the {@code mergeCell} tag of an XLSX worksheet. Each tag describes one
+ * merged region through its {@code ref} attribute (for example {@code A1:B2}). The
+ * region is wrapped into a {@link CellExtra} of type {@link CellExtraTypeEnum#MERGE}
+ * and dispatched as an extra event, so listeners can receive merged-cell information
+ * while the sheet is streamed.
  *
- *
+ * <p>The value of the merged region is not available from this tag and is therefore
+ * left empty here; it is filled in later from the corresponding cell data.
  */
 public class MergeCellTagHandler extends AbstractXlsxTagHandler {
 
+    /**
+     * Returns {@code true} only when the caller has requested
+     * {@link CellExtraTypeEnum#MERGE} in the extra read set, since merged region
+     * information is otherwise unnecessary and would add overhead.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @return {@code true} if merged region extras should be read
+     */
     @Override
     public boolean support(XlsxReadContext xlsxReadContext) {
         return xlsxReadContext.readWorkbookHolder().getExtraReadSet().contains(CellExtraTypeEnum.MERGE);
     }
 
+    /**
+     * Reads the {@code ref} attribute of the {@code mergeCell} tag, stores the merged
+     * region as a {@link CellExtra} on the sheet holder, and fires the extra event.
+     * Tags without a {@code ref} attribute are ignored.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name, always the {@code mergeCell} tag
+     * @param attributes      the tag attributes, from which {@code ref} is read
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         String ref = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_REF);

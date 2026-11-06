@@ -33,11 +33,20 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SubRecord;
 
 /**
- * Record handler
+ * Handles XLS {@link ObjRecord} (BIFF object record).
  *
- *
+ * <p>Scans the record's sub-records for a {@link CommonObjectDataSubRecord} describing a
+ * comment object, and stores its object id in the read context so that a subsequent
+ * note record can be associated with the correct cell.
  */
 public class ObjRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * Process the {@link ObjRecord} and cache the comment object index if present.
+     *
+     * @param xlsReadContext the current XLS read context used to store the temporary object index
+     * @param record         the record to process, must be an {@link ObjRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         ObjRecord or = (ObjRecord) record;

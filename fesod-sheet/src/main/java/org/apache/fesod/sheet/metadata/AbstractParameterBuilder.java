@@ -35,9 +35,18 @@ import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
 /**
- * ExcelBuilder
+ * Common fluent base builder shared by every Fesod read/write parameter builder.
  *
+ * <p>Options configured here (head definition, converters, locale, date windowing, field cache
+ * location, auto trim, …) apply to both reading and writing; write- or read-specific options live
+ * in the concrete subclasses such as
+ * {@code AbstractExcelWriterParameterBuilder}.</p>
  *
+ * <p>All setters mutate the underlying {@link C} returned by {@link #parameter()} and then return
+ * {@code self()} so calls can be chained fluently.</p>
+ *
+ * @param <T> the concrete builder type, used for fluent self-chaining
+ * @param <C> the concrete {@link BasicParameter} subtype this builder mutates
  */
 public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilder, C extends BasicParameter> {
 
@@ -106,6 +115,16 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
         return self();
     }
 
+    /**
+     * Sets the model class only when {@code clazz} is non-{@code null}; otherwise this is a no-op.
+     * Useful when the class is optional and you want to avoid a {@code null} head overwriting an
+     * earlier value.
+     *
+     * @param clazz the model class to derive the head from; if {@code null} the current value is
+     *              preserved
+     * @return this builder instance, for chaining
+     * @see #head(Class)
+     */
     public T headIfNotNull(Class<?> clazz) {
         if (Objects.nonNull(clazz)) {
             parameter().setClazz(clazz);
@@ -114,10 +133,12 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * Custom type conversions override the default.
+     * Registers a custom {@link Converter} that will be consulted before Fesod's built-in
+     * converters. Handlers accumulate in registration order.
      *
-     * @param converter
-     * @return
+     * @param converter the converter to register; passing {@code null} appends a null entry and
+     *                  is not supported by the runtime, so callers should never do so
+     * @return this builder instance, for chaining
      */
     public T registerConverter(Converter<?> converter) {
         if (parameter().getCustomConverterList() == null) {
@@ -128,12 +149,12 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * true if date uses 1904 windowing, or false if using 1900 date windowing.
-     * <p>
-     * default is false
+     * Chooses the Excel date epoch used when converting {@link java.util.Date} values.
+     * Pass {@code true} to use the 1904 windowing system, {@code false} to use the more common
+     * 1900 windowing system. The default value is {@code false}.
      *
-     * @param use1904windowing
-     * @return
+     * @param use1904windowing whether to interpret date serial numbers relative to 1904
+     * @return this builder instance, for chaining
      */
     public T use1904windowing(Boolean use1904windowing) {
         parameter().setUse1904windowing(use1904windowing);
@@ -141,11 +162,10 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * A <code>Locale</code> object represents a specific geographical, political, or cultural region. This parameter is
-     * used when formatting dates and numbers.
+     * Sets the {@link Locale} used when formatting dates and numbers during reading or writing.
      *
-     * @param locale
-     * @return
+     * @param locale the locale to apply; {@code null} keeps the platform default
+     * @return this builder instance, for chaining
      */
     public T locale(Locale locale) {
         parameter().setLocale(locale);
@@ -153,9 +173,13 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * The cache used when parsing fields such as head.
-     * <p>
-     * default is THREAD_LOCAL.
+     * Sets where the reflection cache for field metadata (such as head resolution) is stored.
+     * The default value is {@link CacheLocationEnum#THREAD_LOCAL}.
+     *
+     * @param filedCacheLocation the cache location to use; the parameter name keeps the historical
+     *                           "filed" spelling for API compatibility, but it refers to the
+     *                           <em>field</em> cache location
+     * @return this builder instance, for chaining
      */
     public T filedCacheLocation(CacheLocationEnum filedCacheLocation) {
         parameter().setFiledCacheLocation(filedCacheLocation);
@@ -163,10 +187,11 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * Automatic trim includes sheet name and content
+     * Whether string values (sheet names and cell content) should be automatically trimmed of
+     * leading/trailing whitespace.
      *
-     * @param autoTrim
-     * @return
+     * @param autoTrim {@code true} to trim values, {@code false} to leave them untouched
+     * @return this builder instance, for chaining
      */
     public T autoTrim(Boolean autoTrim) {
         parameter().setAutoTrim(autoTrim);
@@ -174,25 +199,40 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     }
 
     /**
-     * Automatic strip includes sheet name and content
+     * Whether cell values and sheet names should be automatically stripped of leading/trailing
+     * whitespace (and other non-visible characters) before being handed to converters or written
+     * to the target sheet.
      *
-     * @param autoStrip
-     * @return
+     * <p>When both this flag and {@link #autoTrim(Boolean)} are enabled, stripping takes
+     * precedence. The default value is {@code false}.</p>
+     *
+     * @param autoStrip {@code true} to strip leading/trailing whitespace from string values,
+     *                  {@code false} to leave them untouched
+     * @return this builder instance, for chaining
+     * @see #autoTrim(Boolean)
      */
     public T autoStrip(Boolean autoStrip) {
         parameter().setAutoStrip(autoStrip);
         return self();
     }
 
+    /**
+     * Returns this builder cast to the concrete subtype {@code T}, so that fluent setters can be
+     * chained without losing the specific builder type.
+     *
+     * @return this instance, typed as the concrete builder {@code T}
+     */
     @SuppressWarnings("unchecked")
     protected T self() {
         return (T) this;
     }
 
     /**
-     * Get parameter
+     * Returns the parameter object that this builder mutates. Implementations typically hold a
+     * single {@link C} instance and expose it here.
      *
-     * @return
+     * @return the concrete parameter object currently being built; never {@code null} while the
+     *         builder is usable
      */
     protected abstract C parameter();
 }

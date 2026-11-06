@@ -31,11 +31,22 @@ import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
- *
- *
+ * Handler for the BIFF {@link IndexRecord}, which stores the row/column index
+ * information of a worksheet.
+ * <p>
+ * Uses the record's last row index to set an approximate total row number on the
+ * current sheet holder, so progress can be estimated before the sheet is fully read.
  */
 public class IndexRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * Sets the approximate total row number on the current sheet holder from
+     * {@link IndexRecord#getLastRowAdd1()}. Does nothing when no sheet is currently
+     * being read.
+     *
+     * @param xlsReadContext the current XLS reading context
+     * @param record         the {@link IndexRecord} to process
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         if (xlsReadContext.readSheetHolder() == null) {

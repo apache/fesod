@@ -38,9 +38,22 @@ import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for POI dummy records, which mark synthetic positions in the XLS stream rather than real BIFF records.
+ * <p>
+ * {@code LastCellOfRowDummyRecord} signals the end of a row and triggers row finalization and the {@code endRow}
+ * event; {@code MissingCellDummyRecord} marks a cell with no stored value and fills it with an empty placeholder
+ * unless the cell already contains data.
  */
 public class DummyRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param xlsReadContext the current XLS read context, used to access the sheet and row holders
+     *                       and to publish the {@code endRow} event
+     * @param record         a {@code LastCellOfRowDummyRecord} or {@code MissingCellDummyRecord}; any other
+     *                       record type is ignored
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         XlsReadSheetHolder xlsReadSheetHolder = xlsReadContext.xlsReadSheetHolder();

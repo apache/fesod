@@ -35,9 +35,25 @@ import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for {@link LabelRecord} entries encountered while streaming an XLS (BIFF v03) workbook.
+ * <p>
+ * A {@code LabelRecord} represents a cell containing a text label. This handler stores the label
+ * value in the current row's cell map as a {@link ReadCellData}, applying the configured
+ * auto-strip or auto-trim whitespace handling when enabled. If the physical column is filtered out
+ * by the current column resolver, the record is skipped.
  */
 public class LabelRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * Process the label record and register its text value into the current row's cell map,
+     * marking the temporary row type as {@link RowTypeEnum#DATA}.
+     *
+     * @param xlsReadContext the active XLS read context, used to resolve the target column index,
+     *                       read the global whitespace configuration, and access the current
+     *                       sheet's cell map
+     * @param record         the record to process, expected to be a {@link LabelRecord}
+     * @throws ClassCastException if {@code record} is not a {@link LabelRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelRecord lrec = (LabelRecord) record;

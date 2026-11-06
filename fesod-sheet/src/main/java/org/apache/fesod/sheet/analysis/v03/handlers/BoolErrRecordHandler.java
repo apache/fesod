@@ -35,10 +35,23 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 
 /**
- * Record handler
+ * Handles the XLS {@code BOOLERR} record, which stores a single boolean value or an error code.
+ * <p>
+ * The parsed cell data is written into the current row's cell map, and the temporary row type is
+ * marked as {@link RowTypeEnum#DATA}. Records whose column is not part of the target column range
+ * are ignored.
  */
 public class BoolErrRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Convert a {@link BoolErrRecord} into {@link ReadCellData} and cache it in the current sheet holder.
+     * <p>
+     * An error record is converted to {@link CellDataTypeEnum#ERROR} with the readable error text, since
+     * {@link BoolErrRecord#getBooleanValue()} would report any non-zero error code as {@code true}.
+     *
+     * @param xlsReadContext the XLS reading context holding the target column range and cell cache
+     * @param record         the record to process, must be a {@link BoolErrRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BoolErrRecord ber = (BoolErrRecord) record;

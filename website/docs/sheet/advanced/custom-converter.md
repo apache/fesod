@@ -26,11 +26,19 @@ This chapter introduces how to create and register custom converters for both re
 
 ## Overview
 
-Fesod provides a `Converter` interface that allows you to define custom data transformation logic. Converters can be registered per-field (via annotation) or globally (via builder), and work for both reading and writing.
+Fesod splits conversion into two directions, each with its own interface:
+
+- `ReadConverter<T>` — converts spreadsheet cell data into Java objects when reading.
+- `WriteConverter<T>` — converts Java objects into spreadsheet cell data when writing.
+- `Converter<T>` — combines both interfaces for two-way conversion.
+
+Converters can be registered per-field (via annotation), globally (via builder), or bound to specific columns (via `ColumnBinding`).
 
 ## Creating a Custom Converter
 
-### Converter Implementation
+### Read & Write: `Converter<T>`
+
+Implement `Converter<T>` when the same converter handles both reading and writing.
 
 ```java
 public class CustomStringStringConverter implements Converter<String> {
@@ -56,62 +64,94 @@ public class CustomStringStringConverter implements Converter<String> {
 }
 ```
 
----
+### Read-Only: `ReadConverter<T>`
 
-## Per-Field vs. Global Registration
-
-| Approach | Scope | How |
-|:---|:---|:---|
-| Per-field | Single field only | `@ExcelProperty(converter = MyConverter.class)` |
-| Global | All fields matching Java type + Excel type | `.registerConverter(new MyConverter())` on the builder |
-
-### Converter Resolution Priority
-
-1. Field-level converter (`@ExcelProperty(converter = ...)`) — highest priority
-2. Builder-level converter (`.registerConverter(...)`) with a matching lookup key
-3. Built-in default converter — lowest priority
-
----
-
-## Global Registration Example
-
-### Write with Global Converter
-
-For ordinary XLSX/XLS writes, global converter lookup uses the Java type and a `null` Excel type key. Use the following variant of the converter above. The returned `WriteCellData` still determines the output cell type; returning `null` here only changes the lookup key.
+Implement `ReadConverter<T>` when only reading requires customization.
 
 ```java
-public class GlobalStringWriteConverter extends CustomStringStringConverter {
+public class CustomStringReadConverter implements ReadConverter<String> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
-        return null;
+        return CellDataTypeEnum.STRING;
+    }
+
+    @Override
+    public String convertToJavaData(ReadConverterContext<?> context) {
+        return "Custom: " + context.getReadCellData().getStringValue();
     }
 }
 ```
 
-For CSV writing and reading string cells, register the original `CustomStringStringConverter`, which returns `CellDataTypeEnum.STRING`.
+### Write-Only: `WriteConverter<T>`
+
+Implement `WriteConverter<T>` when only writing requires customization.
 
 ```java
-@Test
-public void customConverterWrite() {
-    String fileName = "customConverterWrite" + System.currentTimeMillis() + ".xlsx";
+public class CustomStringWriteConverter implements WriteConverter<String> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
 
-    FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new GlobalStringWriteConverter())
-        .sheet()
-        .doWrite(data());
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
+        return new WriteCellData<>("Custom: " + context.getValue());
+    }
 }
 ```
 
-### Read with Global Converter
+---
+
+## Column-Bound Converters (`ColumnBinding`)
+
+By default, a globally registered converter applies to all eligible columns across the entire sheet. Implement `ColumnBinding` to restrict a converter (read or write) to specific column indices (0-based).
+
+This is especially useful in **no-bean** scenarios where you cannot use field annotations:
 
 ```java
-@Test
-public void customConverterRead() {
-    String fileName = "path/to/demo.xlsx";
+public class ColumnZeroStringWriteConverter implements WriteConverter<String>, ColumnBinding {
+    @Override
+    public Integer columnIndex() {
+        return 0; // Binds exclusively to Column 0
+    }
 
-    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
-        .registerConverter(new CustomStringStringConverter())
-        .sheet()
-        .doRead();
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
+        return new WriteCellData<>("Col0: " + context.getValue());
+    }
 }
 ```
+
+- Override `columnIndex()` for a single column.
+- Override `columnIndexes()` if you need to match multiple columns (e.g. `Set.of(1, 3)`).
+
+:::warning
+If a converter implements `ColumnBinding` but returns `null` or an empty set, it will **match no columns at all** and will **not** fall back as a global converter. Do not implement `ColumnBinding` if you intend to create a global converter.
+:::
+
+## Registration Scope & Precedence
+
+| Approach         | Scope              | How to Register                                                                               |
+|:-----------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| **Per-Field**    | Single field       | `@ExcelProperty(converter = MyConverter.class)`                                               |
+| **Column-Bound** | Target column(s)   | Implement `ColumnBinding` + register on builder                                               |
+| **Global**       | All matching types | `.registerReadConverter(...)`, `.registerWriteConverter(...)`,<br/> `.registerConverter(...)` |
+
+### Converter Resolution Priority
+
+1. **Field-level** (`@ExcelProperty(converter = ...)`)
+2. **Column-bound custom converter** (`ColumnBinding` matching target column index)
+3. **Global custom converter** (if multiple match the same type, **the last one registered wins**)
+4. **Built-in default converter**
+
+*Scope Rule: Registrations at the sheet-level take precedence over workbook-level registrations.*

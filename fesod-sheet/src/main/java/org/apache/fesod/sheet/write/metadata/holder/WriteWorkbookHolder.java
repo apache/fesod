@@ -239,6 +239,8 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
             this.excelType = writeWorkbook.getExcelType();
         }
 
+        initDefaultConverters(this.excelType, false);
+
         // init handler
         try {
             initHandler(writeWorkbook, null);

@@ -26,13 +26,13 @@
 package org.apache.fesod.sheet.metadata;
 
 import java.util.List;
-import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.fesod.sheet.converters.Converter;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.converters.CellDataConverterRegistry;
+import org.apache.fesod.sheet.converters.DefaultConverterLoader;
+import org.apache.fesod.sheet.support.ExcelTypeEnum;
 
 /**
  * Write/read holder
@@ -60,76 +60,92 @@ public abstract class AbstractHolder implements ConfigurationHolder {
      * Some global variables
      */
     private GlobalConfiguration globalConfiguration;
-    /**
-     * <p>
-     * Read key:
-     * <p>
-     * Write key:
-     */
-    private Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap;
 
-    public AbstractHolder(BasicParameter basicParameter, AbstractHolder prentAbstractHolder) {
+    private CellDataConverterRegistry converterRegistry;
+
+    public AbstractHolder(BasicParameter basicParameter, AbstractHolder parentAbstractHolder) {
         this.newInitialization = Boolean.TRUE;
-        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && prentAbstractHolder != null) {
-            this.head = prentAbstractHolder.getHead();
+        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && parentAbstractHolder != null) {
+            this.head = parentAbstractHolder.getHead();
         } else {
             this.head = basicParameter.getHead();
         }
-        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && prentAbstractHolder != null) {
-            this.clazz = prentAbstractHolder.getClazz();
+        if (basicParameter.getHead() == null && basicParameter.getClazz() == null && parentAbstractHolder != null) {
+            this.clazz = parentAbstractHolder.getClazz();
         } else {
             this.clazz = basicParameter.getClazz();
         }
         this.globalConfiguration = new GlobalConfiguration();
         if (basicParameter.getAutoTrim() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setAutoTrim(
-                        prentAbstractHolder.getGlobalConfiguration().getAutoTrim());
+                        parentAbstractHolder.getGlobalConfiguration().getAutoTrim());
             }
         } else {
             globalConfiguration.setAutoTrim(basicParameter.getAutoTrim());
         }
 
         if (basicParameter.getAutoStrip() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setAutoStrip(
-                        prentAbstractHolder.getGlobalConfiguration().getAutoStrip());
+                        parentAbstractHolder.getGlobalConfiguration().getAutoStrip());
             }
         } else {
             globalConfiguration.setAutoStrip(basicParameter.getAutoStrip());
         }
 
         if (basicParameter.getUse1904windowing() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setUse1904windowing(
-                        prentAbstractHolder.getGlobalConfiguration().getUse1904windowing());
+                        parentAbstractHolder.getGlobalConfiguration().getUse1904windowing());
             }
         } else {
             globalConfiguration.setUse1904windowing(basicParameter.getUse1904windowing());
         }
 
         if (basicParameter.getLocale() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setLocale(
-                        prentAbstractHolder.getGlobalConfiguration().getLocale());
+                        parentAbstractHolder.getGlobalConfiguration().getLocale());
             }
         } else {
             globalConfiguration.setLocale(basicParameter.getLocale());
         }
 
         if (basicParameter.getFiledCacheLocation() == null) {
-            if (prentAbstractHolder != null) {
+            if (parentAbstractHolder != null) {
                 globalConfiguration.setFiledCacheLocation(
-                        prentAbstractHolder.getGlobalConfiguration().getFiledCacheLocation());
+                        parentAbstractHolder.getGlobalConfiguration().getFiledCacheLocation());
             }
         } else {
             globalConfiguration.setFiledCacheLocation(basicParameter.getFiledCacheLocation());
         }
+
+        if (parentAbstractHolder == null) {
+            this.converterRegistry = new CellDataConverterRegistry();
+        } else {
+            this.converterRegistry = new CellDataConverterRegistry(parentAbstractHolder.getConverterRegistry());
+        }
+    }
+
+    /**
+     * register default converters
+     */
+    protected void initDefaultConverters(ExcelTypeEnum excelTypeEnum, boolean readable) {
+        if (readable) {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultReadConverter());
+            return;
+        }
+        if (ExcelTypeEnum.CSV.equals(excelTypeEnum)) {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultWriteStringConverter());
+        } else {
+            getConverterRegistry().addDefaultConverters(DefaultConverterLoader.loadDefaultWriteConverter());
+        }
     }
 
     @Override
-    public Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap() {
-        return getConverterMap();
+    public CellDataConverterRegistry converterRegistry() {
+        return getConverterRegistry();
     }
 
     @Override

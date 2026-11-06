@@ -50,6 +50,7 @@ import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.util.StyleUtil;
+import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContextRecycler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
 import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
@@ -70,7 +71,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "workbookWriteHandlerContext")
+@EqualsAndHashCode(exclude = {"workbookWriteHandlerContext", "cellWriteHandlerContextRecycler"})
 @Slf4j
 public class WriteWorkbookHolder extends AbstractWriteHolder {
     /***
@@ -187,6 +188,12 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
      */
     @Exclude
     private WorkbookWriteHandlerContext workbookWriteHandlerContext;
+
+    /**
+     * Recycles the {@code CellWriteHandlerContext} across the cells of this write session.
+     */
+    @Exclude
+    private CellWriteHandlerContextRecycler cellWriteHandlerContextRecycler;
 
     public WriteWorkbookHolder(WriteWorkbook writeWorkbook) {
         super(writeWorkbook, null);

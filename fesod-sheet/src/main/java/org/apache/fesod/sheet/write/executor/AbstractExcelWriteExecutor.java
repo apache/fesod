@@ -48,6 +48,7 @@ import org.apache.fesod.sheet.util.StyleUtil;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
+import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContextRecycler;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -67,8 +68,14 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
     protected WriteContext writeContext;
 
+    /**
+     * Recycles the {@code CellWriteHandlerContext} across the cells of this write session.
+     */
+    protected final CellWriteHandlerContextRecycler cellContextRecycler;
+
     public AbstractExcelWriteExecutor(WriteContext writeContext) {
         this.writeContext = writeContext;
+        this.cellContextRecycler = writeContext.writeWorkbookHolder().getCellWriteHandlerContextRecycler();
     }
 
     /**

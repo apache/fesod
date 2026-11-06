@@ -1,0 +1,420 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.apache.fesod.sheet.fill;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.fesod.sheet.ExcelWriter;
+import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.enums.WriteDirectionEnum;
+import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.fesod.sheet.write.metadata.WriteSheet;
+import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
+import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag(Tags.ROUND_TRIP)
+public class FillWithFormulaInCreatedRowsTest extends AbstractExcelTest {
+
+    private File createTemplate() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            headRow.createCell(2).setCellValue("abs");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A2*2");
+            templateRow.createCell(2).setCellFormula("$A$2*10");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        return template;
+    }
+
+    private List<Map<String, String>> buildData(int size) {
+        List<Map<String, String>> list = new ArrayList<>();
+        for (int i = 1; i <= size; i++) {
+            Map<String, String> row = new HashMap<>();
+            row.put("name", "n" + i);
+            list.add(row);
+        }
+        return list;
+    }
+
+    private static String formulaOf(Sheet sheet, int rowIndex, int columnIndex) {
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) {
+            return null;
+        }
+        Cell cell = row.getCell(columnIndex);
+        if (cell == null) {
+            return null;
+        }
+        return cell.getCellType() == CellType.FORMULA ? cell.getCellFormula() : null;
+    }
+
+    @Test
+    void fillListKeepsFormulasInCreatedRows() throws Exception {
+        File template = createTemplate();
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(3)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // Values are filled for every created row.
+            for (int i = 1; i <= 3; i++) {
+                Assertions.assertEquals("n" + i, sheet.getRow(i).getCell(0).getStringCellValue());
+            }
+            // The original row keeps its template formulas; every created row carries a
+            // translated copy: relative references follow the copied row, absolute ones stay.
+            Assertions.assertEquals("A2*2", formulaOf(sheet, 1, 1));
+            Assertions.assertEquals("A3*2", formulaOf(sheet, 2, 1));
+            Assertions.assertEquals("A4*2", formulaOf(sheet, 3, 1));
+            Assertions.assertEquals("$A$2*10", formulaOf(sheet, 1, 2));
+            Assertions.assertEquals("$A$2*10", formulaOf(sheet, 2, 2));
+            Assertions.assertEquals("$A$2*10", formulaOf(sheet, 3, 2));
+        }
+    }
+
+    @Test
+    void fillListWithoutForceNewRowKeepsFormulasInCreatedRows() throws Exception {
+        File template = createTemplate();
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile).withTemplate(template).sheet().doFill(new FillWrapper("data", buildData(3)));
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Assertions.assertEquals("A2*2", formulaOf(sheet, 1, 1));
+            Assertions.assertEquals("A3*2", formulaOf(sheet, 2, 1));
+            Assertions.assertEquals("A4*2", formulaOf(sheet, 3, 1));
+            Assertions.assertEquals("$A$2*10", formulaOf(sheet, 2, 2));
+        }
+    }
+
+    /**
+     * Two collection areas on one sheet: {@code other} sits above {@code data}, so {@code data}
+     * is filled first (full template scan) and {@code other} is filled second (its analysis data
+     * is already cached). Formulas next to both collections must survive.
+     */
+    private File createTwoCollectionTemplate() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row otherRow = sheet.createRow(1);
+            otherRow.createCell(0).setCellValue("{other.name}");
+            otherRow.createCell(1).setCellFormula("A2*2");
+            Row separator = sheet.createRow(2);
+            separator.createCell(0).setCellValue("sep");
+            Row dataRow = sheet.createRow(3);
+            dataRow.createCell(0).setCellValue("{data.name}");
+            dataRow.createCell(1).setCellFormula("A4*2");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        return template;
+    }
+
+    @Test
+    void fillKeepsFormulasForEveryCollectionArea() throws Exception {
+        File template = createTwoCollectionTemplate();
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        // One writer, two fills: builder.doFill() finishes the writer after every call, so two
+        // collection areas need the lower-level fill API.
+        ExcelWriter writer = FesodSheet.write(outFile).withTemplate(template).build();
+        WriteSheet writeSheet = new WriteSheet();
+        writer.fill(new FillWrapper("data", buildData(2)), writeSheet);
+        writer.fill(new FillWrapper("other", buildData(2)), writeSheet);
+        writer.finish();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // The collection filled first keeps its formulas (existing behaviour).
+            Assertions.assertEquals("A4*2", formulaOf(sheet, 3, 1));
+            Assertions.assertEquals("A5*2", formulaOf(sheet, 4, 1));
+            // The collection filled second reaches the cached analysis data; its formulas must be
+            // collected on that path too.
+            Assertions.assertEquals("A2*2", formulaOf(sheet, 1, 1));
+            Assertions.assertEquals("A3*2", formulaOf(sheet, 2, 1));
+        }
+    }
+
+    /**
+     * Horizontal fill: the formula column overlaps a data column — the formula must not
+     * overwrite the data cell.
+     */
+    @Test
+    void horizontalFillDoesNotCollideWithDataColumn() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row templateRow = sheet.createRow(0);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A1*2");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        ExcelWriter writer = FesodSheet.write(outFile).withTemplate(template).build();
+        WriteSheet writeSheet = new WriteSheet();
+        writer.fill(
+                new FillWrapper("data", buildData(3)),
+                FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build(),
+                writeSheet);
+        writer.finish();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // Data fills all three columns in the template row.
+            Assertions.assertEquals("n1", sheet.getRow(0).getCell(0).getStringCellValue());
+            Assertions.assertEquals("n2", sheet.getRow(0).getCell(1).getStringCellValue());
+            Assertions.assertEquals("n3", sheet.getRow(0).getCell(2).getStringCellValue());
+        }
+    }
+
+    /**
+     * forceNewRow with a formula referencing a row below the collection area: after
+     * shiftRows the cached formula text must be refreshed so copyFormulaCells translates
+     * the shifted formula, not the pre-shift original.
+     */
+    @Test
+    void forceNewRowUpdatesFormulaCacheAfterShift() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A4*2");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(2)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // The template has only rows 0-1, so shiftRows returns early and the formula
+            // cache is NOT refreshed. Copying A4*2 to row 2 should give A5*2.
+            Assertions.assertEquals("A5*2", formulaOf(sheet, 2, 1));
+        }
+    }
+
+    /**
+     * forceNewRow with a populated row below the collection: shiftRows actually moves
+     * rows, so the cached formula text must be refreshed before copying.
+     */
+    @Test
+    void forceNewRowShiftsFormulaCacheWhenRowsMove() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A4*2");
+            // A populated row below the collection so shiftRows has something to move.
+            Row belowRow = sheet.createRow(3);
+            belowRow.createCell(0).setCellValue("below");
+            belowRow.createCell(1).setCellFormula("A4*10");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(2)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // shiftRows(2, ...) moves row 3 down by 1 (number = size-1 = 1).
+            // Template formula A4*2 at row 1 is outside the shifted range (rows 2+),
+            // but its reference to A4 (row 3) moves to row 4 -> A5*2 after refresh.
+            // Created row at row 2: translates A5*2 -> A6*2.
+            Assertions.assertEquals("A5*2", formulaOf(sheet, 1, 1));
+            Assertions.assertEquals("A6*2", formulaOf(sheet, 2, 1));
+        }
+    }
+
+    /**
+     * Horizontal fill must not overwrite cells that already hold a value in the
+     * non-data columns. The reviewer's exact case: {data.name} in A1, =A1*2 in C1,
+     * and "Keep" in D1. After filling two items horizontally, D1 must stay "Keep".
+     */
+    @Test
+    void horizontalFillPreservesExistingCellValues() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row row = sheet.createRow(0);
+            row.createCell(0).setCellValue("{data.name}");
+            row.createCell(1).setCellFormula("A1*2");
+            row.createCell(2).setCellValue("Keep");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        ExcelWriter writer = FesodSheet.write(outFile).withTemplate(template).build();
+        WriteSheet writeSheet = new WriteSheet();
+        writer.fill(
+                new FillWrapper("data", buildData(2)),
+                FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build(),
+                writeSheet);
+        writer.finish();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // Data fills columns 0-1 in the template row.
+            Assertions.assertEquals("n1", sheet.getRow(0).getCell(0).getStringCellValue());
+            Assertions.assertEquals("n2", sheet.getRow(0).getCell(1).getStringCellValue());
+            // Column 2 holds the original value, not a copied formula.
+            Assertions.assertEquals("Keep", sheet.getRow(0).getCell(2).getStringCellValue());
+        }
+    }
+
+    /**
+     * save-and-reopen case from skytin1004's fifth review:
+     * Template: A2={data.name}, B2==A6*2, A4="footer".
+     * Fill 3 items with forceNewRow(true). After save+reopen:
+     * - B2 formula should reference the shifted row (not #REF!)
+     * - Copied formulas should follow the same row-shift as the source
+     * - A reference that falls inside the newly expanded range should be valid
+     */
+    @Test
+    void forceNewRowCopiedFormulasMatchSourceShift() throws Exception {
+        File template = createTempFile(ExcelFormat.XLSX);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet0");
+            Row headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("item");
+            headRow.createCell(1).setCellValue("double");
+            Row templateRow = sheet.createRow(1);
+            templateRow.createCell(0).setCellValue("{data.name}");
+            templateRow.createCell(1).setCellFormula("A5*2");
+            // A populated row below the collection so shiftRows has something to move.
+            Row belowRow = sheet.createRow(4);
+            belowRow.createCell(0).setCellValue("footer");
+            belowRow.createCell(1).setCellFormula("A5*10");
+            try (FileOutputStream out = new FileOutputStream(template)) {
+                workbook.write(out);
+            }
+        }
+        File outFile = createTempFile(ExcelFormat.XLSX);
+
+        FesodSheet.write(outFile)
+                .withTemplate(template)
+                .sheet()
+                .doFill(
+                        new FillWrapper("data", buildData(3)),
+                        FillConfig.builder().forceNewRow(true).build());
+
+        // Reopen to verify what POI actually wrote to the file.
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(outFile))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            // The original formula in B2 (row 1, col 1) was A5*2 referencing row 4.
+            // After shiftRows(3, ...) inserts 2 rows, row 4 becomes row 6.
+            // The source formula should now reference A7*2 (row 6 shifted).
+            String sourceFormula = formulaOf(sheet, 1, 1);
+            Assertions.assertNotNull(sourceFormula, "Source formula must not be null");
+            Assertions.assertFalse(
+                    sourceFormula.contains("#REF!"), "Source formula must not contain #REF!: " + sourceFormula);
+            // The copied formulas at rows 2 and 3 should follow the same shift.
+            String copy1 = formulaOf(sheet, 2, 1);
+            String copy2 = formulaOf(sheet, 3, 1);
+            Assertions.assertNotNull(copy1, "First copy formula must not be null");
+            Assertions.assertNotNull(copy2, "Second copy formula must not be null");
+            Assertions.assertFalse(copy1.contains("#REF!"), "First copy must not contain #REF!: " + copy1);
+            Assertions.assertFalse(copy2.contains("#REF!"), "Second copy must not contain #REF!: " + copy2);
+            // Verify consistency: the relative offset between consecutive rows must be 1,
+            // meaning every copied formula is exactly one row below the previous one.
+            // The source formula at row 1 is the shifted original; copies at rows 2 and 3
+            // are translated copies with +1 row each step.
+            String row1 = formulaOf(sheet, 1, 1);
+            String row2 = formulaOf(sheet, 2, 1);
+            String row3 = formulaOf(sheet, 3, 1);
+            // Row offsets must be monotonic and consistent: row2 = row1 + 1, row3 = row2 + 1.
+            // Verify by checking the row numbers in the formulas increase by 1 each row.
+            java.util.regex.Matcher m1 =
+                    java.util.regex.Pattern.compile("A(\\d+)").matcher(row1);
+            java.util.regex.Matcher m2 =
+                    java.util.regex.Pattern.compile("A(\\d+)").matcher(row2);
+            java.util.regex.Matcher m3 =
+                    java.util.regex.Pattern.compile("A(\\d+)").matcher(row3);
+            if (m1.find() && m2.find() && m3.find()) {
+                int r1 = Integer.parseInt(m1.group(1));
+                int r2 = Integer.parseInt(m2.group(1));
+                int r3 = Integer.parseInt(m3.group(1));
+                Assertions.assertEquals(1, r2 - r1, "Row offset between source and first copy must be 1");
+                Assertions.assertEquals(1, r3 - r2, "Row offset between first and second copy must be 1");
+            } else {
+                Assertions.fail("Could not parse row numbers from formulas: " + row1 + ", " + row2 + ", " + row3);
+            }
+        }
+    }
+}

@@ -212,7 +212,9 @@ public class CsvWorkbook implements Workbook {
 
     @Override
     public Sheet getSheetAt(int index) {
-        assert index == 0 : "CSV exists only in one sheet.";
+        if (index != 0) {
+            throw new IllegalArgumentException("CSV sheet index (" + index + ") is out of range (0..0)");
+        }
         return csvSheet;
     }
 

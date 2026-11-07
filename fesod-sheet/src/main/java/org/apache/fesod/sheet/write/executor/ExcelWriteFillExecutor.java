@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellAddress;
 
 /**
  * Fill the data into excel
@@ -98,9 +100,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
      */
     private final Map<UniqueDataFlagKey, Short> collectionRowHeightCache = MapUtils.newHashMap();
     /**
-     * Last index cache for collection fields
+     * Last filled coordinates for collection fields. Identity keys remain valid when template rows move.
      */
-    private final Map<UniqueDataFlagKey, Map<AnalysisCell, Integer>> collectionLastIndexCache = MapUtils.newHashMap();
+    private final Map<UniqueDataFlagKey, Map<AnalysisCell, CellAddress>> collectionLastCellCache =
+            MapUtils.newHashMap();
 
     private final Map<UniqueDataFlagKey, Integer> relativeRowIndexMap = MapUtils.newHashMap();
     /**
@@ -159,13 +162,13 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             return;
         }
         int maxRowIndex = 0;
-        Map<AnalysisCell, Integer> collectionLastIndexMap = collectionLastIndexCache.get(currentUniqueDataFlag);
+        Map<AnalysisCell, CellAddress> collectionLastCellMap = collectionLastCellCache.get(currentUniqueDataFlag);
         for (AnalysisCell analysisCell : analysisCellList) {
-            if (collectionLastIndexMap != null) {
-                Integer lastRowIndex = collectionLastIndexMap.get(analysisCell);
-                if (lastRowIndex != null) {
-                    if (lastRowIndex > maxRowIndex) {
-                        maxRowIndex = lastRowIndex;
+            if (collectionLastCellMap != null) {
+                CellAddress lastCell = collectionLastCellMap.get(analysisCell);
+                if (lastCell != null) {
+                    if (lastCell.getRow() > maxRowIndex) {
+                        maxRowIndex = lastCell.getRow();
                     }
                     continue;
                 }
@@ -181,7 +184,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
         int number = size;
-        if (collectionLastIndexMap == null) {
+        if (collectionLastCellMap == null) {
             number--;
         }
         if (number <= 0) {
@@ -192,14 +195,24 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         // The current data is greater than unity rowindex increase
         increaseRowIndex(templateAnalysisCache, number, maxRowIndex);
         increaseRowIndex(templateCollectionAnalysisCache, number, maxRowIndex);
+        for (Map.Entry<UniqueDataFlagKey, Map<AnalysisCell, CellAddress>> entry : collectionLastCellCache.entrySet()) {
+            if (!sameSheet(entry.getKey())) {
+                continue;
+            }
+            for (Map.Entry<AnalysisCell, CellAddress> lastCellEntry :
+                    entry.getValue().entrySet()) {
+                CellAddress lastCell = lastCellEntry.getValue();
+                if (lastCell.getRow() > maxRowIndex) {
+                    lastCellEntry.setValue(new CellAddress(lastCell.getRow() + number, lastCell.getColumn()));
+                }
+            }
+        }
     }
 
     private void increaseRowIndex(
             Map<UniqueDataFlagKey, List<AnalysisCell>> templateAnalysisCache, int number, int maxRowIndex) {
         for (Map.Entry<UniqueDataFlagKey, List<AnalysisCell>> entry : templateAnalysisCache.entrySet()) {
-            UniqueDataFlagKey uniqueDataFlagKey = entry.getKey();
-            if (!Objects.equals(currentUniqueDataFlag.getSheetNo(), uniqueDataFlagKey.getSheetNo())
-                    || !Objects.equals(currentUniqueDataFlag.getSheetName(), uniqueDataFlagKey.getSheetName())) {
+            if (!sameSheet(entry.getKey())) {
                 continue;
             }
             for (AnalysisCell analysisCell : entry.getValue()) {
@@ -208,6 +221,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 }
             }
         }
+    }
+
+    private boolean sameSheet(UniqueDataFlagKey uniqueDataFlagKey) {
+        return Objects.equals(currentUniqueDataFlag.getSheetNo(), uniqueDataFlagKey.getSheetNo())
+                && Objects.equals(currentUniqueDataFlag.getSheetName(), uniqueDataFlagKey.getSheetName());
     }
 
     private void doFill(
@@ -367,38 +385,26 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
         Sheet sheet = writeContext.writeSheetHolder().getSheet();
 
-        Map<AnalysisCell, Integer> collectionLastIndexMap =
-                collectionLastIndexCache.computeIfAbsent(currentUniqueDataFlag, key -> MapUtils.newHashMap());
+        Map<AnalysisCell, CellAddress> collectionLastCellMap =
+                collectionLastCellCache.computeIfAbsent(currentUniqueDataFlag, key -> new IdentityHashMap<>());
 
-        boolean isOriginalCell = false;
+        CellAddress lastCell = collectionLastCellMap.get(analysisCell);
+        boolean isOriginalCell = lastCell == null;
         Integer lastRowIndex;
         Integer lastColumnIndex;
         switch (fillConfig.getDirection()) {
             case VERTICAL:
-                lastRowIndex = collectionLastIndexMap.get(analysisCell);
-                if (lastRowIndex == null) {
-                    lastRowIndex = analysisCell.getRowIndex();
-                    collectionLastIndexMap.put(analysisCell, lastRowIndex);
-                    isOriginalCell = true;
-                } else {
-                    collectionLastIndexMap.put(analysisCell, ++lastRowIndex);
-                }
+                lastRowIndex = isOriginalCell ? analysisCell.getRowIndex() : lastCell.getRow() + 1;
                 lastColumnIndex = analysisCell.getColumnIndex();
                 break;
             case HORIZONTAL:
                 lastRowIndex = analysisCell.getRowIndex();
-                lastColumnIndex = collectionLastIndexMap.get(analysisCell);
-                if (lastColumnIndex == null) {
-                    lastColumnIndex = analysisCell.getColumnIndex();
-                    collectionLastIndexMap.put(analysisCell, lastColumnIndex);
-                    isOriginalCell = true;
-                } else {
-                    collectionLastIndexMap.put(analysisCell, ++lastColumnIndex);
-                }
+                lastColumnIndex = isOriginalCell ? analysisCell.getColumnIndex() : lastCell.getColumn() + 1;
                 break;
             default:
                 throw new ExcelGenerateException("The wrong direction.");
         }
+        collectionLastCellMap.put(analysisCell, new CellAddress(lastRowIndex, lastColumnIndex));
 
         Row row = createRowIfNecessary(
                 sheet, cachedSheet, lastRowIndex, fillConfig, analysisCell, isOriginalCell, rowWriteHandlerContext);
@@ -411,7 +417,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
 
         if (isOriginalCell) {
             Map<AnalysisCell, CellStyle> collectionFieldStyleMap =
-                    collectionFieldStyleCache.computeIfAbsent(currentUniqueDataFlag, key -> MapUtils.newHashMap());
+                    collectionFieldStyleCache.computeIfAbsent(currentUniqueDataFlag, key -> new IdentityHashMap<>());
             collectionFieldStyleMap.put(analysisCell, cell.getCellStyle());
         }
     }

@@ -449,12 +449,25 @@ public class DateUtils {
      * @return
      */
     public static String format(BigDecimal date, Boolean use1904windowing, String dateFormat) {
+        return format(date, use1904windowing, dateFormat, null);
+    }
+
+    /**
+     * Format a numeric Excel date serial, resolving month, weekday and era names using the given locale.
+     *
+     * @param date date serial
+     * @param use1904windowing whether the 1904 date windowing system applies
+     * @param dateFormat date format, empty means the default date format
+     * @param locale locale used to resolve localized text, null means the JVM default format locale
+     * @return formatted date, or null when the date is null
+     */
+    public static String format(BigDecimal date, Boolean use1904windowing, String dateFormat, Locale locale) {
         if (date == null) {
             return null;
         }
         LocalDateTime localDateTime =
                 DateUtil.getLocalDateTime(date.doubleValue(), BooleanUtils.isTrue(use1904windowing), true);
-        return format(localDateTime, dateFormat);
+        return format(localDateTime, dateFormat, locale);
     }
 
     /**

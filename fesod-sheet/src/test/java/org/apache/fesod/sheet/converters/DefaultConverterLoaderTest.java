@@ -23,6 +23,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
@@ -30,6 +31,7 @@ import org.apache.fesod.sheet.converters.instant.InstantStringConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
+import org.apache.fesod.sheet.converters.offsettime.OffsetTimeStringConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeStringConverter;
@@ -141,6 +143,21 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 TimestampStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersOffsetTimeStringConverter() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                OffsetTimeStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(OffsetTime.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                OffsetTimeStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(OffsetTime.class)));
+        Assertions.assertInstanceOf(
+                OffsetTimeStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(OffsetTime.class, CellDataTypeEnum.STRING)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

@@ -105,6 +105,21 @@ class DateUtilsTest {
         Assertions.assertEquals(30, cal2.get(Calendar.MINUTE));
     }
 
+    @Test
+    void test_parseDate_respectsLocale() throws ParseException {
+        Date expected = new SimpleDateFormat(DateUtils.DATE_FORMAT_10).parse("2026-11-16");
+        String pattern = "EEEE dd MMMM yyyy";
+
+        Assertions.assertEquals(
+                expected,
+                DateUtils.parseDate(new SimpleDateFormat(pattern, Locale.US).format(expected), pattern, Locale.US));
+        Assertions.assertEquals(
+                expected,
+                DateUtils.parseDate(
+                        new SimpleDateFormat(pattern, Locale.CHINESE).format(expected), pattern, Locale.CHINESE));
+        Assertions.assertEquals(expected, DateUtils.parseDate("2026-11-16", "", Locale.CHINESE));
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"2024-02-31", "2023-02-29", "2024-13-01"})
     void test_parseDateRejectsInvalidCalendarDates(String value) {
@@ -254,6 +269,20 @@ class DateUtilsTest {
     }
 
     @Test
+    void test_formatDate_respectsLocale() throws ParseException {
+        Date date = new SimpleDateFormat(DateUtils.DATE_FORMAT_10).parse("2026-11-16");
+        String pattern = "EEEE dd MMMM yyyy";
+
+        Assertions.assertEquals(
+                new SimpleDateFormat(pattern, Locale.US).format(date), DateUtils.format(date, pattern, Locale.US));
+        Assertions.assertEquals(
+                new SimpleDateFormat(pattern, Locale.CHINESE).format(date),
+                DateUtils.format(date, pattern, Locale.CHINESE));
+        Assertions.assertEquals("2026-11-16 00:00:00", DateUtils.format(date, null, Locale.CHINESE));
+        Assertions.assertNull(DateUtils.format((Date) null, null, Locale.US));
+    }
+
+    @Test
     void test_format_LocalDateTime() {
         LocalDateTime ldt = LocalDateTime.of(2026, 10, 1, 12, 0, 0);
         String format = "dd-MMM-yyyy";
@@ -366,6 +395,54 @@ class DateUtilsTest {
             DateUtils.format(date, "yyyy-MM-dd", new Locale("en", "X" + i));
         }
         Assertions.assertEquals(localeCap, localeCache.size());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_dateFormatCache_isBounded() throws NoSuchFieldException, IllegalAccessException {
+        int localeCap = readIntConstant("MAX_LOCALE_CACHE_SIZE");
+        int formatCap = readIntConstant("MAX_FORMAT_CACHE_SIZE");
+        Date date = new Date(0);
+
+        for (int i = 0; i <= formatCap; i++) {
+            DateUtils.format(date, "yyyy-MM-dd'" + i + "'", Locale.US);
+        }
+
+        Field field = DateUtils.class.getDeclaredField("DATE_FORMAT_THREAD_LOCAL");
+        field.setAccessible(true);
+        ThreadLocal<Map<Locale, Map<String, SimpleDateFormat>>> threadLocal =
+                (ThreadLocal<Map<Locale, Map<String, SimpleDateFormat>>>) field.get(null);
+        Map<Locale, Map<String, SimpleDateFormat>> localeCache = threadLocal.get();
+        Assertions.assertEquals(formatCap, localeCache.get(Locale.US).size());
+
+        for (int i = 0; i < localeCap + 2; i++) {
+            DateUtils.format(date, "yyyy-MM-dd", new Locale("en", "X" + i));
+        }
+        Assertions.assertEquals(localeCap, localeCache.size());
+    }
+
+    @Test
+    @ResourceLock(Resources.LOCALE)
+    void test_dateFormatCache_tracksDefaultFormatLocaleChanges() throws ParseException {
+        Locale originalLocale = Locale.getDefault(Locale.Category.FORMAT);
+        try {
+            Date date = new SimpleDateFormat(DateUtils.DATE_FORMAT_10).parse("2026-11-16");
+            String pattern = "EEEE dd MMMM yyyy";
+
+            Locale.setDefault(Locale.Category.FORMAT, Locale.CHINESE);
+            String chineseResult = DateUtils.format(date, pattern);
+            Date chineseRoundTrip = DateUtils.parseDate(chineseResult, pattern);
+
+            Locale.setDefault(Locale.Category.FORMAT, Locale.US);
+            String usResult = DateUtils.format(date, pattern);
+
+            Assertions.assertEquals(new SimpleDateFormat(pattern, Locale.CHINESE).format(date), chineseResult);
+            Assertions.assertEquals(date, chineseRoundTrip);
+            Assertions.assertEquals(new SimpleDateFormat(pattern, Locale.US).format(date), usResult);
+            Assertions.assertNotEquals(chineseResult, usResult);
+        } finally {
+            Locale.setDefault(Locale.Category.FORMAT, originalLocale);
+        }
     }
 
     private static int readIntConstant(String name) throws NoSuchFieldException, IllegalAccessException {

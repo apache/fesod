@@ -38,7 +38,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -62,9 +61,11 @@ public class DateUtils {
     private static final int MAX_FORMAT_CACHE_SIZE = 64;
 
     /**
-     * Is a cache of dates
+     * Bounded cache of {@link SimpleDateFormat}, nested by resolved locale then pattern. Both levels evict FIFO, and
+     * the whole cache is cleared by {@link #removeThreadLocalCache()}.
      */
-    private static final ThreadLocal<Map<String, SimpleDateFormat>> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Map<Locale, Map<String, SimpleDateFormat>>> DATE_FORMAT_THREAD_LOCAL =
+            new ThreadLocal<>();
 
     /**
      * Bounded cache of {@link DateTimeFormatter}, nested by resolved locale then pattern. Both levels evict FIFO, and
@@ -119,10 +120,23 @@ public class DateUtils {
      * @throws ParseException
      */
     public static Date parseDate(String dateString, String dateFormat) throws ParseException {
+        return parseDate(dateString, dateFormat, null);
+    }
+
+    /**
+     * convert string to date
+     *
+     * @param dateString date text
+     * @param dateFormat date format, empty means auto-detected from the text
+     * @param locale locale used to resolve month and weekday names, null means the JVM default format locale
+     * @return parsed date
+     * @throws ParseException if the text does not match the format
+     */
+    public static Date parseDate(String dateString, String dateFormat, Locale locale) throws ParseException {
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = switchDateFormat(dateString);
         }
-        return getCacheDateFormat(dateFormat).parse(dateString);
+        return getCacheDateFormat(dateFormat, locale).parse(dateString);
     }
 
     /**
@@ -270,13 +284,25 @@ public class DateUtils {
      * @return
      */
     public static String format(Date date, String dateFormat) {
+        return format(date, dateFormat, null);
+    }
+
+    /**
+     * Format date using the given locale for month, weekday and era names.
+     *
+     * @param date date to format
+     * @param dateFormat date format, empty means the default date format
+     * @param locale locale used to resolve localized text, null means the JVM default format locale
+     * @return formatted date, or null when the date is null
+     */
+    public static String format(Date date, String dateFormat, Locale locale) {
         if (date == null) {
             return null;
         }
         if (StringUtils.isEmpty(dateFormat)) {
             dateFormat = defaultDateFormat;
         }
-        return getCacheDateFormat(dateFormat).format(date);
+        return getCacheDateFormat(dateFormat, locale).format(date);
     }
 
     /**
@@ -502,20 +528,29 @@ public class DateUtils {
         return builder.toString();
     }
 
-    private static DateFormat getCacheDateFormat(String dateFormat) {
-        Map<String, SimpleDateFormat> dateFormatMap = DATE_FORMAT_THREAD_LOCAL.get();
-        if (dateFormatMap == null) {
-            dateFormatMap = new HashMap<String, SimpleDateFormat>();
-            DATE_FORMAT_THREAD_LOCAL.set(dateFormatMap);
-        } else {
-            SimpleDateFormat dateFormatCached = dateFormatMap.get(dateFormat);
-            if (dateFormatCached != null) {
-                return dateFormatCached;
-            }
+    /**
+     * Returns a cached, non-lenient {@link SimpleDateFormat} for the pattern and locale. A null locale resolves to the
+     * JVM default format locale; caching by locale first keeps formatters from being reused across locales.
+     */
+    private static DateFormat getCacheDateFormat(String dateFormat, Locale locale) {
+        Locale actualLocale = locale == null ? Locale.getDefault(Locale.Category.FORMAT) : locale;
+        Map<Locale, Map<String, SimpleDateFormat>> localeCache = DATE_FORMAT_THREAD_LOCAL.get();
+        if (localeCache == null) {
+            localeCache = MapUtils.newBoundedMap(MAX_LOCALE_CACHE_SIZE);
+            DATE_FORMAT_THREAD_LOCAL.set(localeCache);
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        Map<String, SimpleDateFormat> formatCache = localeCache.get(actualLocale);
+        if (formatCache == null) {
+            formatCache = MapUtils.newBoundedMap(MAX_FORMAT_CACHE_SIZE);
+            localeCache.put(actualLocale, formatCache);
+        }
+        SimpleDateFormat dateFormatCached = formatCache.get(dateFormat);
+        if (dateFormatCached != null) {
+            return dateFormatCached;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat, actualLocale);
         simpleDateFormat.setLenient(false);
-        dateFormatMap.put(dateFormat, simpleDateFormat);
+        formatCache.put(dateFormat, simpleDateFormat);
         return simpleDateFormat;
     }
 

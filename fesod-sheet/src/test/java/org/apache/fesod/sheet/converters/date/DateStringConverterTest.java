@@ -113,6 +113,24 @@ class DateStringConverterTest {
         Assertions.assertEquals(expected, parsed);
     }
 
+    @Test
+    void convertToExcelDataFallsBackToJvmDefaultLocaleWhenLocaleUnset() throws ParseException {
+        Date date = date("2026-11-16");
+        ExcelContentProperty contentProperty = contentProperty(LOCALIZED_PATTERN);
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setLocale(null);
+
+        String actual = converter
+                .convertToExcelData(date, contentProperty, configuration)
+                .getStringValue();
+
+        // A null locale must fall back to the JVM default format locale (US here, see setUp),
+        // not silently produce something else. This pins the fallback path end-to-end.
+        Assertions.assertEquals(
+                new SimpleDateFormat(LOCALIZED_PATTERN, Locale.getDefault(Locale.Category.FORMAT)).format(date),
+                actual);
+    }
+
     private static Date date(String value) throws ParseException {
         return new SimpleDateFormat(DateUtils.DATE_FORMAT_10).parse(value);
     }

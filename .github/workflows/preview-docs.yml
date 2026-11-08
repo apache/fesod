@@ -15,12 +15,21 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: Preview Documentation
+name: Docs Preview
 
 on:
   pull_request:
     paths:
       - 'website/**'
+      - '.github/workflows/preview-docs.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: preview-docs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy-preview:
@@ -28,6 +37,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86

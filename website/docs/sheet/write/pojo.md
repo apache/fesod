@@ -238,7 +238,7 @@ The collection needs a stable iteration order for this - a `LinkedHashSet` or a 
 
 ### Overview
 
-Write data directly using `List<List<String>>` to define headers and data without creating entity classes.
+Write data directly using `HeadBuilder` to define headers and data without creating entity classes.
 
 ### Code Example
 
@@ -248,16 +248,9 @@ public void noModelWrite() {
     String fileName = "noModelWrite" + System.currentTimeMillis() + ".xlsx";
 
     FesodSheet.write(fileName)
-        .head(head()) // Dynamic headers
+        .head(HeadBuilder.forSimple("String Title", "Number Title", "Date Title")) // Dynamic headers
         .sheet("Write Without Object")
         .doWrite(dataList());
-}
-
-private List<List<String>> head() {
-    return Arrays.asList(
-        Collections.singletonList("String Title"),
-        Collections.singletonList("Number Title"),
-        Collections.singletonList("Date Title"));
 }
 
 private List<List<Object>> dataList() {

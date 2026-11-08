@@ -149,8 +149,7 @@ public void simpleRead() {
 
 ### 概述
 
-Fesod 支持不定义 POJO 类直接读取电子表格文件，通过 `Map<Integer, String>` 直接读取数据，其中的键为**列索引**，值为*
-*单元格数据**。
+Fesod 支持不定义 POJO 类直接读取电子表格文件，通过 `Map<Integer, String>` 直接读取数据，其中的键为**列索引**，值为**单元格数据**。
 
 ### 数据监听器
 

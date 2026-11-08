@@ -29,6 +29,8 @@ import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -52,7 +54,7 @@ public class HeaderMergeStrategyTest extends AbstractExcelTest {
                 .doWrite(createTestData());
 
         // Verify no merged regions
-        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             Assertions.assertEquals(
                     0, sheet.getNumMergedRegions(), "NONE strategy should not create any merged regions");
@@ -72,7 +74,7 @@ public class HeaderMergeStrategyTest extends AbstractExcelTest {
                 .doWrite(createTestData());
 
         // Verify only horizontal merges exist
-        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             int mergedRegionCount = sheet.getNumMergedRegions();
 
@@ -100,7 +102,7 @@ public class HeaderMergeStrategyTest extends AbstractExcelTest {
                 .doWrite(createTestData());
 
         // Verify only vertical merges exist
-        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             int mergedRegionCount = sheet.getNumMergedRegions();
 
@@ -128,7 +130,7 @@ public class HeaderMergeStrategyTest extends AbstractExcelTest {
                 .doWrite(createTestData());
 
         // Verify all merged regions form valid rectangles
-        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             int mergedRegionCount = sheet.getNumMergedRegions();
 
@@ -157,7 +159,7 @@ public class HeaderMergeStrategyTest extends AbstractExcelTest {
                 .doWrite(createTestData());
 
         // AUTO strategy should work similar to the old behavior
-        try (org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file)) {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
             Sheet sheet = workbook.getSheetAt(0);
             // Just verify that the file was created successfully
             Assertions.assertNotNull(sheet, "Sheet should be created");

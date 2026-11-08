@@ -204,8 +204,7 @@ public class FileUtils {
         } catch (IOException e) {
             return;
         }
-        // Delete symbolic links and NTFS junctions directly without traversing targets. File#isDirectory() resolves
-        // a Windows junction, while "no follow" attributes report it as "other" (a normal directory is not "other").
+        // Delete symbolic links and NTFS junctions (reported as "other") directly without traversing targets
         if (attributes.isSymbolicLink() || attributes.isOther()) {
             file.delete();
             return;

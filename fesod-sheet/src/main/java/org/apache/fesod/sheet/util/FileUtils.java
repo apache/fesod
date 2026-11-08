@@ -190,12 +190,12 @@ public class FileUtils {
     }
 
     /**
-     * delete file
+     * Deletes the given file or directory recursively.
      * <p>
-     * Symbolic links and directory junctions are deleted themselves and never followed, so the deletion cannot
+     * Symbolic links and NTFS junctions are deleted without being followed, ensuring that the deletion cannot
      * escape the given directory.
      *
-     * @param file
+     * @param file the file or directory to delete
      */
     public static void delete(File file) {
         BasicFileAttributes attributes;
@@ -204,8 +204,8 @@ public class FileUtils {
         } catch (IOException e) {
             return;
         }
-        // Read attributes without following links: File#isDirectory() resolves a Windows directory junction, while
-        // "no follow" attributes report it as "other" (a regular directory reports isOther() = false).
+        // Delete symbolic links and NTFS junctions directly without traversing targets. File#isDirectory() resolves
+        // a Windows junction, while "no follow" attributes report it as "other" (a normal directory is not "other").
         if (attributes.isSymbolicLink() || attributes.isOther()) {
             file.delete();
             return;

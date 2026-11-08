@@ -42,11 +42,17 @@ The declared field type selects the converter, so most sources need no configura
 | `URL` | `UrlImageConverter` | Downloaded while the file is written, see [URL Sources](#url-sources). |
 | `String` | none by default | Must be declared explicitly, see below. |
 
+<a id="string-explicit-declaration"></a>
+
+:::warning
+
 `String` is the only source you have to declare, because an undeclared `String` field is written as
 text. Choose the converter that matches the value:
 
 - `StringImageConverter` or `StringPathnameImageConverter` - a path to a file (the two behave identically).
 - `StringBase64ImageConverter` - base64 data, with or without a `data:image/png;base64,` prefix.
+
+:::
 
 ## Image Export
 

@@ -63,7 +63,7 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
     /**
      * Sets the quote character
      * <p>
-     * If set to {@link org.apache.fesod.sheet.metadata.csv.CsvConstant#NONE_QUOTE}, quoting is disabled and values are
+     * If set to {@link CsvConstant#NONE_QUOTE}, quoting is disabled and values are
      * always written unquoted. This is equivalent to setting {@code quote} to {@code null} in Apache Commons CSV.
      * </p>
      *

@@ -56,6 +56,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -124,6 +125,10 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                         writeContext.writeWorkbookHolder(), cellData.getRichTextStringDataValue()));
                 return;
             case EMPTY:
+                return;
+            case ERROR:
+                cell.setCellErrorValue(
+                        FormulaError.forString(cellData.getStringValue()).getCode());
                 return;
             default:
                 throw new ExcelWriteDataConvertException(

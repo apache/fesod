@@ -42,6 +42,7 @@ import org.junit.jupiter.api.parallel.Resources;
  * Tests {@link StringNumberConverter}.
  */
 @Tag(Tags.UNIT)
+@ResourceLock(Resources.LOCALE)
 class StringNumberConverterTest {
 
     private final StringNumberConverter converter = new StringNumberConverter();
@@ -82,7 +83,6 @@ class StringNumberConverterTest {
     }
 
     @Test
-    @ResourceLock(Resources.LOCALE)
     void convertToJavaDataHonorsConfiguredLocaleForNumericDateSerial() {
         BigDecimal serial = new BigDecimal("45000");
         ExcelContentProperty contentProperty = contentProperty("dd MMMM yyyy", null);

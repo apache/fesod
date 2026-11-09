@@ -40,8 +40,6 @@ Here is the Apache Fesod (Incubating) official download page. Apache Fesod provi
 
 For older releases, please check the [archive](https://archive.apache.org/dist/incubator/fesod/).
 
-For non-Apache releases, please check the [non-apache releases](https://repo1.maven.org/maven2/cn/idev/excel/fastexcel/).
-
 ## Verifying Apache Releases
 
 Before use, please refer to this [official guide](https://www.apache.org/info/verification.html) to verify all Apache release versions, including the integrity and authenticity of source code releases.

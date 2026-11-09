@@ -62,9 +62,9 @@ public class ExcelGeneralNumberFormat extends Format {
         } else {
             scientificFormat = new DecimalFormat("#", decimalSymbols);
         }
-        org.apache.poi.ss.usermodel.DataFormatter.setExcelStyleRoundingMode(scientificFormat);
+        DataFormatter.setExcelStyleRoundingMode(scientificFormat);
         integerFormat = new DecimalFormat("#", decimalSymbols);
-        org.apache.poi.ss.usermodel.DataFormatter.setExcelStyleRoundingMode(integerFormat);
+        DataFormatter.setExcelStyleRoundingMode(integerFormat);
         decimalFormat = new DecimalFormat("#.##########", decimalSymbols);
         DataFormatter.setExcelStyleRoundingMode(decimalFormat);
     }

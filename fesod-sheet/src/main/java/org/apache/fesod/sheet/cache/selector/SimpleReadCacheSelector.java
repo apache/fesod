@@ -69,7 +69,7 @@ public class SimpleReadCacheSelector implements ReadCacheSelector {
     /**
      * Maximum size of cache activation.unit MB.
      *
-     * @deprecated Please use maxCacheActivateBatchCount to control the size of the occupied memory
+     * @deprecated use {@link #maxCacheActivateBatchCount} instead to control the occupied memory
      */
     @Deprecated
     private Integer maxCacheActivateSize;
@@ -87,6 +87,8 @@ public class SimpleReadCacheSelector implements ReadCacheSelector {
      *
      * @param maxUseMapCacheSize
      * @param maxCacheActivateSize
+     * @deprecated use {@link #SimpleReadCacheSelector()} plus {@link #setMaxCacheActivateBatchCount(Integer)}
+     *             instead; {@code maxCacheActivateSize} is no longer honored
      */
     @Deprecated
     public SimpleReadCacheSelector(Long maxUseMapCacheSize, Integer maxCacheActivateSize) {

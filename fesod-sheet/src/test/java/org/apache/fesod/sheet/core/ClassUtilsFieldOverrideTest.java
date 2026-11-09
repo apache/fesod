@@ -20,6 +20,8 @@
 package org.apache.fesod.sheet.core;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,8 +49,13 @@ import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -525,12 +532,12 @@ public class ClassUtilsFieldOverrideTest extends AbstractExcelTest {
     private static Function<Path, List<String>> extractExcelHeader() {
         // Helper to read first row (header) from generated file
         Function<Path, List<String>> readHeader = path -> {
-            try (java.io.InputStream is = java.nio.file.Files.newInputStream(path)) {
-                org.apache.poi.ss.usermodel.Workbook wb = org.apache.poi.ss.usermodel.WorkbookFactory.create(is);
-                org.apache.poi.ss.usermodel.Sheet sheet = wb.getSheetAt(0);
-                org.apache.poi.ss.usermodel.Row row = sheet.getRow(0);
+            try (InputStream is = Files.newInputStream(path)) {
+                Workbook wb = WorkbookFactory.create(is);
+                Sheet sheet = wb.getSheetAt(0);
+                Row row = sheet.getRow(0);
                 List<String> headers = new ArrayList<>();
-                for (org.apache.poi.ss.usermodel.Cell cell : row) {
+                for (Cell cell : row) {
                     headers.add(cell.getStringCellValue());
                 }
                 wb.close();

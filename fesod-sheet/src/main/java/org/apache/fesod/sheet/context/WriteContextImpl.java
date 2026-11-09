@@ -155,7 +155,7 @@ public class WriteContextImpl implements WriteContext {
 
     private void closeOnInitializationFailure(Throwable failure) {
         IOUtils.closeQuietly(writeWorkbookHolder.getWorkbook(), e -> recordFailure(failure, e));
-        if (writeWorkbookHolder.getAutoCloseStream()) {
+        if (writeWorkbookHolder.shouldCloseOutputStream()) {
             IOUtils.closeQuietly(writeWorkbookHolder.getOutputStream(), e -> recordFailure(failure, e));
         }
         clearEncrypt03();
@@ -583,7 +583,7 @@ public class WriteContextImpl implements WriteContext {
             throwable = recordFailure(throwable, t);
         }
         try {
-            if (writeWorkbookHolder.getAutoCloseStream() && writeWorkbookHolder.getOutputStream() != null) {
+            if (writeWorkbookHolder.shouldCloseOutputStream() && writeWorkbookHolder.getOutputStream() != null) {
                 writeWorkbookHolder.getOutputStream().close();
             }
         } catch (Throwable t) {

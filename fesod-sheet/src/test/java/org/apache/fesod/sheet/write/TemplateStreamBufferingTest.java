@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
@@ -38,6 +39,7 @@ import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
 import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
+import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
@@ -88,7 +90,10 @@ class TemplateStreamBufferingTest extends AbstractExcelTest {
                             .withTemplate(source)
                             .autoCloseStream(autoClose)
                             .inMemory(inMemory);
+                    FileOutputStream output;
                     try (ExcelWriter writer = builder.build()) {
+                        output = (FileOutputStream)
+                                writer.writeContext().writeWorkbookHolder().getOutputStream();
                         Assertions.assertEquals(autoClose ? 1 : 0, source.closeCalls);
                         InputStream prepared =
                                 writer.writeContext().writeWorkbookHolder().getTempTemplateInputStream();
@@ -96,15 +101,64 @@ class TemplateStreamBufferingTest extends AbstractExcelTest {
                         Assertions.assertThrows(IOException.class, prepared::read);
                         fill(writer);
                     }
+                    Assertions.assertFalse(output.getFD().valid(), "Fesod must close its own output stream");
                     Assertions.assertEquals(autoClose ? 1 : 0, source.closeCalls);
                     if (!autoClose) {
                         Assertions.assertEquals(-1, source.read());
                     }
                 }
                 assertFilled(streamOutput);
+                Files.delete(Files.move(
+                        streamOutput.toPath(), streamOutput.toPath().resolveSibling("moved" + streamOutput.getName())));
             }
         }
         Assertions.assertArrayEquals(original, Files.readAllBytes(template.toPath()));
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource(FormatScope.BINARY)
+    void finishingHonorsCallerOutputStreamOwnership(ExcelFormat format) throws Exception {
+        File template = template(format);
+        for (boolean inMemory : new boolean[] {false, true}) {
+            for (boolean autoClose : new boolean[] {true, false}) {
+                TrackingOutputStream output = new TrackingOutputStream();
+                try (TrackingInputStream source = new TrackingInputStream(Files.newInputStream(template.toPath()))) {
+                    fill(FesodSheet.write(output)
+                            .excelType(format.toExcelTypeEnum())
+                            .withTemplate(source)
+                            .autoCloseStream(autoClose)
+                            .inMemory(inMemory));
+                    Assertions.assertEquals(autoClose ? 1 : 0, source.closeCalls);
+                    Assertions.assertEquals(autoClose ? 1 : 0, output.closeCalls);
+                }
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @ExcelFormatSource(FormatScope.BINARY)
+    void parsingFailureClosesFileOutputRegardlessOfAutoClose(ExcelFormat format) throws Exception {
+        for (boolean autoClose : new boolean[] {true, false}) {
+            File output = createTempFile("invalid-template", format);
+            AtomicReference<FileOutputStream> stream = new AtomicReference<>();
+            try (TrackingInputStream source = new TrackingInputStream(new ByteArrayInputStream(new byte[128]))) {
+                Assertions.assertThrows(RuntimeException.class, () -> FesodSheet.write(output)
+                        .withTemplate(source)
+                        .autoCloseStream(autoClose)
+                        .registerWriteHandler(new WorkbookWriteHandler() {
+                            @Override
+                            public void beforeWorkbookCreate(WorkbookWriteHandlerContext context) {
+                                stream.set((FileOutputStream)
+                                        context.getWriteWorkbookHolder().getOutputStream());
+                            }
+                        })
+                        .build());
+                Assertions.assertNotNull(stream.get());
+                Assertions.assertFalse(stream.get().getFD().valid(), "Fesod must close its own output stream");
+                Assertions.assertEquals(autoClose ? 1 : 0, source.closeCalls);
+            }
+            Files.delete(output.toPath());
+        }
     }
 
     @ParameterizedTest

@@ -49,7 +49,8 @@ public class ExcelWriterBuilder extends AbstractExcelWriterParameterBuilder<Exce
     }
 
     /**
-     * Default true
+     * Whether to close caller-provided template input and output streams. Default true.
+     * Streams opened internally for files are always closed.
      *
      * @param autoCloseStream
      * @return

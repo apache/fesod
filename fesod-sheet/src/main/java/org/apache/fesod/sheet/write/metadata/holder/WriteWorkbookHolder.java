@@ -274,19 +274,23 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
     }
 
     /**
-     * Close the output stream when initialization fails, so that the target file is not held open.
-     * Mirrors the close behavior of the success path, which is also gated by {@code autoCloseStream};
-     * callers that opt out of automatic closing via {@code autoCloseStream(false)} keep that behavior
-     * here as well.
+     * Close owned output streams when initialization fails, so that the target file is not held open.
      */
     private void closeOutputStreamOnFailure() {
-        if (autoCloseStream && outputStream != null) {
+        if (shouldCloseOutputStream() && outputStream != null) {
             try {
                 outputStream.close();
             } catch (IOException e) {
                 log.warn("Failed to close output stream after workbook initialization failure.", e);
             }
         }
+    }
+
+    /**
+     * Streams opened internally for files are always closed; caller-provided streams follow {@code autoCloseStream}.
+     */
+    public boolean shouldCloseOutputStream() {
+        return file != null || autoCloseStream;
     }
 
     private void prepareTemplate() throws IOException {

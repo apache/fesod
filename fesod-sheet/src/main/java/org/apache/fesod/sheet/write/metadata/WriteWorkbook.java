@@ -88,7 +88,8 @@ public class WriteWorkbook extends WriteBasicParameter {
      */
     private File templateFile;
     /**
-     * Default true.
+     * Whether to close caller-provided template input and output streams. Default true.
+     * Streams opened internally for files are always closed.
      */
     private Boolean autoCloseStream;
     /**

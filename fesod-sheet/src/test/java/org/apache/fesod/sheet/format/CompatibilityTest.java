@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.format;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -137,15 +136,10 @@ public class CompatibilityTest extends AbstractExcelTest {
                 FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         Assertions.assertEquals(10L, list.size());
 
-        // Save file content before deleting Fesod's temp dir
-        byte[] fileContent = Files.readAllBytes(file.toPath());
-
         // Only delete Fesod's own temp dir, never the whole system temp dir shared with other processes
         FileUtils.delete(new File(FileUtils.getTempFilePrefix()));
-
-        // Recreate the file after temp dir deletion to continue the test
-        file.getParentFile().mkdirs();
-        Files.write(file.toPath(), fileContent);
+        // The workbook lives in JUnit's @TempDir, so it must survive the deletion
+        Assertions.assertTrue(file.exists());
 
         list = FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         Assertions.assertEquals(10L, list.size());

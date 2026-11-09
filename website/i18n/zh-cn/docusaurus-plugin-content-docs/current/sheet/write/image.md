@@ -40,10 +40,16 @@ title: '图片'
 | `URL` | `UrlImageConverter` | 写文件时通过网络下载，见 [URL 来源](#url-来源)。 |
 | `String` | 默认没有 | 必须显式指定，见下文。 |
 
+<a id="string-explicit-declaration"></a>
+
+:::warning
+
 `String` 是唯一必须显式声明转换器的来源，否则该字段会被当作文本写出。根据取值选择对应的转换器：
 
 - `StringImageConverter` 或 `StringPathnameImageConverter` - 文件路径（两者行为一致）。
 - `StringBase64ImageConverter` - base64 数据，可以带 `data:image/png;base64,` 前缀，也可以不带。
+
+:::
 
 ## 图片导出
 

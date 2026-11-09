@@ -97,3 +97,30 @@ jobs:
         run: ./mvnw install -B -V -DskipTests
       - name: Java Doc
         run: ./mvnw javadoc:javadoc
+
+  test-windows:
+    # Run only tests tagged with Tags.WINDOWS, which Windows-only tests pair with the built-in
+    # @EnabledOnOs(OS.WINDOWS). The Linux matrix sees the same tests but JUnit skips them there.
+    runs-on: windows-2022
+    name: Test Windows
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - name: Cache local Maven repository
+        uses: actions/cache@v6
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
+      - name: Test Windows
+        run: ./mvnw.cmd test -B -pl fesod-common,fesod-shaded,fesod-sheet -Dtest.groups=windows
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2.25.0
+        if: (!cancelled())
+        with:
+          files: "**/target/surefire-reports/*.xml"

@@ -42,6 +42,8 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
@@ -301,8 +303,8 @@ class FileUtilsTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     void test_delete_doesNotFollowDirectoryJunctions() throws IOException {
-        Assumptions.assumeTrue(isWindows(), "Directory junctions are only available on Windows");
         // outside/
         //   - keep.txt
         // root/
@@ -322,10 +324,6 @@ class FileUtilsTest {
         Assertions.assertFalse(root.exists());
         Assertions.assertFalse(Files.exists(junction, LinkOption.NOFOLLOW_LINKS));
         Assertions.assertTrue(keep.exists());
-    }
-
-    private static boolean isWindows() {
-        return System.getProperty("os.name").startsWith("Windows");
     }
 
     private static boolean createJunction(Path link, File target) {

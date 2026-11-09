@@ -102,14 +102,20 @@ jobs:
     # Run only tests tagged with Tags.WINDOWS, which Windows-only tests pair with the built-in
     # @EnabledOnOs(OS.WINDOWS). The Linux matrix sees the same tests but JUnit skips them there.
     runs-on: windows-2022
-    name: Test Windows
+    strategy:
+      matrix:
+        java: [ 8, 11, 17, 21, 25 ]
+        distribution: [ 'temurin' ]
+      fail-fast: false
+      max-parallel: 5
+    name: Test Windows JDK ${{ matrix.java }}
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
-          java-version: 17
-          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          distribution: ${{ matrix.distribution }}
       - name: Cache local Maven repository
         uses: actions/cache@v6
         with:
@@ -118,5 +124,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
       - name: Test Windows
+        # Use package (not test): fesod-shaded only produces the relocated cglib classes in its shaded jar.
         # Quote -Dtest.groups: unquoted, PowerShell splits the argument at the dot.
-        run: ./mvnw.cmd test -B -pl fesod-common,fesod-shaded,fesod-sheet '-Dtest.groups=windows'
+        run: ./mvnw.cmd clean package -B -pl fesod-common,fesod-shaded,fesod-sheet '-Dtest.groups=windows'

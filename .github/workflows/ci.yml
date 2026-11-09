@@ -118,4 +118,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
       - name: Test Windows
-        run: ./mvnw.cmd test -B -pl fesod-common,fesod-shaded,fesod-sheet -Dtest.groups=windows
+        # Quote -Dtest.groups: unquoted, PowerShell splits the argument at the dot.
+        run: ./mvnw.cmd test -B -pl fesod-common,fesod-shaded,fesod-sheet '-Dtest.groups=windows'

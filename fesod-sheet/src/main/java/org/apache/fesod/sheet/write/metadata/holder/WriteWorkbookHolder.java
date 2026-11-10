@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
@@ -279,19 +281,26 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
             return;
         }
         if (isSameFile(outputFile, templateFile)) {
-            throw new ExcelGenerateException("Template file and output file must be different.");
+            throw new ExcelGenerateException("Template file and output file must be different: template="
+                    + templateFile.getAbsolutePath() + ", output=" + outputFile.getAbsolutePath());
         }
     }
 
     private static boolean isSameFile(File outputFile, File templateFile) {
         try {
-            return outputFile.getCanonicalFile().equals(templateFile.getCanonicalFile());
-        } catch (IOException e) {
+            return Files.isSameFile(outputFile.toPath(), templateFile.toPath());
+        } catch (NoSuchFileException e) {
+            // A new output file has no filesystem identity yet.
             return outputFile
                     .toPath()
                     .toAbsolutePath()
                     .normalize()
                     .equals(templateFile.toPath().toAbsolutePath().normalize());
+        } catch (IOException e) {
+            throw new ExcelGenerateException(
+                    "Cannot compare template file and output file: template=" + templateFile.getAbsolutePath()
+                            + ", output=" + outputFile.getAbsolutePath(),
+                    e);
         }
     }
 

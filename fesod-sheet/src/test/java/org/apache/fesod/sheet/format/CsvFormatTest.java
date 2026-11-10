@@ -36,6 +36,7 @@ import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.FesodSheet;
+import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.metadata.csv.CsvConstant;
 import org.apache.fesod.sheet.metadata.csv.CsvWorkbook;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
@@ -224,6 +225,31 @@ public class CsvFormatTest extends AbstractExcelTest {
                 })
                 .csv()
                 .doWrite(data);
+    }
+
+    @Test
+    public void writeSecondCsvSheetShouldFailWithoutLosingFirstSheetData() throws Exception {
+        File csvFile = createTempFile("csv-repeat-sheet", ExcelFormat.CSV);
+        List<CsvData> firstSheetData = dataList(3, "First");
+        List<CsvData> secondSheetData = dataList(3, "Second");
+
+        try (ExcelWriter excelWriter = FesodSheet.write(csvFile, CsvData.class)
+                .excelType(ExcelTypeEnum.CSV)
+                .build()) {
+            excelWriter.write(firstSheetData, FesodSheet.writerSheet(0).build());
+
+            ExcelGenerateException exception = Assertions.assertThrows(ExcelGenerateException.class, () -> {
+                excelWriter.write(secondSheetData, FesodSheet.writerSheet(1).build());
+            });
+            Assertions.assertEquals("CSV repeat creation is not allowed.", exception.getMessage());
+        }
+
+        List<CsvData> actualData = FesodSheet.read(csvFile, CsvData.class, new CsvDataListener())
+                .csv()
+                .doReadSync();
+        Assertions.assertEquals(3, actualData.size());
+        Assertions.assertEquals("First0", actualData.get(0).getString());
+        Assertions.assertEquals("First2", actualData.get(2).getString());
     }
 
     private void doTest(

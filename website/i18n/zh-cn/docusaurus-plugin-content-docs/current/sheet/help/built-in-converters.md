@@ -383,6 +383,13 @@ title: '内置转换器'
 <td>&#x1f7e1; 待发布</td>
 </tr>
 <tr>
+<td>MonthDay</td>
+<td>STRING</td>
+<td>MonthDayStringConverter</td>
+<td>&#x2705; 读取<br />&#x2705; 写入</td>
+<td>&#x1f7e1; 待发布</td>
+</tr>
+<tr>
 <td>byte[]</td>
 <td>IMAGE <small>(Drawing)</small></td>
 <td>ByteArrayImageConverter</td>

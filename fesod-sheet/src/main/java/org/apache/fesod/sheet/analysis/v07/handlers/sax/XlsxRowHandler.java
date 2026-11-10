@@ -49,6 +49,8 @@ import org.xml.sax.helpers.DefaultHandler;
 @Slf4j
 public class XlsxRowHandler extends DefaultHandler {
     private final XlsxReadContext xlsxReadContext;
+    private boolean inPhoneticRun;
+    private boolean inlineStringCell;
     private static final Map<String, XlsxTagHandler> XLSX_CELL_HANDLER_MAP = new HashMap<>(64);
     private int ignoredElementDepth;
 
@@ -102,9 +104,17 @@ public class XlsxRowHandler extends DefaultHandler {
             return;
         }
         String tagName = tagName(localName, name);
+        if (isPhoneticRun(tagName)) {
+            inPhoneticRun = true;
+            return;
+        }
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(tagName);
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
+        }
+        if (handler instanceof CellTagHandler) {
+            // Both inlineStr and str map to DIRECT_STRING, but only inlineStr must ignore v elements.
+            inlineStringCell = "inlineStr".equals(attributes.getValue(ExcelXmlConstants.ATTRIBUTE_T));
         }
         xlsxReadContext.xlsxReadSheetHolder().getTagDeque().push(tagName);
         handler.startElement(xlsxReadContext, tagName, attributes);
@@ -112,7 +122,7 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (ignoredElementDepth > 0) {
+        if (ignoredElementDepth > 0 || inPhoneticRun) {
             return;
         }
         String currentTag = xlsxReadContext.xlsxReadSheetHolder().getTagDeque().peek();
@@ -121,6 +131,10 @@ public class XlsxRowHandler extends DefaultHandler {
         }
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(currentTag);
         if (handler == null || !handler.support(xlsxReadContext)) {
+            return;
+        }
+        if (inlineStringCell && handler instanceof CellValueTagHandler) {
+            // Tolerate stray v elements in inlineStr cells, including supported prefixed tags.
             return;
         }
         handler.characters(xlsxReadContext, ch, start, length);
@@ -136,6 +150,10 @@ public class XlsxRowHandler extends DefaultHandler {
             return;
         }
         String tagName = tagName(localName, name);
+        if (isPhoneticRun(tagName)) {
+            inPhoneticRun = false;
+            return;
+        }
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(tagName);
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
@@ -160,5 +178,9 @@ public class XlsxRowHandler extends DefaultHandler {
 
     private static boolean isSpreadsheetNamespace(String uri) {
         return uri == null || ExcelXmlConstants.NAMESPACE_SPREADSHEETML.equals(uri);
+    }
+
+    private static boolean isPhoneticRun(String tagName) {
+        return ExcelXmlConstants.SHAREDSTRINGS_RPH_TAG.equals(tagName);
     }
 }

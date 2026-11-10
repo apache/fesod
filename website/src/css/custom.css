@@ -101,8 +101,14 @@ article header h2 {
     font-weight: bold;
 }
 
-table{
+.team table,
+.built-in-converters table {
     display: table;
     width: 100%;
     table-layout: auto;
+}
+
+#string-explicit-declaration {
+    scroll-margin-top: var(--ifm-navbar-height);
+    display: block;
 }

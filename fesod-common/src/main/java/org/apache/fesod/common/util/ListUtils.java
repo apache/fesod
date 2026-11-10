@@ -17,6 +17,13 @@
  * under the License.
  */
 
+/*
+ * Portions of this file are derived from Guava's Lists, Preconditions and CollectPreconditions.
+ *
+ * Copyright (C) 2007 The Guava Authors
+ * Copyright (C) 2008 The Guava Authors
+ */
+
 package org.apache.fesod.common.util;
 
 import java.util.ArrayList;

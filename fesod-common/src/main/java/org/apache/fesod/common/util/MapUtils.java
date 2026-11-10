@@ -17,6 +17,12 @@
  * under the License.
  */
 
+/*
+ * Portions of this file are derived from Guava's Maps.
+ *
+ * Copyright (C) 2007 The Guava Authors
+ */
+
 package org.apache.fesod.common.util;
 
 import java.util.HashMap;

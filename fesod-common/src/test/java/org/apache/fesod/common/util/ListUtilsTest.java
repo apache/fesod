@@ -19,6 +19,8 @@
 
 package org.apache.fesod.common.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -42,8 +44,7 @@ class ListUtilsTest {
     @Test
     void test_newArrayList_varargs() {
         ArrayList<String> list = ListUtils.newArrayList("a", "b", "c");
-        Assertions.assertEquals(3, list.size());
-        Assertions.assertEquals(Arrays.asList("a", "b", "c"), list);
+        assertThat(list).containsExactly("a", "b", "c");
 
         ArrayList<Integer> emptyList = ListUtils.newArrayList();
         Assertions.assertTrue(emptyList.isEmpty());

@@ -56,6 +56,7 @@ import org.apache.fesod.sheet.converters.floatconverter.FloatBooleanConverter;
 import org.apache.fesod.sheet.converters.floatconverter.FloatNumberConverter;
 import org.apache.fesod.sheet.converters.floatconverter.FloatStringConverter;
 import org.apache.fesod.sheet.converters.inputstream.InputStreamImageConverter;
+import org.apache.fesod.sheet.converters.instant.InstantStringConverter;
 import org.apache.fesod.sheet.converters.integer.IntegerBooleanConverter;
 import org.apache.fesod.sheet.converters.integer.IntegerNumberConverter;
 import org.apache.fesod.sheet.converters.integer.IntegerStringConverter;
@@ -84,7 +85,11 @@ import org.apache.fesod.sheet.converters.string.StringBooleanConverter;
 import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.converters.string.StringNumberConverter;
 import org.apache.fesod.sheet.converters.string.StringStringConverter;
+import org.apache.fesod.sheet.converters.timestamp.TimestampDateConverter;
+import org.apache.fesod.sheet.converters.timestamp.TimestampNumberConverter;
+import org.apache.fesod.sheet.converters.timestamp.TimestampStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
+import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.converters.year.YearStringConverter;
 
 /**
@@ -134,8 +139,12 @@ public class DefaultConverterLoader {
         putAllConverter(new LocalTimeStringConverter());
         putAllConverter(new SqlTimeNumberConverter());
         putAllConverter(new SqlTimeStringConverter());
+        putAllConverter(new TimestampNumberConverter());
+        putAllConverter(new TimestampStringConverter());
         putAllConverter(new OffsetDateTimeNumberConverter());
         putAllConverter(new OffsetDateTimeStringConverter());
+
+        putAllConverter(new InstantStringConverter());
 
         putAllConverter(new DoubleBooleanConverter());
         putAllConverter(new DoubleNumberConverter());
@@ -162,6 +171,8 @@ public class DefaultConverterLoader {
         putAllConverter(new StringStringConverter());
         putAllConverter(new StringErrorConverter());
 
+        putAllConverter(new UUIDStringConverter());
+
         putAllConverter(new YearStringConverter());
         allConverter = Collections.unmodifiableMap(allConverter);
     }
@@ -177,7 +188,9 @@ public class DefaultConverterLoader {
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
+        putWriteConverter(new InstantStringConverter());
         putWriteConverter(new SqlTimeDateConverter());
+        putWriteConverter(new TimestampDateConverter());
         putWriteConverter(new OffsetDateTimeDateConverter());
         putWriteConverter(new DoubleNumberConverter());
         putWriteConverter(new FloatNumberConverter());
@@ -191,6 +204,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new ByteArrayImageConverter());
         putWriteConverter(new BoxingByteArrayImageConverter());
         putWriteConverter(new UrlImageConverter());
+        putWriteConverter(new UUIDStringConverter());
 
         // In some cases, it must be converted to string
         putWriteStringConverter(new BigDecimalStringConverter());
@@ -202,7 +216,9 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());
+        putWriteStringConverter(new InstantStringConverter());
         putWriteStringConverter(new SqlTimeStringConverter());
+        putWriteStringConverter(new TimestampStringConverter());
         putWriteStringConverter(new OffsetDateTimeStringConverter());
         putWriteStringConverter(new DoubleStringConverter());
         putWriteStringConverter(new FloatStringConverter());
@@ -210,6 +226,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LongStringConverter());
         putWriteStringConverter(new ShortStringConverter());
         putWriteStringConverter(new StringStringConverter());
+        putWriteStringConverter(new UUIDStringConverter());
         putWriteStringConverter(new YearStringConverter());
         defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
     }

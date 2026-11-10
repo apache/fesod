@@ -28,7 +28,6 @@ package org.apache.fesod.sheet.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -162,7 +161,7 @@ public class FileUtils {
      * Copies the input stream into the file without closing the stream.
      */
     private static void copyToFile(File file, InputStream inputStream) {
-        try (OutputStream outputStream = new FileOutputStream(file)) {
+        try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
             int bytesRead;
             byte[] buffer = new byte[WRITE_BUFF_SIZE];
             while ((bytesRead = inputStream.read(buffer, 0, WRITE_BUFF_SIZE)) != -1) {
@@ -187,7 +186,7 @@ public class FileUtils {
      * @throws ExcelCommonException If the directory cannot be created.
      */
     public static File createCacheTmpFile() {
-        return createDirectory(new File(cachePath + UUID.randomUUID().toString()));
+        return createDirectory(new File(cachePath + UUID.randomUUID()));
     }
 
     /**

@@ -303,6 +303,7 @@ class FileUtilsTest {
     }
 
     @Test
+    @Tag(Tags.WINDOWS)
     @EnabledOnOs(OS.WINDOWS)
     void test_delete_doesNotFollowDirectoryJunctions() throws IOException {
         // outside/

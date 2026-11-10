@@ -57,6 +57,7 @@ import org.apache.fesod.sheet.util.PoiUtils;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
 import org.apache.fesod.sheet.write.handler.context.CellWriteHandlerContext;
 import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
+import org.apache.fesod.sheet.write.handler.impl.StructuredTableWorkbookWriteHandler;
 import org.apache.fesod.sheet.write.metadata.fill.AnalysisCell;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
@@ -66,6 +67,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  * Fill the data into excel
@@ -108,8 +110,15 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
      */
     private UniqueDataFlagKey currentUniqueDataFlag;
 
+    private final StructuredTableWorkbookWriteHandler structuredTableHandler;
+
     public ExcelWriteFillExecutor(WriteContext writeContext) {
         super(writeContext);
+        structuredTableHandler = writeContext.writeWorkbookHolder().getWriteHandlerList().stream()
+                .filter(StructuredTableWorkbookWriteHandler.class::isInstance)
+                .map(StructuredTableWorkbookWriteHandler.class::cast)
+                .findFirst()
+                .orElse(null);
     }
 
     public void fill(Object data, FillConfig fillConfig) {
@@ -141,6 +150,15 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             Collection<?> collectionData = (Collection<?>) realData;
             if (CollectionUtils.isEmpty(collectionData)) {
                 return;
+            }
+            Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
+            if (structuredTableHandler != null && cachedSheet instanceof XSSFSheet) {
+                structuredTableHandler.prepareFill(
+                        (XSSFSheet) cachedSheet,
+                        analysisCellList,
+                        collectionLastIndexCache.get(currentUniqueDataFlag),
+                        fillConfig,
+                        collectionData.size());
             }
             Iterator<?> iterator = collectionData.iterator();
             if (WriteDirectionEnum.VERTICAL.equals(fillConfig.getDirection()) && fillConfig.getForceNewRow()) {
@@ -176,9 +194,6 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         int lastRowIndex = cachedSheet.getLastRowNum();
-        if (maxRowIndex >= lastRowIndex) {
-            return;
-        }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
         int number = size;
         if (collectionLastIndexMap == null) {
@@ -187,7 +202,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         if (number <= 0) {
             return;
         }
-        sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+        if (structuredTableHandler != null && sheet instanceof XSSFSheet) {
+            structuredTableHandler.shiftRows((XSSFSheet) sheet, maxRowIndex, lastRowIndex, number);
+        } else if (maxRowIndex < lastRowIndex) {
+            sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+        }
 
         // The current data is greater than unity rowindex increase
         increaseRowIndex(templateAnalysisCache, number, maxRowIndex);

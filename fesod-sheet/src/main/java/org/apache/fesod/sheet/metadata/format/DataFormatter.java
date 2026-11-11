@@ -17,6 +17,14 @@
  * under the License.
  */
 
+/*
+ * Portions of this file are derived from Apache POI's DataFormatter, which carries the following notice:
+ *
+ * 2012 - Alfresco Software, Ltd.
+ * Alfresco Software has modified source of this file
+ * The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
+ */
+
 package org.apache.fesod.sheet.metadata.format;
 
 import java.math.BigDecimal;

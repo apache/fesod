@@ -59,6 +59,15 @@ public class CellDataDataTest extends AbstractExcelTest {
         Assertions.assertEquals("2020年01月01日", row.getDate().getData());
         Assertions.assertEquals(2L, (long) row.getInteger1().getData());
         Assertions.assertEquals(2L, (long) row.getInteger2());
+
+        // A cell read as ReadCellData must tell where the cell is
+        Assertions.assertEquals(1, row.getDate().getRowIndex());
+        Assertions.assertEquals(0, row.getDate().getColumnIndex());
+        Assertions.assertEquals(1, row.getInteger1().getRowIndex());
+        Assertions.assertEquals(1, row.getInteger1().getColumnIndex());
+        Assertions.assertEquals(1, row.getFormulaValue().getRowIndex());
+        Assertions.assertEquals(3, row.getFormulaValue().getColumnIndex());
+
         if (format.toExcelTypeEnum() != ExcelTypeEnum.CSV) {
             Assertions.assertEquals(
                     "B2+C2", row.getFormulaValue().getFormulaData().getFormulaValue());

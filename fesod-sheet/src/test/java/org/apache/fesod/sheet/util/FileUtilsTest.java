@@ -284,7 +284,7 @@ class FileUtilsTest {
         File outside = tempDir.resolve("outside").toFile();
         FileUtils.createDirectory(outside);
         File keep = new File(outside, "keep.txt");
-        Files.write(keep.toPath(), "content".getBytes());
+        Files.write(keep.toPath(), "content".getBytes(StandardCharsets.UTF_8));
 
         File root = tempDir.resolve("root").toFile();
         FileUtils.createDirectory(root);
@@ -318,7 +318,7 @@ class FileUtilsTest {
         File root = tempDir.resolve("junction-root").toFile();
         FileUtils.createDirectory(root);
         Path junction = root.toPath().resolve("junction");
-        Assumptions.assumeTrue(createJunction(junction, outside), "Directory junctions are not supported");
+        createJunction(junction, outside);
 
         FileUtils.delete(root);
 
@@ -327,21 +327,27 @@ class FileUtilsTest {
         Assertions.assertTrue(keep.exists());
     }
 
-    private static boolean createJunction(Path link, File target) {
+    /**
+     * Creates a directory junction. Junctions, unlike symbolic links, need no elevation on Windows; a failure here
+     * means the test environment is broken, so it is reported instead of skipped.
+     */
+    private static void createJunction(Path link, File target) throws IOException {
+        Process process = new ProcessBuilder("cmd", "/c", "mklink", "/J", link.toString(), target.getAbsolutePath())
+                .redirectErrorStream(true)
+                .start();
         try {
-            Process process = new ProcessBuilder("cmd", "/c", "mklink", "/J", link.toString(), target.getAbsolutePath())
-                    .redirectErrorStream(true)
-                    .start();
             if (!process.waitFor(30, TimeUnit.SECONDS)) {
                 process.destroyForcibly();
-                return false;
+                throw new IOException("Timed out creating directory junction: " + link);
             }
-            return process.exitValue() == 0;
-        } catch (IOException e) {
-            return false;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return false;
+            process.destroyForcibly();
+            throw new IOException("Interrupted while creating directory junction: " + link, e);
+        }
+        if (process.exitValue() != 0) {
+            throw new IOException(
+                    "Failed to create directory junction " + link + " (mklink exit code " + process.exitValue() + ")");
         }
     }
 

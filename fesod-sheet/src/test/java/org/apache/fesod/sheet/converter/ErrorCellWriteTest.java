@@ -27,6 +27,7 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.converters.string.StringErrorConverter;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -72,6 +73,47 @@ public class ErrorCellWriteTest extends AbstractExcelTest {
                     org.apache.poi.ss.formula.eval.ErrorEval.getText(cell.getErrorCellValue()),
                     "the error code round-trips");
         }
+    }
+
+    @Test
+    public void stringErrorConverterWritesAnErrorCellOnXls() throws Exception {
+        File file = createTempFile("errorCellWriteXls", org.apache.fesod.sheet.testkit.enums.ExcelFormat.XLS);
+        ErrorModel model = new ErrorModel();
+        model.setCode("#N/A");
+
+        FesodSheet.write(file, ErrorModel.class).sheet().doWrite(Collections.singletonList(model));
+
+        try (Workbook workbook = new HSSFWorkbook(new java.io.FileInputStream(file))) {
+            org.apache.poi.ss.usermodel.Cell cell =
+                    workbook.getSheetAt(0).getRow(1).getCell(0);
+            Assertions.assertEquals(CellType.ERROR, cell.getCellType(), "the cell must be an error cell");
+            Assertions.assertEquals("#N/A", org.apache.poi.ss.formula.eval.ErrorEval.getText(cell.getErrorCellValue()));
+        }
+    }
+
+    @Test
+    public void stringErrorConverterWritesErrorTextOnCsv() throws Exception {
+        File file = createTempFile("errorCellWriteCsv", org.apache.fesod.sheet.testkit.enums.ExcelFormat.CSV);
+        ErrorModel model = new ErrorModel();
+        model.setCode("#DIV/0!");
+
+        FesodSheet.write(file, ErrorModel.class).sheet().doWrite(Collections.singletonList(model));
+
+        java.util.List<String> lines =
+                java.nio.file.Files.readAllLines(file.toPath(), java.nio.charset.StandardCharsets.UTF_8);
+        Assertions.assertEquals("\"#DIV/0!\"", lines.get(1), "CSV keeps the error text instead of an empty field");
+    }
+
+    @Test
+    public void unknownErrorTextFailsWithContext() throws Exception {
+        File file = createTempFile("errorCellWriteBad", org.apache.fesod.sheet.testkit.enums.ExcelFormat.XLSX);
+        ErrorModel model = new ErrorModel();
+        model.setCode("not-an-error");
+
+        org.apache.fesod.sheet.exception.ExcelWriteDataConvertException ex = Assertions.assertThrows(
+                org.apache.fesod.sheet.exception.ExcelWriteDataConvertException.class,
+                () -> FesodSheet.write(file, ErrorModel.class).sheet().doWrite(Collections.singletonList(model)));
+        Assertions.assertTrue(ex.getMessage().contains("not-an-error"), "the message carries the value and context");
     }
 
     @Test

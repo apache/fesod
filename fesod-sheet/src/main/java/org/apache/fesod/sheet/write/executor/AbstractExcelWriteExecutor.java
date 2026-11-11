@@ -125,8 +125,16 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
             case EMPTY:
                 return;
             case ERROR:
-                cell.setCellErrorValue(
-                        FormulaError.forString(cellData.getStringValue()).getCode());
+                try {
+                    cell.setCellErrorValue(
+                            FormulaError.forString(cellData.getStringValue()).getCode());
+                } catch (IllegalArgumentException e) {
+                    throw new ExcelWriteDataConvertException(
+                            cellWriteHandlerContext,
+                            "Not a supported error value:" + cellData.getStringValue() + "at row:"
+                                    + cellWriteHandlerContext.getRowIndex(),
+                            e);
+                }
                 return;
             default:
                 throw new ExcelWriteDataConvertException(

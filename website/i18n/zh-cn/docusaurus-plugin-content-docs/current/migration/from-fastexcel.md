@@ -297,7 +297,7 @@ FastExcel 1.3 曾提供了 `FastExcelFactory` 作为第二个入口类，其 API
 以下功能在 FastExcel 1.3.0 中不存在。迁移时值得了解，但除非你想使用它们，否则无需任何操作：
 
 - **`@FreezePane`**（`org.apache.fesod.sheet.annotation.write.style.FreezePane`）：类级注解，写入工作表时冻结行和/或列（`colSplit`、`rowSplit`、`leftmostColumn`、`topRow`）。
-- **URL 图片安全**（`org.apache.fesod.sheet.converters.url`）：`UrlImageFetchPolicy`（由 `SchemePolicy` 和 `CidrBlock` 构建）为内置的 URL 图片转换器提供 SSRF 防护。默认只允许 `http`/`https` 与公网地址；可通过白名单放行私网、主机和 CIDR，并可限制重定向次数（`maxRedirects`）与图片大小（`maxImageBytes`）。
+- **URL 图片安全**（`org.apache.fesod.sheet.converters.url`）：`UrlImageFetchPolicy`（由 `SchemePolicy` 和 `CidrBlock` 构建）为内置的 URL 图片转换器提供 SSRF 防护。自 2.1.0-incubating 起，远程 URL 图片获取**默认关闭**，必须通过 `UrlImageConverter.setFetchPolicy(...)` 配置显式的精确主机白名单（`allowedHosts`，不支持通配符）才能启用。白名单内的主机仍只允许 `http`/`https` 与公网地址，除非另外放行私网、主机或 CIDR；重定向次数（`maxRedirects`）与图片大小（`maxImageBytes`）也会受到限制。如果原 FastExcel 代码写出了 `URL` 类型的图片字段，请在应用启动时配置该策略，否则写出会因 `IOException`（`Remote URL image fetching is disabled`）而失败。详见 [URL 来源](../sheet/write/image.md#url-来源)与[安全模型](/community/security-model)。
 - **字符串图片转换器**（`org.apache.fesod.sheet.converters.string`）：`StringBase64ImageConverter`（base64 值，可选 `data:` 前缀）与 `StringPathnameImageConverter`（本地文件路径）将字符串转图片的转换显式化，兼容的 `StringImageConverter` 仍然保留。
 - **`HeadBuilder` / `DefaultHeadBuilder`**（`org.apache.fesod.sheet.metadata`）：无 Bean 模式下的流式表头构建，例如 `FesodSheet.write(pathname).head(builder -> builder.column("ID", 2).columns("User Info", sub -> sub.column("Name").column("Age")))`。
 - **`HeaderMergeStrategy`**（`org.apache.fesod.sheet.enums.HeaderMergeStrategy`）：显式控制表头合并——`NONE`、`HORIZONTAL_ONLY`、`VERTICAL_ONLY`、`FULL_RECTANGLE`、`AUTO`——通过写构建器上的 `headerMergeStrategy(...)` 设置，取代布尔开关 `automaticMergeHead`。

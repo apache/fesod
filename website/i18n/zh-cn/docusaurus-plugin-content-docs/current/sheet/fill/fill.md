@@ -478,3 +478,9 @@ public void compositeFill() {
 </tbody>
 </table>
 </div>
+
+### 交错分页填充
+
+对于上下分区排列的命名列表，可以交替填充各列表的分页，例如依次填充 `upper` 第 1 页、`lower` 第 1 页、`upper` 第 2 页、`lower` 第 2 页。每次纵向列表填充均传入 `FillConfig.builder().forceNewRow(true).build()`，为追加的数据插入行并将下方分区下移。每个列表会从自己上次填充的数据之后继续追加。
+
+与其他使用 `forceNewRow(true)` 的填充一样，移动行时工作簿会保留在内存中，请据此选择分页和工作簿大小。

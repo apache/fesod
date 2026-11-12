@@ -40,6 +40,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.common.beans.BeanWrappers;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.common.util.StringUtils;
@@ -50,7 +52,6 @@ import org.apache.fesod.sheet.enums.WriteTemplateAnalysisCellTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.apache.fesod.sheet.util.PoiUtils;
@@ -215,13 +216,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         if (CollectionUtils.isEmpty(analysisCellList) || oneRowData == null) {
             return;
         }
-        Map dataMap;
-        if (oneRowData instanceof Map) {
-            dataMap = (Map) oneRowData;
-        } else {
-            dataMap = BeanMapUtils.create(oneRowData);
-        }
-        Set<String> dataKeySet = new HashSet<>(dataMap.keySet());
+        BeanWrapper beanWrapper = BeanWrappers.create(oneRowData);
+        Set<String> beanPropertyNames = beanWrapper.getPropertyNames();
 
         RowWriteHandlerContext rowWriteHandlerContext =
                 WriteHandlerUtils.createRowWriteHandlerContext(writeContext, null, relativeRowIndex, Boolean.FALSE);
@@ -240,11 +236,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
             if (analysisCell.getOnlyOneVariable()) {
                 String variable = analysisCell.getVariableList().get(0);
                 Object value = null;
-                if (dataKeySet.contains(variable)) {
-                    value = dataMap.get(variable);
+                if (beanPropertyNames.contains(variable)) {
+                    value = beanWrapper.getProperty(variable);
                 }
                 ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                        dataMap,
+                        beanWrapper,
                         writeContext
                                 .currentWriteHolder()
                                 .excelWriteHeadProperty()
@@ -255,7 +251,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
 
                 createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext);
                 cellWriteHandlerContext.setOriginalValue(value);
-                cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
+                cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(beanWrapper, variable, value));
 
                 converterAndSet(cellWriteHandlerContext);
                 WriteCellData<?> cellData = cellWriteHandlerContext.getFirstCellData();
@@ -280,11 +276,11 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 for (String variable : analysisCell.getVariableList()) {
                     cellValueBuild.append(analysisCell.getPrepareDataList().get(index++));
                     Object value = null;
-                    if (dataKeySet.contains(variable)) {
-                        value = dataMap.get(variable);
+                    if (beanPropertyNames.contains(variable)) {
+                        value = beanWrapper.getProperty(variable);
                     }
                     ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                            dataMap,
+                            beanWrapper,
                             writeContext
                                     .currentWriteHolder()
                                     .excelWriteHeadProperty()
@@ -292,7 +288,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                             variable,
                             writeContext.currentWriteHolder());
                     cellWriteHandlerContext.setOriginalValue(value);
-                    cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
+                    cellWriteHandlerContext.setOriginalFieldClass(
+                            FieldUtils.getFieldClass(beanWrapper, variable, value));
                     cellWriteHandlerContext.setExcelContentProperty(excelContentProperty);
                     cellWriteHandlerContext.setTargetCellDataType(CellDataTypeEnum.STRING);
 

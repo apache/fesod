@@ -232,7 +232,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 readWorkbookHolder.getReadCache().destroy();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         try {
             if ((readWorkbookHolder instanceof XlsxReadWorkbookHolder)
@@ -240,7 +240,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 ((XlsxReadWorkbookHolder) readWorkbookHolder).getOpcPackage().revert();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         try {
             if ((readWorkbookHolder instanceof XlsReadWorkbookHolder)
@@ -250,7 +250,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                         .close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
 
         // close csv.
@@ -261,7 +261,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 ((CsvReadWorkbookHolder) readWorkbookHolder).getCsvParser().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
 
         try {
@@ -270,14 +270,14 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 readWorkbookHolder.getInputStream().close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         try {
             if (readWorkbookHolder.getTempFile() != null) {
                 FileUtils.delete(readWorkbookHolder.getTempFile());
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
 
         clearEncrypt03();
@@ -287,6 +287,19 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
         if (throwable != null) {
             throw new ExcelAnalysisException("Can not close IO.", throwable);
         }
+    }
+
+    /**
+     * Returns the first recorded failure, attaching any later one to it as a suppressed exception.
+     */
+    private static Throwable recordFailure(Throwable recorded, Throwable t) {
+        if (recorded == null) {
+            return t;
+        }
+        if (t != null && recorded != t) {
+            recorded.addSuppressed(t);
+        }
+        return recorded;
     }
 
     /**

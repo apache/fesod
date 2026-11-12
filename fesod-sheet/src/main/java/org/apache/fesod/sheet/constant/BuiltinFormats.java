@@ -503,15 +503,21 @@ public class BuiltinFormats {
     public static final Map<String, Short> BUILTIN_FORMATS_MAP_US = buildMap(BUILTIN_FORMATS_US);
     public static final short MIN_CUSTOM_DATA_FORMAT_INDEX = 82;
 
+    // Indexes where the shipped US table differs from the all-language entry (the "$" currency formats 5-8, 42 and
+    // 44), computed once so later edits to the public arrays do not change them
+    private static final boolean[] US_OVERRIDES = usOverrides();
+
     public static String getBuiltinFormat(Short index, String defaultFormat, Locale locale) {
         if (index == null || index <= 0) {
             return defaultFormat;
         }
 
-        // Give priority to checking if it is the default value for all languages
+        String[] builtinFormat = switchBuiltinFormats(locale);
+        // Give priority to checking if it is the default value for all languages, except at US_OVERRIDES under the
+        // US locale, where the file's format and then the US table are used
         if (index < BUILTIN_FORMATS_ALL_LANGUAGES.length) {
             String format = BUILTIN_FORMATS_ALL_LANGUAGES[index];
-            if (format != null) {
+            if (format != null && !(builtinFormat == BUILTIN_FORMATS_US && US_OVERRIDES[index])) {
                 return format;
             }
         }
@@ -522,7 +528,6 @@ public class BuiltinFormats {
         }
 
         // Finally, try using the built-in format
-        String[] builtinFormat = switchBuiltinFormats(locale);
         if (index >= builtinFormat.length) {
             return defaultFormat;
         }
@@ -549,5 +554,14 @@ public class BuiltinFormats {
             map.put(builtinFormats[i], (short) i);
         }
         return map;
+    }
+
+    private static boolean[] usOverrides() {
+        boolean[] overrides = new boolean[BUILTIN_FORMATS_ALL_LANGUAGES.length];
+        for (int i = 0; i < overrides.length && i < BUILTIN_FORMATS_US.length; i++) {
+            String format = BUILTIN_FORMATS_ALL_LANGUAGES[i];
+            overrides[i] = format != null && !format.equals(BUILTIN_FORMATS_US[i]);
+        }
+        return overrides;
     }
 }

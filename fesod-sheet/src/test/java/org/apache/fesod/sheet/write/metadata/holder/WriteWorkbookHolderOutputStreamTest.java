@@ -19,15 +19,16 @@
 
 package org.apache.fesod.sheet.write.metadata.holder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for the output stream lifecycle of {@link WriteWorkbookHolder} when workbook
@@ -38,11 +39,13 @@ public class WriteWorkbookHolderOutputStreamTest {
     @TempDir
     Path tempDir;
 
-    @Test
-    void constructorClosesOutputFileStreamWhenTemplateCopyFails() throws IOException {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void constructorClosesOutputFileStreamWhenTemplateCopyFails(boolean autoClose) throws IOException {
         File outputFile = tempDir.resolve("output.xlsx").toFile();
         WriteWorkbook writeWorkbook = new WriteWorkbook();
         writeWorkbook.setFile(outputFile);
+        writeWorkbook.setAutoCloseStream(autoClose);
         writeWorkbook.setTemplateFile(tempDir.resolve("missing-template.xlsx").toFile());
 
         Assertions.assertThrows(ExcelGenerateException.class, () -> new WriteWorkbookHolder(writeWorkbook));
@@ -52,16 +55,19 @@ public class WriteWorkbookHolderOutputStreamTest {
         Assertions.assertTrue(outputFile.delete(), "output stream should be closed after initialization failure");
     }
 
-    @Test
-    void constructorDoesNotCloseCallerProvidedOutputStreamWhenAutoCloseDisabled() throws IOException {
-        WriteWorkbook writeWorkbook = new WriteWorkbook();
-        writeWorkbook.setAutoCloseStream(false);
-        writeWorkbook.setOutputStream(new ByteArrayOutputStream());
-        writeWorkbook.setTemplateFile(tempDir.resolve("missing-template.xlsx").toFile());
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void constructorHonorsCallerProvidedOutputStreamOwnership(boolean autoClose) throws IOException {
+        try (FileOutputStream output =
+                new FileOutputStream(tempDir.resolve("output.xlsx").toFile())) {
+            WriteWorkbook writeWorkbook = new WriteWorkbook();
+            writeWorkbook.setAutoCloseStream(autoClose);
+            writeWorkbook.setOutputStream(output);
+            writeWorkbook.setTemplateFile(
+                    tempDir.resolve("missing-template.xlsx").toFile());
 
-        Assertions.assertThrows(ExcelGenerateException.class, () -> new WriteWorkbookHolder(writeWorkbook));
-        // autoCloseStream(false) opts into manual stream management, so the holder must not close
-        // caller-provided streams — mirroring the success-path contract.
-        Assertions.assertDoesNotThrow(() -> writeWorkbook.getOutputStream().write(1));
+            Assertions.assertThrows(ExcelGenerateException.class, () -> new WriteWorkbookHolder(writeWorkbook));
+            Assertions.assertEquals(!autoClose, output.getFD().valid());
+        }
     }
 }

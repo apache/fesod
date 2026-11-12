@@ -49,7 +49,8 @@ public class ExcelWriterBuilder extends AbstractExcelWriterParameterBuilder<Exce
     }
 
     /**
-     * Default true
+     * Whether to close caller-provided template input and output streams. Default true.
+     * Streams opened internally for files are always closed.
      *
      * @param autoCloseStream
      * @return
@@ -128,8 +129,8 @@ public class ExcelWriterBuilder extends AbstractExcelWriterParameterBuilder<Exce
     }
 
     /**
-     * Template file.
-     * This file is read into memory, excessive cases can lead to OOM.
+     * Template stream, read through a bounded buffer when the writer is built.
+     * The parsed workbook still resides in memory, so large templates can lead to OOM.
      */
     public ExcelWriterBuilder withTemplate(InputStream templateInputStream) {
         writeWorkbook.setTemplateInputStream(templateInputStream);
@@ -137,8 +138,8 @@ public class ExcelWriterBuilder extends AbstractExcelWriterParameterBuilder<Exce
     }
 
     /**
-     * Template file.
-     * This file is read into memory, excessive cases can lead to OOM.
+     * Template file, read through a bounded buffer when the writer is built.
+     * The parsed workbook still resides in memory, so large templates can lead to OOM.
      */
     public ExcelWriterBuilder withTemplate(File templateFile) {
         writeWorkbook.setTemplateFile(templateFile);
@@ -146,8 +147,8 @@ public class ExcelWriterBuilder extends AbstractExcelWriterParameterBuilder<Exce
     }
 
     /**
-     * Template file.
-     * This file is read into memory, excessive cases can lead to OOM.
+     * Template file, read through a bounded buffer when the writer is built.
+     * The parsed workbook still resides in memory, so large templates can lead to OOM.
      */
     public ExcelWriterBuilder withTemplate(String pathName) {
         return withTemplate(new File(pathName));

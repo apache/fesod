@@ -19,7 +19,6 @@
 
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Translate from '@docusaurus/Translate';
@@ -42,7 +41,6 @@ function columnLetter(index) {
 }
 
 function HomepageHeader() {
-    const {siteConfig} = useDocusaurusContext();
     return (
         <header className={clsx('hero hero--primary', styles.heroBanner)}>
             <div className={styles.gridOverlay} aria-hidden="true" />
@@ -58,7 +56,7 @@ function HomepageHeader() {
             </div>
             <div className="container">
                 <Heading as="h1" className="hero__title">
-                    {siteConfig.title}
+                    Apache Fesod™ (Incubating)
                 </Heading>
                 <p className="hero__subtitle">
                     <Translate>site.description</Translate>
@@ -81,11 +79,10 @@ function HomepageHeader() {
 }
 
 export default function Home() {
-    const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
             title=""
-            description="Apache Fesod (Incubating) Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
+            description="Apache Fesod™ (Incubating) Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
             <HomepageHeader/>
             <main>
                 <HomepageFeatures/>

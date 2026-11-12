@@ -42,7 +42,6 @@ function columnLetter(index) {
 }
 
 function HomepageHeader() {
-    const {siteConfig} = useDocusaurusContext();
     return (
         <header className={clsx('hero hero--primary', styles.heroBanner)}>
             <div className={styles.gridOverlay} aria-hidden="true" />
@@ -58,7 +57,7 @@ function HomepageHeader() {
             </div>
             <div className="container">
                 <Heading as="h1" className="hero__title">
-                    {siteConfig.title}
+                    Apache Fesod™ (Incubating)
                 </Heading>
                 <p className="hero__subtitle">
                     <Translate>site.description</Translate>
@@ -85,7 +84,7 @@ export default function Home() {
     return (
         <Layout
             title=""
-            description="Apache Fesod (Incubating) Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
+            description="Apache Fesod™ (Incubating) Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
             <HomepageHeader/>
             <main>
                 <HomepageFeatures/>

@@ -27,7 +27,9 @@ package org.apache.fesod.sheet.analysis.v03.handlers;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.exception.ExcelAnalysisException;
 import org.apache.fesod.sheet.exception.ExcelAnalysisStopException;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadWorkbookHolder;
@@ -60,9 +62,13 @@ public class BofRecordHandler extends AbstractXlsRecordHandler {
             readSheetIndex = 0;
             xlsReadWorkbookHolder.setReadSheetIndex(readSheetIndex);
         }
-        ReadSheet actualReadSheet =
-                xlsReadWorkbookHolder.getActualSheetDataList().get(readSheetIndex);
-        assert actualReadSheet != null : "Can't find the sheet.";
+
+        List<ReadSheet> actualSheetDataList = xlsReadWorkbookHolder.getActualSheetDataList();
+        if (CollectionUtils.isEmpty(actualSheetDataList) || readSheetIndex >= actualSheetDataList.size()) {
+            throw new ExcelAnalysisException("Cannot find sheet at index " + readSheetIndex + ", total sheet count is "
+                    + CollectionUtils.size(actualSheetDataList));
+        }
+        ReadSheet actualReadSheet = actualSheetDataList.get(readSheetIndex);
         // Copy the parameter to the current sheet
         ReadSheet readSheet = SheetUtils.match(actualReadSheet, xlsReadContext);
         if (readSheet != null) {

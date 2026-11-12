@@ -41,7 +41,7 @@ class ExcelDateFormatDetector {
     /**
      * Is a cache of dates
      */
-    private static final ThreadLocal<Map<Short, Boolean>> DATE_THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, Boolean>> DATE_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * The following patterns are used in {@link #isADateFormat(Short, String)}
@@ -73,19 +73,25 @@ class ExcelDateFormatDetector {
         if (formatIndex == null) {
             return false;
         }
-        Map<Short, Boolean> isDateCache = DATE_THREAD_LOCAL.get();
+        // Format indexes are defined per workbook, so the same index can map to different format strings.
+        final String cacheKey = cacheKey(formatIndex, formatString);
+        Map<String, Boolean> isDateCache = DATE_THREAD_LOCAL.get();
         if (isDateCache == null) {
             isDateCache = MapUtils.newHashMap();
             DATE_THREAD_LOCAL.set(isDateCache);
         } else {
-            Boolean isDatecachedDataList = isDateCache.get(formatIndex);
+            Boolean isDatecachedDataList = isDateCache.get(cacheKey);
             if (isDatecachedDataList != null) {
                 return isDatecachedDataList;
             }
         }
         boolean isDate = isADateFormatUncached(formatIndex, formatString);
-        isDateCache.put(formatIndex, isDate);
+        isDateCache.put(cacheKey, isDate);
         return isDate;
+    }
+
+    private static String cacheKey(Short formatIndex, String formatString) {
+        return formatIndex + "\u0000" + (formatString == null ? "" : formatString);
     }
 
     /**

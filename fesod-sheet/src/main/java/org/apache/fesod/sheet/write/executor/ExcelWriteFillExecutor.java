@@ -565,6 +565,9 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                     suffixIndex = -1;
                 }
             }
+            if (suffixIndex < 0) {
+                break out;
+            }
             if (analysisCell == null) {
                 analysisCell = initAnalysisCell(rowIndex, columnIndex);
             }

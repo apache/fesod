@@ -20,6 +20,8 @@
 package org.apache.fesod.sheet.converters.zoneddatetime;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -29,18 +31,40 @@ import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.fesod.sheet.testkit.helpers.RoundTripHelper;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
+import org.apache.fesod.sheet.testkit.params.FormatScope;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
 @Tag(Tags.ROUND_TRIP)
 class ZonedDateTimeDateRoundTripTest extends AbstractExcelTest {
+    private static final ZonedDateTime VALUE = ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("Asia/Shanghai"));
+
+    @Test
+    void csvDateConverterPreservesZone() throws Exception {
+        File file = createTempFile(ExcelFormat.CSV);
+        ZonedDateTimeDateWriteData input = new ZonedDateTimeDateWriteData();
+        input.setZoned(VALUE);
+
+        List<ZonedDateTimePlainReadData> result = RoundTripHelper.writeAndRead(
+                file,
+                ZonedDateTimeDateWriteData.class,
+                Collections.singletonList(input),
+                ZonedDateTimePlainReadData.class);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(VALUE, result.get(0).getZoned());
+        String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+        Assertions.assertTrue(content.contains("2020-01-02T03:04:05+08:00[Asia/Shanghai]"), content);
+    }
+
     @ParameterizedTest
-    @ExcelFormatSource
-    void dateConverterRoundTripUsesSystemZone(ExcelFormat format) throws Exception {
+    @ExcelFormatSource(FormatScope.BINARY)
+    void binaryDateConverterDropsZone(ExcelFormat format) throws Exception {
         File file = createTempFile(format);
         ZonedDateTimeDateWriteData input = new ZonedDateTimeDateWriteData();
-        input.setZoned(ZonedDateTime.of(2020, 1, 2, 3, 4, 5, 0, ZoneId.of("Asia/Shanghai")));
+        input.setZoned(VALUE);
 
         List<ZonedDateTimePlainReadData> result = RoundTripHelper.writeAndRead(
                 file,
@@ -50,7 +74,7 @@ class ZonedDateTimeDateRoundTripTest extends AbstractExcelTest {
 
         Assertions.assertEquals(1, result.size());
         ZonedDateTime read = result.get(0).getZoned();
-        Assertions.assertEquals(input.getZoned().toLocalDateTime(), read.toLocalDateTime());
+        Assertions.assertEquals(VALUE.toLocalDateTime(), read.toLocalDateTime());
         Assertions.assertEquals(ZoneId.systemDefault(), read.getZone());
     }
 }

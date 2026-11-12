@@ -19,10 +19,7 @@
 
 package org.apache.fesod.sheet.converters.zoneddatetime;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -46,21 +43,8 @@ public class ZonedDateTimeStringConverter implements Converter<ZonedDateTime> {
     @Override
     public ZonedDateTime convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        String format = dateTimeFormat(contentProperty);
-        try {
-            return DateUtils.parseZonedDateTime(cellData.getStringValue(), format, globalConfiguration.getLocale());
-        } catch (DateTimeParseException e) {
-            if (!StringUtils.isEmpty(format)) {
-                throw e;
-            }
-            try {
-                return DateUtils.parseLocalDateTime(cellData.getStringValue(), null, globalConfiguration.getLocale())
-                        .atZone(ZoneId.systemDefault());
-            } catch (DateTimeParseException localDateTimeException) {
-                e.addSuppressed(localDateTimeException);
-                throw e;
-            }
-        }
+        return DateUtils.parseZonedDateTime(
+                cellData.getStringValue(), dateTimeFormat(contentProperty), globalConfiguration.getLocale());
     }
 
     @Override

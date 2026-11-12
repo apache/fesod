@@ -21,20 +21,25 @@ package org.apache.fesod.sheet.converters.zoneddatetime;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
+import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 
 /**
  * ZonedDateTime and date converter.
  *
- * <p>DATE cells store only a local date-time, so the zone is discarded when writing. CSV output therefore
- * contains no zone. Reading it back without an explicit {@code @DateTimeFormat} applies the JVM default time
- * zone. Use {@link ZonedDateTimeStringConverter} when the zone must be preserved.
+ * <p>DATE cells store only a local date-time, so XLSX and XLS write the local date-time and discard the zone.
+ * For CSV without an explicit {@code @DateTimeFormat}, this converter writes an ISO-8601 string with the zone
+ * so the value can be read back as a {@link ZonedDateTime}. A configured {@code @DateTimeFormat} keeps the
+ * DATE-cell behavior and does not preserve the zone; use {@link ZonedDateTimeStringConverter} when a custom
+ * string representation must carry the zone.
  */
 public class ZonedDateTimeDateConverter implements Converter<ZonedDateTime> {
     @Override
@@ -43,19 +48,38 @@ public class ZonedDateTimeDateConverter implements Converter<ZonedDateTime> {
     }
 
     @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<ZonedDateTime> context) throws Exception {
+        if (isCsv(context) && StringUtils.isEmpty(format(context.getContentProperty()))) {
+            return new WriteCellData<>(context.getValue().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
+        }
+        return convertToExcelData(
+                context.getValue(),
+                context.getContentProperty(),
+                context.getWriteContext().currentWriteHolder().globalConfiguration());
+    }
+
+    @Override
     public WriteCellData<?> convertToExcelData(
             ZonedDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws Exception {
         LocalDateTime localDateTime = value.toLocalDateTime();
         WriteCellData<?> cellData = new WriteCellData<>(localDateTime);
-        String format = null;
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            format = contentProperty.getDateTimeFormatProperty().getFormat();
-            if (StringUtils.isEmpty(format)) {
-                format = null;
-            }
-        }
-        WorkBookUtil.fillDataFormat(cellData, format, DateUtils.defaultDateFormat);
+        WorkBookUtil.fillDataFormat(cellData, format(contentProperty), DateUtils.defaultDateFormat);
         return cellData;
+    }
+
+    private boolean isCsv(WriteConverterContext<ZonedDateTime> context) {
+        return context.getWriteContext() != null
+                && context.getWriteContext().writeWorkbookHolder() != null
+                && ExcelTypeEnum.CSV.equals(
+                        context.getWriteContext().writeWorkbookHolder().getExcelType());
+    }
+
+    private String format(ExcelContentProperty contentProperty) {
+        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
+            return null;
+        }
+        String format = contentProperty.getDateTimeFormatProperty().getFormat();
+        return StringUtils.isEmpty(format) ? null : format;
     }
 }

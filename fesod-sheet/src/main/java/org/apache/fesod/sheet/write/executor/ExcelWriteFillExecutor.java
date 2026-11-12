@@ -39,6 +39,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.common.util.MapUtils;
@@ -61,17 +62,33 @@ import org.apache.fesod.sheet.write.metadata.fill.AnalysisCell;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
 
 /**
  * Fill the data into excel
  *
  *
  */
+@Slf4j
 public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
 
     private static final String ESCAPE_FILL_PREFIX = "\\\\\\{";
@@ -176,9 +193,6 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         }
         Sheet cachedSheet = writeContext.writeSheetHolder().getCachedSheet();
         int lastRowIndex = cachedSheet.getLastRowNum();
-        if (maxRowIndex >= lastRowIndex) {
-            return;
-        }
         Sheet sheet = writeContext.writeSheetHolder().getCachedSheet();
         int number = size;
         if (collectionLastIndexMap == null) {
@@ -187,11 +201,112 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         if (number <= 0) {
             return;
         }
-        sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+        if (maxRowIndex < lastRowIndex) {
+            sheet.shiftRows(maxRowIndex + 1, lastRowIndex, number, true, false);
+            if (sheet instanceof XSSFSheet) {
+                shiftDataValidationFormulas((XSSFSheet) sheet, maxRowIndex + 1, lastRowIndex, number);
+            }
+        }
+        shiftDataValidationRanges(sheet, maxRowIndex, number);
 
         // The current data is greater than unity rowindex increase
         increaseRowIndex(templateAnalysisCache, number, maxRowIndex);
         increaseRowIndex(templateCollectionAnalysisCache, number, maxRowIndex);
+    }
+
+    private void shiftDataValidationFormulas(XSSFSheet sheet, int firstRow, int lastRow, int number) {
+        XSSFWorkbook workbook = sheet.getWorkbook();
+        FormulaShifter shifter = FormulaShifter.createForRowShift(
+                workbook.getSheetIndex(sheet),
+                sheet.getSheetName(),
+                firstRow,
+                lastRow,
+                number,
+                workbook.getSpreadsheetVersion());
+        XSSFEvaluationWorkbook evaluationWorkbook = XSSFEvaluationWorkbook.create(workbook);
+        for (Sheet workbookSheet : workbook) {
+            XSSFSheet validationSheet = (XSSFSheet) workbookSheet;
+            if (!validationSheet.getCTWorksheet().isSetDataValidations()) {
+                continue;
+            }
+            int sheetIndex = workbook.getSheetIndex(validationSheet);
+            for (CTDataValidation validation :
+                    validationSheet.getCTWorksheet().getDataValidations().getDataValidationList()) {
+                if (validation.isSetFormula1()) {
+                    validation.setFormula1(shiftDataValidationFormula(
+                            validation.getFormula1(), shifter, evaluationWorkbook, sheetIndex));
+                }
+                if (validation.isSetFormula2()) {
+                    validation.setFormula2(shiftDataValidationFormula(
+                            validation.getFormula2(), shifter, evaluationWorkbook, sheetIndex));
+                }
+            }
+        }
+    }
+
+    private String shiftDataValidationFormula(
+            String formula, FormulaShifter shifter, XSSFEvaluationWorkbook workbook, int sheetIndex) {
+        if (StringUtils.isEmpty(formula)) {
+            return formula;
+        }
+        try {
+            Ptg[] tokens = FormulaParser.parse(formula, workbook, FormulaType.CELL, sheetIndex);
+            if (shifter.adjustFormula(tokens, sheetIndex)) {
+                return FormulaRenderer.toFormulaString(workbook, tokens);
+            }
+        } catch (FormulaParseException e) {
+            // Keep formulas using Excel syntax that POI does not support.
+            log.warn("Unable to shift data validation formula: {}", formula, e);
+        }
+        return formula;
+    }
+
+    private void shiftDataValidationRanges(Sheet sheet, int afterRow, int number) {
+        int lastRow = sheet.getWorkbook().getSpreadsheetVersion().getLastRowIndex();
+        if (sheet instanceof XSSFSheet) {
+            XSSFSheet xssfSheet = (XSSFSheet) sheet;
+            if (!xssfSheet.getCTWorksheet().isSetDataValidations()) {
+                return;
+            }
+            for (CTDataValidation validation :
+                    xssfSheet.getCTWorksheet().getDataValidations().getDataValidationList()) {
+                List<String> shifted = new ArrayList<>();
+                for (Object reference : validation.getSqref()) {
+                    CellRangeAddress range = CellRangeAddress.valueOf(reference.toString());
+                    shiftDataValidationRange(range, afterRow, number, lastRow);
+                    shifted.add(range.formatAsString());
+                }
+                validation.setSqref(shifted);
+            }
+        } else if (sheet instanceof HSSFSheet) {
+            HSSFSheet hssfSheet = (HSSFSheet) sheet;
+            for (RecordBase record : hssfSheet.getSheet().getRecords()) {
+                if (record instanceof DataValidityTable) {
+                    ((DataValidityTable) record).visitContainedRecords(validationRecord -> {
+                        if (validationRecord instanceof DVRecord) {
+                            for (CellRangeAddress range : ((DVRecord) validationRecord)
+                                    .getCellRangeAddress()
+                                    .getCellRangeAddresses()) {
+                                shiftDataValidationRange(range, afterRow, number, lastRow);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private void shiftDataValidationRange(CellRangeAddress range, int afterRow, int number, int lastRow) {
+        if (range.getFirstRow() > afterRow) {
+            int firstRow = range.getFirstRow() + number;
+            if (firstRow > lastRow) {
+                throw new ExcelGenerateException("Cannot shift data validation beyond the last worksheet row.");
+            }
+            range.setFirstRow(firstRow);
+        }
+        if (range.getLastRow() > afterRow) {
+            range.setLastRow(Math.min(range.getLastRow() + number, lastRow));
+        }
     }
 
     private void increaseRowIndex(

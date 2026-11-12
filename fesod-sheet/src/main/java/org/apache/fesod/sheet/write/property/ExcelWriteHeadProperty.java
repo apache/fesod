@@ -35,6 +35,7 @@ import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.annotation.AnnotatedElementUtils;
 import org.apache.fesod.sheet.annotation.write.style.ColumnWidth;
 import org.apache.fesod.sheet.annotation.write.style.ContentLoopMerge;
 import org.apache.fesod.sheet.annotation.write.style.ContentRowHeight;
@@ -77,15 +78,18 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
         if (getHeadKind() != HeadKindEnum.CLASS) {
             return;
         }
-        this.headRowHeightProperty = RowHeightProperty.build(headClazz.getAnnotation(HeadRowHeight.class));
-        this.contentRowHeightProperty = RowHeightProperty.build(headClazz.getAnnotation(ContentRowHeight.class));
-        this.onceAbsoluteMergeProperty =
-                OnceAbsoluteMergeProperty.build(headClazz.getAnnotation(OnceAbsoluteMerge.class));
-        this.freezePaneProperty = SheetFreezePaneProperty.build(headClazz.getAnnotation(FreezePane.class));
+        this.headRowHeightProperty =
+                RowHeightProperty.build(AnnotatedElementUtils.getMergedAnnotation(headClazz, HeadRowHeight.class));
+        this.contentRowHeightProperty =
+                RowHeightProperty.build(AnnotatedElementUtils.getMergedAnnotation(headClazz, ContentRowHeight.class));
+        this.onceAbsoluteMergeProperty = OnceAbsoluteMergeProperty.build(
+                AnnotatedElementUtils.getMergedAnnotation(headClazz, OnceAbsoluteMerge.class));
+        this.freezePaneProperty =
+                SheetFreezePaneProperty.build(AnnotatedElementUtils.getMergedAnnotation(headClazz, FreezePane.class));
 
-        ColumnWidth parentColumnWidth = headClazz.getAnnotation(ColumnWidth.class);
-        HeadStyle parentHeadStyle = headClazz.getAnnotation(HeadStyle.class);
-        HeadFontStyle parentHeadFontStyle = headClazz.getAnnotation(HeadFontStyle.class);
+        ColumnWidth parentColumnWidth = AnnotatedElementUtils.getMergedAnnotation(headClazz, ColumnWidth.class);
+        HeadStyle parentHeadStyle = AnnotatedElementUtils.getMergedAnnotation(headClazz, HeadStyle.class);
+        HeadFontStyle parentHeadFontStyle = AnnotatedElementUtils.getMergedAnnotation(headClazz, HeadFontStyle.class);
 
         for (Map.Entry<Integer, Head> entry : getHeadMap().entrySet()) {
             Head headData = entry.getValue();
@@ -95,25 +99,26 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
             }
             Field field = headData.getField();
 
-            ColumnWidth columnWidth = field.getAnnotation(ColumnWidth.class);
+            ColumnWidth columnWidth = AnnotatedElementUtils.getMergedAnnotation(field, ColumnWidth.class);
             if (columnWidth == null) {
                 columnWidth = parentColumnWidth;
             }
             headData.setColumnWidthProperty(ColumnWidthProperty.build(columnWidth));
 
-            HeadStyle headStyle = field.getAnnotation(HeadStyle.class);
+            HeadStyle headStyle = AnnotatedElementUtils.getMergedAnnotation(field, HeadStyle.class);
             if (headStyle == null) {
                 headStyle = parentHeadStyle;
             }
             headData.setHeadStyleProperty(StyleProperty.build(headStyle));
 
-            HeadFontStyle headFontStyle = field.getAnnotation(HeadFontStyle.class);
+            HeadFontStyle headFontStyle = AnnotatedElementUtils.getMergedAnnotation(field, HeadFontStyle.class);
             if (headFontStyle == null) {
                 headFontStyle = parentHeadFontStyle;
             }
             headData.setHeadFontProperty(FontProperty.build(headFontStyle));
 
-            headData.setLoopMergeProperty(LoopMergeProperty.build(field.getAnnotation(ContentLoopMerge.class)));
+            headData.setLoopMergeProperty(
+                    LoopMergeProperty.build(AnnotatedElementUtils.getMergedAnnotation(field, ContentLoopMerge.class)));
         }
     }
 

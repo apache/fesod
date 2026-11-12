@@ -32,20 +32,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Set the height of each table
- *
- *
+ * Sets the height for each header row, in points.
+ * <p>
+ * Applied at the class level; all header rows share the same height.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface HeadRowHeight {
+
     /**
-     * Set the header height
+     * The height of each header row, in points.
      * <p>
-     * -1 mean the auto set height
+     * A value of {@code -1} means the height will be adjusted automatically.
      *
-     * @return Header height
+     * @return the header row height in points, or {@code -1} for automatic height
      */
     short value() default -1;
 }

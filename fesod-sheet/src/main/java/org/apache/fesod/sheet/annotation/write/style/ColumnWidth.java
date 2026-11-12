@@ -32,9 +32,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Set the width of the table
+ * Sets the width of a column.
+ * <p>
+ * When declared on a field, it applies to that column only. When declared on a class, it
+ * provides the default width for all columns whose field does not declare its own
+ * {@code @ColumnWidth}.
  *
- *
+ * @see org.apache.fesod.sheet.annotation.write.style.ContentRowHeight
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -42,11 +46,11 @@ import java.lang.annotation.Target;
 public @interface ColumnWidth {
 
     /**
-     * Column width
+     * The column width, measured in characters of the default font width.
      * <p>
-     * -1 means the default column width is used
+     * A value of {@code -1} means the workbook's default column width is used.
      *
-     * @return Column width
+     * @return the column width, or {@code -1} to use the default
      */
     int value() default -1;
 }

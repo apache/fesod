@@ -39,11 +39,24 @@ import org.apache.fesod.sheet.read.metadata.holder.xlsx.XlsxReadSheetHolder;
 import org.xml.sax.Attributes;
 
 /**
- * Cell Handler
- *
+ * SAX handler for the XLSX {@code <row>} element.
+ * <p>
+ * On {@code startElement}, it reconciles the physical row index with the sheet's cursor so that
+ * rows missing from the XML are surfaced as {@link RowTypeEnum#EMPTY} empty rows. On
+ * {@code endElement}, it classifies the collected cells and dispatches the completed row to the
+ * {@link org.apache.fesod.sheet.read.processor.AnalysisEventProcessor}.
  */
 public class RowTagHandler extends AbstractXlsxTagHandler {
 
+    /**
+     * Handles the start of a {@code <row>} element: resolves the target row index from the {@code r}
+     * attribute and, when it jumps ahead of the current cursor, emits intervening empty rows before
+     * advancing the sheet holder to the new index.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name (always the {@code <row>} element)
+     * @param attributes      the tag attributes, from which the {@code r} attribute is read
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
@@ -64,6 +77,14 @@ public class RowTagHandler extends AbstractXlsxTagHandler {
         xlsxReadSheetHolder.setRowIndex(rowIndex);
     }
 
+    /**
+     * Handles the end of a {@code <row>} element: determines whether the row carries real data or
+     * should be downgraded to {@link RowTypeEnum#EMPTY} when every cell is empty, then publishes the
+     * row through the read holder and resets the sheet holder's column index and cell map.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name (always the {@code <row>} element)
+     */
     @Override
     public void endElement(XlsxReadContext xlsxReadContext, String name) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();

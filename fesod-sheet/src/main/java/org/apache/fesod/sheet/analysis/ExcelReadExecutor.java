@@ -29,21 +29,29 @@ import java.util.List;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 
 /**
- * Excel file Executor
+ * Executes the read process of a single workbook.
  *
- *
+ * <p>An implementation is format specific (XLS, XLSX or CSV) and is created by
+ * {@link ExcelAnalyserImpl} once the file type has been detected. It exposes the sheets
+ * declared in the workbook and streams the parsed sheet data to the handlers configured
+ * in the surrounding read context.</p>
  */
 public interface ExcelReadExecutor {
 
     /**
-     * Returns the actual sheet in excel
+     * Returns every sheet contained in the workbook, in the order they are declared.
      *
-     * @return Actual sheet in excel
+     * @return the sheets of the workbook, never {@code null}; empty when the workbook
+     *         cannot be analysed (for instance an unsupported legacy format)
      */
     List<ReadSheet> sheetList();
 
     /**
-     * Read the sheet.
+     * Reads the sheets selected by the current read configuration and dispatches the
+     * parsed rows to the registered listeners.
+     *
+     * <p>The processing stops as soon as a listener raises {@code ExcelAnalysisStopException},
+     * which is handled by the caller and is not reported as a failure.</p>
      */
     void execute();
 }

@@ -30,13 +30,31 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Utility methods for creating and manipulating {@link Map} instances ({@link HashMap},
+ * {@link LinkedHashMap}, {@link TreeMap} and bounded caches).
+ *
+ * <p>All factory methods return a <i>mutable</i> map unless otherwise noted.
+ *
+ * <p>This is a utility class and cannot be instantiated.
+ */
 public class MapUtils {
 
+    /**
+     * Utility classes must never be instantiated.
+     */
     private MapUtils() {}
 
     /**
-     * A {@link LinkedHashMap} bounded to {@code maxEntries}, evicting the eldest entry on overflow (FIFO). Insertion
-     * order keeps {@link #get} non-mutating on hot paths.
+     * A {@link LinkedHashMap} bounded to {@code maxEntries} entries, evicting the eldest entry on
+     * overflow (FIFO).
+     *
+     * <p>Insertion order is preserved and access-order is disabled, so {@link #get(Object)} does
+     * not mutate the underlying linked list — this keeps reads cheap and side-effect free on hot
+     * paths.
+     *
+     * @param <K> the type of keys maintained by this map
+     * @param <V> the type of mapped values
      */
     private static final class BoundedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         private static final long serialVersionUID = 1L;
@@ -55,27 +73,28 @@ public class MapUtils {
     }
 
     /**
-     * Creates an empty {@code Map} that retains at most {@code maxEntries} entries, evicting the eldest on overflow.
-     * Handy for thread-local caches keyed by an unbounded input set.
+     * Creates an empty {@code Map} that retains at most {@code maxEntries} entries, evicting the
+     * eldest on overflow (FIFO). Handy for thread-local caches keyed by an unbounded input set.
      *
+     * <p>The returned map preserves insertion order and is <i>not</i> synchronized; callers must
+     * provide their own concurrency control if the map is shared across threads.
+     *
+     * @param <K> the type of keys maintained by the returned map
+     * @param <V> the type of mapped values
      * @param maxEntries the maximum number of entries to retain; must be positive
      * @return a new, empty bounded {@code Map}
+     * @throws IllegalArgumentException if the initial capacity derived from {@code maxEntries} is
+     *                                  negative
      */
     public static <K, V> Map<K, V> newBoundedMap(int maxEntries) {
         return new BoundedLinkedHashMap<>(maxEntries);
     }
 
     /**
-     * Creates a <i>mutable</i>, empty {@code HashMap} instance.
+     * Creates a <i>mutable</i>, empty {@code HashMap} instance with the default initial capacity.
      *
-     * <p><b>Note:</b> if mutability is not required, use ImmutableMap.of() instead.
-     *
-     * <p><b>Note:</b> if {@code K} is an {@code enum} type, use newEnumMap instead.
-     *
-     * <p><b>Note for Java 7 and later:</b> this method is now unnecessary and should be treated as
-     * deprecated. Instead, use the {@code HashMap} constructor directly, taking advantage of the new
-     * <a href="http://goo.gl/iz2Wi">"diamond" syntax</a>.
-     *
+     * @param <K> the type of keys maintained by the returned map
+     * @param <V> the type of mapped values
      * @return a new, empty {@code HashMap}
      */
     public static <K, V> HashMap<K, V> newHashMap() {
@@ -84,14 +103,11 @@ public class MapUtils {
 
     /**
      * Creates a <i>mutable</i>, empty {@code TreeMap} instance using the natural ordering of its
-     * elements.
+     * keys.
      *
-     * <p><b>Note:</b> if mutability is not required, use ImmutableSortedMap.of() instead.
-     *
-     * <p><b>Note for Java 7 and later:</b> this method is now unnecessary and should be treated as
-     * deprecated. Instead, use the {@code TreeMap} constructor directly, taking advantage of the new
-     * <a href="http://goo.gl/iz2Wi">"diamond" syntax</a>.
-     *
+     * @param <K> the type of keys maintained by the returned map; must be
+     *            {@link Comparable naturally orderable}
+     * @param <V> the type of mapped values
      * @return a new, empty {@code TreeMap}
      */
     public static <K extends Comparable, V> TreeMap<K, V> newTreeMap() {
@@ -99,14 +115,15 @@ public class MapUtils {
     }
 
     /**
-     * Creates a {@code HashMap} instance, with a high enough "initial capacity" that it <i>should</i>
-     * hold {@code expectedSize} elements without growth. This behavior cannot be broadly guaranteed,
-     * but it is observed to be true for OpenJDK 1.7. It also can't be guaranteed that the method
-     * isn't inadvertently <i>oversizing</i> the returned map.
+     * Creates a {@code HashMap} instance with a high enough initial capacity that it <i>should</i>
+     * hold {@code expectedSize} entries without resizing. The result is not guaranteed and the map
+     * may be inadvertently oversized.
      *
+     * @param <K> the type of keys maintained by the returned map
+     * @param <V> the type of mapped values
      * @param expectedSize the number of entries you expect to add to the returned map
      * @return a new, empty {@code HashMap} with enough capacity to hold {@code expectedSize} entries
-     * without resizing
+     *         without resizing
      * @throws IllegalArgumentException if {@code expectedSize} is negative
      */
     public static <K, V> HashMap<K, V> newHashMapWithExpectedSize(int expectedSize) {
@@ -116,12 +133,8 @@ public class MapUtils {
     /**
      * Creates a <i>mutable</i>, empty, insertion-ordered {@code LinkedHashMap} instance.
      *
-     * <p><b>Note:</b> if mutability is not required, use  ImmutableMap.of() instead.
-     *
-     * <p><b>Note for Java 7 and later:</b> this method is now unnecessary and should be treated as
-     * deprecated. Instead, use the {@code LinkedHashMap} constructor directly, taking advantage of
-     * the new <a href="http://goo.gl/iz2Wi">"diamond" syntax</a>.
-     *
+     * @param <K> the type of keys maintained by the returned map
+     * @param <V> the type of mapped values
      * @return a new, empty {@code LinkedHashMap}
      */
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMap() {
@@ -129,14 +142,15 @@ public class MapUtils {
     }
 
     /**
-     * Creates a {@code LinkedHashMap} instance, with a high enough "initial capacity" that it
-     * <i>should</i> hold {@code expectedSize} elements without growth. This behavior cannot be
-     * broadly guaranteed, but it is observed to be true for OpenJDK 1.7. It also can't be guaranteed
-     * that the method isn't inadvertently <i>oversizing</i> the returned map.
+     * Creates a {@code LinkedHashMap} instance with a high enough initial capacity that it
+     * <i>should</i> hold {@code expectedSize} entries without resizing. The result is not guaranteed
+     * and the map may be inadvertently oversized.
      *
+     * @param <K> the type of keys maintained by the returned map
+     * @param <V> the type of mapped values
      * @param expectedSize the number of entries you expect to add to the returned map
      * @return a new, empty {@code LinkedHashMap} with enough capacity to hold {@code expectedSize}
-     * entries without resizing
+     *         entries without resizing
      * @throws IllegalArgumentException if {@code expectedSize} is negative
      */
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMapWithExpectedSize(int expectedSize) {
@@ -144,8 +158,11 @@ public class MapUtils {
     }
 
     /**
-     * Returns a capacity that is sufficient to keep the map from being resized as long as it grows no
-     * larger than expectedSize and the load factor is ≥ its default (0.75).
+     * Returns a capacity sufficient to keep the map from being resized as long as it grows no
+     * larger than {@code expectedSize} and the load factor remains at its default (0.75).
+     *
+     * @param expectedSize the expected number of entries the map will hold
+     * @return the initial capacity to use when constructing the map
      */
     static int capacity(int expectedSize) {
         if (expectedSize < 3) {

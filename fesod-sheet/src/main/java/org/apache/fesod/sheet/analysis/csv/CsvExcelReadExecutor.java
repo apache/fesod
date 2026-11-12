@@ -67,6 +67,14 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
     // Context for CSV reading operation
     private final CsvReadContext csvReadContext;
 
+    /**
+     * Constructs a CSV read executor bound to the given context.
+     *
+     * <p>A single synthetic {@link ReadSheet} with index {@code 0} is created, since a CSV
+     * stream is treated as one sheet.
+     *
+     * @param csvReadContext the CSV read context holding workbook-level configuration
+     */
     public CsvExcelReadExecutor(CsvReadContext csvReadContext) {
         this.csvReadContext = csvReadContext;
         sheetList = new ArrayList<>();
@@ -265,9 +273,12 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
     }
 
     /**
-     * Determine whether an UncheckedIOException from Commons CSV is benign, i.e., caused by
-     * truncated quoted fields or early EOF while parsing an encapsulated token. In such cases
-     * we should stop reading the current sheet gracefully rather than failing the whole read.
+     * Detects whether the given throwable wraps an {@link IOException} whose message indicates a
+     * benign CSV truncation (for example an unclosed quoted field hitting EOF). Such errors are
+     * treated as "input finished" rather than failures.
+     *
+     * @param t the throwable to inspect; the whole cause chain is walked
+     * @return {@code true} if the error is a recognised benign parse failure, {@code false} otherwise
      */
     private static boolean isBenignCsvParseException(Throwable t) {
         Throwable cur = t;

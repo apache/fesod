@@ -32,10 +32,25 @@ import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for the BIFF {@code RK} record, which encodes a numeric or short-text cell value in a compact
+ * 30-bit representation.
+ * <p>
+ * This handler does not decode the RK value; it registers the cell's position in the current row's cell map
+ * as an empty {@link ReadCellData}, so downstream listeners can still observe that the cell exists. Records
+ * whose physical column is filtered out by the current column resolver are skipped.
  */
 public class RkRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Resolves the target column from {@link RKRecord#getColumn()}; if the column is not filtered out, stores an
+     * empty {@link ReadCellData} at {@link RKRecord#getRow()} into the current sheet's cell map.
+     *
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the {@link RKRecord} to process, never {@code null}
+     * @throws ClassCastException if {@code record} is not an {@link RKRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         RKRecord re = (RKRecord) record;

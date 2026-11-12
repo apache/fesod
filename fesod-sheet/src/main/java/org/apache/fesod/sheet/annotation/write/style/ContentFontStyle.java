@@ -37,9 +37,14 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
- * Custom content styles.
+ * Customizes the font used when writing the content (data) cells.
+ * <p>
+ * Declare this annotation on a field to style a single column, or on a class to style every field in
+ * that class. An attribute left at its default value ({@code -1}, an empty name, or
+ * {@link BooleanEnum#DEFAULT}) is treated as "not set" and is therefore ignored.
  *
- *
+ * @see ContentStyle
+ * @see HeadFontStyle
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -47,27 +52,27 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 public @interface ContentFontStyle {
 
     /**
-     * The name for the font (i.e. Arial)
+     * The name of the font, for example {@code Arial}.
      */
     String fontName() default "";
 
     /**
-     * Height in the familiar unit of measure - points
+     * The height of the font, in points.
      */
     short fontHeightInPoints() default -1;
 
     /**
-     * Whether to use italics or not
+     * Whether the text is rendered in italics.
      */
     BooleanEnum italic() default BooleanEnum.DEFAULT;
 
     /**
-     * Whether to use a strikeout horizontal line through the text or not
+     * Whether a horizontal strikeout line is drawn through the text.
      */
     BooleanEnum strikeout() default BooleanEnum.DEFAULT;
 
     /**
-     * The color for the font
+     * The color of the font, as an indexed color value.
      *
      * @see Font#COLOR_NORMAL
      * @see Font#COLOR_RED
@@ -77,7 +82,7 @@ public @interface ContentFontStyle {
     short color() default -1;
 
     /**
-     * Set normal, super or subscript.
+     * The type of offset to use, i.e. normal, superscript or subscript.
      *
      * @see Font#SS_NONE
      * @see Font#SS_SUPER
@@ -86,7 +91,7 @@ public @interface ContentFontStyle {
     short typeOffset() default -1;
 
     /**
-     * set type of text underlining to use
+     * The type of underline to use.
      *
      * @see Font#U_NONE
      * @see Font#U_SINGLE
@@ -97,7 +102,7 @@ public @interface ContentFontStyle {
     byte underline() default -1;
 
     /**
-     * Set character-set to use.
+     * The character set to use.
      *
      * @see FontCharset
      * @see Font#ANSI_CHARSET
@@ -107,7 +112,7 @@ public @interface ContentFontStyle {
     int charset() default -1;
 
     /**
-     * Bold
+     * Whether the text is rendered in bold.
      */
     BooleanEnum bold() default BooleanEnum.DEFAULT;
 }

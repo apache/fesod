@@ -41,9 +41,11 @@ import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
- * Custom header styles
- *
- *
+ * Defines the style applied to the header cells being written.
+ * <p>
+ * It can be declared on a field to style a single column header, or on a class to style every column header. Every
+ * attribute is optional: a value of {@code -1}, or {@link BooleanEnum#DEFAULT} for boolean attributes, means "not set"
+ * and the default style of the workbook is kept.
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -89,7 +91,7 @@ public @interface HeadStyle {
 
     /**
      * Set the degree of rotation for the text in the cell.
-     *
+     * <p>
      * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF uses values from 0 to 180 degrees. The
      * implementations of this method will map between these two value-ranges accordingly, however the corresponding
      * getter is returning values in the range mandated by the current type of Excel file-format that this CellStyle is

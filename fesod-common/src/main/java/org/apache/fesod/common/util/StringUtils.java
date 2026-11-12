@@ -19,16 +19,26 @@
 
 package org.apache.fesod.common.util;
 
+/**
+ * Utility methods for {@link CharSequence} and {@link String} handling.
+ *
+ * <p>All methods are null-safe and treat a {@code null} input the same way as documented
+ * per method. This class is not intended to be instantiated.
+ */
 public class StringUtils {
+
+    /**
+     * Utility classes must never be instantiated.
+     */
     private StringUtils() {}
 
     /**
-     * A String for a space character.
+     * A single space character, {@code " "}.
      */
     public static final String SPACE = " ";
 
     /**
-     * The empty String {@code ""}.
+     * The empty string {@code ""}.
      */
     public static final String EMPTY = "";
 
@@ -43,12 +53,8 @@ public class StringUtils {
      * StringUtils.isEmpty("  bob  ") = false
      * </pre>
      *
-     * <p>NOTE: This method changed in Lang version 2.0.
-     * It no longer trims the CharSequence.
-     * That functionality is available in isBlank().</p>
-     *
-     * @param cs the CharSequence to check, may be null
-     * @return {@code true} if the CharSequence is empty or null
+     * @param cs the CharSequence to check, may be {@code null}
+     * @return {@code true} if the CharSequence is {@code null} or empty, {@code false} otherwise
      */
     public static boolean isEmpty(final CharSequence cs) {
         return cs == null || cs.length() == 0;
@@ -67,8 +73,9 @@ public class StringUtils {
      * StringUtils.isBlank("  bob  ") = false
      * </pre>
      *
-     * @param cs the CharSequence to check, may be null
-     * @return {@code true} if the CharSequence is null, empty or whitespace only
+     * @param cs the CharSequence to check, may be {@code null}
+     * @return {@code true} if the CharSequence is {@code null}, empty or whitespace only,
+     *         {@code false} otherwise
      */
     public static boolean isBlank(final CharSequence cs) {
         int strLen;
@@ -96,20 +103,21 @@ public class StringUtils {
      * StringUtils.isNotBlank("  bob  ") = true
      * </pre>
      *
-     * @param cs the CharSequence to check, may be null
-     * @return {@code true} if the CharSequence is
-     * not empty and not null and not whitespace only
+     * @param cs the CharSequence to check, may be {@code null}
+     * @return {@code true} if the CharSequence is not {@code null}, not empty and not whitespace
+     *         only, {@code false} otherwise
+     * @see #isBlank(CharSequence)
      */
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
     }
 
     /**
-     * <p>Compares two CharSequences, returning {@code true} if they represent
-     * equal sequences of characters.</p>
+     * Compares two {@link CharSequence}s for equality, returning {@code true} if they represent
+     * the same sequence of characters.
      *
-     * <p>{@code null}s are handled without exceptions. Two {@code null}
-     * references are considered to be equal. The comparison is case sensitive.</p>
+     * <p>{@code null} values are handled without throwing; two {@code null} references are
+     * considered equal. The comparison is case-sensitive.</p>
      *
      * <pre>
      * StringUtils.equals(null, null)   = true
@@ -121,7 +129,8 @@ public class StringUtils {
      *
      * @param cs1 the first CharSequence, may be {@code null}
      * @param cs2 the second CharSequence, may be {@code null}
-     * @return {@code true} if the CharSequences are equal (case-sensitive), or both {@code null}
+     * @return {@code true} if both CharSequences are {@code null}, or are case-sensitively equal,
+     *         {@code false} otherwise
      * @see Object#equals(Object)
      */
     public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
@@ -141,15 +150,17 @@ public class StringUtils {
     }
 
     /**
-     * Green implementation of regionMatches.
+     * Compares a region of one {@link CharSequence} with a region of another, mirroring the
+     * behavior of {@link String#regionMatches(boolean, int, String, int, int)} for
+     * implementations that are not {@link String}.
      *
-     * @param cs         the {@code CharSequence} to be processed
-     * @param ignoreCase whether or not to be case insensitive
-     * @param thisStart  the index to start on the {@code cs} CharSequence
-     * @param substring  the {@code CharSequence} to be looked for
-     * @param start      the index to start on the {@code substring} CharSequence
-     * @param length     character length of the region
-     * @return whether the region matched
+     * @param cs         the CharSequence being searched, must not be {@code null}
+     * @param ignoreCase {@code true} to compare while ignoring case, {@code false} otherwise
+     * @param thisStart  the start index within {@code cs}
+     * @param substring  the CharSequence to look for, must not be {@code null}
+     * @param start      the start index within {@code substring}
+     * @param length     the number of characters to compare
+     * @return {@code true} if the specified regions match, {@code false} otherwise
      */
     public static boolean regionMatches(
             final CharSequence cs,
@@ -227,8 +238,9 @@ public class StringUtils {
      * StringUtils.isNumeric("+123") = false
      * </pre>
      *
-     * @param cs the CharSequence to check, may be null
-     * @return {@code true} if only contains digits, and is non-null
+     * @param cs the CharSequence to check, may be {@code null}
+     * @return {@code true} if the CharSequence is non-empty and contains only digits,
+     *         {@code false} otherwise
      */
     public static boolean isNumeric(final CharSequence cs) {
         if (isEmpty(cs)) {
@@ -262,8 +274,8 @@ public class StringUtils {
      * StringUtils.strip(" ab c ") = "ab c"
      * </pre>
      *
-     * @param str the String to remove whitespace from, may be null
-     * @return the stripped String, {@code null} if null String input
+     * @param str the String to strip, may be {@code null}
+     * @return the stripped String, or {@code null} if the input is {@code null}
      */
     public static String strip(final String str) {
         if (str == null || str.isEmpty()) {
@@ -285,13 +297,18 @@ public class StringUtils {
     }
 
     /**
-     * Checks if the character is whitespace
+     * Checks whether a character should be treated as blank.
+     *
+     * <p>A character is considered blank if it is a Java whitespace character
+     * ({@link Character#isWhitespace(char)}), a Unicode space character
+     * ({@link Character#isSpaceChar(char)}), or one of the invisible/formatting characters
+     * commonly found in spreadsheets ({@code \u202a}, {@code \ufeff}, {@code \u3164},
+     * {@code \u2800}, {@code \u200c}, {@code \u180e}).</p>
      *
      * @param ch the character to check
-     * @return {@code true} if the character is a Java whitespace
-     * character; {@code false} otherwise.
-     * @see java.lang.Character#isWhitespace(char)
-     * @see java.lang.Character#isSpaceChar(char)
+     * @return {@code true} if the character is blank, {@code false} otherwise
+     * @see Character#isWhitespace(char)
+     * @see Character#isSpaceChar(char)
      */
     public static boolean isBlankChar(final char ch) {
         return Character.isSpaceChar(ch)

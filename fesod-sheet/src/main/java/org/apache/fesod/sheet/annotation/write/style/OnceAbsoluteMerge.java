@@ -32,39 +32,43 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Merge the cells once
- *
- *
+ * Declares a single absolute cell merge region on the annotated head class.
+ * <p>
+ * The region is defined by the inclusive range from
+ * {@link #firstRowIndex()}/{@link #firstColumnIndex()} to
+ * {@link #lastRowIndex()}/{@link #lastColumnIndex()}. A value of {@code -1}
+ * means the coordinate is unset.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface OnceAbsoluteMerge {
+
     /**
-     * First row
+     * The index of the first row (inclusive) of the merge region.
      *
-     * @return
+     * @return the first row index, or {@code -1} if not set
      */
     int firstRowIndex() default -1;
 
     /**
-     * Last row
+     * The index of the last row (inclusive) of the merge region.
      *
-     * @return
+     * @return the last row index, or {@code -1} if not set
      */
     int lastRowIndex() default -1;
 
     /**
-     * First column
+     * The index of the first column (inclusive) of the merge region.
      *
-     * @return
+     * @return the first column index, or {@code -1} if not set
      */
     int firstColumnIndex() default -1;
 
     /**
-     * Last row
+     * The index of the last column (inclusive) of the merge region.
      *
-     * @return
+     * @return the last column index, or {@code -1} if not set
      */
     int lastColumnIndex() default -1;
 }

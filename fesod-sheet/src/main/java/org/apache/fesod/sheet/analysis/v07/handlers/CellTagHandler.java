@@ -40,13 +40,27 @@ import org.apache.fesod.sheet.util.XlsxEscapeUtils;
 import org.xml.sax.Attributes;
 
 /**
- * Cell Handler
+ * Handles the {@code <c>} (cell) element during XLSX SAX parsing.
  *
+ * <p>On start, extracts the cell reference, data type and style index from attributes
+ * and initializes temporary state. On end, resolves the cell value according to its
+ * type (shared string, inline string, number, boolean, error or empty), applies
+ * configured whitespace handling, and stores the resulting {@link ReadCellData}
+ * in the current row's cell map.
  */
 public class CellTagHandler extends AbstractXlsxTagHandler {
 
     private static final int DEFAULT_FORMAT_INDEX = 0;
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Reads the {@code r} (reference), {@code t} (type) and {@code s} (style index)
+     * attributes, then prepares a temp {@link ReadCellData} and a {@link StringBuilder}
+     * to accumulate child text.
+     *
+     * @throws ExcelAnalysisException if the cell type attribute is unrecognized
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
@@ -82,6 +96,16 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
                 .setDataFormatData(xlsxReadContext.xlsxReadWorkbookHolder().dataFormatData(dateFormatIndexInteger));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Converts the accumulated raw text into a typed value based on the cell's data
+     * type, applies auto-trim or auto-strip according to {@link GlobalConfiguration},
+     * and puts the final {@link ReadCellData} into the cell map.
+     *
+     * <p>If the target column index cannot be determined (e.g. filtered columns),
+     * this method returns early without storing the cell.
+     */
     @Override
     public void endElement(XlsxReadContext xlsxReadContext, String name) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();

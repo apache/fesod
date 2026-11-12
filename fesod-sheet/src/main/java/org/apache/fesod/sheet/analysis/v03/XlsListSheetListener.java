@@ -43,12 +43,21 @@ import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * In some cases, you need to know the number of sheets in advance and only read the file once in advance.
- *
- *
+ * Lists the sheets of an XLS (BIFF8) file in a single lightweight pass.
+ * <p>
+ * Only workbook-level records are dispatched to handlers, so sheet names and count can be
+ * obtained without parsing any cell data. This is used when the sheet structure must be known
+ * before the real read starts.
  */
 public class XlsListSheetListener implements HSSFListener {
+    /**
+     * Read context that holds the sheet information collected during the pass.
+     */
     private final XlsReadContext xlsReadContext;
+
+    /**
+     * Handlers keyed by BIFF record SID; records without a handler are skipped.
+     */
     private static final Map<Short, XlsRecordHandler> XLS_RECORD_HANDLER_MAP = new HashMap<Short, XlsRecordHandler>();
 
     static {

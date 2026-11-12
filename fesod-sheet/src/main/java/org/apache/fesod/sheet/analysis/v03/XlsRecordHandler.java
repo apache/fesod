@@ -29,23 +29,31 @@ import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Intercepts handle xls reads.
+ * Handler for a single XLS (BIFF) record type during streaming read.
+ * <p>
+ * Implementations are registered by record sid in {@link XlsSaxAnalyser} and {@link XlsListSheetListener}, and are
+ * invoked only when {@link #support(XlsReadContext, Record)} returns {@code true}.
  */
 public interface XlsRecordHandler {
+
     /**
-     * Whether to support
+     * Determine whether this handler can process the given record in the current read context.
      *
-     * @param xlsReadContext
-     * @param record
-     * @return
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the record to test, never {@code null}
+     * @return {@code true} if {@link #processRecord(XlsReadContext, Record)} should be invoked for this record
      */
     boolean support(XlsReadContext xlsReadContext, Record record);
 
     /**
-     * Processing record
+     * Process the given record and update the read context accordingly.
+     * <p>
+     * Only called after {@link #support(XlsReadContext, Record)} returned {@code true}. Throwing
+     * {@link org.apache.fesod.sheet.exception.ExcelAnalysisStopSheetException} stops the current sheet and makes
+     * subsequent ignorable records be skipped.
      *
-     * @param xlsReadContext
-     * @param record
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the record to process, never {@code null}
      */
     void processRecord(XlsReadContext xlsReadContext, Record record);
 }

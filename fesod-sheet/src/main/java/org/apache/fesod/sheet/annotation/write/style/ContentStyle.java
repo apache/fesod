@@ -35,22 +35,24 @@ import org.apache.fesod.sheet.enums.poi.BorderStyleEnum;
 import org.apache.fesod.sheet.enums.poi.FillPatternTypeEnum;
 import org.apache.fesod.sheet.enums.poi.HorizontalAlignmentEnum;
 import org.apache.fesod.sheet.enums.poi.VerticalAlignmentEnum;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
- * Custom content styles
- *
- *
+ * Defines the style applied to the content of the cells being written.
+ * <p>
+ * It can be declared on a field to style a single column, or on a class to style every column. Every attribute is
+ * optional: a value of {@code -1}, or {@link BooleanEnum#DEFAULT} for boolean attributes, means "not set" and the
+ * default style of the workbook is kept.
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ContentStyle {
+
     /**
-     * Set the data format (must be a valid format). Built in formats are defined at {@link BuiltinFormats}.
+     * The data format to apply to the cell. Must be a valid format
      */
     short dataFormat() default -1;
 

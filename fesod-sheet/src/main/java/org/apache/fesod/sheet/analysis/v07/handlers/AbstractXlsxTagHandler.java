@@ -29,22 +29,51 @@ import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.xml.sax.Attributes;
 
 /**
- * Abstract tag handler
- *
- *
+ * Abstract base implementation of {@link XlsxTagHandler} that provides no-op default
+ * behavior for all lifecycle callbacks, so subclasses only need to override the
+ * methods relevant to the tags they handle.
  */
 public abstract class AbstractXlsxTagHandler implements XlsxTagHandler {
+
+    /**
+     * Returns {@code true} by default, meaning the handler supports all tags
+     * unless a subclass overrides this method.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @return {@code true} if this handler supports the given context
+     */
     @Override
     public boolean support(XlsxReadContext xlsxReadContext) {
         return true;
     }
 
+    /**
+     * Invoked when the start of a tag is encountered. Does nothing by default.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name
+     * @param attributes      the tag attributes
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {}
 
+    /**
+     * Invoked when the end of a tag is encountered. Does nothing by default.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name
+     */
     @Override
     public void endElement(XlsxReadContext xlsxReadContext, String name) {}
 
+    /**
+     * Invoked when the character data within a tag is read. Does nothing by default.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param ch              the characters from the XML document
+     * @param start           the start position in the array
+     * @param length          the number of characters to read from the array
+     */
     @Override
     public void characters(XlsxReadContext xlsxReadContext, char[] ch, int start, int length) {}
 }

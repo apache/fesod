@@ -26,9 +26,9 @@
 package org.apache.fesod.sheet.constant;
 
 /**
- * Order constant.
+ * Constants that define the relative execution order of handlers and style strategies.
  *
- *
+ * <p>Smaller values run earlier in the processing pipeline.
  */
 public class OrderConstant {
 

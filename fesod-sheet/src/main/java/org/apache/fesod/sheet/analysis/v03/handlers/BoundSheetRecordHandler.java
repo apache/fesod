@@ -31,10 +31,20 @@ import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for the BIFF {@link BoundSheetRecord}, which describes each worksheet in the workbook
+ * (sheet name, visibility state, and stream position).
+ * <p>
+ * Collects the record into the workbook holder so that sheets can be enumerated before reading starts.
  */
 public class BoundSheetRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Casts the record to {@link BoundSheetRecord} and appends it to the bound sheet record list
+     * held by {@link XlsReadContext#xlsReadWorkbookHolder()}.
+     *
+     * @param xlsReadContext the current XLS reading context
+     * @param record         the {@link BoundSheetRecord} to process
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BoundSheetRecord bsr = (BoundSheetRecord) record;

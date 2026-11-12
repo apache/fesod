@@ -29,9 +29,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 
 /**
- * Used to store constant
- *
- *
+ * Constants shared across the sheet processing pipeline.
  */
 public class FesodSheetConstants {
 

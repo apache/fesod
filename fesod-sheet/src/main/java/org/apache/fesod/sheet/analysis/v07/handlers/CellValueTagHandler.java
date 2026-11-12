@@ -26,7 +26,9 @@
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
 /**
- * Cell Value Handler
+ * Handler for the XLSX cell value tag {@code <v>}.
  *
+ * <p>Accumulates the raw value content of a cell into the temporary data buffer
+ * of the current sheet holder, reusing the behaviour defined by {@link AbstractCellValueTagHandler}.
  */
 public class CellValueTagHandler extends AbstractCellValueTagHandler {}

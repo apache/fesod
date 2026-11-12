@@ -43,12 +43,17 @@ import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 
 /**
- * Default cache
+ * Default {@link ReadCache} implementation backed by Ehcache 3.
  *
- *
+ * <p>Data is written in batches to a disk-based cache and read through a heap-based cache that
+ * acts as a hot-tier for the most recently accessed batches.
  */
 @Slf4j
 public class Ehcache implements ReadCache {
+
+    /**
+     * Number of values stored per cache batch.
+     */
     public static final int BATCH_COUNT = 100;
     /**
      * Key index
@@ -80,6 +85,8 @@ public class Ehcache implements ReadCache {
     private int cacheMiss = 0;
 
     /**
+     * Create a cache with the given heap size limit.
+     *
      * @param maxCacheActivateSize maximum size of the activated cache
      * @deprecated use {@link #Ehcache(Integer, Integer)} instead, which also accepts a batch count
      */
@@ -88,6 +95,17 @@ public class Ehcache implements ReadCache {
         this(maxCacheActivateSize, null);
     }
 
+    /**
+     * Create a cache configured with either a heap size limit or a batch-count limit.
+     *
+     * <p>When {@code maxCacheActivateSize} is provided it takes precedence and the heap cache is
+     * sized in megabytes; otherwise the heap cache is sized by the number of entries.
+     *
+     * @param maxCacheActivateSize         maximum size of the activated cache, in megabytes; may be
+     *                                     {@code null}
+     * @param maxCacheActivateBatchCount   maximum number of batches kept in the activated cache;
+     *                                     used when {@code maxCacheActivateSize} is {@code null}
+     */
     public Ehcache(Integer maxCacheActivateSize, Integer maxCacheActivateBatchCount) {
         // In order to be compatible with the code
         // If the user set up `maxCacheActivateSize`, then continue using it
@@ -120,6 +138,14 @@ public class Ehcache implements ReadCache {
                 .build();
     }
 
+    /**
+     * Initialize the file cache and the active heap cache for the current read.
+     *
+     * <p>If the temporary cache directory has been removed since it was first created, it is
+     * recreated before the file cache is opened again.
+     *
+     * @param analysisContext the analysis context of the current read
+     */
     @Override
     public void init(AnalysisContext analysisContext) {
         cacheAlias = UUID.randomUUID().toString();
@@ -144,6 +170,11 @@ public class Ehcache implements ReadCache {
         activeCache = ACTIVE_CACHE_MANAGER.createCache(cacheAlias, activeCacheConfiguration);
     }
 
+    /**
+     * Append a value, flushing a full batch to the file cache when {@link #BATCH_COUNT} is reached.
+     *
+     * @param value the value to cache
+     */
     @Override
     public void put(String value) {
         dataList.add(value);
@@ -160,6 +191,15 @@ public class Ehcache implements ReadCache {
         }
     }
 
+    /**
+     * Look up a value by its global index.
+     *
+     * <p>The batch is served from the active heap cache when present; otherwise it is loaded from
+     * the file cache and promoted into the heap cache.
+     *
+     * @param key the zero-based index of the value
+     * @return the cached value, or {@code null} when {@code key} is {@code null} or negative
+     */
     @Override
     public String get(Integer key) {
         if (key == null || key < 0) {
@@ -179,6 +219,9 @@ public class Ehcache implements ReadCache {
         return dataList.get(key % BATCH_COUNT);
     }
 
+    /**
+     * Flush any partially filled batch remaining in the buffer to the file cache.
+     */
     @Override
     public void putFinished() {
         if (CollectionUtils.isEmpty(dataList)) {
@@ -187,6 +230,9 @@ public class Ehcache implements ReadCache {
         fileCache.put(activeIndex, dataList);
     }
 
+    /**
+     * Remove the file cache and the active heap cache associated with this instance.
+     */
     @Override
     public void destroy() {
         FILE_CACHE_MANAGER.removeCache(cacheAlias);

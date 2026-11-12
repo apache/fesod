@@ -35,17 +35,33 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.xml.sax.Attributes;
 
 /**
- * Cell Handler
+ * Handler for the {@code hyperlink} tag in the XLSX sheet XML.
  *
- *
+ * <p>Resolves the hyperlink target — following the {@code r:id} relationship for external
+ * links and reading the {@code location} attribute for internal ones — and emits it as a
+ * {@link CellExtra} of type {@link CellExtraTypeEnum#HYPERLINK}.
  */
 public class HyperlinkTagHandler extends AbstractXlsxTagHandler {
 
+    /**
+     * Only active when the caller requested extra reading of hyperlinks.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @return {@code true} if {@link CellExtraTypeEnum#HYPERLINK} is in the extra read set
+     */
     @Override
     public boolean support(XlsxReadContext xlsxReadContext) {
         return xlsxReadContext.readWorkbookHolder().getExtraReadSet().contains(CellExtraTypeEnum.HYPERLINK);
     }
 
+    /**
+     * Builds the hyperlink address from the current {@code hyperlink} tag and hands it to the
+     * event processor. Does nothing when the cell reference is missing or no target can be resolved.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name
+     * @param attributes      the tag attributes, including {@code ref}, {@code r:id} and {@code location}
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         String ref = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_REF);

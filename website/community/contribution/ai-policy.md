@@ -28,13 +28,14 @@ A core value of open source is **human collaboration, knowledge sharing, and tru
 
 ## Pull Request
 
-- Before submitting a PR, the author must personally read the entire PR and **understand the core design and implementation end-to-end**. Authors must be prepared to justify and help reviewers understand their changes during review. An "AI dump"—submitting a PR composed largely of AI-generated code and descriptions that the author has not digested or understood—is unacceptable. Even if the code runs, it offloads the entire burden of comprehension onto reviewers, and the author gains nothing from the process.
+- Before submitting a PR, the author must personally read the code, understand the core design end-to-end, and be able to clearly explain their changes during review. Submitting unverified or undigested content is strictly prohibited; even if the code runs, an author who cannot explain its principles is essentially offloading the entire burden of comprehension and verification onto reviewers, and the author gains no growth from the process.
 - It is completely normal to not fully understand every detail of AI-generated code. Please proactively call out these unknowns and assumptions in your PR description so reviewers can work with you to address any concerns.
-- **Using autonomous agents to create PRs, whether automatically or in bulk, is strictly prohibited**. We require a human in the loop; any automated contribution lacking meaningful human involvement will be closed immediately.
+- We strictly prohibit automatic, unattended, bot-owned, or bulk submissions that lack meaningful human review. We require every submission to have a human in the loop who genuinely understands the work produced by AI and takes personal responsibility for it.
+- All contributions must strictly comply with the [ASF Generative Tooling Guidance](https://www.apache.org/legal/generative-tooling.html).
 
 ## Communication & Discussion
 
-Code review is not just about merging code; it is about engaging with **you as a person** (rather than your AI tool) to help you grow and integrate into the community. Whether opening an issue, describing a PR, or answering questions during review, please express yourself in your own words. **Automated AI-generated comments and copy-pasted AI responses are strictly prohibited when communicating with reviewers.** Reviewers may collapse or hide comments they believe to be AI-generated.
+Code review is not just about merging code; it is about engaging with **you as a person** (rather than your AI tool) to help you grow and integrate into the community. Whether opening an issue, describing a PR, or answering questions during review, please express yourself in your own words, and never copy-paste unreviewed, AI-generated content directly.
 
 Unreviewed AI replies place the burden of discernment entirely on the reviewer and deny you the opportunity to learn. Common examples of such unhelpful replies include mechanically summarizing the diff instead of addressing the actual question, listing local commands and checks that CI already covers, or evading design questions with generic descriptions of code changes.
 

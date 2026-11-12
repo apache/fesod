@@ -19,6 +19,17 @@
 
 This file provides guidance for AI coding agents working with the Apache Fesod (Incubating) codebase.
 
+## AI Policy (read first)
+
+Before any task, read [AI_POLICY.md](./AI_POLICY.md) and explicitly tell the user you have read it.
+
+Hard rules for agents:
+
+- DO NOT open PRs, issues, or post comments on your own. All submissions MUST be manually reviewed and pushed by a human.
+- DO NOT write PR descriptions, review comments, or issue reports on your own. You may ONLY translate, proofread, or polish text originally drafted by the human.
+- ALWAYS remind the human to read and understand the whole diff.
+- ALWAYS list non-trivial unknowns and assumptions so the human can selectively include them in the PR description.
+
 ## Project Overview
 
 Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLSX/CSV) without OOM, derived from Alibaba EasyExcel. It uses Apache POI under the hood with streaming SAX-based reading. The project is an Apache incubator project and must follow ASF conventions.
@@ -125,7 +136,3 @@ Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLS
 4. Windows-only tests (`Test Windows` job: `-Dtest.groups=windows`, paired with `@EnabledOnOs`)
 5. `mvn install` + `mvn javadoc:javadoc`
 6. CodeQL security scan
-
-## AI-assisted contributions
-
-All AI-assisted contributions must adhere to our [AI Policy](./AI_POLICY.md).

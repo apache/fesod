@@ -100,15 +100,16 @@ To prevent long-stalled pull requests (PRs) from blocking project progress while
 The PR adoption mechanism applies when **all** of the following conditions are met:
 
 - **Review is progressing normally**: Reviewers have actively provided feedback and reviews; the stall is not due to a lack of community review capacity.
-- **Long author inactivity**: The original author has been inactive for over **15 days** without addressing required items (e.g., unresolved CI failures, unanswered review comments, unmerged branch conflicts, or explicitly stating they have no time to proceed).
+- **Long author inactivity**: The original author has been inactive for over **14 days** without addressing required items (e.g., unresolved CI failures, unanswered review comments, unmerged branch conflicts, or explicitly stating they have no time to proceed).
 - **Adoption intent stated**: Another contributor has actively commented in the original PR expressing interest in taking it over.
 
 ### Workflow
 
 1. **Polite Inquiry**: After the adopter leaves a comment in the original PR confirming their intent to take over, maintainers may add the `PR: waiting for feedback` label.
-2. **Grace Period**: Give the original author a 15-day grace period (can be extended up to 30 days for major PRs such as architectural refactorings).
-   - If the original author resumes work within this period, the adoption process terminates, giving priority to the original author to finish;
-   - If the author does not respond by the deadline or explicitly gives up, the new contributor may proceed to work and submit a new PR.
+2. **Grace Period**: Give the original author a **7-day** grace period.
+   - **Resume work**: If the original author resumes work with meaningful progress (e.g., addressing review questions, pushing code, or providing a clear schedule), the adoption process terminates, giving priority to the original author to finish.
+   - **Early hand-off**: If the original author explicitly states they cannot continue, the new contributor may take over immediately without waiting for the 7 days to expire.
+   - **Timeout**: If the author does not respond or show meaningful progress by the end of the 7-day window, the new contributor may proceed to work and submit a new PR.
 3. **Link & Track**: At the beginning of the new PR description, please state `Related #<Original-PR-Number>` and apply the `PR: adopted` label. Maintainers will close the original PR with gratitude once the new PR is merged or the new approach is confirmed.
 
 ### Attribution

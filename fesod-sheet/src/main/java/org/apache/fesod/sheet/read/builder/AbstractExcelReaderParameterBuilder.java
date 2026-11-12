@@ -27,6 +27,8 @@ package org.apache.fesod.sheet.read.builder;
 
 import java.util.Objects;
 import org.apache.fesod.common.util.ListUtils;
+import org.apache.fesod.sheet.converters.Converter;
+import org.apache.fesod.sheet.converters.ReadConverter;
 import org.apache.fesod.sheet.metadata.AbstractParameterBuilder;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 import org.apache.fesod.sheet.read.metadata.ReadBasicParameter;
@@ -91,6 +93,27 @@ public abstract class AbstractExcelReaderParameterBuilder<
             }
             parameter().getCustomReadListenerList().add(readListener);
         }
+        return self();
+    }
+
+    /**
+     * Registers a custom converter.
+     *
+     * @see #registerReadConverter(ReadConverter)
+     */
+    @Override
+    public T registerConverter(Converter<?> converter) {
+        return registerReadConverter(converter);
+    }
+
+    /**
+     * Registers a custom read converter.
+     */
+    public T registerReadConverter(ReadConverter<?> converter) {
+        if (parameter().getCustomConverterList() == null) {
+            parameter().setCustomConverterList(ListUtils.newArrayList());
+        }
+        parameter().getCustomConverterList().add(converter);
         return self();
     }
 }

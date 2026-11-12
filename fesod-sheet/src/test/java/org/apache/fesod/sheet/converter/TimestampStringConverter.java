@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converter;
 
 import java.sql.Timestamp;
+import org.apache.fesod.sheet.converters.ColumnBinding;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -27,15 +28,16 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.DateUtils;
 
-public class TimestampStringConverter implements Converter<Timestamp> {
+public class TimestampStringConverter implements Converter<Timestamp>, ColumnBinding {
+
     @Override
-    public Class<Timestamp> supportJavaTypeKey() {
-        return Timestamp.class;
+    public Integer columnIndex() {
+        return 0;
     }
 
     @Override
-    public CellDataTypeEnum supportExcelTypeKey() {
-        return CellDataTypeEnum.STRING;
+    public Class<Timestamp> supportJavaTypeKey() {
+        return Timestamp.class;
     }
 
     @Override

@@ -31,6 +31,7 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.converters.WriteConverter;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.BasicParameter;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
@@ -56,6 +57,10 @@ public class WriteBasicParameter extends BasicParameter {
      * Custom type handler override the default
      */
     private List<WriteHandler> customWriteHandlerList = new ArrayList<WriteHandler>();
+    /**
+     * Custom type converters for writing.
+     */
+    private List<WriteConverter<?>> customConverterList = new ArrayList<>();
     /**
      * Use the default style.Default is true.
      */

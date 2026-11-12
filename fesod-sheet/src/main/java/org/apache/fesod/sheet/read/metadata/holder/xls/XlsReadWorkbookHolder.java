@@ -88,6 +88,9 @@ public class XlsReadWorkbookHolder extends ReadWorkbookHolder {
         this.boundSheetRecordList = new ArrayList<BoundSheetRecord>();
         this.needReadSheet = Boolean.TRUE;
         setExcelType(ExcelTypeEnum.XLS);
+
+        initDefaultConverters(ExcelTypeEnum.XLS, true);
+
         if (getGlobalConfiguration().getUse1904windowing() == null) {
             getGlobalConfiguration().setUse1904windowing(Boolean.FALSE);
         }

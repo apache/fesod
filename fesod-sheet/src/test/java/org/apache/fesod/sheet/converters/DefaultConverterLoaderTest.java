@@ -74,9 +74,10 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 LocalTimeDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class)));
+
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                LocalTimeStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+                LocalTimeStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(LocalTime.class)));
     }
 
     @Test
@@ -89,9 +90,10 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 InstantStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Instant.class)));
+
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                InstantStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(Instant.class, CellDataTypeEnum.STRING)));
+                InstantStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(Instant.class)));
     }
 
     @Test
@@ -100,12 +102,14 @@ public class DefaultConverterLoaderTest {
                 UUIDStringConverter.class,
                 DefaultConverterLoader.loadDefaultReadConverter()
                         .get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
+
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 UUIDStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(UUID.class)));
+
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                UUIDStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(UUID.class, CellDataTypeEnum.STRING)));
+                UUIDStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(UUID.class)));
     }
 
     @Test
@@ -120,9 +124,9 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 SqlTimeDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Time.class)));
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                SqlTimeStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(Time.class, CellDataTypeEnum.STRING)));
+                SqlTimeStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(Time.class)));
     }
 
     @Test
@@ -138,9 +142,9 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 TimestampDateConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class)));
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                TimestampStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.STRING)));
+                TimestampStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(Timestamp.class)));
     }
 
     private static void assertLoadIsImmutableAndCopyIsMutable(

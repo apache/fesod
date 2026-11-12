@@ -56,6 +56,10 @@ public class NumberUtils {
     private static final ThreadLocal<Map<Locale, Map<String, DecimalFormat>>> DECIMAL_FORMAT_THREAD_LOCAL =
             new ThreadLocal<>();
 
+    static {
+        ThreadLocalCleaner.register(DECIMAL_FORMAT_THREAD_LOCAL::remove);
+    }
+
     private NumberUtils() {}
 
     /**

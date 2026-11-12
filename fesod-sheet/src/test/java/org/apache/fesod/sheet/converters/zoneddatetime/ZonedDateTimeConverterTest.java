@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.converters.zoneddatetime;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
@@ -140,6 +141,15 @@ class ZonedDateTimeConverterTest {
                 DateTimeParseException.class,
                 () -> converter.convertToJavaData(
                         new ReadCellData<>("2020-01-02 03:04:05"), property, new GlobalConfiguration()));
+    }
+
+    @Test
+    void stringConverterReadsTextWithoutZoneUsingSystemZone() {
+        ZonedDateTimeStringConverter converter = new ZonedDateTimeStringConverter();
+        Assertions.assertEquals(
+                LocalDateTime.of(2020, 1, 2, 3, 4, 5).atZone(ZoneId.systemDefault()),
+                converter.convertToJavaData(
+                        new ReadCellData<>("2020-01-02 03:04:05"), null, new GlobalConfiguration()));
     }
 
     @Test

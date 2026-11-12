@@ -29,7 +29,13 @@ import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
 
-/** ZonedDateTime and date converter. */
+/**
+ * ZonedDateTime and date converter.
+ *
+ * <p>DATE cells store only a local date-time, so the zone is discarded when writing. CSV output therefore
+ * contains no zone. Reading it back without an explicit {@code @DateTimeFormat} applies the JVM default time
+ * zone. Use {@link ZonedDateTimeStringConverter} when the zone must be preserved.
+ */
 public class ZonedDateTimeDateConverter implements Converter<ZonedDateTime> {
     @Override
     public Class<?> supportJavaTypeKey() {

@@ -51,7 +51,7 @@ jobs:
       - name: Test with Maven
         run: ./mvnw clean install -B -V
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@da5b7be67623cd59bbbd1a0ce4f022050a55605f # v2.26.0
         if: (!cancelled())
         with:
           files: "**/target/surefire-reports/*.xml"

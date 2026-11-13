@@ -206,6 +206,212 @@ public void listFill() {
 
 ---
 
+## 列表填充合并策略
+
+### 概述
+
+在处理列表数据填充时，模板中可能定义了复杂的跨行或跨列合并结构。默认情况下，Fesod 不会自动合并跨行跨列单元格。但是，您可以使用 `mergeStrategy` 参数来控制合并行为。
+
+### 合并策略
+
+- **NONE**：不进行任何自动合并（默认）。
+- **AUTO**：Fesod 会参照模板行的合并结构，自动对生成的每一行数据应用相同的合并区域。
+- **MERGE_CELL_STYLE**：在 `AUTO` 的基础上，将 **锚定单元格（左上角单元格）** 的样式应用到整个合并区域内的所有单元格。
+  - *注意：过多的单元格样式实例可能导致性能问题，并可能超出单元格样式数量限制（.xlsx 格式为 64000 个，.xls 格式为 4000 个），请在数据量较大时谨慎使用。*
+
+### POJO 类
+
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class MultiRowFillData {
+    private Integer no;
+    private String string1;
+    private String string2;
+    private String string3;
+    private LocalDate localDate1;
+    private LocalDate localDate2;
+    private Long number1;
+    private Long number2;
+}
+```
+
+### 数据列表
+
+```java
+private List<MultiRowFillData> data1() {
+    List<FillData> list = ListUtils.newArrayList();
+    for (int i = 0; i < 5; i++) {
+        MultiRowFillData fillData = new MultiRowFillData();
+        fillData.setNo(i);
+        fillData.setString1("字符串1");
+        fillData.setString2("字符串2");
+        fillData.setString3("字符串3");
+        fillData.setLocalDate1(LocalDate.now());
+        fillData.setLocalDate2(LocalDate.now());
+        fillData.setNumber1(100L);
+        fillData.setNumber2(200L);
+        list.add(fillData);
+    }
+    return list;
+}
+```
+
+### 代码示例
+
+#### `FillMergeStrategy.NONE`
+
+```java
+
+@Test
+public void listMultiRowFill() {
+    String templateFileName = "path/to/list.xlsx";
+
+    FesodSheet.write("listMultiRowFill.xlsx")
+            .withTemplate(templateFileName)
+            .sheet()
+            .doFill(data1(), FillConfig.builder().mergeStrategy(FillMergeStrategy.NONE).build());
+}
+```
+
+##### 模板
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>序号（跨行合并）</td><td>字符串1-2（常规）</td><td>字符串3（跨行合并）</td><td colspan="2">日期1-2（跨列合并）</td><td colspan="2">数字1（跨行跨列合并）</td><td>数字2（常规）</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">{.no}</td><td>{.string1}</td><td rowspan="2">{.string3}</td><td class="xl-num" colspan="2">{.localDate1}</td><td class="xl-num" colspan="2" rowspan="2">{.number1}</td><td class="xl-num">{.number2}</td></tr>
+<tr><td class="xl-chrome">3</td><td>{.string2}</td><td class="xl-num" colspan="2">{.localDate2}</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+##### 结果
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>序号（跨行合并）</td><td>字符串1-2（常规）</td><td>字符串3（跨行合并）</td><td colspan="2">日期1-2（跨列合并）</td><td colspan="2">数字1（跨行跨列合并）</td><td>数字2（常规）</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">0</td><td>字符串1</td><td rowspan="2">字符串3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num">1</td><td>字符串1</td><td>字符串3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">5</td><td></td><td>字符串2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-num">2</td><td>字符串1</td><td>字符串3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">7</td><td></td><td>字符串2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-num">3</td><td>字符串1</td><td>字符串3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">9</td><td></td><td>字符串2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-num">4</td><td>字符串1</td><td>字符串3</td><td class="xl-num">2026-02-01</td><td></td><td class="xl-num">100</td><td></td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">11</td><td></td><td>字符串2</td><td></td><td class="xl-num">2026-02-01</td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+#### `FillMergeStrategy.AUTO`
+
+```java
+
+@Test
+public void listMultiRowFill() {
+    String templateFileName = "path/to/list.xlsx";
+
+    FesodSheet.write("listMultiRowFill.xlsx")
+            .withTemplate(templateFileName)
+            .sheet()
+            .doFill(data(), FillConfig.builder().mergeStrategy(FillMergeStrategy.AUTO).build());
+}
+```
+
+##### 模板
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>序号（跨行合并）</td><td>字符串1-2（常规）</td><td>字符串3（跨行合并）</td><td colspan="2">日期1-2（跨列合并）</td><td colspan="2">数字1（跨行跨列合并）</td><td>数字2（常规）</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">{.no}</td><td>{.string1}</td><td rowspan="2">{.string3}</td><td class="xl-num" colspan="2">{.localDate1}</td><td class="xl-num" colspan="2" rowspan="2">{.number1}</td><td class="xl-num">{.number2}</td></tr>
+<tr><td class="xl-chrome">3</td><td>{.string2}</td><td class="xl-num" colspan="2">{.localDate2}</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+##### 结果
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td>序号（跨行合并）</td><td>字符串1-2（常规）</td><td>字符串3（跨行合并）</td><td colspan="2">日期1-2（跨列合并）</td><td colspan="2">数字1（跨行跨列合并）</td><td>数字2（常规）</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num" rowspan="2">0</td><td>字符串1</td><td rowspan="2">字符串3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">3</td><td>字符串2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num" rowspan="2">1</td><td>字符串1</td><td rowspan="2">字符串3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">5</td><td>字符串2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-num" rowspan="2">2</td><td>字符串1</td><td rowspan="2">字符串3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">7</td><td>字符串2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-num" rowspan="2">3</td><td>字符串1</td><td rowspan="2">字符串3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">9</td><td>字符串2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-num" rowspan="2">4</td><td>字符串1</td><td rowspan="2">字符串3</td><td colspan="2" class="xl-num">2026-02-01</td><td class="xl-num" colspan="2" rowspan="2">100</td><td class="xl-num">200</td></tr>
+<tr><td class="xl-chrome">11</td><td>字符串2</td><td class="xl-num" colspan="2">2026-02-01</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+#### `FillMergeStrategy.MERGE_CELL_STYLE`
+
+```java
+
+@Test
+public void listMultiRowFill() {
+    String templateFileName = "path/to/list.xlsx";
+
+    FesodSheet.write("listMultiRowFill.xlsx")
+            .withTemplate(templateFileName)
+            .sheet()
+            .doFill(data(), FillConfig.builder().mergeStrategy(FillMergeStrategy.MERGE_CELL_STYLE).build());
+}
+```
+
+##### 模板
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-border">序号（跨行合并）</td><td class="xl-border">字符串1-2（常规）</td><td class="xl-border">字符串3（跨行合并）</td><td class="xl-border" colspan="2">日期1-2（跨列合并）</td><td class="xl-border" colspan="2">数字1（跨行跨列合并）</td><td class="xl-border">数字2（常规）</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num xl-border" rowspan="2">{.no}</td><td class="xl-border">{.string1}</td><td class="xl-border" rowspan="2">{.string3}</td><td class="xl-num xl-border" colspan="2">{.localDate1}</td><td class="xl-num xl-border" colspan="2" rowspan="2">{.number1}</td><td class="xl-num xl-border">{.number2}</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-border">{.string2}</td><td class="xl-num xl-border" colspan="2">{.localDate2}</td><td class="xl-border"></td></tr>
+</tbody>
+</table>
+</div>
+
+##### 结果
+
+<div class="xl-sheet-container">
+<table class="xl-sheet">
+<tbody>
+<tr><td class="xl-chrome"></td><td class="xl-chrome">A</td><td class="xl-chrome">B</td><td class="xl-chrome">C</td><td class="xl-chrome">D</td><td class="xl-chrome">E</td><td class="xl-chrome">F</td><td class="xl-chrome">G</td><td class="xl-chrome">H</td></tr>
+<tr><td class="xl-chrome">1</td><td class="xl-border">序号（跨行合并）</td><td class="xl-border">字符串1-2（常规）</td><td class="xl-border">字符串3（跨行合并）</td><td class="xl-border" colspan="2">日期1-2（跨列合并）</td><td class="xl-border" colspan="2">数字1（跨行跨列合并）</td><td class="xl-border">数字2（常规）</td></tr>
+<tr><td class="xl-chrome">2</td><td class="xl-num xl-border" rowspan="2">0</td><td class="xl-border">字符串1</td><td class="xl-border" rowspan="2">字符串3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">3</td><td class="xl-border">字符串2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border"></td></tr>
+<tr><td class="xl-chrome">4</td><td class="xl-num xl-border" rowspan="2">1</td><td class="xl-border">字符串1</td><td class="xl-border" rowspan="2">字符串3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">5</td><td class="xl-border">字符串2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border__horizontal_default"></td></tr>
+<tr><td class="xl-chrome">6</td><td class="xl-num xl-border" rowspan="2">2</td><td class="xl-border">字符串1</td><td class="xl-border" rowspan="2">字符串3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">7</td><td class="xl-border">字符串2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border__horizontal_default"></td></tr>
+<tr><td class="xl-chrome">8</td><td class="xl-num xl-border" rowspan="2">3</td><td class="xl-border">字符串1</td><td class="xl-border" rowspan="2">字符串3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">9</td><td class="xl-border">字符串2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td class="xl-border__horizontal_default"></td></tr>
+<tr><td class="xl-chrome">10</td><td class="xl-num xl-border" rowspan="2">4</td><td class="xl-border">字符串1</td><td class="xl-border" rowspan="2">字符串3</td><td colspan="2" class="xl-num xl-border">2026-02-01</td><td class="xl-num xl-border_bottom_default xl-border-right-none" colspan="2" rowspan="2">100</td><td class="xl-num xl-border">200</td></tr>
+<tr><td class="xl-chrome">11</td><td class="xl-border">字符串2</td><td class="xl-num xl-border" colspan="2">2026-02-01</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+> 注：`MERGE_CELL_STYLE`模式下，为什么部分单元格没有样式？  
+> 这是因为模板变量未覆盖这些单元格，所以模板中的样式未被复制。有些没有被模板变量覆盖的单元格之所以看起来有线条，是由于周围单元格的边框渲染造成的。
+
+---
+
 ## 复杂填充
 
 ### 概述

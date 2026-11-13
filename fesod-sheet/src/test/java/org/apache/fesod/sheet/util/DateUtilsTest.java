@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.Year;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -571,6 +572,25 @@ class DateUtilsTest {
         Assertions.assertEquals("2020-01-02T03:04:05+08:00", DateUtils.format(value, "", Locale.US));
         Assertions.assertEquals(
                 "02 Januar 2020 03:04:05 +08:00", DateUtils.format(value, "dd MMMM yyyy HH:mm:ss XXX", Locale.GERMAN));
+    }
+
+    @Test
+    void test_parseOffsetTime() {
+        OffsetTime expected = OffsetTime.of(3, 4, 5, 0, ZoneOffset.ofHours(8));
+        Assertions.assertEquals(expected, DateUtils.parseOffsetTime("03:04:05+08:00", null, Locale.US));
+        Assertions.assertEquals(expected, DateUtils.parseOffsetTime("03:04:05+08:00", "", Locale.US));
+        Assertions.assertEquals(expected, DateUtils.parseOffsetTime("03:04:05 +08:00", "HH:mm:ss XXX", Locale.US));
+        Assertions.assertThrows(
+                DateTimeParseException.class, () -> DateUtils.parseOffsetTime("03:04:05", null, Locale.US));
+    }
+
+    @Test
+    void test_format_OffsetTime() {
+        OffsetTime value = OffsetTime.of(3, 4, 5, 0, ZoneOffset.ofHours(8));
+        Assertions.assertNull(DateUtils.format((OffsetTime) null, null, Locale.US));
+        Assertions.assertEquals("03:04:05+08:00", DateUtils.format(value, null, Locale.US));
+        Assertions.assertEquals("03:04:05+08:00", DateUtils.format(value, "", Locale.US));
+        Assertions.assertEquals("03:04:05 +08:00", DateUtils.format(value, "HH:mm:ss XXX", Locale.US));
     }
 
     @Test

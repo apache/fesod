@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -177,6 +178,21 @@ public class DateUtils {
             return OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         }
         return OffsetDateTime.parse(dateString, getCacheDateTimeFormat(dateFormat, local));
+    }
+
+    /**
+     * convert string to time, requiring the string to carry an explicit offset
+     *
+     * @param timeString time string, e.g. 03:04:05+08:00
+     * @param timeFormat time format, empty means ISO_OFFSET_TIME
+     * @param local local
+     * @return
+     */
+    public static OffsetTime parseOffsetTime(String timeString, String timeFormat, Locale local) {
+        if (StringUtils.isEmpty(timeFormat)) {
+            return OffsetTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_TIME);
+        }
+        return OffsetTime.parse(timeString, getCacheDateTimeFormat(timeFormat, local));
     }
 
     /**
@@ -396,6 +412,24 @@ public class DateUtils {
             return date.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         }
         return date.format(getCacheDateTimeFormat(dateFormat, local));
+    }
+
+    /**
+     * Format time, preserving the offset in the output
+     *
+     * @param time time
+     * @param timeFormat time format, empty means ISO_OFFSET_TIME
+     * @param local local
+     * @return format string
+     */
+    public static String format(OffsetTime time, String timeFormat, Locale local) {
+        if (time == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(timeFormat)) {
+            return time.format(DateTimeFormatter.ISO_OFFSET_TIME);
+        }
+        return time.format(getCacheDateTimeFormat(timeFormat, local));
     }
 
     /**

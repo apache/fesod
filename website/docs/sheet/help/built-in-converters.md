@@ -383,6 +383,13 @@ This section lists the converters provided in the project.
 <td>&#x1f7e1; NEXT</td>
 </tr>
 <tr>
+<td>MonthDay</td>
+<td>STRING</td>
+<td>MonthDayStringConverter</td>
+<td>&#x2705; Read<br />&#x2705; Write</td>
+<td>&#x1f7e1; NEXT</td>
+</tr>
+<tr>
 <td>byte[]</td>
 <td>IMAGE <small>(Drawing)</small></td>
 <td>ByteArrayImageConverter</td>

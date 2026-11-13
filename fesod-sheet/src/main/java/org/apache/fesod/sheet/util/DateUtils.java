@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -90,6 +91,8 @@ public class DateUtils {
     public static String defaultLocalDateFormat = DATE_FORMAT_10;
 
     public static String defaultYearFormat = "yyyy";
+
+    public static String defaultMonthDayFormat = "--MM-dd";
 
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 
@@ -162,6 +165,21 @@ public class DateUtils {
             timeFormat = switchTimeFormat(timeString);
         }
         return LocalTime.parse(timeString, getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * convert string to month day
+     *
+     * @param monthDayString month day string, e.g. --10-31
+     * @param monthDayFormat month day format, empty means ISO representation of a month-day
+     * @param local local
+     * @return
+     */
+    public static MonthDay parseMonthDay(String monthDayString, String monthDayFormat, Locale local) {
+        if (StringUtils.isEmpty(monthDayFormat)) {
+            monthDayFormat = defaultMonthDayFormat;
+        }
+        return MonthDay.parse(monthDayString, getCacheDateTimeFormat(monthDayFormat, local));
     }
 
     /**
@@ -345,6 +363,24 @@ public class DateUtils {
             timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
         }
         return time.format(getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * Format month day
+     *
+     * @param monthDay MonthDay
+     * @param monthDayFormat month day format, empty means ISO representation of a month-day
+     * @param local local
+     * @return format string
+     */
+    public static String format(MonthDay monthDay, String monthDayFormat, Locale local) {
+        if (monthDay == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(monthDayFormat)) {
+            monthDayFormat = defaultMonthDayFormat;
+        }
+        return monthDay.format(getCacheDateTimeFormat(monthDayFormat, local));
     }
 
     /**

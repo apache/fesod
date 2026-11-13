@@ -139,6 +139,7 @@ public class ExcelWriterBuilder extends AbstractExcelWriterParameterBuilder<Exce
     /**
      * Template file.
      * This file is read into memory, excessive cases can lead to OOM.
+     * The template and output must be different files, including symbolic links and hard links.
      */
     public ExcelWriterBuilder withTemplate(File templateFile) {
         writeWorkbook.setTemplateFile(templateFile);

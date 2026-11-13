@@ -38,6 +38,7 @@ import org.apache.fesod.sheet.enums.NumericCellTypeEnum;
 import org.apache.fesod.sheet.metadata.data.FormulaData;
 import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -310,6 +311,9 @@ public class CsvCell extends CellBase {
     @Override
     public void setCellErrorValue(byte value) {
         this.numberValue = BigDecimal.valueOf(value);
+        // buildCellValue serializes ERROR cells through the string value, so keep the '#NAME?'
+        // style text alongside the code instead of silently writing an empty field.
+        this.stringValue = ErrorEval.getText(value);
         this.cellType = CellType.ERROR;
     }
 

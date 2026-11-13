@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.util;
 
 import java.lang.reflect.Field;
@@ -560,6 +554,7 @@ public class ClassUtils {
         private Collection<Integer> excludeColumnIndexes;
         private Collection<String> includeColumnFieldNames;
         private Collection<Integer> includeColumnIndexes;
+        private Boolean orderByIncludeColumn;
 
         FieldCacheKey(Class<?> clazz, ConfigurationHolder configurationHolder) {
             this.clazz = clazz;
@@ -569,6 +564,7 @@ public class ClassUtils {
                 this.excludeColumnIndexes = writeHolder.excludeColumnIndexes();
                 this.includeColumnFieldNames = writeHolder.includeColumnFieldNames();
                 this.includeColumnIndexes = writeHolder.includeColumnIndexes();
+                this.orderByIncludeColumn = writeHolder.orderByIncludeColumn();
             }
         }
     }

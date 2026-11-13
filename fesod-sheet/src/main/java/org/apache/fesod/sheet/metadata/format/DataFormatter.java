@@ -18,9 +18,11 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * Portions of this file are derived from Apache POI's DataFormatter, which carries the following notice:
  *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
+ * 2012 - Alfresco Software, Ltd.
+ * Alfresco Software has modified source of this file
+ * The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
  */
 
 package org.apache.fesod.sheet.metadata.format;

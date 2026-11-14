@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.fesod.common.util.MapUtils;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -48,8 +47,6 @@ public class LongestMatchColumnWidthStyleStrategy extends AbstractColumnWidthSty
 
     private static final int MAX_COLUMN_WIDTH = 255;
 
-    private final Map<Integer, Map<Integer, Integer>> cache = MapUtils.newHashMapWithExpectedSize(8);
-
     @Override
     protected void setColumnWidth(
             WriteSheetHolder writeSheetHolder,
@@ -62,8 +59,11 @@ public class LongestMatchColumnWidthStyleStrategy extends AbstractColumnWidthSty
         if (!needSetWidth) {
             return;
         }
-        Map<Integer, Integer> maxColumnWidthMap =
-                cache.computeIfAbsent(writeSheetHolder.getSheetNo(), key -> new HashMap<>(16));
+        Map<Integer, Integer> maxColumnWidthMap = writeSheetHolder.getColumnWidthCache();
+        if (maxColumnWidthMap == null) {
+            maxColumnWidthMap = new HashMap<>(16);
+            writeSheetHolder.setColumnWidthCache(maxColumnWidthMap);
+        }
         Integer columnWidth = dataLength(cellDataList, cell, isHead);
         if (columnWidth < 0) {
             return;

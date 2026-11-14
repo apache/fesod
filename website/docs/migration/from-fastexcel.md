@@ -322,10 +322,17 @@ about when migrating, but require no action unless you want to use them:
   (`colSplit`, `rowSplit`, `leftmostColumn`, `topRow`).
 - **URL image security** (`org.apache.fesod.sheet.converters.url`):
   `UrlImageFetchPolicy` (built with `SchemePolicy` and `CidrBlock`) guards the
-  built-in URL image converter against SSRF. By default only `http`/`https` and
-  public network addresses are allowed; private networks, hosts and CIDRs can
-  be allowlisted, and redirects (`maxRedirects`) and image size (`maxImageBytes`)
-  are capped.
+  built-in URL image converter against SSRF. Since 2.1.0-incubating, remote URL
+  image fetching is **disabled by default**: you must enable it with an explicit
+  exact-host allowlist (`allowedHosts`, no wildcards) via
+  `UrlImageConverter.setFetchPolicy(...)`. Allowlisted hosts are still limited
+  to `http`/`https` and public network addresses unless private networks, hosts
+  or CIDRs are also allowlisted, and redirects (`maxRedirects`) and image size
+  (`maxImageBytes`) are capped. If your FastExcel code wrote `URL` image fields,
+  configure the policy at application startup; otherwise the write fails with
+  an `IOException` (`Remote URL image fetching is disabled`). See
+  [URL Sources](../sheet/write/image.md#url-sources) and the
+  [Security Model](/community/security-model).
 - **String image converters** (`org.apache.fesod.sheet.converters.string`):
   `StringBase64ImageConverter` (base64 values, optional `data:` prefix) and
   `StringPathnameImageConverter` (local file path) make the string-to-image

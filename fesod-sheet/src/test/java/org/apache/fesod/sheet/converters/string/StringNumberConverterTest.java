@@ -20,27 +20,43 @@
 package org.apache.fesod.sheet.converters.string;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.util.DateUtils;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 /**
  * Tests {@link StringNumberConverter}.
  */
 @Tag(Tags.UNIT)
+@ResourceLock(Resources.LOCALE)
 class StringNumberConverterTest {
 
     private final StringNumberConverter converter = new StringNumberConverter();
+    private Locale savedDefault;
+
+    @BeforeEach
+    void setUp() {
+        savedDefault = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+    }
 
     @AfterEach
     void tearDown() {
+        Locale.setDefault(savedDefault);
         DateUtils.removeThreadLocalCache();
     }
 
@@ -64,6 +80,31 @@ class StringNumberConverterTest {
         String actual = converter.convertToJavaData(new ReadCellData<>(BigDecimal.ONE), contentProperty, configuration);
 
         Assertions.assertEquals("1900-01-01", actual);
+    }
+
+    @Test
+    void convertToJavaDataHonorsConfiguredLocaleForNumericDateSerial() {
+        BigDecimal serial = new BigDecimal("45000");
+        ExcelContentProperty contentProperty = contentProperty("dd MMMM yyyy", null);
+
+        String chinese = converter.convertToJavaData(
+                new ReadCellData<>(serial), contentProperty, globalConfiguration(Locale.CHINESE));
+        String us = converter.convertToJavaData(
+                new ReadCellData<>(serial), contentProperty, globalConfiguration(Locale.US));
+
+        // The configured locale must change the produced text...
+        Assertions.assertNotEquals(us, chinese);
+        // ...and the localized output must use that locale rather than the JVM default.
+        LocalDateTime localDateTime = DateUtil.getLocalDateTime(serial.doubleValue(), false, true);
+        String expectedChinese =
+                DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.CHINESE).format(localDateTime);
+        Assertions.assertEquals(expectedChinese, chinese);
+    }
+
+    private static GlobalConfiguration globalConfiguration(Locale locale) {
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setLocale(locale);
+        return globalConfiguration;
     }
 
     private static ExcelContentProperty contentProperty(String format, Boolean use1904windowing) {

@@ -173,7 +173,6 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         Integer rowIndex = cellWriteHandlerContext.getRowIndex();
         Integer columnIndex = cellWriteHandlerContext.getColumnIndex();
         Sheet sheet = cellWriteHandlerContext.getWriteSheetHolder().getSheet();
-        Cell cell = cellWriteHandlerContext.getCell();
 
         if (writeContext.writeWorkbookHolder().getExcelType() == ExcelTypeEnum.XLSX) {
             anchor = new XSSFClientAnchor(
@@ -221,7 +220,9 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         if (commentData.getAuthor() != null) {
             comment.setAuthor(commentData.getAuthor());
         }
-        cell.setCellComment(comment);
+        // The anchor cell owns the comment. Registering it on the data cell instead made the
+        // duplicate check and the stored reference point at different cells.
+        comment.setAddress(anchor.getRow1(), anchor.getCol1());
     }
 
     protected void fillImage(CellWriteHandlerContext cellWriteHandlerContext, List<ImageData> imageDataList) {

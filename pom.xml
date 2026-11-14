@@ -613,6 +613,12 @@ under the License.
     </build>
     <profiles>
         <profile>
+            <id>quarkus-extension</id>
+            <modules>
+                <module>fesod-quarkus</module>
+            </modules>
+        </profile>
+        <profile>
             <id>apache-release</id>
             <properties>
                 <maven.javadoc.skip>false</maven.javadoc.skip>

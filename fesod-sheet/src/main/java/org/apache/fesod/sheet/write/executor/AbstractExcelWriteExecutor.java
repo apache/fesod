@@ -154,15 +154,22 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         CreationHelper helper = workbook.getCreationHelper();
         Hyperlink hyperlink = helper.createHyperlink(StyleUtil.getHyperlinkType(hyperlinkData.getHyperlinkType()));
         hyperlink.setAddress(hyperlinkData.getAddress());
-        hyperlink.setFirstRow(StyleUtil.getCellCoordinate(
-                rowIndex, hyperlinkData.getFirstRowIndex(), hyperlinkData.getRelativeFirstRowIndex()));
-        hyperlink.setFirstColumn(StyleUtil.getCellCoordinate(
-                columnIndex, hyperlinkData.getFirstColumnIndex(), hyperlinkData.getRelativeFirstColumnIndex()));
-        hyperlink.setLastRow(StyleUtil.getCellCoordinate(
-                rowIndex, hyperlinkData.getLastRowIndex(), hyperlinkData.getRelativeLastRowIndex()));
-        hyperlink.setLastColumn(StyleUtil.getCellCoordinate(
-                columnIndex, hyperlinkData.getLastColumnIndex(), hyperlinkData.getRelativeLastColumnIndex()));
+
+        int firstRow = StyleUtil.getCellCoordinate(
+                rowIndex, hyperlinkData.getFirstRowIndex(), hyperlinkData.getRelativeFirstRowIndex());
+        int firstColumn = StyleUtil.getCellCoordinate(
+                columnIndex, hyperlinkData.getFirstColumnIndex(), hyperlinkData.getRelativeFirstColumnIndex());
+        int lastRow = StyleUtil.getCellCoordinate(
+                rowIndex, hyperlinkData.getLastRowIndex(), hyperlinkData.getRelativeLastRowIndex());
+        int lastColumn = StyleUtil.getCellCoordinate(
+                columnIndex, hyperlinkData.getLastColumnIndex(), hyperlinkData.getRelativeLastColumnIndex());
+
+        // POI rewrites the range to the owning cell inside setHyperlink, so apply it afterwards.
         cell.setHyperlink(hyperlink);
+        hyperlink.setFirstRow(firstRow);
+        hyperlink.setFirstColumn(firstColumn);
+        hyperlink.setLastRow(lastRow);
+        hyperlink.setLastColumn(lastColumn);
     }
 
     private void fillComment(CellWriteHandlerContext cellWriteHandlerContext, CommentData commentData) {

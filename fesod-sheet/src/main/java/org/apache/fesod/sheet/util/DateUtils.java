@@ -92,7 +92,11 @@ public class DateUtils {
 
     public static String defaultYearFormat = "yyyy";
 
-    public static String defaultMonthDayFormat = "--MM-dd";
+    /**
+     * The optional {@code --} prefix reads both the ISO form ({@code --10-31}) and the bare form ({@code 10-31}),
+     * so no lenient fallback pattern is needed when parsing.
+     */
+    public static String defaultMonthDayFormat = "[--]MM-dd";
 
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 

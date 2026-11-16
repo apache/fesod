@@ -20,8 +20,6 @@
 package org.apache.fesod.sheet.converters.monthday;
 
 import java.time.MonthDay;
-import java.time.format.DateTimeParseException;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -32,12 +30,8 @@ import org.apache.fesod.sheet.util.DateUtils;
 
 /**
  * MonthDay and string converter
- *
- *
  */
 public class MonthDayStringConverter implements Converter<MonthDay> {
-
-    private static final String LENIENT_FORMAT = "MM-dd";
 
     @Override
     public Class<?> supportJavaTypeKey() {
@@ -52,16 +46,8 @@ public class MonthDayStringConverter implements Converter<MonthDay> {
     @Override
     public MonthDay convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        String stringValue = cellData.getStringValue();
-        String format = customFormat(contentProperty);
-        if (format != null) {
-            return DateUtils.parseMonthDay(stringValue, format, globalConfiguration.getLocale());
-        }
-        try {
-            return DateUtils.parseMonthDay(stringValue, null, globalConfiguration.getLocale());
-        } catch (DateTimeParseException e) {
-            return DateUtils.parseMonthDay(stringValue, LENIENT_FORMAT, globalConfiguration.getLocale());
-        }
+        return DateUtils.parseMonthDay(
+                cellData.getStringValue(), customFormat(contentProperty), globalConfiguration.getLocale());
     }
 
     @Override
@@ -75,7 +61,6 @@ public class MonthDayStringConverter implements Converter<MonthDay> {
         if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
             return null;
         }
-        String format = contentProperty.getDateTimeFormatProperty().getFormat();
-        return StringUtils.isEmpty(format) ? null : format;
+        return contentProperty.getDateTimeFormatProperty().getFormat();
     }
 }

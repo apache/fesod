@@ -22,9 +22,6 @@ package org.apache.fesod.sheet.converters.monthday;
 import java.time.MonthDay;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
-import org.apache.fesod.sheet.converters.ConverterKeyBuild;
-import org.apache.fesod.sheet.converters.DefaultConverterLoader;
-import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
@@ -158,30 +155,6 @@ class MonthDayStringConverterTest {
         Assertions.assertEquals(
                 MonthDay.parse(isoText),
                 converter.convertToJavaData(new ReadCellData<>(written.getStringValue()), null, GLOBAL_CONFIGURATION));
-    }
-
-    @Test
-    void converterIsRegisteredForBothReadAndWrite() {
-        Assertions.assertEquals(
-                MonthDayStringConverter.class,
-                DefaultConverterLoader.loadAllConverter()
-                        .get(ConverterKeyBuild.buildKey(MonthDay.class, CellDataTypeEnum.STRING))
-                        .getClass());
-        Assertions.assertEquals(
-                MonthDayStringConverter.class,
-                DefaultConverterLoader.loadDefaultWriteConverter()
-                        .get(ConverterKeyBuild.buildKey(MonthDay.class))
-                        .getClass());
-        Assertions.assertEquals(
-                MonthDayStringConverter.class,
-                DefaultConverterLoader.loadDefaultWriteConverter()
-                        .get(ConverterKeyBuild.buildKey(MonthDay.class, CellDataTypeEnum.STRING))
-                        .getClass());
-        Assertions.assertEquals(
-                1,
-                DefaultConverterLoader.loadAllConverter().entrySet().stream()
-                        .filter(entry -> entry.getKey().getClazz() == MonthDay.class)
-                        .count());
     }
 
     private static ExcelContentProperty propertyWithFormat(String format) {

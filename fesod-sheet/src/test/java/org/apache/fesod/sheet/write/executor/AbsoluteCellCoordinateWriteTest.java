@@ -28,26 +28,33 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
+import org.apache.fesod.sheet.metadata.data.CommentData;
 import org.apache.fesod.sheet.metadata.data.ImageData;
+import org.apache.fesod.sheet.metadata.data.RichTextStringData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Shape;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 /**
  * Verifies that absolute cell coordinates of {@code 0} (row 1 / column A) are honored when writing
- * images, instead of falling back to the coordinates of the cell that carries the data.
+ * images, instead of falling back to the coordinates of the cell that carries the data, and that the
+ * comment write path keeps its existing behavior for absolute {@code 0}.
  */
 @Tag(Tags.WRITE)
 class AbsoluteCellCoordinateWriteTest extends AbstractExcelTest {
@@ -102,6 +109,52 @@ class AbsoluteCellCoordinateWriteTest extends AbstractExcelTest {
         List<ClientAnchor> anchors = readPictureAnchors(file);
         Assertions.assertEquals(1, anchors.size());
         assertAnchor(anchors.get(0), 0, 0, DATA_ROW_INDEX + 2, DATA_COLUMN_INDEX + 2);
+    }
+
+    /**
+     * A comment on B1 with an absolute anchor of {@code (0, 0)} must not collide with the comment that
+     * already lives on A1. Absolute {@code 0} is only honored for images, so the comment stays on its
+     * own cell.
+     */
+    @ParameterizedTest
+    @CsvSource({"XLSX, false", "XLSX, true", "XLS, false"})
+    void comment_with_absolute_zero_anchor_keeps_existing_behavior(ExcelFormat format, boolean inMemory)
+            throws IOException {
+        WriteCellData<String> a1 = new WriteCellData<>("a1");
+        a1.setCommentData(comment("comment on A1"));
+
+        CommentData absoluteZero = comment("comment on B1");
+        absoluteZero.setFirstRowIndex(0);
+        absoluteZero.setFirstColumnIndex(0);
+        WriteCellData<String> b1 = new WriteCellData<>("b1");
+        b1.setCommentData(absoluteZero);
+
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList(a1, b1));
+
+        File file = createTempFile("absolute-zero-comment", format);
+        Assertions.assertDoesNotThrow(() -> FesodSheet.write(file)
+                .excelType(format.toExcelTypeEnum())
+                .inMemory(inMemory)
+                .needHead(false)
+                .sheet()
+                .doWrite(data));
+
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Comment commentA1 = sheet.getCellComment(new CellAddress(0, 0));
+            Comment commentB1 = sheet.getCellComment(new CellAddress(0, 1));
+            Assertions.assertNotNull(commentA1, "A1 should keep its comment");
+            Assertions.assertNotNull(commentB1, "B1 should keep its comment");
+            Assertions.assertEquals("comment on A1", commentA1.getString().getString());
+            Assertions.assertEquals("comment on B1", commentB1.getString().getString());
+        }
+    }
+
+    private static CommentData comment(String text) {
+        CommentData commentData = new CommentData();
+        commentData.setRichTextStringData(new RichTextStringData(text));
+        return commentData;
     }
 
     private File writeImages(ExcelFormat format, ImageData... images) throws IOException {

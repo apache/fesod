@@ -254,14 +254,14 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
             if (imageData.getLeft() != null) {
                 anchor.setDx1(StyleUtil.getCoordinate(imageData.getLeft()));
             }
-            anchor.setRow1(StyleUtil.getCellCoordinate(
+            anchor.setRow1(StyleUtil.getImageCellCoordinate(
                     rowIndex, imageData.getFirstRowIndex(), imageData.getRelativeFirstRowIndex()));
-            anchor.setCol1(StyleUtil.getCellCoordinate(
+            anchor.setCol1(StyleUtil.getImageCellCoordinate(
                     columnIndex, imageData.getFirstColumnIndex(), imageData.getRelativeFirstColumnIndex()));
-            anchor.setRow2(StyleUtil.getCellCoordinate(
+            anchor.setRow2(StyleUtil.getImageCellCoordinate(
                             rowIndex, imageData.getLastRowIndex(), imageData.getRelativeLastRowIndex())
                     + 1);
-            anchor.setCol2(StyleUtil.getCellCoordinate(
+            anchor.setCol2(StyleUtil.getImageCellCoordinate(
                             columnIndex, imageData.getLastColumnIndex(), imageData.getRelativeLastColumnIndex())
                     + 1);
             if (imageData.getAnchorType() != null) {

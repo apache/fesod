@@ -234,23 +234,43 @@ class StyleUtilTest {
     }
 
     @Test
-    void testGetCellCoordinate_withAbsoluteZero_shouldReturnZero() {
-        Assertions.assertEquals(0, StyleUtil.getCellCoordinate(100, 0, null));
+    void testGetCellCoordinate_withAbsoluteZero_shouldFallBackToCurrent() {
+        Assertions.assertEquals(100, StyleUtil.getCellCoordinate(100, 0, null));
     }
 
     @Test
-    void testGetCellCoordinate_withAbsoluteZeroAndRelative_shouldPreferAbsolute() {
-        Assertions.assertEquals(0, StyleUtil.getCellCoordinate(100, 0, 200));
+    void testGetCellCoordinate_withAbsoluteZero_shouldFallBackToRelative() {
+        Assertions.assertEquals(300, StyleUtil.getCellCoordinate(100, 0, 200));
     }
 
     @Test
-    void testGetCellCoordinate_withNegativeAbsolute_shouldFallBackToRelative() {
-        Assertions.assertEquals(300, StyleUtil.getCellCoordinate(100, -1, 200));
+    void testGetImageCellCoordinate_withAbsolute_shouldReturnAbsolute() {
+        Assertions.assertEquals(500, StyleUtil.getImageCellCoordinate(100, 500, 200));
     }
 
     @Test
-    void testGetCellCoordinate_withNegativeAbsolute_shouldFallBackToCurrent() {
-        Assertions.assertEquals(100, StyleUtil.getCellCoordinate(100, -1, null));
+    void testGetImageCellCoordinate_withAbsoluteZero_shouldReturnZero() {
+        Assertions.assertEquals(0, StyleUtil.getImageCellCoordinate(100, 0, null));
+    }
+
+    @Test
+    void testGetImageCellCoordinate_withAbsoluteZeroAndRelative_shouldPreferAbsolute() {
+        Assertions.assertEquals(0, StyleUtil.getImageCellCoordinate(100, 0, 200));
+    }
+
+    @Test
+    void testGetImageCellCoordinate_withNegativeAbsolute_shouldFallBackToRelative() {
+        Assertions.assertEquals(300, StyleUtil.getImageCellCoordinate(100, -1, 200));
+    }
+
+    @Test
+    void testGetImageCellCoordinate_withNegativeAbsolute_shouldFallBackToCurrent() {
+        Assertions.assertEquals(100, StyleUtil.getImageCellCoordinate(100, -1, null));
+    }
+
+    @Test
+    void testGetImageCellCoordinate_withNull_shouldReturnCurrent() {
+        Assertions.assertEquals(100, StyleUtil.getImageCellCoordinate(100, null, null));
     }
 
     @Test

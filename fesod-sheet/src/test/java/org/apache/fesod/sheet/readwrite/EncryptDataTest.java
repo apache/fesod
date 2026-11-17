@@ -53,7 +53,6 @@ import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -243,15 +242,13 @@ public class EncryptDataTest extends AbstractExcelTest {
      * Verifies that when the temp file cannot be opened, the open error is reported rather than a failed delete.
      */
     @Test
-    void xlsxStreamPasswordWrite_tempFileOpenFails_reportsOpenError() {
-        File tempFileDir = new File(tempDir, "fesod-temp");
-        Assertions.assertTrue(tempFileDir.mkdirs());
-        Assertions.assertTrue(tempFileDir.setWritable(false));
-        // Root and some file systems ignore the flag, so the open would not fail there
-        Assumptions.assumeFalse(tempFileDir.canWrite());
+    void xlsxStreamPasswordWrite_tempFileOpenFails_reportsOpenError() throws IOException {
+        // A regular file in place of the temp directory makes the open fail
+        File notADirectory = new File(tempDir, "fesod-temp");
+        Assertions.assertTrue(notADirectory.createNewFile());
         OutputStream outputStream = new ByteArrayOutputStream();
         ExcelGenerateException e = Assertions.assertThrows(
-                ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, outputStream, null));
+                ExcelGenerateException.class, () -> writeWithPassword(notADirectory, outputStream, null));
         Assertions.assertInstanceOf(FileNotFoundException.class, e.getCause());
     }
 

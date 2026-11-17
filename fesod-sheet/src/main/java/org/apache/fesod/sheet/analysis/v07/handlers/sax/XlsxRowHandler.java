@@ -49,6 +49,8 @@ import org.xml.sax.helpers.DefaultHandler;
 @Slf4j
 public class XlsxRowHandler extends DefaultHandler {
     private final XlsxReadContext xlsxReadContext;
+    private boolean inPhoneticRun;
+    private boolean inlineStringCell;
     private static final Map<String, XlsxTagHandler> XLSX_CELL_HANDLER_MAP = new HashMap<>(64);
 
     static {
@@ -92,9 +94,17 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+        if (isPhoneticRun(name)) {
+            inPhoneticRun = true;
+            return;
+        }
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(name);
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
+        }
+        if (handler instanceof CellTagHandler) {
+            // Both inlineStr and str map to DIRECT_STRING, but only inlineStr must ignore v elements.
+            inlineStringCell = "inlineStr".equals(attributes.getValue(ExcelXmlConstants.ATTRIBUTE_T));
         }
         xlsxReadContext.xlsxReadSheetHolder().getTagDeque().push(name);
         handler.startElement(xlsxReadContext, name, attributes);
@@ -102,6 +112,10 @@ public class XlsxRowHandler extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+        // Phonetic runs annotate the inline text; they are not part of the cell value.
+        if (inPhoneticRun) {
+            return;
+        }
         String currentTag = xlsxReadContext.xlsxReadSheetHolder().getTagDeque().peek();
         if (currentTag == null) {
             return;
@@ -110,16 +124,30 @@ public class XlsxRowHandler extends DefaultHandler {
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
         }
+        if (inlineStringCell && handler instanceof CellValueTagHandler) {
+            // Tolerate stray v elements in inlineStr cells, including supported prefixed tags.
+            return;
+        }
         handler.characters(xlsxReadContext, ch, start, length);
     }
 
     @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
+        if (isPhoneticRun(name)) {
+            inPhoneticRun = false;
+            return;
+        }
         XlsxTagHandler handler = XLSX_CELL_HANDLER_MAP.get(name);
         if (handler == null || !handler.support(xlsxReadContext)) {
             return;
         }
         handler.endElement(xlsxReadContext, name);
         xlsxReadContext.xlsxReadSheetHolder().getTagDeque().pop();
+    }
+
+    private static boolean isPhoneticRun(String name) {
+        return ExcelXmlConstants.SHAREDSTRINGS_RPH_TAG.equals(name)
+                || ExcelXmlConstants.SHAREDSTRINGS_X_RPH_TAG.equals(name)
+                || ExcelXmlConstants.SHAREDSTRINGS_NS2_RPH_TAG.equals(name);
     }
 }

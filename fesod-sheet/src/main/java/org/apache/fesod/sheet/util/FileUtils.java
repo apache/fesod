@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.util;
 
 import java.io.File;
@@ -32,6 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 import org.apache.fesod.common.util.IoUtils;
 import org.apache.fesod.sheet.exception.ExcelAnalysisException;
@@ -187,16 +184,30 @@ public class FileUtils {
     }
 
     /**
-     * delete file
+     * Deletes the given file or directory recursively.
+     * <p>
+     * Symbolic links and NTFS junctions are deleted without being followed, ensuring that the deletion cannot
+     * escape the given directory.
      *
-     * @param file
+     * @param file the file or directory to delete
      */
     public static void delete(File file) {
-        if (file.isFile()) {
+        BasicFileAttributes attributes;
+        try {
+            attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+            return;
+        }
+        // Delete symbolic links and NTFS junctions (reported as "other") directly without traversing targets
+        if (attributes.isSymbolicLink() || attributes.isOther()) {
             file.delete();
             return;
         }
-        if (file.isDirectory()) {
+        if (attributes.isRegularFile()) {
+            file.delete();
+            return;
+        }
+        if (attributes.isDirectory()) {
             File[] childFiles = file.listFiles();
             if (childFiles == null || childFiles.length == 0) {
                 file.delete();

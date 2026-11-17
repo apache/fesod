@@ -161,20 +161,10 @@ public class EncryptDataTest extends AbstractExcelTest {
     void xlsxStreamPasswordWrite_encryptionFails_writesNothing() throws Exception {
         // A temp directory under a regular file cannot be created, so the encryption step fails
         File regularFile = createTempFile("enc-blocker", ExcelFormat.XLSX);
+        File tempFileDir = new File(regularFile, "sub");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        String originalPrefix = FileUtils.getTempFilePrefix();
-        FileUtils.setTempFilePrefix(regularFile.getAbsolutePath() + File.separator + "sub" + File.separator);
-        try {
-            List<SimpleData> data = TestDataBuilder.simpleData(10);
-            ExcelWriterSheetBuilder sheet = FesodSheet.write(out, SimpleData.class)
-                    .excelType(ExcelTypeEnum.XLSX)
-                    .password(PASSWORD)
-                    .sheet();
-            Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
-            Assertions.assertEquals(0, out.size());
-        } finally {
-            FileUtils.setTempFilePrefix(originalPrefix);
-        }
+        Assertions.assertThrows(ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, out, null));
+        Assertions.assertEquals(0, out.size());
     }
 
     /**

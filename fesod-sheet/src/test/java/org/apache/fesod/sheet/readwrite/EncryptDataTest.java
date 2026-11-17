@@ -154,8 +154,8 @@ public class EncryptDataTest extends AbstractExcelTest {
     }
 
     /**
-     * Verifies that when encrypting an XLSX stream write fails, nothing is written to the stream rather than
-     * the unencrypted workbook.
+     * Verifies that when encrypting an XLSX stream write fails, the stream stays empty instead of receiving the
+     * unencrypted workbook.
      */
     @Test
     void xlsxStreamPasswordWrite_encryptionFails_writesNothing() throws Exception {
@@ -164,7 +164,7 @@ public class EncryptDataTest extends AbstractExcelTest {
         File tempFileDir = new File(regularFile, "sub");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Assertions.assertThrows(ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, out, null));
-        Assertions.assertEquals(0, out.size());
+        assertThat(out.size()).isZero();
     }
 
     /**
@@ -193,7 +193,7 @@ public class EncryptDataTest extends AbstractExcelTest {
                 .sheet();
 
         Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
-        Assertions.assertFalse(file.exists());
+        assertThat(file).doesNotExist();
     }
 
     /**

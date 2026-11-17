@@ -25,6 +25,7 @@ import org.apache.commons.csv.QuoteMode;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.event.SyncReadListener;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.metadata.csv.CsvConstant;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
@@ -83,7 +84,7 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
      */
     public CsvReaderBuilder quote(Character quote, QuoteMode quoteMode) {
         if (quote != null) {
-            this.csvFormatBuilder.setQuote(quote);
+            this.csvFormatBuilder.setQuote(CsvConstant.NONE_QUOTE == quote ? null : quote);
         }
         if (quoteMode != null) {
             this.csvFormatBuilder.setQuoteMode(quoteMode);

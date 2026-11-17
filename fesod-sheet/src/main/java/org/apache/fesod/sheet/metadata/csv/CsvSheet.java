@@ -122,8 +122,12 @@ public class CsvSheet implements Sheet, Closeable {
         // Initialize the data when the row is first created
         initSheet();
 
-        lastRowIndex++;
-        assert rownum == lastRowIndex : "csv create row must be in order.";
+        int newLastRowIndex = lastRowIndex + 1;
+        if (newLastRowIndex != rownum) {
+            throw new IllegalArgumentException("CSV rows must be created in sequential order: expected row index "
+                    + newLastRowIndex + ", but was " + rownum);
+        }
+        lastRowIndex = newLastRowIndex;
         printData();
         CsvRow csvRow = new CsvRow(csvWorkbook, this, rownum);
         rowCache.add(csvRow);
@@ -165,7 +169,7 @@ public class CsvSheet implements Sheet, Closeable {
 
     @Override
     public int getPhysicalNumberOfRows() {
-        return lastRowIndex - rowCache.size();
+        return lastRowIndex + 1;
     }
 
     @Override

@@ -79,6 +79,44 @@ public void converterRead() {
 
 ---
 
+## 默认日期字符串解析
+
+当读取字符串单元格并转换为日期时间字段、且未声明 `@DateTimeFormat` 时，Fesod 会按固定规则回退解析。
+对于 `java.util.Date`、`LocalDate`、`LocalDateTime` 和 `java.sql.Timestamp` 字段，根据字符串长度选择格式：
+
+| 字符串长度 | 格式 |
+|:---|:---|
+| 19 | `yyyy-MM-dd HH:mm:ss` / `yyyy/MM/dd HH:mm:ss` |
+| 17 | `yyyyMMdd HH:mm:ss` |
+| 16 | `yyyy-MM-dd HH:mm` / `yyyy/MM/dd HH:mm` |
+| 14 | `yyyyMMddHHmmss` |
+| 10 | `yyyy-MM-dd` / `yyyy/MM/dd` |
+
+字符串不含 `-` 时使用斜杠分隔的格式。`LocalDate` 同时接受日期和日期时间字符串（忽略时间部分），
+`LocalDateTime` 则必须包含时间部分。
+
+其他日期时间类型有各自的默认格式：
+
+| Java 类型 | 默认格式 |
+|:---|:---|
+| `LocalTime`、`java.sql.Time` | `HH:mm:ss` 或 `HH:mm` |
+| `OffsetDateTime` | 带显式偏移量的 ISO-8601，例如 `2024-01-02T03:04:05+08:00` |
+| `Year` | `yyyy` |
+
+不符合上述规则的字符串不会被解析，例如使用 `T` 分隔符或带毫秒的 ISO-8601 值，以及未补零的值
+（如 `2024/1/2`）。输入使用其他格式时，请显式声明格式：
+
+```java
+@DateTimeFormat("yyyy-MM-dd'T'HH:mm:ss")
+private LocalDateTime time;
+```
+
+:::tip
+默认格式只是对常见格式的兜底，且按字符串长度选择。需要保证解析行为稳定时，请显式声明 `@DateTimeFormat`。
+:::
+
+---
+
 ## 注解参考
 
 ### `@DateTimeFormat`

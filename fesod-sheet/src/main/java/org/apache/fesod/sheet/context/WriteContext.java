@@ -97,7 +97,7 @@ public interface WriteContext {
      * Current sheet
      *
      * @return
-     * @deprecated please us e{@link #writeSheetHolder()}
+     * @deprecated please use {@link #writeSheetHolder()}
      */
     @Deprecated
     Sheet getCurrentSheet();
@@ -106,7 +106,7 @@ public interface WriteContext {
      * Need head
      *
      * @return
-     * @deprecated please us e{@link #writeSheetHolder()}
+     * @deprecated please use {@link #writeSheetHolder()}
      */
     @Deprecated
     boolean needHead();

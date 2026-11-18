@@ -37,6 +37,8 @@ import org.apache.fesod.sheet.util.FileUtils;
  * String and image converter
  *
  * @see StringPathnameImageConverter
+ * @deprecated use {@link StringPathnameImageConverter} instead, which has the same behaviour under a
+ *             name that reflects it
  */
 @Deprecated
 public class StringImageConverter implements Converter<String> {

@@ -27,7 +27,6 @@ package org.apache.fesod.sheet.cache;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.fesod.sheet.context.AnalysisContext;
 
 /**
  * Putting temporary data directly into a map is a little more efficient but very memory intensive
@@ -36,9 +35,6 @@ import org.apache.fesod.sheet.context.AnalysisContext;
  */
 public class MapCache implements ReadCache {
     private final List<String> cache = new ArrayList<>();
-
-    @Override
-    public void init(AnalysisContext analysisContext) {}
 
     @Override
     public void put(String value) {
@@ -52,10 +48,4 @@ public class MapCache implements ReadCache {
         }
         return cache.get(key);
     }
-
-    @Override
-    public void putFinished() {}
-
-    @Override
-    public void destroy() {}
 }

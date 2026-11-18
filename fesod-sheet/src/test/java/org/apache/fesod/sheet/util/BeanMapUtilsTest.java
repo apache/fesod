@@ -19,6 +19,7 @@
 
 package org.apache.fesod.sheet.util;
 
+import java.lang.reflect.Method;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.fesod.shaded.cglib.beans.BeanMap;
@@ -70,7 +71,7 @@ class BeanMapUtilsTest {
         BeanMapUtils.FesodSheetNamingPolicy policy = BeanMapUtils.FesodSheetNamingPolicy.INSTANCE;
 
         Assertions.assertDoesNotThrow(() -> {
-            java.lang.reflect.Method getTagMethod = policy.getClass().getDeclaredMethod("getTag");
+            Method getTagMethod = policy.getClass().getDeclaredMethod("getTag");
             getTagMethod.setAccessible(true);
             String tag = (String) getTagMethod.invoke(policy);
             Assertions.assertEquals("ByFesodCGLIB", tag);

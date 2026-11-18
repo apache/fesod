@@ -90,13 +90,8 @@ Generate dynamic headers in real-time, suitable for scenarios where header conte
 public void dynamicHeadWrite() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
-    List<List<String>> head = Arrays.asList(
-            Collections.singletonList("Dynamic String Title"),
-            Collections.singletonList("Dynamic Number Title"),
-            Collections.singletonList("Dynamic Date Title"));
-
     FesodSheet.write(fileName)
-            .head(head)
+            .head(HeadBuilder.forSimple("Dynamic String Title", "Dynamic Number Title", "Dynamic Date Title"))
             .sheet()
             .doWrite(data());
 }
@@ -145,15 +140,12 @@ cells. The example below uses a three-level header where names repeat in both di
 public void dynamicHeadWriteWithStrategy() {
     String fileName = "dynamicHeadWrite" + System.currentTimeMillis() + ".xlsx";
 
-    List<List<String>> head = Arrays.asList(
-        Arrays.asList("Main Title", "ID", "ID"),
-        Arrays.asList("Main Title", "Group A", "Name"),
-        Arrays.asList("Main Title", "Group A", "Age"),
-        Arrays.asList("Main Title", "Group B", "Name"),
-        Arrays.asList("Main Title", "Group B", "Age"));
-
     FesodSheet.write(fileName)
-        .head(head)
+        .head(builder -> builder.column("Main Title", "ID", "ID")
+                .column("Main Title", "Group A", "Name")
+                .column("Main Title", "Group A", "Age")
+                .column("Main Title", "Group B", "Name")
+                .column("Main Title", "Group B", "Age"))
         .headerMergeStrategy(HeaderMergeStrategy.FULL_RECTANGLE)
         .sheet()
         .doWrite(data());

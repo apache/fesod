@@ -25,7 +25,6 @@
 
 package org.apache.fesod.sheet.converter;
 
-import com.alibaba.fastjson2.JSON;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -51,7 +50,7 @@ public class ExtraDataListener extends AnalysisEventListener<ExtraData> {
 
     @Override
     public void extra(CellExtra extra, AnalysisContext context) {
-        log.info("extra data:{}", JSON.toJSONString(extra));
+        log.info("extra data:{}", extra);
         extras.add(extra);
     }
 }

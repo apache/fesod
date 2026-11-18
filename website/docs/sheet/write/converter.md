@@ -100,6 +100,19 @@ public void converterWrite() {
 
 Register a converter at the builder level to apply it to ALL fields matching the Java type and Excel type. This is useful when you want the same transformation applied globally without annotating each field.
 
+For ordinary XLSX/XLS writes, global converter lookup uses the Java type and a `null` Excel type key. Use the following variant of the converter above. The returned `WriteCellData` still determines the output cell type; returning `null` here only changes the lookup key.
+
+```java
+public class GlobalStringWriteConverter extends CustomStringStringConverter {
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return null;
+    }
+}
+```
+
+For CSV writing and reading string cells, register the original `CustomStringStringConverter`, which returns `CellDataTypeEnum.STRING`.
+
 ### Code Example
 
 ```java
@@ -107,7 +120,7 @@ Register a converter at the builder level to apply it to ALL fields matching the
 public void globalConverterWrite() {
     String fileName = "globalConverterWrite" + System.currentTimeMillis() + ".xlsx";
     FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new CustomStringStringConverter())
+        .registerConverter(new GlobalStringWriteConverter())
         .sheet()
         .doWrite(data());
 }
@@ -120,5 +133,5 @@ public void globalConverterWrite() {
 When multiple converters could apply to a field, Fesod resolves them in this order:
 
 1. Field-level converter (`@ExcelProperty(converter = ...)`) — highest priority
-2. Builder-level converter (`.registerConverter(...)`)
+2. Builder-level converter (`.registerConverter(...)`) with a matching lookup key
 3. Built-in default converter — lowest priority

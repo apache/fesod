@@ -26,6 +26,8 @@
 package org.apache.fesod.sheet.converter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.AnalysisContext;
@@ -123,5 +125,30 @@ public class ExtraDataTest extends AbstractExcelTest {
                 .extraRead(CellExtraTypeEnum.HYPERLINK)
                 .sheet()
                 .doRead();
+    }
+
+    @Test
+    void readHyperlinkWithUrlFragment() {
+        // A1 links to https://example.com/page#section, stored as r:id plus location="section"
+        File file = readFile("extra" + File.separator + "extraHyperlinkFragment.xlsx");
+        List<String> hyperlinks = new ArrayList<>();
+        FesodSheet.read(file, new ReadListener<Object>() {
+                    @Override
+                    public void invoke(Object data, AnalysisContext context) {}
+
+                    @Override
+                    public void doAfterAllAnalysed(AnalysisContext context) {}
+
+                    @Override
+                    public void extra(CellExtra extra, AnalysisContext context) {
+                        hyperlinks.add(extra.getText());
+                    }
+                })
+                .extraRead(CellExtraTypeEnum.HYPERLINK)
+                .sheet()
+                .doRead();
+
+        Assertions.assertEquals(
+                Arrays.asList("https://example.com/page#section", "https://example.com/plain"), hyperlinks);
     }
 }

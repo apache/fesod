@@ -17,6 +17,12 @@
  * under the License.
  */
 
+/*
+ * Portions of this file are derived from Alibaba EasyExcel's DateUtils.
+ *
+ * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
+ */
+
 package org.apache.fesod.sheet.util;
 
 import java.util.Map;
@@ -46,7 +52,7 @@ class ExcelDateFormatDetector {
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
     // add "\u5e74 \u6708 \u65e5" for Chinese/Japanese date format:2017 \u5e74 2 \u6708 7 \u65e5
     private static final Pattern date_ptrn3b =
-            Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0*[ampAMP/]*$");
+            Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0* ?[ampAMP/]*$");
     // elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
     // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date

@@ -21,6 +21,7 @@ package org.apache.fesod.sheet.readwrite;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
@@ -77,7 +78,7 @@ public class DateTimeFormatDefaultWindowingTest extends AbstractExcelTest {
         FesodSheet.write(file1904, DateTimeFormatData.class)
                 .use1904windowing(true)
                 .sheet()
-                .doWrite(java.util.Collections.singletonList(new DateTimeFormatData(VALUE)));
+                .doWrite(Collections.singletonList(new DateTimeFormatData(VALUE)));
 
         try (Workbook workbook = WorkbookFactory.create(file1904)) {
             double serial = workbook.getSheetAt(0).getRow(1).getCell(0).getNumericCellValue();
@@ -89,6 +90,6 @@ public class DateTimeFormatDefaultWindowingTest extends AbstractExcelTest {
         FesodSheet.write(file, DateTimeFormatData.class)
                 .use1904windowing(true)
                 .sheet()
-                .doWrite(java.util.Collections.singletonList(new DateTimeFormatData(VALUE)));
+                .doWrite(Collections.singletonList(new DateTimeFormatData(VALUE)));
     }
 }

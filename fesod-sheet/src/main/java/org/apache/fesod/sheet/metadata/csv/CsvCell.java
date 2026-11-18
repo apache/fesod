@@ -158,6 +158,7 @@ public class CsvCell extends CellBase {
     protected void setCellValueImpl(double value) {
         numberValue = BigDecimal.valueOf(value);
         this.cellType = CellType.NUMERIC;
+        this.numericCellType = NumericCellTypeEnum.NUMBER;
     }
 
     @Override

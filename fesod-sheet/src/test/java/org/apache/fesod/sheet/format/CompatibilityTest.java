@@ -30,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,6 @@ import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -148,14 +146,10 @@ public class CompatibilityTest extends AbstractExcelTest {
                 FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         Assertions.assertEquals(10L, list.size());
 
-        // Save file content before deleting the system temp dir (which also removes @TempDir)
-        byte[] fileContent = Files.readAllBytes(file.toPath());
-
-        FileUtils.delete(new File(System.getProperty(TempFile.JAVA_IO_TMPDIR)));
-
-        // Recreate the file after temp dir deletion to continue the test
-        file.getParentFile().mkdirs();
-        Files.write(file.toPath(), fileContent);
+        // Only delete Fesod's own temp dir, never the whole system temp dir shared with other processes
+        FileUtils.delete(new File(FileUtils.getTempFilePrefix()));
+        // The workbook lives in JUnit's @TempDir, so it must survive the deletion
+        Assertions.assertTrue(file.exists());
 
         list = FesodSheet.read(file).readCache(new Ehcache(null, 20)).sheet().doReadSync();
         Assertions.assertEquals(10L, list.size());

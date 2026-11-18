@@ -17,6 +17,12 @@
  * under the License.
  */
 
+/*
+ * Portions of this file are derived from Alibaba EasyExcel's tests.
+ *
+ * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
+ */
+
 package org.apache.fesod.sheet.testkit.builders;
 
 import java.math.BigDecimal;

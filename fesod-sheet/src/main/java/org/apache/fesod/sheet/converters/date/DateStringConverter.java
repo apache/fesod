@@ -67,11 +67,7 @@ public class DateStringConverter implements Converter<Date> {
     @Override
     public WriteCellData<?> convertToExcelData(
             Date value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(DateUtils.format(value, null));
-        } else {
-            return new WriteCellData<>(DateUtils.format(
-                    value, contentProperty.getDateTimeFormatProperty().getFormat()));
-        }
+        return new WriteCellData<>(
+                DateUtils.format(value, DateUtils.resolveDateTimeFormat(contentProperty, globalConfiguration)));
     }
 }

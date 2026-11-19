@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 import org.apache.fesod.common.util.ListUtils;
+import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
@@ -182,6 +183,72 @@ public abstract class AbstractParameterBuilder<T extends AbstractParameterBuilde
     public T autoStrip(Boolean autoStrip) {
         parameter().setAutoStrip(autoStrip);
         return self();
+    }
+
+    /**
+     * Default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime} fields without a
+     * {@code @DateTimeFormat} pattern.
+     * <p>
+     * default is the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultDateFormat()}),
+     * {@code yyyy-MM-dd HH:mm:ss} unless changed.
+     * <p>
+     * Passing {@code null} leaves the pattern unset, so the read/write context inherits the process-wide default. An
+     * empty or whitespace-only pattern is rejected rather than silently treated as "not set".
+     *
+     * @param defaultDateFormat the pattern, or {@code null} to inherit the process-wide default
+     * @return
+     * @throws IllegalArgumentException if the pattern is empty or whitespace-only
+     */
+    public T defaultDateFormat(String defaultDateFormat) {
+        parameter().setDefaultDateFormat(requireNonBlankPattern(defaultDateFormat, "defaultDateFormat"));
+        return self();
+    }
+
+    /**
+     * Default pattern for {@code LocalDate} fields without a {@code @DateTimeFormat} pattern.
+     * <p>
+     * default is the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultLocalDateFormat()}),
+     * {@code yyyy-MM-dd} unless changed.
+     * <p>
+     * Passing {@code null} leaves the pattern unset, so the read/write context inherits the process-wide default. An
+     * empty or whitespace-only pattern is rejected rather than silently treated as "not set".
+     *
+     * @param defaultLocalDateFormat the pattern, or {@code null} to inherit the process-wide default
+     * @return
+     * @throws IllegalArgumentException if the pattern is empty or whitespace-only
+     */
+    public T defaultLocalDateFormat(String defaultLocalDateFormat) {
+        parameter().setDefaultLocalDateFormat(requireNonBlankPattern(defaultLocalDateFormat, "defaultLocalDateFormat"));
+        return self();
+    }
+
+    /**
+     * Default pattern for {@code Year} fields without a {@code @DateTimeFormat} pattern.
+     * <p>
+     * default is the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultYearFormat()}),
+     * {@code yyyy} unless changed.
+     * <p>
+     * Passing {@code null} leaves the pattern unset, so the read/write context inherits the process-wide default. An
+     * empty or whitespace-only pattern is rejected rather than silently treated as "not set".
+     *
+     * @param defaultYearFormat the pattern, or {@code null} to inherit the process-wide default
+     * @return
+     * @throws IllegalArgumentException if the pattern is empty or whitespace-only
+     */
+    public T defaultYearFormat(String defaultYearFormat) {
+        parameter().setDefaultYearFormat(requireNonBlankPattern(defaultYearFormat, "defaultYearFormat"));
+        return self();
+    }
+
+    /**
+     * Rejects an empty or whitespace-only pattern while keeping {@code null} as "not set", which is how the sibling
+     * builder parameters behave: the holder then falls back to the parent or process-wide default.
+     */
+    private static String requireNonBlankPattern(String format, String name) {
+        if (format != null && StringUtils.isBlank(format)) {
+            throw new IllegalArgumentException(name + " can not be blank");
+        }
+        return format;
     }
 
     @SuppressWarnings("unchecked")

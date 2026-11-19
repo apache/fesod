@@ -51,11 +51,7 @@ public class LocalDateDateConverter implements Converter<LocalDate> {
             throws Exception {
         LocalDateTime localDateTime = value == null ? null : value.atTime(0, 0);
         WriteCellData<?> cellData = new WriteCellData<>(localDateTime);
-        String format = null;
-        if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
-            format = contentProperty.getDateTimeFormatProperty().getFormat();
-        }
-        WorkBookUtil.fillDataFormat(cellData, format, DateUtils.defaultLocalDateFormat);
+        WorkBookUtil.fillDataFormat(cellData, DateUtils.resolveLocalDateFormat(contentProperty, globalConfiguration));
         return cellData;
     }
 }

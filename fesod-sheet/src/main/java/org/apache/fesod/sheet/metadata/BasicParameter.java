@@ -89,4 +89,21 @@ public class BasicParameter {
      * Automatic strip includes sheet name and content
      */
     private Boolean autoStrip;
+    /**
+     * Default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime} fields without a
+     * {@code @DateTimeFormat} pattern; {@code null} falls back to the process-wide default
+     * ({@link org.apache.fesod.sheet.util.DateUtils#setDefaultDateFormat(String)}).
+     */
+    private String defaultDateFormat;
+    /**
+     * Default pattern for {@code LocalDate} fields without a {@code @DateTimeFormat} pattern; {@code null} falls back
+     * to the process-wide default
+     * ({@link org.apache.fesod.sheet.util.DateUtils#setDefaultLocalDateFormat(String)}).
+     */
+    private String defaultLocalDateFormat;
+    /**
+     * Default pattern for {@code Year} fields without a {@code @DateTimeFormat} pattern; {@code null} falls back to
+     * the process-wide default ({@link org.apache.fesod.sheet.util.DateUtils#setDefaultYearFormat(String)}).
+     */
+    private String defaultYearFormat;
 }

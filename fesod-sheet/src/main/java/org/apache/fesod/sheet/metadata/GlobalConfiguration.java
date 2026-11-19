@@ -77,6 +77,28 @@ public class GlobalConfiguration {
      */
     private Boolean autoStrip;
 
+    /**
+     * Per-call default pattern for {@code Date}, {@code LocalDateTime} and {@code OffsetDateTime} fields without a
+     * {@code @DateTimeFormat} pattern; {@code null} falls back to the process-wide default
+     * ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultDateFormat()}, snapshotted when the context is created).
+     */
+    private String defaultDateFormat;
+
+    /**
+     * Per-call default pattern for {@code LocalDate} fields without a {@code @DateTimeFormat} pattern; {@code null}
+     * falls back to the process-wide default
+     * ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultLocalDateFormat()}, snapshotted when the context is
+     * created).
+     */
+    private String defaultLocalDateFormat;
+
+    /**
+     * Per-call default pattern for {@code Year} fields without a {@code @DateTimeFormat} pattern; {@code null} falls
+     * back to the process-wide default
+     * ({@link org.apache.fesod.sheet.util.DateUtils#getDefaultYearFormat()}, snapshotted when the context is created).
+     */
+    private String defaultYearFormat;
+
     public GlobalConfiguration() {
         this.autoTrim = Boolean.TRUE;
         this.autoStrip = Boolean.FALSE;

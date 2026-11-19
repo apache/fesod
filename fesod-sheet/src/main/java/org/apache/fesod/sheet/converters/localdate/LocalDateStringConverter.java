@@ -68,11 +68,9 @@ public class LocalDateStringConverter implements Converter<LocalDate> {
     @Override
     public WriteCellData<?> convertToExcelData(
             LocalDate value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(DateUtils.format(value, null, globalConfiguration.getLocale()));
-        } else {
-            return new WriteCellData<>(DateUtils.format(
-                    value, contentProperty.getDateTimeFormatProperty().getFormat(), globalConfiguration.getLocale()));
-        }
+        return new WriteCellData<>(DateUtils.format(
+                value,
+                DateUtils.resolveLocalDateFormat(contentProperty, globalConfiguration),
+                globalConfiguration.getLocale()));
     }
 }

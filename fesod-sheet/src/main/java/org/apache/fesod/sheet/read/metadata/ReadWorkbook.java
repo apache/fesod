@@ -140,7 +140,9 @@ public class ReadWorkbook extends ReadBasicParameter {
     private Set<CellExtraTypeEnum> extraReadSet;
 
     /**
-     * The number of rows to read, the default is all, start with 0.
+     * The maximum number of rows to read, including header rows.
+     *
+     * <p>A value of {@code 0} or {@code null} indicates no limit (i.e. read all rows).
      */
     private Integer numRows;
 

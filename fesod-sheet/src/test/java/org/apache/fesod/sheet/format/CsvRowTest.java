@@ -20,14 +20,18 @@
 package org.apache.fesod.sheet.format;
 
 import java.io.File;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -49,6 +53,7 @@ import org.apache.fesod.sheet.write.handler.context.RowWriteHandlerContext;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -299,7 +304,7 @@ public class CsvRowTest {
     void csvWrite_withOutOfOrderAndReplacedCells_producesCorrectFile() throws Exception {
         File csvFile = new File(tempDir, "out-of-order-test.csv");
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);
@@ -354,7 +359,7 @@ public class CsvRowTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2023, Calendar.JUNE, 15, 23, 30, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        java.sql.Date sqlDate = new java.sql.Date(cal.getTimeInMillis());
+        Date sqlDate = new Date(cal.getTimeInMillis());
 
         Cell cell = csvRow.createCell(0, CellType.NUMERIC);
         cell.setCellValue(sqlDate);
@@ -376,7 +381,7 @@ public class CsvRowTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2023, Calendar.JUNE, 15, 12, 30, 45);
         cal.set(Calendar.MILLISECOND, 0);
-        java.sql.Time sqlTime = new java.sql.Time(cal.getTimeInMillis());
+        Time sqlTime = new Time(cal.getTimeInMillis());
 
         Cell cell = csvRow.createCell(0, CellType.NUMERIC);
         cell.setCellValue(sqlTime);
@@ -399,18 +404,18 @@ public class CsvRowTest {
     void csvWrite_withSqlDateAndTime_producesCorrectFile() throws Exception {
         File csvFile = new File(tempDir, "sql-date-test.csv");
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);
 
             // java.sql.Date — without fix: UnsupportedOperationException
             Cell dateCell = row.createCell(0, CellType.NUMERIC);
-            dateCell.setCellValue(java.sql.Date.valueOf("2024-01-15"));
+            dateCell.setCellValue(Date.valueOf("2024-01-15"));
 
             // java.sql.Time — without fix: UnsupportedOperationException
             Cell timeCell = row.createCell(1, CellType.NUMERIC);
-            timeCell.setCellValue(java.sql.Time.valueOf("12:30:45"));
+            timeCell.setCellValue(Time.valueOf("12:30:45"));
 
             sheet.close();
         }
@@ -444,7 +449,7 @@ public class CsvRowTest {
         cal.set(2024, Calendar.JANUARY, 15, 12, 30, 45);
         cal.set(Calendar.MILLISECOND, 0);
 
-        try (java.io.Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
             CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
             CsvSheet sheet = (CsvSheet) workbook.createSheet();
             CsvRow row = (CsvRow) sheet.createRow(0);
@@ -510,6 +515,85 @@ public class CsvRowTest {
         }
     }
 
+    @Test
+    void csvSheetPhysicalRowCountShouldMatchCreatedRows() throws Exception {
+        File csvFile = new File(tempDir, "physical-row-count.csv");
+
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+
+            Assertions.assertEquals(0, sheet.getPhysicalNumberOfRows());
+            sheet.createRow(0);
+            Assertions.assertEquals(1, sheet.getPhysicalNumberOfRows());
+
+            sheet.setRowCacheCount(1);
+            sheet.createRow(1);
+            Assertions.assertEquals(2, sheet.getPhysicalNumberOfRows());
+
+            sheet.close();
+        }
+    }
+
+    @Test
+    void csvWorkbookShouldReportCreatedSheetThroughPoiMetadata() throws Exception {
+        File csvFile = new File(tempDir, "workbook-sheet-metadata.csv");
+
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+
+            Assertions.assertEquals(0, workbook.getNumberOfSheets());
+            Assertions.assertFalse(workbook.sheetIterator().hasNext());
+            Assertions.assertFalse(workbook.iterator().hasNext());
+
+            Sheet sheet = workbook.createSheet();
+
+            Assertions.assertEquals(1, workbook.getNumberOfSheets());
+            assertSingleSheetIterator(sheet, workbook.sheetIterator());
+            assertSingleSheetIterator(sheet, workbook.iterator());
+
+            ((CsvSheet) sheet).close();
+        }
+    }
+
+    @Test
+    void shouldRejectOutOfOrderRowCreation() throws Exception {
+        File csvFile = new File(tempDir, "out-of-order-rows.csv");
+
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            CsvSheet sheet = (CsvSheet) workbook.createSheet();
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sheet.createRow(1));
+
+            sheet.createRow(0);
+            sheet.createRow(1);
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sheet.createRow(0));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sheet.createRow(3));
+
+            Assertions.assertEquals(2, sheet.createRow(2).getRowNum());
+
+            sheet.close();
+        }
+    }
+
+    @Test
+    void shouldRejectSheetIndexOtherThanZero() throws Exception {
+        File csvFile = new File(tempDir, "sheet-index.csv");
+
+        try (Writer writer = Files.newBufferedWriter(csvFile.toPath(), StandardCharsets.UTF_8)) {
+            CsvWorkbook workbook = new CsvWorkbook(writer, null, false, false, StandardCharsets.UTF_8, false);
+            Sheet sheet = workbook.createSheet();
+
+            Assertions.assertSame(sheet, workbook.getSheetAt(0));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> workbook.getSheetAt(1));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> workbook.getSheetAt(-1));
+
+            ((CsvSheet) sheet).close();
+        }
+    }
+
     @Getter
     @AllArgsConstructor
     public static class OptionalCsvData {
@@ -542,6 +626,12 @@ public class CsvRowTest {
         head.add(Arrays.asList("Name"));
         head.add(Arrays.asList("Age"));
         return head;
+    }
+
+    private static void assertSingleSheetIterator(Sheet expectedSheet, Iterator<Sheet> iterator) {
+        Assertions.assertTrue(iterator.hasNext());
+        Assertions.assertSame(expectedSheet, iterator.next());
+        Assertions.assertFalse(iterator.hasNext());
     }
 
     @Getter

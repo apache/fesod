@@ -93,7 +93,7 @@ public class BigDecimalBooleanConverter implements Converter<BigDecimal> {
     @Override
     public WriteCellData<?> convertToExcelData(
             BigDecimal value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (BigDecimal.ONE.equals(value)) {
+        if (BigDecimal.ONE.compareTo(value) == 0) {
             return new WriteCellData<>(Boolean.TRUE);
         }
         return new WriteCellData<>(Boolean.FALSE);

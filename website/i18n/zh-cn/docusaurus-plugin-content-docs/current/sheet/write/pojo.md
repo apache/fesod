@@ -235,7 +235,7 @@ public void orderByIncludeColumnWrite() {
 
 ### 概述
 
-直接使用 `List<List<String>>` 定义头和数据写入，无需创建实体类。
+直接使用 `HeadBuilder` 定义头和数据写入，无需创建实体类。
 
 ### 代码示例
 
@@ -245,16 +245,9 @@ public void noModelWrite() {
     String fileName = "noModelWrite" + System.currentTimeMillis() + ".xlsx";
 
     FesodSheet.write(fileName)
-        .head(head()) // 动态头
+        .head(HeadBuilder.forSimple("字符串标题", "数字标题", "日期标题")) // 动态头
         .sheet("无对象写入")
         .doWrite(dataList());
-}
-
-private List<List<String>> head() {
-    return Arrays.asList(
-        Collections.singletonList("字符串标题"),
-        Collections.singletonList("数字标题"),
-        Collections.singletonList("日期标题"));
 }
 
 private List<List<Object>> dataList() {

@@ -80,6 +80,10 @@ const sidebarsCommunity = {
             id: "security",
             type: "doc",
         },
+        {
+            id: "security-model",
+            type: "doc",
+        },
     ]
 };
 export default sidebarsCommunity;

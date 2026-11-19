@@ -19,15 +19,6 @@
 
 package org.apache.fesod.sheet.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import java.util.function.Consumer;
 import org.apache.fesod.sheet.constant.BuiltinFormats;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
@@ -46,10 +37,13 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @Tag(Tags.UNIT)
@@ -67,7 +61,7 @@ class StyleUtilTest {
 
         CellStyle result = StyleUtil.buildCellStyle(workbook, origin, null);
 
-        assertEquals(HorizontalAlignment.CENTER, result.getAlignment());
+        Assertions.assertEquals(HorizontalAlignment.CENTER, result.getAlignment());
     }
 
     @Test
@@ -100,26 +94,26 @@ class StyleUtilTest {
 
         CellStyle result = StyleUtil.buildCellStyle(workbook, originStyle, writeCellStyle);
 
-        assertTrue(result.getHidden());
-        assertFalse(result.getLocked());
-        assertTrue(result.getQuotePrefixed());
-        assertEquals(HorizontalAlignment.RIGHT, result.getAlignment());
-        assertTrue(result.getWrapText());
-        assertEquals(VerticalAlignment.BOTTOM, result.getVerticalAlignment());
-        assertEquals((short) 45, result.getRotation());
-        assertEquals((short) 2, result.getIndention());
-        assertEquals(BorderStyle.THIN, result.getBorderLeft());
-        assertEquals(BorderStyle.MEDIUM, result.getBorderRight());
-        assertEquals(BorderStyle.DASHED, result.getBorderTop());
-        assertEquals(BorderStyle.DOTTED, result.getBorderBottom());
-        assertEquals((short) 10, result.getLeftBorderColor());
-        assertEquals((short) 11, result.getRightBorderColor());
-        assertEquals((short) 12, result.getTopBorderColor());
-        assertEquals((short) 13, result.getBottomBorderColor());
-        assertEquals(FillPatternType.SOLID_FOREGROUND, result.getFillPattern());
-        assertEquals((short) 14, result.getFillBackgroundColor());
-        assertEquals((short) 15, result.getFillForegroundColor());
-        assertTrue(result.getShrinkToFit());
+        Assertions.assertTrue(result.getHidden());
+        Assertions.assertFalse(result.getLocked());
+        Assertions.assertTrue(result.getQuotePrefixed());
+        Assertions.assertEquals(HorizontalAlignment.RIGHT, result.getAlignment());
+        Assertions.assertTrue(result.getWrapText());
+        Assertions.assertEquals(VerticalAlignment.BOTTOM, result.getVerticalAlignment());
+        Assertions.assertEquals((short) 45, result.getRotation());
+        Assertions.assertEquals((short) 2, result.getIndention());
+        Assertions.assertEquals(BorderStyle.THIN, result.getBorderLeft());
+        Assertions.assertEquals(BorderStyle.MEDIUM, result.getBorderRight());
+        Assertions.assertEquals(BorderStyle.DASHED, result.getBorderTop());
+        Assertions.assertEquals(BorderStyle.DOTTED, result.getBorderBottom());
+        Assertions.assertEquals((short) 10, result.getLeftBorderColor());
+        Assertions.assertEquals((short) 11, result.getRightBorderColor());
+        Assertions.assertEquals((short) 12, result.getTopBorderColor());
+        Assertions.assertEquals((short) 13, result.getBottomBorderColor());
+        Assertions.assertEquals(FillPatternType.SOLID_FOREGROUND, result.getFillPattern());
+        Assertions.assertEquals((short) 14, result.getFillBackgroundColor());
+        Assertions.assertEquals((short) 15, result.getFillForegroundColor());
+        Assertions.assertTrue(result.getShrinkToFit());
     }
 
     @Test
@@ -133,10 +127,10 @@ class StyleUtilTest {
 
         CellStyle result = StyleUtil.buildCellStyle(workbook, originStyle, writeCellStyle);
 
-        assertEquals(HorizontalAlignment.LEFT, result.getAlignment());
-        assertEquals(VerticalAlignment.CENTER, result.getVerticalAlignment());
-        assertFalse(result.getHidden());
-        assertTrue(result.getLocked());
+        Assertions.assertEquals(HorizontalAlignment.LEFT, result.getAlignment());
+        Assertions.assertEquals(VerticalAlignment.CENTER, result.getVerticalAlignment());
+        Assertions.assertFalse(result.getHidden());
+        Assertions.assertTrue(result.getLocked());
     }
 
     @Test
@@ -148,17 +142,17 @@ class StyleUtilTest {
 
         CellStyle result = StyleUtil.buildCellStyle(workbook, null, writeCellStyle);
 
-        assertTrue(result.getWrapText());
-        assertEquals((short) 7, result.getFillForegroundColor());
-        assertFalse(result.getHidden());
-        assertTrue(result.getLocked());
+        Assertions.assertTrue(result.getWrapText());
+        Assertions.assertEquals((short) 7, result.getFillForegroundColor());
+        Assertions.assertFalse(result.getHidden());
+        Assertions.assertTrue(result.getLocked());
     }
 
     @Test
     void testBuildDataFormat_withNull_shouldReturnGeneral() {
         Workbook workbook = new HSSFWorkbook();
         short format = StyleUtil.buildDataFormat(workbook, null);
-        assertEquals(BuiltinFormats.GENERAL, format);
+        Assertions.assertEquals(BuiltinFormats.GENERAL, format);
     }
 
     @Test
@@ -168,7 +162,7 @@ class StyleUtilTest {
 
         Workbook workbook = new HSSFWorkbook();
         short format = StyleUtil.buildDataFormat(workbook, dataFormatData);
-        assertEquals(10, format);
+        Assertions.assertEquals(10, format);
     }
 
     @Test
@@ -186,80 +180,80 @@ class StyleUtilTest {
 
         Font font = StyleUtil.buildFont(workbook, null, writeFont);
 
-        assertNotNull(font);
-        assertEquals("Arial", font.getFontName());
-        assertEquals(12, font.getFontHeightInPoints());
-        assertTrue(font.getItalic());
-        assertEquals(10, font.getColor());
-        assertEquals(1, font.getTypeOffset());
-        assertEquals(1, font.getUnderline());
-        assertEquals(3, font.getCharSet());
-        assertTrue(font.getBold());
+        Assertions.assertNotNull(font);
+        Assertions.assertEquals("Arial", font.getFontName());
+        Assertions.assertEquals(12, font.getFontHeightInPoints());
+        Assertions.assertTrue(font.getItalic());
+        Assertions.assertEquals(10, font.getColor());
+        Assertions.assertEquals(1, font.getTypeOffset());
+        Assertions.assertEquals(1, font.getUnderline());
+        Assertions.assertEquals(3, font.getCharSet());
+        Assertions.assertTrue(font.getBold());
     }
 
     @Test
     void testBuildRichTextString_withNull_shouldReturnNull() {
-        assertNull(StyleUtil.buildRichTextString(writeWorkbookHolder, null));
+        Assertions.assertNull(StyleUtil.buildRichTextString(writeWorkbookHolder, null));
     }
 
     @Test
     void testGetHyperlinkType_withNull_shouldReturnNone() {
-        assertEquals(HyperlinkType.NONE, StyleUtil.getHyperlinkType(null));
+        Assertions.assertEquals(HyperlinkType.NONE, StyleUtil.getHyperlinkType(null));
     }
 
     @Test
     void testGetHyperlinkType_withUrl_shouldReturnUrl() {
-        assertEquals(HyperlinkType.URL, StyleUtil.getHyperlinkType(HyperlinkData.HyperlinkType.URL));
+        Assertions.assertEquals(HyperlinkType.URL, StyleUtil.getHyperlinkType(HyperlinkData.HyperlinkType.URL));
     }
 
     @Test
     void testGetCoordinate_withNull_shouldReturnZero() {
-        assertEquals(0, StyleUtil.getCoordinate(null));
+        Assertions.assertEquals(0, StyleUtil.getCoordinate(null));
     }
 
     @Test
     void testGetCoordinate_withValue_shouldConvertToEMU() {
         int coord = 100;
         int emu = StyleUtil.getCoordinate(coord);
-        assertTrue(emu > 0);
+        Assertions.assertTrue(emu > 0);
     }
 
     @Test
     void testGetCellCoordinate_withAbsolute_shouldReturnAbsolute() {
-        assertEquals(500, StyleUtil.getCellCoordinate(100, 500, 200));
+        Assertions.assertEquals(500, StyleUtil.getCellCoordinate(100, 500, 200));
     }
 
     @Test
     void testGetCellCoordinate_withRelative_shouldReturnRelativeAdded() {
-        assertEquals(300, StyleUtil.getCellCoordinate(100, null, 200));
+        Assertions.assertEquals(300, StyleUtil.getCellCoordinate(100, null, 200));
     }
 
     @Test
     void testGetCellCoordinate_withNull_shouldReturnCurrent() {
-        assertEquals(100, StyleUtil.getCellCoordinate(100, null, null));
+        Assertions.assertEquals(100, StyleUtil.getCellCoordinate(100, null, null));
     }
 
     @Test
     void testSetIfNotNull_withNullValue_shouldNotInvokeSetter() {
-        Consumer<String> setter = mock(Consumer.class);
+        Consumer<String> setter = Mockito.mock(Consumer.class);
         String value = null;
         StyleUtil.setIfNotNull(setter, value);
-        verify(setter, never()).accept(any());
+        Mockito.verify(setter, Mockito.never()).accept(ArgumentMatchers.any());
     }
 
     @Test
     void testSetIfNotNull_withNonNullValue_shouldInvokeSetter() {
-        Consumer<String> setter = mock(Consumer.class);
+        Consumer<String> setter = Mockito.mock(Consumer.class);
         String value = "testValue";
         StyleUtil.setIfNotNull(setter, value);
-        verify(setter).accept("testValue");
+        Mockito.verify(setter).accept("testValue");
     }
 
     @Test
     void testSetIfNotNull_withIntegerValue_shouldInvokeSetter() {
-        Consumer<Integer> setter = mock(Consumer.class);
+        Consumer<Integer> setter = Mockito.mock(Consumer.class);
         Integer value = 42;
         StyleUtil.setIfNotNull(setter, value);
-        verify(setter).accept(42);
+        Mockito.verify(setter).accept(42);
     }
 }

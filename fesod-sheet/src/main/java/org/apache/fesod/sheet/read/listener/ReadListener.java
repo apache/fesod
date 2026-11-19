@@ -102,7 +102,7 @@ public interface ReadListener<T> extends Listener {
         if (limit == null) {
             limit = context.readWorkbookHolder().getReadWorkbook().getNumRows();
         }
-        if (limit != null && index >= limit) {
+        if (limit != null && limit > 0 && index >= limit) {
             return false;
         }
         return true;

@@ -35,7 +35,7 @@ description: >
 ## Background
 
 FastExcel (`cn.idev.excel:fastexcel:1.3.0`) was donated to the Apache Software
-Foundation and reborn as **Apache Fesod (Incubating)**.
+Foundation and reborn as **Apache Fesod**.
 The latest stable release is `2.0.1-incubating`.
 
 Key facts that affect how this migration works:

@@ -39,7 +39,7 @@ under the License.
     <packaging>pom</packaging>
     <name>Fesod Parent</name>
     <description>
-        Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
+        Apache Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
     </description>
     <url>https://github.com/apache/fesod</url>
@@ -101,7 +101,7 @@ under the License.
     <developers>
         <developer>
             <id>fesod</id>
-            <name>The Apache Fesod (Incubating) Team</name>
+            <name>The Apache Fesod Team</name>
             <email>dev@fesod.apache.org</email>
             <url>https://fesod.apache.org</url>
             <organization>The Apache Software Foundation</organization>

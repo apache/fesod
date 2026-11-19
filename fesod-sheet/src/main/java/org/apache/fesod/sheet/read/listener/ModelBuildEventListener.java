@@ -42,7 +42,6 @@ import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.read.metadata.holder.ReadSheetHolder;
 import org.apache.fesod.sheet.read.metadata.property.ExcelReadHeadProperty;
 import org.apache.fesod.sheet.util.BeanMapUtils;
-import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.ConverterUtils;
 import org.apache.fesod.sheet.util.DateUtils;
 
@@ -188,11 +187,7 @@ public class ModelBuildEventListener implements IgnoreExceptionReadListener<Map<
             Object value = ConverterUtils.convertToJavaObject(
                     cellData,
                     head.getField(),
-                    ClassUtils.declaredExcelContentProperty(
-                            dataMap,
-                            readSheetHolder.excelReadHeadProperty().getHeadClazz(),
-                            fieldName,
-                            readSheetHolder),
+                    readSheetHolder.getConverterResolver().contentProperty(dataMap, fieldName),
                     readSheetHolder.converterMap(),
                     context,
                     context.readRowHolder().getRowIndex(),

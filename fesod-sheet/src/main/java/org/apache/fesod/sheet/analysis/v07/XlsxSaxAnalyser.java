@@ -40,7 +40,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.MapUtils;
-import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.ExcelReadExecutor;
 import org.apache.fesod.sheet.analysis.v07.handlers.sax.SharedStringsTableHandler;
 import org.apache.fesod.sheet.analysis.v07.handlers.sax.XlsxRowHandler;
@@ -102,6 +101,7 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
     private final List<ReadSheet> sheetList;
     private final Map<Integer, InputStream> sheetMap;
     private final Map<String, CTSheet> ctSheetMap;
+
     /**
      * excel comments key: sheetNo value: CommentsTable
      */
@@ -272,26 +272,8 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
     private void parseXmlSource(InputStream inputStream, ContentHandler handler) {
         InputSource inputSource = new InputSource(inputStream);
         try {
-            SAXParserFactory saxFactory;
-            String xlsxSAXParserFactoryName =
-                    xlsxReadContext.xlsxReadWorkbookHolder().getSaxParserFactoryName();
-            if (StringUtils.isEmpty(xlsxSAXParserFactoryName)) {
-                saxFactory = SAXParserFactory.newInstance();
-            } else {
-                saxFactory = SAXParserFactory.newInstance(xlsxSAXParserFactoryName, null);
-            }
-            try {
-                saxFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            } catch (Throwable ignore) {
-            }
-            try {
-                saxFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            } catch (Throwable ignore) {
-            }
-            try {
-                saxFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            } catch (Throwable ignore) {
-            }
+            SAXParserFactory saxFactory = SaxParserFactoryCache.get(
+                    xlsxReadContext.xlsxReadWorkbookHolder().getSaxParserFactoryName());
             SAXParser saxParser = saxFactory.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setContentHandler(handler);

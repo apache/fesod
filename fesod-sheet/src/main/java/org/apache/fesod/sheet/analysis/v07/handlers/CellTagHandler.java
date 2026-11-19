@@ -66,7 +66,15 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
             throw new ExcelAnalysisException("Invalid cell data type: '" + cellType + "' in cell " + cellReference);
         }
         xlsxReadSheetHolder.setTempCellData(new ReadCellData<>(type));
-        xlsxReadSheetHolder.setTempData(new StringBuilder());
+        // Reuse the per-sheet builder: its content is fully consumed (toString) at endElement of the
+        // previous cell, so setLength(0) is equivalent to allocating a fresh builder per cell.
+        StringBuilder tempData = xlsxReadSheetHolder.getTempData();
+        if (tempData == null) {
+            tempData = new StringBuilder();
+            xlsxReadSheetHolder.setTempData(tempData);
+        } else {
+            tempData.setLength(0);
+        }
 
         // Put in data transformation information
         String dateFormatIndex = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_S);
@@ -94,45 +102,50 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         }
 
         StringBuilder tempData = xlsxReadSheetHolder.getTempData();
-        String tempDataString = tempData.toString();
+        int length = tempData.length();
+        boolean empty = length == 0;
         CellDataTypeEnum oldType = tempCellData.getType();
         switch (oldType) {
-            case STRING:
+            case STRING: {
                 // In some cases, although cell type is a string, it may be an empty tag
-                if (StringUtils.isEmpty(tempDataString)) {
+                if (empty) {
                     break;
                 }
+                int sharedStringIndex = CellTextParser.current().parseInt(tempData);
                 String stringValue =
-                        xlsxReadContext.readWorkbookHolder().getReadCache().get(Integer.valueOf(tempDataString));
+                        xlsxReadContext.readWorkbookHolder().getReadCache().get(sharedStringIndex);
                 tempCellData.setStringValue(stringValue);
                 break;
-            case DIRECT_STRING:
+            }
+            case DIRECT_STRING: {
                 // Undo the '_xHHHH_' escapes of characters XML forbids
-                tempCellData.setStringValue(XlsxEscapeUtils.utfDecode(tempDataString));
+                tempCellData.setStringValue(XlsxEscapeUtils.utfDecode(tempData.toString()));
                 tempCellData.setType(CellDataTypeEnum.STRING);
                 break;
+            }
             case ERROR:
-                tempCellData.setStringValue(tempDataString);
+                tempCellData.setStringValue(tempData.toString());
                 tempCellData.setType(CellDataTypeEnum.STRING);
                 break;
             case BOOLEAN:
-                if (StringUtils.isEmpty(tempDataString)) {
+                if (empty) {
                     tempCellData.setType(CellDataTypeEnum.EMPTY);
                     break;
                 }
                 tempCellData.setBooleanValueFromString(tempData.toString());
                 break;
             case NUMBER:
-            case EMPTY:
-                if (StringUtils.isEmpty(tempDataString)) {
+            case EMPTY: {
+                if (empty) {
                     tempCellData.setType(CellDataTypeEnum.EMPTY);
                     break;
                 }
                 tempCellData.setType(CellDataTypeEnum.NUMBER);
-                tempCellData.setOriginalNumberValue(new BigDecimal(tempDataString));
-                tempCellData.setNumberValue(
-                        tempCellData.getOriginalNumberValue().round(FesodSheetConstants.EXCEL_MATH_CONTEXT));
+                BigDecimal originalNumberValue = CellTextParser.current().parseBigDecimal(tempData);
+                tempCellData.setOriginalNumberValue(originalNumberValue);
+                tempCellData.setNumberValue(originalNumberValue.round(FesodSheetConstants.EXCEL_MATH_CONTEXT));
                 break;
+            }
             default:
                 throw new IllegalStateException("Cannot set values now");
         }

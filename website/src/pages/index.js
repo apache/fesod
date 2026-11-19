@@ -56,7 +56,7 @@ function HomepageHeader() {
             </div>
             <div className="container">
                 <Heading as="h1" className="hero__title">
-                    Apache Fesod™ (Incubating)
+                    Apache Fesod™
                 </Heading>
                 <p className="hero__subtitle">
                     <Translate>site.description</Translate>
@@ -82,7 +82,7 @@ export default function Home() {
     return (
         <Layout
             title=""
-            description="Apache Fesod™ (Incubating) Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
+            description="Apache Fesod™ Official Documentation | Fast, concise, Java tool for processing spreadsheet files that solves memory overflow issues with large files <head />">
             <HomepageHeader/>
             <main>
                 <HomepageFeatures/>

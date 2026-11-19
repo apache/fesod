@@ -41,17 +41,6 @@ under the License.
     <description>
         Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
-
-        Apache Fesod (incubating) is an effort undergoing incubation at The Apache
-        Software Foundation (ASF), sponsored by the Apache Incubator PMC.
-
-        Incubation is required of all newly accepted projects until a further review
-        indicates that the infrastructure, communications, and decision making process
-        have stabilized in a manner consistent with other successful ASF projects.
-
-        While incubation status is not necessarily a reflection of the completeness
-        or stability of the code, it does indicate that the project has yet to be
-        fully endorsed by the ASF.
     </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
@@ -351,13 +340,6 @@ under the License.
                 </includes>
                 <filtering>false</filtering>
             </resource>
-            <resource>
-                <directory>${maven.multiModuleProjectDirectory}</directory>
-                <includes>
-                    <include>DISCLAIMER</include>
-                </includes>
-                <targetPath>META-INF</targetPath>
-            </resource>
         </resources>
         <pluginManagement>
             <plugins>
@@ -442,30 +424,6 @@ under the License.
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-disclaimer-into-jar</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${maven.multiModuleProjectDirectory}</directory>
-                                    <includes>
-                                        <include>DISCLAIMER</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -615,7 +573,7 @@ under the License.
         <profile>
             <id>apache-release</id>
             <properties>
-                <maven.javadoc.skip>false</maven.javadoc.skip>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
         </profile>
         <profile>

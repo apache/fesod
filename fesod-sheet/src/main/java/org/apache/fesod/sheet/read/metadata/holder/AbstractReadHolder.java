@@ -96,6 +96,12 @@ public abstract class AbstractReadHolder extends AbstractHolder implements ReadH
                 } else {
                     this.headRowNumber = 1;
                 }
+            } else if (readBasicParameter.getClazz() != null || readBasicParameter.getHead() != null) {
+                // The sheet declares its own head (class or list), so its row count defines the head rows
+                // for this sheet instead of the workbook-level value.
+                this.headRowNumber = excelReadHeadProperty.hasHead()
+                        ? excelReadHeadProperty.getHeadRowNumber()
+                        : parentAbstractReadHolder.getHeadRowNumber();
             } else {
                 this.headRowNumber = parentAbstractReadHolder.getHeadRowNumber();
             }

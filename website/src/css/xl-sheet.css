@@ -91,7 +91,7 @@
         border-bottom-color: #00b95f;
     }
 
-    .xl-sheet td:not(.xl-chrome):not(.xl-head) {
+    .xl-sheet td:not(.xl-chrome):not(.xl-head):not(.xl-border) {
         border-top: none;
         border-bottom: none;
     }
@@ -154,7 +154,7 @@
     border-left: none;
 }
 
-.xl-sheet td:last-child {
+.xl-sheet td:last-child:not(.xl-border) {
     border-right: none;
 }
 
@@ -249,6 +249,32 @@
 
 .xl-sheet .xl-fc-red {
     color: var(--xl-red);
+}
+
+.xl-sheet .xl-border {
+    border-bottom: var(--ifm-table-border-width) solid var(--xl-ink);
+    border-left: var(--ifm-table-border-width) solid var(--xl-ink);
+    border-right: var(--ifm-table-border-width) solid var(--xl-ink);
+}
+
+.xl-sheet tr td:nth-child(2).xl-border {
+    border-left: none;
+}
+
+.xl-sheet .xl-border-right-none {
+    border-right: none !important;
+}
+
+.xl-sheet .xl-border__horizontal_default {
+    border-bottom: var(--ifm-table-border-width) solid var(--xl-ink);
+    border-left: 1px solid var(--xl-grid);
+    border-right: none;
+}
+
+.xl-sheet .xl-border_bottom_default {
+    border-bottom: var(--ifm-table-border-width) solid var(--xl-grid);
+    border-left: var(--ifm-table-border-width) solid var(--xl-ink);
+    border-right: var(--ifm-table-border-width) solid var(--xl-ink);
 }
 
 /* Pictures */

@@ -48,6 +48,7 @@ import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
@@ -149,6 +150,49 @@ public class EncryptDataTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         Assertions.assertEquals(10, dataList.size());
+    }
+
+    /**
+     * Verifies that when encrypting an XLSX stream write fails, the stream stays empty instead of receiving the
+     * unencrypted workbook.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_encryptionFails_writesNothing() throws Exception {
+        // A temp directory under a regular file cannot be created, so the encryption step fails
+        File regularFile = createTempFile("enc-blocker", ExcelFormat.XLSX);
+        File tempFileDir = new File(regularFile, "sub");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Assertions.assertThrows(ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, out, null));
+        assertThat(out.size()).isZero();
+    }
+
+    /**
+     * Verifies that when encrypting an XLSX file write fails, the unencrypted file is not left behind.
+     */
+    @Test
+    void xlsxFilePasswordWrite_encryptionFails_leavesNoFile() throws Exception {
+        File file = createTempFile("enc-readonly", ExcelFormat.XLSX);
+        Assertions.assertTrue(file.setReadOnly());
+        // Root and some file systems ignore the flag, so the encryption would not fail there
+        Assumptions.assumeFalse(file.canWrite());
+        Assertions.assertTrue(file.setWritable(true));
+        // Once the write stream is open, making the file read-only makes the encrypt-in-place step fail
+        WorkbookWriteHandler makeReadOnly = new WorkbookWriteHandler() {
+            @Override
+            public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
+                Assertions.assertTrue(file.setReadOnly());
+            }
+        };
+
+        List<SimpleData> data = TestDataBuilder.simpleData(10);
+        ExcelWriterSheetBuilder sheet = FesodSheet.write(file, SimpleData.class)
+                .excelType(ExcelTypeEnum.XLSX)
+                .password(PASSWORD)
+                .registerWriteHandler(makeReadOnly)
+                .sheet();
+
+        Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
+        assertThat(file).doesNotExist();
     }
 
     /**

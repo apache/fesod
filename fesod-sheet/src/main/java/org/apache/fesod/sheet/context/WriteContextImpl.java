@@ -27,7 +27,9 @@ package org.apache.fesod.sheet.context;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -542,6 +544,7 @@ public class WriteContextImpl implements WriteContext {
                 isOutputStreamEncrypt = doOutputStreamEncrypt07();
             } catch (Throwable t) {
                 throwable = recordFailure(throwable, t);
+                writeExcel = false;
             }
         }
         if (!isOutputStreamEncrypt) {
@@ -573,7 +576,16 @@ public class WriteContextImpl implements WriteContext {
             try {
                 doFileEncrypt07();
             } catch (Throwable t) {
-                throwable = recordFailure(throwable, t);
+                Throwable failure = t;
+                File file = writeWorkbookHolder.getFile();
+                try {
+                    Files.deleteIfExists(file.toPath());
+                } catch (IOException e) {
+                    failure =
+                            new ExcelGenerateException("Can not delete unencrypted file: " + file.getAbsolutePath(), t);
+                    failure.addSuppressed(e);
+                }
+                throwable = recordFailure(throwable, failure);
             }
         }
         try {

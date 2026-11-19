@@ -2,7 +2,7 @@
 name: fastexcel-to-fesod
 description: >
   Migrates a Java project from FastExcel 1.3 (cn.idev.excel:fastexcel:1.3.0)
-  to Apache Fesod (org.apache.fesod:fesod-sheet:2.0.1-incubating).
+  to Apache Fesod (org.apache.fesod:fesod-sheet:2.1.0-incubating).
   Invoke this skill when asked to "migrate FastExcel to Fesod",
   "upgrade to Apache Fesod", or "replace cn.idev.excel".
   FastExcel 1.3 is the direct predecessor of Apache Fesod.
@@ -36,7 +36,7 @@ description: >
 
 FastExcel (`cn.idev.excel:fastexcel:1.3.0`) was donated to the Apache Software
 Foundation and reborn as **Apache Fesod**.
-The latest stable release is `2.0.1-incubating`.
+The latest stable release is `2.1.0-incubating`.
 
 Key facts that affect how this migration works:
 
@@ -82,7 +82,7 @@ Replace it with:
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>2.0.1-incubating</version>
+    <version>2.1.0-incubating</version>
 </dependency>
 ```
 
@@ -104,13 +104,13 @@ implementation 'cn.idev.excel:fastexcel:1.3.0'
 with:
 
 ```groovy
-implementation 'org.apache.fesod:fesod-sheet:2.0.1-incubating'
+implementation 'org.apache.fesod:fesod-sheet:2.1.0-incubating'
 ```
 
 Kotlin DSL:
 
 ```kotlin
-implementation("org.apache.fesod:fesod-sheet:2.0.1-incubating")
+implementation("org.apache.fesod:fesod-sheet:2.1.0-incubating")
 ```
 
 ---
@@ -442,7 +442,7 @@ After applying all changes, produce a table in this format:
 
 | Phase | File | Changes |
 |---|---|---|
-| 1 | pom.xml | Replaced cn.idev.excel:fastexcel:1.3.0 with org.apache.fesod:fesod-sheet:2.0.1-incubating |
+| 1 | pom.xml | Replaced cn.idev.excel:fastexcel:1.3.0 with org.apache.fesod:fesod-sheet:2.1.0-incubating |
 | 2 | src/.../Foo.java | N import statements updated (cn.idev.excel → org.apache.fesod.sheet) |
 | 3 | src/.../Bar.java | M FastExcel./FastExcelFactory. call sites renamed to FesodSheet. |
 | 4 | src/.../Baz.java | ByFastExcelCGLIB → ByFesodCGLIB (if applicable) |

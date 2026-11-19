@@ -33,9 +33,17 @@ title: '填充'
 | `{name}` | 单个变量 | `doFill(object)`、`doFill(map)` |
 | `{.name}` | 列表中每一项的 `name` 属性 | `doFill(list)`、`fill(list, ...)` |
 | `{data1.name}` | 同上，但取自名为 `data1` 的列表 | `fill(new FillWrapper("data1", list), ...)` |
+| `{.child.name}` | 列表中每一项的嵌套属性 | `doFill(list)` |
+| `{data1.child.name}` | 名为 `data1` 的列表中每一项的嵌套属性 | `fill(new FillWrapper("data1", list), ...)` |
 | `\{name\}` | 用 `\` 转义，不会被解析 | 不填充 |
 
 开头的 `.` 决定了单元格会按列表的每一项重复：默认向下重复，也可以通过 `FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL)` 向右重复。`.` 之前的文字指明数据来自哪个列表，因此一个模板中可以并存多个列表。
+
+列表前缀之后的点号用于逐层读取 JavaBean 属性或 Map 条目。例如，`{.child.name}` 对应
+`item.getChild().getName()`。属性不存在或中间对象为 null 时填充为空。Map 中如果存在完整的
+剩余路径键（如 `"child.name"`），则优先使用该键，包括值为 null 的情况。最终 JavaBean 字段的
+格式注解和转换器仍然生效。第一个点号仍用于区分列表，因此不要用 `{child.name}` 填充单个对象；
+命名列表请使用 `FillWrapper`。
 
 一个单元格里可以混合多个占位符和普通文本，例如 `{name}今年{number}岁了`。填充时没有提供的占位符会被清空，而不是原样留在表格里：用列表填充 `{name}`，或者用单个对象填充 `{.name}`，都会清空该单元格，只保留周围的文本。
 

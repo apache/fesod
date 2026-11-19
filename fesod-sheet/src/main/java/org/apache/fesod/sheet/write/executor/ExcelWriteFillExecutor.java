@@ -27,6 +27,7 @@ package org.apache.fesod.sheet.write.executor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -239,23 +240,10 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
 
             if (analysisCell.getOnlyOneVariable()) {
                 String variable = analysisCell.getVariableList().get(0);
-                Object value = null;
-                if (dataKeySet.contains(variable)) {
-                    value = dataMap.get(variable);
-                }
-                ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                        dataMap,
-                        writeContext
-                                .currentWriteHolder()
-                                .excelWriteHeadProperty()
-                                .getHeadClazz(),
-                        variable,
-                        writeContext.currentWriteHolder());
-                cellWriteHandlerContext.setExcelContentProperty(excelContentProperty);
+                Object value = resolveFillProperty(dataMap, dataKeySet, variable, cellWriteHandlerContext);
 
                 createCell(analysisCell, fillConfig, cellWriteHandlerContext, rowWriteHandlerContext);
                 cellWriteHandlerContext.setOriginalValue(value);
-                cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
 
                 converterAndSet(cellWriteHandlerContext);
                 WriteCellData<?> cellData = cellWriteHandlerContext.getFirstCellData();
@@ -279,21 +267,8 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
 
                 for (String variable : analysisCell.getVariableList()) {
                     cellValueBuild.append(analysisCell.getPrepareDataList().get(index++));
-                    Object value = null;
-                    if (dataKeySet.contains(variable)) {
-                        value = dataMap.get(variable);
-                    }
-                    ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                            dataMap,
-                            writeContext
-                                    .currentWriteHolder()
-                                    .excelWriteHeadProperty()
-                                    .getHeadClazz(),
-                            variable,
-                            writeContext.currentWriteHolder());
+                    Object value = resolveFillProperty(dataMap, dataKeySet, variable, cellWriteHandlerContext);
                     cellWriteHandlerContext.setOriginalValue(value);
-                    cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(dataMap, variable, value));
-                    cellWriteHandlerContext.setExcelContentProperty(excelContentProperty);
                     cellWriteHandlerContext.setTargetCellDataType(CellDataTypeEnum.STRING);
 
                     WriteCellData<?> cellData = convert(cellWriteHandlerContext);
@@ -337,6 +312,37 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
         if (rowWriteHandlerContext.getRow() != null) {
             WriteHandlerUtils.afterRowDispose(rowWriteHandlerContext);
         }
+    }
+
+    private Object resolveFillProperty(
+            Map dataMap, Set<String> dataKeySet, String variable, CellWriteHandlerContext context) {
+        Map propertyMap = dataMap;
+        String fieldName = variable;
+        // A literal Map key (including a null value) takes precedence over a nested path.
+        if (!dataKeySet.contains(variable)) {
+            int separator = fieldName.indexOf('.');
+            while (separator >= 0) {
+                Object parent = propertyMap.get(fieldName.substring(0, separator));
+                fieldName = fieldName.substring(separator + 1);
+                if (parent == null) {
+                    propertyMap = Collections.emptyMap();
+                    break;
+                }
+                propertyMap = parent instanceof Map ? (Map) parent : BeanMapUtils.create(parent);
+                if (propertyMap.containsKey(fieldName)) {
+                    break;
+                }
+                separator = fieldName.indexOf('.');
+            }
+        }
+        Object value = propertyMap.get(fieldName);
+        Class<?> headClass = propertyMap == dataMap
+                ? writeContext.currentWriteHolder().excelWriteHeadProperty().getHeadClazz()
+                : null;
+        context.setExcelContentProperty(ClassUtils.declaredExcelContentProperty(
+                propertyMap, headClass, fieldName, writeContext.currentWriteHolder()));
+        context.setOriginalFieldClass(FieldUtils.getFieldClass(propertyMap, fieldName, value));
+        return value;
     }
 
     private Integer getRelativeRowIndex() {

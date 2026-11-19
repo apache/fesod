@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.common.beans.BeanWrapper;
 import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
@@ -286,7 +286,7 @@ class ClassUtilsTest {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
 
         ExcelContentProperty property =
-                ClassUtils.declaredExcelContentProperty(null, FormatEntity.class, "date", writeHolder);
+                ClassUtils.declaredExcelContentProperty((BeanWrapper) null, FormatEntity.class, "date", writeHolder);
 
         Assertions.assertNotNull(property);
         Assertions.assertNotNull(property.getDateTimeFormatProperty());
@@ -299,7 +299,7 @@ class ClassUtilsTest {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.MEMORY);
 
         ExcelContentProperty property =
-                ClassUtils.declaredExcelContentProperty(null, FormatEntity.class, "date", writeHolder);
+                ClassUtils.declaredExcelContentProperty((BeanWrapper) null, FormatEntity.class, "date", writeHolder);
 
         Assertions.assertNotNull(property);
         Assertions.assertNotNull(property.getDateTimeFormatProperty());
@@ -312,7 +312,7 @@ class ClassUtilsTest {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.THREAD_LOCAL);
 
         ExcelContentProperty property =
-                ClassUtils.declaredExcelContentProperty(null, FormatEntity.class, "date", writeHolder);
+                ClassUtils.declaredExcelContentProperty((BeanWrapper) null, FormatEntity.class, "date", writeHolder);
 
         Assertions.assertNotNull(property);
         Assertions.assertNotNull(property.getDateTimeFormatProperty());
@@ -321,15 +321,13 @@ class ClassUtilsTest {
     }
 
     @Test
-    void test_declaredExcelContentProperty_BeanMap() {
-        BeanMap beanMapMocked = Mockito.mock(BeanMap.class);
-        FormatEntity beanMocked = Mockito.mock(FormatEntity.class);
-
+    void test_declaredExcelContentProperty_BeanWrapper() {
+        BeanWrapper beanWrapperMocked = Mockito.mock(BeanWrapper.class);
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
-        Mockito.when(beanMapMocked.getBean()).thenReturn(beanMocked);
+        Mockito.doReturn(FormatEntity.class).when(beanWrapperMocked).getWrappedClass();
 
         ExcelContentProperty property =
-                ClassUtils.declaredExcelContentProperty(beanMapMocked, FormatEntity.class, "date", writeHolder);
+                ClassUtils.declaredExcelContentProperty(beanWrapperMocked, FormatEntity.class, "date", writeHolder);
 
         Assertions.assertNotNull(property);
         Assertions.assertNotNull(property.getDateTimeFormatProperty());
@@ -341,8 +339,8 @@ class ClassUtilsTest {
     void test_declaredExcelContentProperty_converter() {
         Mockito.when(globalConfiguration.getFiledCacheLocation()).thenReturn(CacheLocationEnum.NONE);
 
-        ExcelContentProperty property =
-                ClassUtils.declaredExcelContentProperty(null, FormatEntity.class, "customConvert", writeHolder);
+        ExcelContentProperty property = ClassUtils.declaredExcelContentProperty(
+                (BeanWrapper) null, FormatEntity.class, "customConvert", writeHolder);
 
         Assertions.assertNotNull(property);
         Assertions.assertNotNull(property.getConverter());

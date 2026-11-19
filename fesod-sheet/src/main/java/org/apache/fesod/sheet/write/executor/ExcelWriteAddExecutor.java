@@ -31,14 +31,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.fesod.shaded.cglib.beans.BeanMap;
+import org.apache.fesod.common.beans.BeanWrapper;
+import org.apache.fesod.common.beans.BeanWrappers;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.enums.HeadKindEnum;
 import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.metadata.FieldWrapper;
 import org.apache.fesod.sheet.metadata.Head;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.apache.fesod.sheet.util.WorkBookUtil;
@@ -149,7 +149,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
             int dataIndex,
             int columnIndex) {
         ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                null,
+                (BeanWrapper) null,
                 writeContext.currentWriteHolder().excelWriteHeadProperty().getHeadClazz(),
                 head == null ? null : head.getFieldName(),
                 writeContext.currentWriteHolder());
@@ -173,10 +173,10 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
 
     private void addJavaObjectToExcel(Object oneRowData, Row row, int rowIndex, int relativeRowIndex) {
         WriteHolder currentWriteHolder = writeContext.currentWriteHolder();
-        BeanMap beanMap = BeanMapUtils.create(oneRowData);
-        // Bean the contains of the Map Key method with poor performance,So to create a keySet here
-        Set<String> beanKeySet = new HashSet<>(beanMap.keySet());
-        Set<String> beanMapHandledSet = new HashSet<>();
+        BeanWrapper beanWrapper = BeanWrappers.create(oneRowData);
+        // Use Set to optimize contains queries
+        Set<String> beanPropertyNames = beanWrapper.getPropertyNames();
+        Set<String> handledPropertyNames = new HashSet<>();
         int maxCellIndex = -1;
         // If it's a class it needs to be cast by type
         if (HeadKindEnum.CLASS.equals(
@@ -187,12 +187,15 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
                 int columnIndex = entry.getKey();
                 Head head = entry.getValue();
                 String name = head.getFieldName();
-                if (!beanKeySet.contains(name)) {
+                if (!beanPropertyNames.contains(name)) {
                     continue;
                 }
 
                 ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                        beanMap, currentWriteHolder.excelWriteHeadProperty().getHeadClazz(), name, currentWriteHolder);
+                        beanWrapper,
+                        currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
+                        name,
+                        currentWriteHolder);
                 CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
                         writeContext,
                         row,
@@ -209,18 +212,18 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
 
                 WriteHandlerUtils.afterCellCreate(cellWriteHandlerContext);
 
-                cellWriteHandlerContext.setOriginalValue(beanMap.get(name));
+                cellWriteHandlerContext.setOriginalValue(beanWrapper.getProperty(name));
                 cellWriteHandlerContext.setOriginalFieldClass(head.getField().getType());
                 converterAndSet(cellWriteHandlerContext);
 
                 WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
 
-                beanMapHandledSet.add(name);
+                handledPropertyNames.add(name);
                 maxCellIndex = Math.max(maxCellIndex, columnIndex);
             }
         }
         // Finish
-        if (beanMapHandledSet.size() == beanMap.size()) {
+        if (handledPropertyNames.size() == beanWrapper.getPropertySize()) {
             return;
         }
         maxCellIndex++;
@@ -230,13 +233,16 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
                 fieldCache.getSortedFieldMap().entrySet()) {
             FieldWrapper field = entry.getValue();
             String fieldName = field.getFieldName();
-            boolean uselessData = !beanKeySet.contains(fieldName) || beanMapHandledSet.contains(fieldName);
+            boolean uselessData = !beanPropertyNames.contains(fieldName) || handledPropertyNames.contains(fieldName);
             if (uselessData) {
                 continue;
             }
-            Object value = beanMap.get(fieldName);
+            Object value = beanWrapper.getProperty(fieldName);
             ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
-                    beanMap, currentWriteHolder.excelWriteHeadProperty().getHeadClazz(), fieldName, currentWriteHolder);
+                    beanWrapper,
+                    currentWriteHolder.excelWriteHeadProperty().getHeadClazz(),
+                    fieldName,
+                    currentWriteHolder);
             CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
                     writeContext,
                     row,
@@ -255,7 +261,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
             WriteHandlerUtils.afterCellCreate(cellWriteHandlerContext);
 
             cellWriteHandlerContext.setOriginalValue(value);
-            cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(beanMap, fieldName, value));
+            cellWriteHandlerContext.setOriginalFieldClass(FieldUtils.getFieldClass(beanWrapper, fieldName, value));
             converterAndSet(cellWriteHandlerContext);
 
             WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);

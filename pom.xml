@@ -573,7 +573,7 @@ under the License.
         <profile>
             <id>apache-release</id>
             <properties>
-                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
             </properties>
         </profile>
         <profile>

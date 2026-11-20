@@ -25,3 +25,4 @@ Related: #ISSUE
 - [ ] I have read the [Contributor Guide](https://fesod.apache.org/community/contribution/).
 - [ ] I have written the necessary doc or comment.
 - [ ] I have added the necessary unit tests and all cases have passed.
+- [ ] My commits are signed and show as "Verified" on GitHub ([how to sign](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification)).

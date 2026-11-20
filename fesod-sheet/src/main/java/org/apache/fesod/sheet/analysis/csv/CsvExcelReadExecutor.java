@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -220,9 +220,9 @@ public class CsvExcelReadExecutor implements ExcelReadExecutor {
         Iterator<String> cellIterator = record.iterator();
         int columnIndex = 0;
         Boolean autoTrim =
-                csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoTrim();
+                csvReadContext.currentReadHolder().globalConfiguration().getAutoTrim();
         Boolean autoStrip =
-                csvReadContext.csvReadWorkbookHolder().globalConfiguration().getAutoStrip();
+                csvReadContext.currentReadHolder().globalConfiguration().getAutoStrip();
 
         while (cellIterator.hasNext()) {
             String cellString = cellIterator.next();

@@ -24,7 +24,9 @@ This section explains how to build project from source code and also describe ho
 
 ## Workspace Preparation
 
-To develop this project, you need **Maven 3.9 or above** and **JDK (Java Development Kit) 17 or above**. However, you must use **Java 1.8** compatible language features during compilation to ensure this project can run in environments with Java 1.8 or above.
+To develop this project, you need **JDK (Java Development Kit) 8 or above** and Maven. The project builds and tests on JDK 8, 11, 17, 21 and 25, which is the CI matrix. **JDK 17 or above** is recommended for local development and is required to run the code formatter (`./mvnw spotless:apply` / `./mvnw spotless:check`). Whatever JDK you use, you must use **Java 1.8** compatible language features so that this project can run in environments with Java 1.8 or above.
+
+Use the bundled Maven Wrapper (`./mvnw`, or `mvnw.cmd` on Windows), which downloads the Maven version pinned by the project (currently **Maven 3.6.3**), so no separate Maven installation is needed. If you prefer a locally installed Maven, use **3.6.3 or above**.
 
 > You can use tools such as [SDKMAN](https://sdkman.io/) to configure multiple versions of the Java toolchain.
 

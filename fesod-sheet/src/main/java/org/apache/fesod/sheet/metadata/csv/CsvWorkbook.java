@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
@@ -60,7 +59,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CsvWorkbook implements Workbook {
     /**
      * output

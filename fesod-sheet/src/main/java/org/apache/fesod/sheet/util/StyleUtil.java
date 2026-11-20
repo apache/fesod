@@ -226,7 +226,7 @@ public class StyleUtil {
 
     public static int getCellCoordinate(
             Integer currentCoordinate, Integer absoluteCoordinate, Integer relativeCoordinate) {
-        if (absoluteCoordinate != null && absoluteCoordinate > 0) {
+        if (absoluteCoordinate != null && absoluteCoordinate >= 0) {
             return absoluteCoordinate;
         }
         if (relativeCoordinate != null) {

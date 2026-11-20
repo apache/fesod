@@ -234,6 +234,26 @@ class StyleUtilTest {
     }
 
     @Test
+    void testGetCellCoordinate_withAbsoluteZero_shouldReturnZero() {
+        Assertions.assertEquals(0, StyleUtil.getCellCoordinate(100, 0, null));
+    }
+
+    @Test
+    void testGetCellCoordinate_withAbsoluteZeroAndRelative_shouldPreferAbsolute() {
+        Assertions.assertEquals(0, StyleUtil.getCellCoordinate(100, 0, 200));
+    }
+
+    @Test
+    void testGetCellCoordinate_withNegativeAbsolute_shouldFallBackToRelative() {
+        Assertions.assertEquals(300, StyleUtil.getCellCoordinate(100, -1, 200));
+    }
+
+    @Test
+    void testGetCellCoordinate_withNegativeAbsolute_shouldFallBackToCurrent() {
+        Assertions.assertEquals(100, StyleUtil.getCellCoordinate(100, -1, null));
+    }
+
+    @Test
     void testSetIfNotNull_withNullValue_shouldNotInvokeSetter() {
         Consumer<String> setter = Mockito.mock(Consumer.class);
         String value = null;

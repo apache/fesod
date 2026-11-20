@@ -154,15 +154,22 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         CreationHelper helper = workbook.getCreationHelper();
         Hyperlink hyperlink = helper.createHyperlink(StyleUtil.getHyperlinkType(hyperlinkData.getHyperlinkType()));
         hyperlink.setAddress(hyperlinkData.getAddress());
-        hyperlink.setFirstRow(StyleUtil.getCellCoordinate(
-                rowIndex, hyperlinkData.getFirstRowIndex(), hyperlinkData.getRelativeFirstRowIndex()));
-        hyperlink.setFirstColumn(StyleUtil.getCellCoordinate(
-                columnIndex, hyperlinkData.getFirstColumnIndex(), hyperlinkData.getRelativeFirstColumnIndex()));
-        hyperlink.setLastRow(StyleUtil.getCellCoordinate(
-                rowIndex, hyperlinkData.getLastRowIndex(), hyperlinkData.getRelativeLastRowIndex()));
-        hyperlink.setLastColumn(StyleUtil.getCellCoordinate(
-                columnIndex, hyperlinkData.getLastColumnIndex(), hyperlinkData.getRelativeLastColumnIndex()));
+
+        int firstRow = StyleUtil.getCellCoordinate(
+                rowIndex, hyperlinkData.getFirstRowIndex(), hyperlinkData.getRelativeFirstRowIndex());
+        int firstColumn = StyleUtil.getCellCoordinate(
+                columnIndex, hyperlinkData.getFirstColumnIndex(), hyperlinkData.getRelativeFirstColumnIndex());
+        int lastRow = StyleUtil.getCellCoordinate(
+                rowIndex, hyperlinkData.getLastRowIndex(), hyperlinkData.getRelativeLastRowIndex());
+        int lastColumn = StyleUtil.getCellCoordinate(
+                columnIndex, hyperlinkData.getLastColumnIndex(), hyperlinkData.getRelativeLastColumnIndex());
+
+        // POI rewrites the range to the owning cell inside setHyperlink, so apply it afterwards.
         cell.setHyperlink(hyperlink);
+        hyperlink.setFirstRow(firstRow);
+        hyperlink.setFirstColumn(firstColumn);
+        hyperlink.setLastRow(lastRow);
+        hyperlink.setLastColumn(lastColumn);
     }
 
     private void fillComment(CellWriteHandlerContext cellWriteHandlerContext, CommentData commentData) {
@@ -173,7 +180,6 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         Integer rowIndex = cellWriteHandlerContext.getRowIndex();
         Integer columnIndex = cellWriteHandlerContext.getColumnIndex();
         Sheet sheet = cellWriteHandlerContext.getWriteSheetHolder().getSheet();
-        Cell cell = cellWriteHandlerContext.getCell();
 
         if (writeContext.writeWorkbookHolder().getExcelType() == ExcelTypeEnum.XLSX) {
             anchor = new XSSFClientAnchor(
@@ -221,7 +227,9 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
         if (commentData.getAuthor() != null) {
             comment.setAuthor(commentData.getAuthor());
         }
-        cell.setCellComment(comment);
+        // The anchor cell owns the comment. Registering it on the data cell instead made the
+        // duplicate check and the stored reference point at different cells.
+        comment.setAddress(anchor.getRow1(), anchor.getCol1());
     }
 
     protected void fillImage(CellWriteHandlerContext cellWriteHandlerContext, List<ImageData> imageDataList) {

@@ -28,7 +28,8 @@ package org.apache.fesod.sheet.write.metadata;
 import java.util.Map;
 
 /**
- * A map row of data.
+ * A row whose integer keys identify zero-based data positions.
+ * Missing positions before the last key are included in the row size.
  *
  *
  */
@@ -36,8 +37,24 @@ public class MapRowData implements RowData {
 
     private final Map<Integer, ?> map;
 
+    // Determine the row extent once before cell handlers run, like CollectionRowData.
+    private final int size;
+
     public MapRowData(Map<Integer, ?> map) {
         this.map = map;
+        int size = map.size();
+        for (Object key : map.keySet()) {
+            if (key instanceof Integer) {
+                int index = (Integer) key;
+                if (index >= size) {
+                    if (index == Integer.MAX_VALUE) {
+                        throw new IllegalArgumentException("Row data index is too large: " + index);
+                    }
+                    size = index + 1;
+                }
+            }
+        }
+        this.size = size;
     }
 
     @Override
@@ -47,7 +64,7 @@ public class MapRowData implements RowData {
 
     @Override
     public int size() {
-        return map.size();
+        return size;
     }
 
     @Override

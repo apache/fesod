@@ -277,3 +277,16 @@ private List<List<Object>> dataList() {
 </tbody>
 </table>
 </div>
+
+### Sparse Map Rows
+
+Rows can also be `Map<Integer, ?>` values. Nonnegative integer keys identify zero-based data positions; missing positions are blank, and map iteration order does not change their positions. With no custom indexed head, the following writes `FIRST` to A1 and `THIRD` to C1, leaving B1 blank. Explicit `null` entries for gaps are unnecessary. This works with XLS, XLSX and CSV.
+
+```java
+Map<Integer, String> row = new HashMap<>();
+row.put(0, "FIRST");
+row.put(2, "THIRD");
+FesodSheet.write("sparse.xlsx").sheet().doWrite(Collections.singletonList(row));
+```
+
+When using a head class with explicit column indexes, map data positions follow the same head mapping as list rows.

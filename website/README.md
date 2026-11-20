@@ -1,4 +1,4 @@
-# Apache Fesod (Incubating) Website
+# Apache Fesod Website
 
 <!--
 - Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,5 +1,5 @@
 <!--
-Thanks very much for contributing to Apache Fesod (Incubating)! Please make sure that your code changes
+Thanks very much for contributing to Apache Fesod! Please make sure that your code changes
 are covered with tests. And in case of new features or big changes
 remember to adjust the documentation.
 

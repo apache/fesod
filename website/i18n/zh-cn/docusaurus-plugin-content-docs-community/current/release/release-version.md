@@ -313,10 +313,10 @@ svn ci -m "add gpg key for xxx"
 
 #### 3.3.1 预发布版本
 
-例如要发布 `X.Y.Z` 版本，需要进行如下操作。
+例如要发布 `X.Y.Z` 版本，需要进行如下操作：
 
 - 创建一个新分支 `X.Y.Z` 作为发布分支
-- 将 `pom.xml` 中的 `revision` 属性修改为 `X.Y.Z`
+- 修改 `pom.xml` 中的版本号为 `X.Y.Z`
 - 在 `pom.xml` 中设置固定的 `project.build.outputTimestamp`，以保证[可复现构建](https://maven.apache.org/guides/mini/guide-reproducible-builds.html)
 - 提交并推送发布准备相关的更改
 - 从该提交创建签名 RC（Release Candidate）Tag，然后推送该 Tag

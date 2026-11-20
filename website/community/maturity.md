@@ -30,6 +30,8 @@ More details can be found in the [Apache Project Maturity Model](https://communi
 
 This self-assessment was prepared during the incubation of Apache Fesod (Incubating).
 
+Apache Fesod graduated from the Apache Incubator on 2026-11-18 and is now an Apache Top-Level Project (TLP). This assessment is kept as the dated record of the incubation period; its review date and evidence are unchanged.
+
 - **Last reviewed:** 2026-11-12
 - **Model:** [Apache Project Maturity Model](https://community.apache.org/apache-way/apache-project-maturity-model.html), version 1.4
 - **Scope:** the project's community practices, the published releases up to 2.1.0-incubating, and the `main` branch of [apache/fesod](https://github.com/apache/fesod) at the review date. Remarks that describe a change on `main` state explicitly when that change is not yet part of a published release.

@@ -493,8 +493,9 @@ ${RELEASE_TAG_COMMIT_HASH}
 Release Notes:
 ${RELEASE_NOTES_URL}
 
-The artifacts have been signed with key ${SIGNING_KEY_ID}, belonging to
-${RELEASE_MANAGER_APACHE_EMAIL}. The key can be found in the KEYS file:
+The artifacts were signed with the key belonging to ${RELEASE_MANAGER_APACHE_EMAIL}.
+The full signing-key fingerprint is ${SIGNING_KEY_FINGERPRINT}.
+The public key can be found in the KEYS file:
 https://downloads.apache.org/fesod/KEYS
 
 Build environment: JDK 8 or later and the Maven wrapper included in the source package.

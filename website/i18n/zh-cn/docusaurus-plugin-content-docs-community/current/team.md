@@ -41,6 +41,7 @@ Apache Fesod (Incubating) 团队由成员和贡献者组成。我们秉持开放
 | Zhe Zhang    | [@alaahong](https://github.com/alaahong)                         | [zhangzhe](https://people.apache.org/committer-index.html#zhangzhe)       | PPMC 成员 |
 | Ziqiu Guo    | [@delei](https://github.com/delei)                               | [delei](https://people.apache.org/committer-index.html#delei)             | PPMC 成员 |
 | Jing Yang    | [@bengbengbalabalabeng](https://github.com/bengbengbalabalabeng) | [benbala](https://people.apache.org/committer-index.html#benbala)         | PPMC 成员 |
+| Zhongqiang Gong | [@GOODBOY008](https://github.com/GOODBOY008)                  | [gongzhongqiang](https://people.apache.org/committer-index.html#gongzhongqiang) | PPMC 成员 |
 
 </div>
 
@@ -50,7 +51,7 @@ Apache Fesod (Incubating) 团队由成员和贡献者组成。我们秉持开放
 
 | 姓名            | GitHub                                                           | Apache ID                                                                       | 角色      |
 |-----------------|------------------------------------------------------------------|---------------------------------------------------------------------------------|-----------|
-| Zhongqiang Gong | [@GOODBOY008](https://github.com/GOODBOY008)                     | [gongzhongqiang](https://people.apache.org/committer-index.html#gongzhongqiang) | Committer |
+| Nikita Kuprins  | [@nkuprins](https://github.com/nkuprins)                         | [nkuprins](https://people.apache.org/committer-index.html#nkuprins)             | Committer |
 
 </div>
 

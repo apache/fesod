@@ -78,6 +78,9 @@ public enum CellDataTypeEnum {
         TYPE_ROUTING_MAP.put("e", ERROR);
         TYPE_ROUTING_MAP.put("b", BOOLEAN);
         TYPE_ROUTING_MAP.put("n", NUMBER);
+        // "d" is a valid cell type per ECMA-376 section 18.18.11 (an ISO-8601 date string); the value
+        // is kept as the raw text, matching the other non-shared-string text forms.
+        TYPE_ROUTING_MAP.put("d", DIRECT_STRING);
     }
 
     /**

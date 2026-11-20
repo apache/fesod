@@ -23,15 +23,18 @@
         "div",
         "table",
         "tr",
+        "th",
         "td",
         "a",
         "img",
         "sub",
         "b",
         "br",
+        "thead",
         "tbody",
         "mark",
         "font",
+        "small",
         "p"
       ]
     },

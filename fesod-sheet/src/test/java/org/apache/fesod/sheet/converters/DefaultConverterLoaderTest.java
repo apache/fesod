@@ -23,6 +23,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.time.MonthDay;
 import java.time.OffsetTime;
 import java.util.Map;
 import java.util.UUID;
@@ -31,6 +32,7 @@ import org.apache.fesod.sheet.converters.instant.InstantStringConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeDateConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeNumberConverter;
 import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
+import org.apache.fesod.sheet.converters.monthday.MonthDayStringConverter;
 import org.apache.fesod.sheet.converters.offsettime.OffsetTimeStringConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeDateConverter;
 import org.apache.fesod.sheet.converters.sqltime.SqlTimeNumberConverter;
@@ -79,6 +81,21 @@ public class DefaultConverterLoaderTest {
         Assertions.assertInstanceOf(
                 LocalTimeStringConverter.class,
                 writeConverter.get(ConverterKeyBuild.buildKey(LocalTime.class, CellDataTypeEnum.STRING)));
+    }
+
+    @Test
+    void loadConvertersRegistersMonthDayStringConverter() {
+        Map<ConverterKey, Converter<?>> allConverter = DefaultConverterLoader.loadAllConverter();
+        Assertions.assertInstanceOf(
+                MonthDayStringConverter.class,
+                allConverter.get(ConverterKeyBuild.buildKey(MonthDay.class, CellDataTypeEnum.STRING)));
+
+        Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
+        Assertions.assertInstanceOf(
+                MonthDayStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(MonthDay.class)));
+        Assertions.assertInstanceOf(
+                MonthDayStringConverter.class,
+                writeConverter.get(ConverterKeyBuild.buildKey(MonthDay.class, CellDataTypeEnum.STRING)));
     }
 
     @Test

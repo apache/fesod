@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.util;
 
 import java.math.BigDecimal;
@@ -32,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.Year;
@@ -97,6 +92,12 @@ public class DateUtils {
     public static String defaultLocalDateFormat = DATE_FORMAT_10;
 
     public static String defaultYearFormat = "yyyy";
+
+    /**
+     * The optional {@code --} prefix reads both the ISO form ({@code --10-31}) and the bare form ({@code 10-31}),
+     * so no lenient fallback pattern is needed when parsing.
+     */
+    public static String defaultMonthDayFormat = "[--]MM-dd";
 
     public static final String DEFAULT_LOCAL_TIME_FORMAT = TIME_FORMAT_8;
 
@@ -169,6 +170,21 @@ public class DateUtils {
             timeFormat = switchTimeFormat(timeString);
         }
         return LocalTime.parse(timeString, getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * convert string to month day
+     *
+     * @param monthDayString month day string, e.g. --10-31
+     * @param monthDayFormat month day format, empty means ISO representation of a month-day
+     * @param local local
+     * @return
+     */
+    public static MonthDay parseMonthDay(String monthDayString, String monthDayFormat, Locale local) {
+        if (StringUtils.isEmpty(monthDayFormat)) {
+            monthDayFormat = defaultMonthDayFormat;
+        }
+        return MonthDay.parse(monthDayString, getCacheDateTimeFormat(monthDayFormat, local));
     }
 
     /**
@@ -367,6 +383,24 @@ public class DateUtils {
             timeFormat = DEFAULT_LOCAL_TIME_FORMAT;
         }
         return time.format(getCacheDateTimeFormat(timeFormat, local));
+    }
+
+    /**
+     * Format month day
+     *
+     * @param monthDay MonthDay
+     * @param monthDayFormat month day format, empty means ISO representation of a month-day
+     * @param local local
+     * @return format string
+     */
+    public static String format(MonthDay monthDay, String monthDayFormat, Locale local) {
+        if (monthDay == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(monthDayFormat)) {
+            monthDayFormat = defaultMonthDayFormat;
+        }
+        return monthDay.format(getCacheDateTimeFormat(monthDayFormat, local));
     }
 
     /**

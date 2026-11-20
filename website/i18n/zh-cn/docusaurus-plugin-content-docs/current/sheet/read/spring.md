@@ -37,7 +37,7 @@ title: '与 Spring 集成'
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod</artifactId>
+    <artifactId>fesod-sheet</artifactId>
     <version>版本号</version>
 </dependency>
 <dependency>

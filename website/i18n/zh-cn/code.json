@@ -352,17 +352,5 @@
   "theme.IconExternalLink.ariaLabel": {
     "message": "(opens in new tab)",
     "description": "The ARIA label for the external link icon"
-  },
-  "team.name": {
-    "message": "Apache Fesod (Incubating) 团队"
-  },
-  "team.desc": {
-    "message": "Apache Fesod (Incubating) 团队由成员和贡献者组成。我们秉持开放和协作的社区理念，欢迎更多的人加入我们，与社区共同成长。"
-  },
-  "team.tip": {
-    "message": "(排名不分先后)"
-  },
-  "team.thanks": {
-    "message": "感谢所有参与贡献的人们。"
   }
 }

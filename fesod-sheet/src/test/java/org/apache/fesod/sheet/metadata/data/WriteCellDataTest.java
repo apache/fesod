@@ -19,6 +19,9 @@
 
 package org.apache.fesod.sheet.metadata.data;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,7 +33,7 @@ public class WriteCellDataTest {
 
     @Test
     void constructorShouldSupportSqlDate() {
-        WriteCellData<?> cellData = new WriteCellData<>(java.sql.Date.valueOf("2026-05-07"));
+        WriteCellData<?> cellData = new WriteCellData<>(Date.valueOf("2026-05-07"));
 
         Assertions.assertEquals(CellDataTypeEnum.DATE, cellData.getType());
         Assertions.assertEquals(
@@ -39,7 +42,7 @@ public class WriteCellDataTest {
 
     @Test
     void constructorShouldSupportSqlTime() {
-        WriteCellData<?> cellData = new WriteCellData<>(java.sql.Time.valueOf("12:34:56"));
+        WriteCellData<?> cellData = new WriteCellData<>(Time.valueOf("12:34:56"));
 
         Assertions.assertEquals(CellDataTypeEnum.DATE, cellData.getType());
         Assertions.assertEquals(
@@ -48,7 +51,7 @@ public class WriteCellDataTest {
 
     @Test
     void constructorShouldKeepSupportingSqlTimestampNanos() {
-        WriteCellData<?> cellData = new WriteCellData<>(java.sql.Timestamp.valueOf("2026-05-07 12:34:56.789123456"));
+        WriteCellData<?> cellData = new WriteCellData<>(Timestamp.valueOf("2026-05-07 12:34:56.789123456"));
 
         Assertions.assertEquals(CellDataTypeEnum.DATE, cellData.getType());
         Assertions.assertEquals(LocalDateTime.of(2026, 5, 7, 12, 34, 56, 789_123_456), cellData.getDateValue());

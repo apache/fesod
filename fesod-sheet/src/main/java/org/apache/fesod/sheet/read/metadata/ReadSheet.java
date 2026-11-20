@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -51,7 +51,9 @@ public class ReadSheet extends ReadBasicParameter {
      */
     private boolean sheetVeryHidden;
     /**
-     * The number of rows to read, the default is all, start with 0.
+     * The maximum number of rows to read, including header rows.
+     *
+     * <p>A value of {@code 0} or {@code null} indicates no limit (i.e. read all rows).
      */
     public Integer numRows;
 

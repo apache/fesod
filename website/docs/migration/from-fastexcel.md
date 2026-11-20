@@ -58,7 +58,7 @@ Replace your existing dependency with Apache Fesod (Incubating):
 | Source                          | GroupId          | ArtifactId  | Version           |
 |---------------------------------|------------------|-------------|-------------------|
 | **cn.idev FastExcel**           | cn.idev.excel    | fastexcel   | 1.3.0             |
-| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod-sheet | 2.0.2-incubating+ |
+| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod-sheet | 2.1.0-incubating+ |
 
 **Maven:**
 
@@ -78,7 +78,7 @@ After:
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>2.0.2-incubating</version>
+    <version>2.1.0-incubating</version>
 </dependency>
 ```
 
@@ -93,7 +93,7 @@ implementation 'cn.idev.excel:fastexcel:1.3.0'
 After:
 
 ```gradle
-implementation 'org.apache.fesod:fesod-sheet:2.0.2-incubating'
+implementation 'org.apache.fesod:fesod-sheet:2.1.0-incubating'
 ```
 
 > **Note**: The `fesod-sheet` module is the core module for Excel/CSV processing. It automatically includes the necessary dependencies (`fesod-common` and `fesod-shaded`).
@@ -322,10 +322,17 @@ about when migrating, but require no action unless you want to use them:
   (`colSplit`, `rowSplit`, `leftmostColumn`, `topRow`).
 - **URL image security** (`org.apache.fesod.sheet.converters.url`):
   `UrlImageFetchPolicy` (built with `SchemePolicy` and `CidrBlock`) guards the
-  built-in URL image converter against SSRF. By default only `http`/`https` and
-  public network addresses are allowed; private networks, hosts and CIDRs can
-  be allowlisted, and redirects (`maxRedirects`) and image size (`maxImageBytes`)
-  are capped.
+  built-in URL image converter against SSRF. Since 2.1.0-incubating, remote URL
+  image fetching is **disabled by default**: you must enable it with an explicit
+  exact-host allowlist (`allowedHosts`, no wildcards) via
+  `UrlImageConverter.setFetchPolicy(...)`. Allowlisted hosts are still limited
+  to `http`/`https` and public network addresses unless private networks, hosts
+  or CIDRs are also allowlisted, and redirects (`maxRedirects`) and image size
+  (`maxImageBytes`) are capped. If your FastExcel code wrote `URL` image fields,
+  configure the policy at application startup; otherwise the write fails with
+  an `IOException` (`Remote URL image fetching is disabled`). See
+  [URL Sources](../sheet/write/image.md#url-sources) and the
+  [Security Model](/community/security-model).
 - **String image converters** (`org.apache.fesod.sheet.converters.string`):
   `StringBase64ImageConverter` (base64 values, optional `data:` prefix) and
   `StringPathnameImageConverter` (local file path) make the string-to-image

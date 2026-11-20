@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -61,7 +61,7 @@ public class StringNumberConverter implements Converter<String> {
         if (contentProperty != null && contentProperty.getDateTimeFormatProperty() != null) {
             return DateUtils.format(
                     cellData.getNumberValue(),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing(),
+                    DateUtils.isDate1904(contentProperty, globalConfiguration),
                     contentProperty.getDateTimeFormatProperty().getFormat());
         }
         // If there are "NumberFormat", read as number

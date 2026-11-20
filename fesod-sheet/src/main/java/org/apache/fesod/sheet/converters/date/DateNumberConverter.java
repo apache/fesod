@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -56,25 +56,14 @@ public class DateNumberConverter implements Converter<Date> {
     @Override
     public Date convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return DateUtils.getJavaDate(
-                    cellData.getNumberValue().doubleValue(), globalConfiguration.getUse1904windowing());
-        } else {
-            return DateUtils.getJavaDate(
-                    cellData.getNumberValue().doubleValue(),
-                    contentProperty.getDateTimeFormatProperty().getUse1904windowing());
-        }
+        return DateUtils.getJavaDate(
+                cellData.getNumberValue().doubleValue(), DateUtils.isDate1904(contentProperty, globalConfiguration));
     }
 
     @Override
     public WriteCellData<?> convertToExcelData(
             Date value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(
-                    BigDecimal.valueOf(DateUtil.getExcelDate(value, globalConfiguration.getUse1904windowing())));
-        } else {
-            return new WriteCellData<>(BigDecimal.valueOf(DateUtil.getExcelDate(
-                    value, contentProperty.getDateTimeFormatProperty().getUse1904windowing())));
-        }
+        return new WriteCellData<>(BigDecimal.valueOf(
+                DateUtil.getExcelDate(value, DateUtils.isDate1904(contentProperty, globalConfiguration))));
     }
 }

@@ -25,6 +25,7 @@ package org.apache.fesod.sheet.testkit;
  * <h2>Usage with Maven Surefire</h2>
  * <pre>
  * mvn test -Dtest.groups=unit              # fast feedback: util tests only
+ * mvn test -Dtest.groups=unit,windows      # unit tests plus OS-specific Windows tests
  * mvn test -Dtest.excludedGroups=fuzz      # exclude slow fuzz tests
  * mvn test                                 # run all (default)
  * </pre>
@@ -32,6 +33,7 @@ package org.apache.fesod.sheet.testkit;
  * <h2>Tag Definitions</h2>
  * <ul>
  *   <li>{@link #UNIT} — pure logic tests with no Excel I/O ({@code util/*} tests)</li>
+ *   <li>{@link #WINDOWS} — Windows-only tests, paired with {@code @EnabledOnOs(OS.WINDOWS)}</li>
  *   <li>{@link #ROUND_TRIP} — write-then-read matrix tests extending {@code AbstractExcelTest}</li>
  *   <li>{@link #READ} — read-only tests (analysers, SAX parsers, head detection)</li>
  *   <li>{@link #WRITE} — write-only tests (sheet creation, handlers, freeze panes)</li>
@@ -43,6 +45,13 @@ public final class Tags {
 
     /** Pure logic tests with no Excel I/O ({@code util/*} tests). */
     public static final String UNIT = "unit";
+
+    /**
+     * Windows-only tests. Pair with JUnit's {@code @EnabledOnOs(OS.WINDOWS)}: the annotation skips
+     * the test on other operating systems, while this tag lets the {@code Test Windows} CI job run
+     * exactly these tests via {@code -Dtest.groups=windows}.
+     */
+    public static final String WINDOWS = "windows";
 
     /** Write-then-read matrix tests extending {@code AbstractExcelTest}. */
     public static final String ROUND_TRIP = "round-trip";

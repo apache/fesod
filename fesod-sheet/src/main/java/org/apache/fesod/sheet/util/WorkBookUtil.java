@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -156,7 +156,7 @@ public class WorkBookUtil {
             cellData.getWriteCellStyle().setDataFormatData(new DataFormatData());
         }
         if (cellData.getWriteCellStyle().getDataFormatData().getFormat() == null) {
-            if (format == null) {
+            if (format == null || format.isEmpty()) {
                 cellData.getWriteCellStyle().getDataFormatData().setFormat(defaultFormat);
             } else {
                 cellData.getWriteCellStyle().getDataFormatData().setFormat(format);

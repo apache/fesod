@@ -32,6 +32,10 @@ const sidebarsCommunity = {
             type: "doc",
         },
         {
+            id: "team",
+            type: "doc",
+        },
+        {
             id: "feedback",
             type: "doc",
         },
@@ -74,6 +78,10 @@ const sidebarsCommunity = {
         },
         {
             id: "security",
+            type: "doc",
+        },
+        {
+            id: "security-model",
             type: "doc",
         },
     ]

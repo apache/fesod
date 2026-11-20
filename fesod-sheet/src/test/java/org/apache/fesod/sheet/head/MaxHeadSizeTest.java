@@ -19,8 +19,6 @@
 
 package org.apache.fesod.sheet.head;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONWriter;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +64,7 @@ public class MaxHeadSizeTest extends AbstractExcelTest {
         // default
         dataList = FesodSheet.read(file).excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
         dataList.forEach(d -> {
-            log.info(JSON.toJSONString(d, JSONWriter.Feature.WriteMapNullValue));
+            log.info("{}", d);
             Assertions.assertTrue(d.size() >= expectHeadSize);
         });
 
@@ -76,7 +74,7 @@ public class MaxHeadSizeTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         dataList.forEach(d -> {
-            log.info(JSON.toJSONString(d, JSONWriter.Feature.WriteMapNullValue));
+            log.info("{}", d);
             Assertions.assertTrue(d.size() >= expectHeadSize);
         });
     }
@@ -88,7 +86,7 @@ public class MaxHeadSizeTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         dataList.forEach(d -> {
-            log.info(JSON.toJSONString(d, JSONWriter.Feature.WriteMapNullValue));
+            log.info("{}", d);
         });
     }
 

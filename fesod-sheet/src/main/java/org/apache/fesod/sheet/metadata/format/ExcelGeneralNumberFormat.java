@@ -17,12 +17,6 @@
  * under the License.
  */
 
-/*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
- *
- * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
- */
-
 package org.apache.fesod.sheet.metadata.format;
 
 import java.math.BigDecimal;
@@ -62,9 +56,9 @@ public class ExcelGeneralNumberFormat extends Format {
         } else {
             scientificFormat = new DecimalFormat("#", decimalSymbols);
         }
-        org.apache.poi.ss.usermodel.DataFormatter.setExcelStyleRoundingMode(scientificFormat);
+        DataFormatter.setExcelStyleRoundingMode(scientificFormat);
         integerFormat = new DecimalFormat("#", decimalSymbols);
-        org.apache.poi.ss.usermodel.DataFormatter.setExcelStyleRoundingMode(integerFormat);
+        DataFormatter.setExcelStyleRoundingMode(integerFormat);
         decimalFormat = new DecimalFormat("#.##########", decimalSymbols);
         DataFormatter.setExcelStyleRoundingMode(decimalFormat);
     }

@@ -313,10 +313,10 @@ Encryption of the configuration is recommended. Refer to the following guides:
 
 #### 3.3.1 Pre-Release Version
 
-For example, to release version `X.Y.Z`, follow these steps.
+For example, to release version `X.Y.Z`, follow these steps:
 
 - Create a new branch `X.Y.Z` as the release branch.
-- Update the `revision` property in `pom.xml` to `X.Y.Z`.
+- Update the version number in `pom.xml` to `X.Y.Z`.
 - Set a fixed `project.build.outputTimestamp` in `pom.xml` to ensure [reproducible builds](https://maven.apache.org/guides/mini/guide-reproducible-builds.html).
 - Commit and push the release preparation changes.
 - Create the signed RC (Release Candidate) tag from that exact commit, then push the tag.

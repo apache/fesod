@@ -84,7 +84,10 @@ public class SheetUtils {
                             parameterSheetName = parameterSheetName.trim();
                             sheetName = sheetName.trim();
                         }
-                        match = parameterSheetName.equals(sheetName);
+                        // Sheet names are case-insensitive in the workbook model itself (POI's
+                        // Workbook.getSheet resolves case-insensitively, and the write/fill path
+                        // relies on that), so a case difference must not silently read nothing.
+                        match = parameterSheetName.equalsIgnoreCase(sheetName);
                     }
                 }
             }

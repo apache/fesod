@@ -39,7 +39,7 @@ Ensure the necessary dependencies are included in your pom.xml file:
 ```xml
 <dependency>
     <groupId>org.apache.fesod</groupId>
-    <artifactId>fesod</artifactId>
+    <artifactId>fesod-sheet</artifactId>
     <version>{version.number}</version>
 </dependency>
 <dependency>

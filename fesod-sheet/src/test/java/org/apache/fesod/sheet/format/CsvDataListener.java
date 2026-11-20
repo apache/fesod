@@ -19,7 +19,6 @@
 
 package org.apache.fesod.sheet.format;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.event.AnalysisEventListener;
@@ -43,7 +42,7 @@ public class CsvDataListener extends AnalysisEventListener<Object> {
 
     @Override
     public void invoke(Object data, AnalysisContext context) {
-        log.info("data:{}", JSON.toJSONString(data));
+        log.info("data:{}", data);
     }
 
     @Override

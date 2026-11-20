@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -102,7 +102,7 @@ public interface ReadListener<T> extends Listener {
         if (limit == null) {
             limit = context.readWorkbookHolder().getReadWorkbook().getNumRows();
         }
-        if (limit != null && index >= limit) {
+        if (limit != null && limit > 0 && index >= limit) {
             return false;
         }
         return true;

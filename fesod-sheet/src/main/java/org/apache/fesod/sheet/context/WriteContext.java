@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -97,7 +97,7 @@ public interface WriteContext {
      * Current sheet
      *
      * @return
-     * @deprecated please us e{@link #writeSheetHolder()}
+     * @deprecated please use {@link #writeSheetHolder()}
      */
     @Deprecated
     Sheet getCurrentSheet();
@@ -106,7 +106,7 @@ public interface WriteContext {
      * Need head
      *
      * @return
-     * @deprecated please us e{@link #writeSheetHolder()}
+     * @deprecated please use {@link #writeSheetHolder()}
      */
     @Deprecated
     boolean needHead();

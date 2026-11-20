@@ -17,6 +17,12 @@
  * under the License.
  */
 
+/*
+ * Portions of this file are derived from Alibaba EasyExcel's LocalDateStringConverter.
+ *
+ * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
+ */
+
 package org.apache.fesod.sheet.converters.localtime;
 
 import java.time.LocalTime;

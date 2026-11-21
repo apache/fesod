@@ -20,10 +20,9 @@ title: 'Onboarding'
 - limitations under the License.
 -->
 
-This document primarily serves as a guide for new PPMC members to Apache Fesod (Incubating).
+This document primarily serves as a guide for new PMC members of Apache Fesod.
 
-Upon receiving an invitation email from Apache Fesod (Incubating) PPMC, a new PPMC member should consider whether accepting.
-If they decide in favor, they should select **"Reply All"** and express their decision.
+Upon receiving an invitation email from the Apache Fesod PMC, a new PMC member should consider whether to accept. If they decide in favor, they should select **"Reply All"** and express their decision.
 
 ## Subscribe to Private Mailing List
 
@@ -33,13 +32,22 @@ If they decide in favor, they should select **"Reply All"** and express their de
 
 If you receive an email with the subject `WELCOME to private@fesod.apache.org`, you have successfully subscribed to the private mailing list.
 
-It's required for PPMC members to subscribe the private mailing list. The private list is only for confidential discussions that should not be made public, such as the suitability of a particular individual to become a committer or a member of the PPMC.
+It's required for PMC members to subscribe to the private mailing list. The private list is only for confidential discussions that should not be made public, such as the suitability of a particular individual to become a committer or a member of the PMC.
 
 ### Don’t mix private and public lists in posts
 
-- Don’t post to both the dev and private lists. Each member of the PPMC should be on the dev list, so posting to dev is sufficient.
-- Likewise, don’t post to both the Incubator general and Incubator private lists. Each member of the IPMC is on the Incubator general list, so posting to the general list is sufficient.
+- Don’t post to both the dev and private lists. Each member of the PMC should be on the dev list, so posting to dev is sufficient.
+- Keep discussions that can be public on the dev list, and use the private list only for matters that must stay confidential.
 
-## Read PPMC Member Guide
+## Learn How the PMC Works
 
-Please read [PPMC GUIDE](https://incubator.apache.org/guides/ppmc.html) to know about the general responsibilities of Project Management Committee (PMC) members in managing our project and common how-to procedures for day to day maintenance.
+Please read the [Apache PMC guide](https://www.apache.org/dev/pmc.html) to learn about the responsibilities of PMC members and the day-to-day operation of a top-level project.
+
+As a PMC member of Apache Fesod, you are expected to:
+
+- stay active on the dev and private mailing lists;
+- vote on new committers, new PMC members and releases;
+- help review contributions and guide the project roadmap;
+- keep the project aligned with ASF branding, legal and release policies.
+
+The PMC chair is an ASF officer (Vice President, Apache Fesod) appointed by the Board, maintains the project roster in [Whimsy](https://whimsy.apache.org/roster/committee/fesod), and submits a report on the project's health to the Board. The project reports quarterly; new PMCs report monthly for the first quarter. Chairs can find further guidance in the [PMC Chair guide](https://www.apache.org/dev/pmc-chair).

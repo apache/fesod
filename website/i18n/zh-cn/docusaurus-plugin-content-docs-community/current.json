@@ -12,7 +12,7 @@
     "description": "The label for category Committers in sidebar community"
   },
   "sidebar.community.category.PMC Members": {
-    "message": "PPMC 成员",
+    "message": "PMC 成员",
     "description": "The label for category PMC Members in sidebar community"
   },
   "sidebar.community.category.Release": {

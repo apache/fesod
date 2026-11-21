@@ -89,7 +89,7 @@ public class ExcelWriterTableBuilder extends AbstractExcelWriterParameterBuilder
     }
 
     public void doWrite(Supplier<Collection<?>> supplier) {
-        doWrite(supplier.get());
+        doWrite(SupplierWriteSupport.get(excelWriter, supplier));
     }
 
     @Override

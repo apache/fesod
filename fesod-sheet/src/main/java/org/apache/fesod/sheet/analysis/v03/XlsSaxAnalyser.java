@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -216,7 +216,9 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
         }
 
         // There are some special xls that do not have the terminator "[EOF]", so an additional
-        xlsReadContext.analysisEventProcessor().endSheet(xlsReadContext);
+        if (xlsReadContext.readSheetHolder() != null) {
+            xlsReadContext.analysisEventProcessor().endSheet(xlsReadContext);
+        }
     }
 
     private void setCurrentUserPassword() {

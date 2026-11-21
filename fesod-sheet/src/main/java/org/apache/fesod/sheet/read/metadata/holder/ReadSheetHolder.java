@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -106,9 +106,9 @@ public class ReadSheetHolder extends AbstractReadHolder {
 
     /**
      * Approximate total number of rows.
-     * use: getApproximateTotalRowNumber()
      *
      * @return
+     * @deprecated use {@link #getApproximateTotalRowNumber()} instead
      */
     @Deprecated
     public Integer getTotal() {

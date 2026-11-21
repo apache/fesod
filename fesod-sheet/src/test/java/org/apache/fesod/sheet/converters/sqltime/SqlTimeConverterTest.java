@@ -32,6 +32,7 @@ import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.DateTimeFormatProperty;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.testkit.Tags;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -55,8 +56,7 @@ class SqlTimeConverterTest {
     void dateNumberAndStringConversions() throws Exception {
         Time time = Time.valueOf("12:34:56");
         WriteCellData<?> date = new SqlTimeDateConverter().convertToExcelData(time, null, config);
-        Assertions.assertEquals(
-                time.toLocalTime().atDate(org.apache.fesod.sheet.util.DateUtils.EPOCH), date.getDateValue());
+        Assertions.assertEquals(time.toLocalTime().atDate(DateUtils.EPOCH), date.getDateValue());
         SqlTimeNumberConverter number = new SqlTimeNumberConverter();
         WriteCellData<?> numeric = number.convertToExcelData(time, null, config);
         Assertions.assertEquals(
@@ -89,7 +89,7 @@ class SqlTimeConverterTest {
         Assertions.assertEquals("12:30", text.getStringValue());
         WriteCellData<?> numeric = new SqlTimeNumberConverter().convertToExcelData(time, property, config);
         Assertions.assertEquals(
-                DateUtil.getExcelDate(time.toLocalTime().atDate(org.apache.fesod.sheet.util.DateUtils.EPOCH), true),
+                DateUtil.getExcelDate(time.toLocalTime().atDate(DateUtils.EPOCH), true),
                 numeric.getNumberValue().doubleValue(),
                 1e-8);
     }

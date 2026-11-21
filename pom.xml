@@ -37,21 +37,10 @@ under the License.
     <version>${revision}</version>
 
     <packaging>pom</packaging>
-    <name>fesod-parent</name>
+    <name>Fesod Parent</name>
     <description>
-        Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
+        Apache Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
-
-        Apache Fesod (incubating) is an effort undergoing incubation at The Apache
-        Software Foundation (ASF), sponsored by the Apache Incubator PMC.
-
-        Incubation is required of all newly accepted projects until a further review
-        indicates that the infrastructure, communications, and decision making process
-        have stabilized in a manner consistent with other successful ASF projects.
-
-        While incubation status is not necessarily a reflection of the completeness
-        or stability of the code, it does indicate that the project has yet to be
-        fully endorsed by the ASF.
     </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
@@ -61,6 +50,7 @@ under the License.
         <module>fesod-common</module>
         <module>fesod-shaded</module>
         <module>fesod-sheet</module>
+        <module>fesod-benchmark</module>
     </modules>
 
     <properties>
@@ -73,7 +63,6 @@ under the License.
         <maven-compiler-plugin>3.14.1</maven-compiler-plugin>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.test.skip>true</maven.test.skip>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-csv.version>1.14.1</commons-csv.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -83,13 +72,11 @@ under the License.
         <slf4j-api.version>2.0.20</slf4j-api.version>
         <lombok.version>1.18.44</lombok.version>
         <spring-core.version>5.3.39</spring-core.version>
-        <fastjson2.version>2.0.65</fastjson2.version>
-        <spring-boot-starter-web.version>2.7.18</spring-boot-starter-web.version>
         <slf4j-simple.version>2.0.20</slf4j-simple.version>
         <jcl-over-slf4j.version>2.0.20</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>2.0.20</log4j-over-slf4j.version>
         <log4j-to-slf4j.version>2.24.3</log4j-to-slf4j.version>
-        <jacoco.version>0.8.15</jacoco.version>
+        <jacoco.version>0.8.16</jacoco.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <jazzer.junit.version>0.25.1</jazzer.junit.version>
@@ -100,9 +87,9 @@ under the License.
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/apache/fesod.git</connection>
-        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/fesod.git</developerConnection>
-        <url>scm:git:git@github.com:apache/fesod.git</url>
+        <connection>scm:git:https://github.com/apache/fesod.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/fesod.git</developerConnection>
+        <url>https://github.com/apache/fesod</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -110,6 +97,17 @@ under the License.
         <name>The Apache Software Foundation</name>
         <url>https://www.apache.org</url>
     </organization>
+
+    <developers>
+        <developer>
+            <id>fesod</id>
+            <name>The Apache Fesod Team</name>
+            <email>dev@fesod.apache.org</email>
+            <url>https://fesod.apache.org</url>
+            <organization>The Apache Software Foundation</organization>
+            <organizationUrl>https://www.apache.org</organizationUrl>
+        </developer>
+    </developers>
 
     <issueManagement>
         <system>GitHub</system>
@@ -207,11 +205,6 @@ under the License.
                 <version>${spring-core.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2</artifactId>
-                <version>${fastjson2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${jcl-over-slf4j.version}</version>
@@ -230,17 +223,6 @@ under the License.
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j-simple.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -298,21 +280,7 @@ under the License.
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- test -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -372,13 +340,6 @@ under the License.
                 </includes>
                 <filtering>false</filtering>
             </resource>
-            <resource>
-                <directory>${maven.multiModuleProjectDirectory}</directory>
-                <includes>
-                    <include>DISCLAIMER</include>
-                </includes>
-                <targetPath>META-INF</targetPath>
-            </resource>
         </resources>
         <pluginManagement>
             <plugins>
@@ -427,7 +388,7 @@ under the License.
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
-                    <version>2.46.1</version>
+                    <version>3.10.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -465,30 +426,6 @@ under the License.
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-disclaimer-into-jar</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${maven.multiModuleProjectDirectory}</directory>
-                                    <includes>
-                                        <include>DISCLAIMER</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${maven.compiler.source}</source>
@@ -522,8 +459,6 @@ under the License.
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>oss</flattenMode>
                     <pomElements>
-                        <url>remove</url>
-                        <scm>remove</scm>
                         <distributionManagement>remove</distributionManagement>
                         <repositories>remove</repositories>
                     </pomElements>
@@ -566,6 +501,7 @@ under the License.
                 <artifactId>spotless-maven-plugin</artifactId>
                 <configuration>
                     <java>
+                        <shortenFullyQualifiedTypes/>
                         <palantirJavaFormat>
                             <version>2.72.0</version>
                         </palantirJavaFormat>
@@ -621,7 +557,6 @@ under the License.
                     <excludes>
                         <exclude>website/**</exclude>
                         <exclude>logo.svg</exclude>
-                        <exclude>**/*.md</exclude>
                         <exclude>dist/**</exclude>
                         <exclude>**/*.xlsx</exclude>
                         <exclude>**/*.xls</exclude>
@@ -635,6 +570,12 @@ under the License.
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>apache-release</id>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+            </properties>
+        </profile>
         <profile>
             <id>jdk9plus</id>
             <activation>

@@ -79,6 +79,47 @@ public void converterRead() {
 
 ---
 
+## Default Date String Parsing
+
+When a string cell is read into a date/time field and no `@DateTimeFormat` is declared, Fesod falls back to a
+fixed set of patterns. For `java.util.Date`, `LocalDate`, `LocalDateTime` and `java.sql.Timestamp` fields, the
+pattern is selected by the length of the string:
+
+| String length | Patterns |
+|:---|:---|
+| 19 | `yyyy-MM-dd HH:mm:ss` / `yyyy/MM/dd HH:mm:ss` |
+| 17 | `yyyyMMdd HH:mm:ss` |
+| 16 | `yyyy-MM-dd HH:mm` / `yyyy/MM/dd HH:mm` |
+| 14 | `yyyyMMddHHmmss` |
+| 10 | `yyyy-MM-dd` / `yyyy/MM/dd` |
+
+The slash-separated pattern is used when the string contains no `-`. `LocalDate` accepts both date and
+date-time strings and ignores the time part, while `LocalDateTime` requires the time part.
+
+Other date/time types have their own defaults:
+
+| Java type | Default patterns |
+|:---|:---|
+| `LocalTime`, `java.sql.Time` | `HH:mm:ss` or `HH:mm` |
+| `OffsetDateTime` | ISO-8601 with an explicit offset, e.g. `2024-01-02T03:04:05+08:00` |
+| `Year` | `yyyy` |
+
+Values that do not match these patterns are not parsed, for example ISO-8601 values with a `T` separator or
+milliseconds, and non-zero-padded values such as `2024/1/2`. When the input uses another format, declare the
+pattern explicitly:
+
+```java
+@DateTimeFormat("yyyy-MM-dd'T'HH:mm:ss")
+private LocalDateTime time;
+```
+
+:::tip
+The default patterns are a fallback for common formats and are selected by string length. Declare
+`@DateTimeFormat` explicitly when the format of the input must be guaranteed.
+:::
+
+---
+
 ## Annotation Reference
 
 ### `@DateTimeFormat`

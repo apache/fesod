@@ -76,6 +76,7 @@ import org.apache.fesod.sheet.converters.monthday.MonthDayStringConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeDateConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeNumberConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeStringConverter;
+import org.apache.fesod.sheet.converters.offsettime.OffsetTimeStringConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortBooleanConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortNumberConverter;
 import org.apache.fesod.sheet.converters.shortconverter.ShortStringConverter;
@@ -145,6 +146,7 @@ public class DefaultConverterLoader {
         putAllConverter(new TimestampStringConverter());
         putAllConverter(new OffsetDateTimeNumberConverter());
         putAllConverter(new OffsetDateTimeStringConverter());
+        putAllConverter(new OffsetTimeStringConverter());
 
         putAllConverter(new InstantStringConverter());
 
@@ -195,6 +197,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new SqlTimeDateConverter());
         putWriteConverter(new TimestampDateConverter());
         putWriteConverter(new OffsetDateTimeDateConverter());
+        putWriteConverter(new OffsetTimeStringConverter());
         putWriteConverter(new DoubleNumberConverter());
         putWriteConverter(new FloatNumberConverter());
         putWriteConverter(new IntegerNumberConverter());
@@ -224,6 +227,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new SqlTimeStringConverter());
         putWriteStringConverter(new TimestampStringConverter());
         putWriteStringConverter(new OffsetDateTimeStringConverter());
+        putWriteStringConverter(new OffsetTimeStringConverter());
         putWriteStringConverter(new DoubleStringConverter());
         putWriteStringConverter(new FloatStringConverter());
         putWriteStringConverter(new IntegerStringConverter());

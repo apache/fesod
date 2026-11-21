@@ -34,6 +34,7 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild.ConverterKey;
+import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.converters.NullableObjectConverter;
 import org.apache.fesod.sheet.converters.ReadConverterContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -41,7 +42,6 @@ import org.apache.fesod.sheet.exception.ExcelDataConvertException;
 import org.apache.fesod.sheet.metadata.data.CellData;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.apache.fesod.sheet.read.metadata.holder.ReadSheetHolder;
 
 /**
  * Converting objects
@@ -63,7 +63,6 @@ public class ConverterUtils {
     public static Map<Integer, String> convertToStringMap(
             Map<Integer, ReadCellData<?>> cellDataMap, AnalysisContext context) {
         Map<Integer, String> stringMap = MapUtils.newHashMapWithExpectedSize(cellDataMap.size());
-        ReadSheetHolder readSheetHolder = context.readSheetHolder();
         int index = 0;
         for (Map.Entry<Integer, ReadCellData<?>> entry : cellDataMap.entrySet()) {
             Integer key = entry.getKey();
@@ -77,8 +76,12 @@ public class ConverterUtils {
                 stringMap.put(key, null);
                 continue;
             }
-            Converter<?> converter =
-                    readSheetHolder.converterMap().get(ConverterKeyBuild.buildKey(String.class, cellData.getType()));
+            // Resolve against the built-in read converters only. The header path must keep the
+            // file's raw header text: user-registered converters apply to data cells, so letting
+            // them rewrite the header would silently break @ExcelProperty name matching and the
+            // map handed to invokeHeadMap. See issue #1098.
+            Converter<?> converter = DefaultConverterLoader.loadDefaultReadConverter()
+                    .get(ConverterKeyBuild.buildKey(String.class, cellData.getType()));
             if (converter == null) {
                 throw new ExcelDataConvertException(
                         context.readRowHolder().getRowIndex(),

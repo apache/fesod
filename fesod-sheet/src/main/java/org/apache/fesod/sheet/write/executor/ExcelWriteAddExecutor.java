@@ -154,7 +154,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
                 head == null ? null : head.getFieldName(),
                 writeContext.currentWriteHolder());
 
-        CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
+        CellWriteHandlerContext cellWriteHandlerContext = cellContextRecycler.renew(
                 writeContext, row, rowIndex, head, columnIndex, relativeRowIndex, Boolean.FALSE, excelContentProperty);
         WriteHandlerUtils.beforeCellCreate(cellWriteHandlerContext);
 
@@ -169,6 +169,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
         converterAndSet(cellWriteHandlerContext);
 
         WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
+        cellContextRecycler.cellCompleted(cellWriteHandlerContext);
     }
 
     private void addJavaObjectToExcel(Object oneRowData, Row row, int rowIndex, int relativeRowIndex) {
@@ -193,7 +194,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
 
                 ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
                         beanMap, currentWriteHolder.excelWriteHeadProperty().getHeadClazz(), name, currentWriteHolder);
-                CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
+                CellWriteHandlerContext cellWriteHandlerContext = cellContextRecycler.renew(
                         writeContext,
                         row,
                         rowIndex,
@@ -214,6 +215,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
                 converterAndSet(cellWriteHandlerContext);
 
                 WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
+                cellContextRecycler.cellCompleted(cellWriteHandlerContext);
 
                 beanMapHandledSet.add(name);
                 maxCellIndex = Math.max(maxCellIndex, columnIndex);
@@ -237,7 +239,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
             Object value = beanMap.get(fieldName);
             ExcelContentProperty excelContentProperty = ClassUtils.declaredExcelContentProperty(
                     beanMap, currentWriteHolder.excelWriteHeadProperty().getHeadClazz(), fieldName, currentWriteHolder);
-            CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
+            CellWriteHandlerContext cellWriteHandlerContext = cellContextRecycler.renew(
                     writeContext,
                     row,
                     rowIndex,
@@ -259,6 +261,7 @@ public class ExcelWriteAddExecutor extends AbstractExcelWriteExecutor {
             converterAndSet(cellWriteHandlerContext);
 
             WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
+            cellContextRecycler.cellCompleted(cellWriteHandlerContext);
             maxCellIndex++;
         }
     }

@@ -227,7 +227,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 WriteHandlerUtils.createRowWriteHandlerContext(writeContext, null, relativeRowIndex, Boolean.FALSE);
 
         for (AnalysisCell analysisCell : analysisCellList) {
-            CellWriteHandlerContext cellWriteHandlerContext = WriteHandlerUtils.createCellWriteHandlerContext(
+            CellWriteHandlerContext cellWriteHandlerContext = cellContextRecycler.renew(
                     writeContext,
                     null,
                     analysisCell.getRowIndex(),
@@ -331,6 +331,7 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                 }
             }
             WriteHandlerUtils.afterCellDispose(cellWriteHandlerContext);
+            cellContextRecycler.cellCompleted(cellWriteHandlerContext);
         }
 
         // In the case of the fill line may be called many times

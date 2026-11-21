@@ -161,10 +161,21 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
                         || mergeStrategy == HeaderMergeStrategy.AUTO) {
                     for (int k = i + 1; k < headList.size(); k++) {
                         String key = k + "-" + j;
+                        // Under AUTO, same-name cells in a deeper row describe the same group only when their parent
+                        // labels (the cell above each column) are equal.
+                        boolean sameParentContext = j == 0
+                                || mergeStrategy != HeaderMergeStrategy.AUTO
+                                || (headList.get(k).getHeadNameList().size() > j - 1
+                                        && Objects.equals(
+                                                headNameList.get(j - 1),
+                                                headList.get(k)
+                                                        .getHeadNameList()
+                                                        .get(j - 1)));
                         if (headList.get(k).getHeadNameList().size() > j
                                 && Objects.equals(
                                         headList.get(k).getHeadNameList().get(j), headName)
-                                && !alreadyRangeSet.contains(key)) {
+                                && !alreadyRangeSet.contains(key)
+                                && sameParentContext) {
                             alreadyRangeSet.add(key);
                             lastCol = k;
                         } else {
@@ -180,7 +191,7 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
                         || mergeStrategy == HeaderMergeStrategy.AUTO) {
                     outer:
                     for (int k = j + 1; k < headNameList.size(); k++) {
-                        // For FULL_RECTANGLE and AUTO, verify all cells in the row
+                        // Verify all cells in the row
                         boolean canMerge = true;
                         for (int l = i; l <= lastCol; l++) {
                             String key = l + "-" + k;
@@ -191,11 +202,6 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
                                 canMerge = false;
                                 break;
                             }
-                        }
-
-                        // For AUTO strategy, also check context consistency
-                        if (canMerge && mergeStrategy == HeaderMergeStrategy.AUTO) {
-                            canMerge = canMergeVertically(headList, j, k, i, lastCol);
                         }
 
                         if (canMerge) {
@@ -230,42 +236,6 @@ public class ExcelWriteHeadProperty extends ExcelHeadProperty {
             }
         }
         return cellRangeList;
-    }
-
-    /**
-     * Check if two rows can be merged vertically based on context consistency
-     *
-     * @param headList    The list of heads
-     * @param row1        First row index
-     * @param row2        Second row index
-     * @param startCol    Start column index
-     * @param endCol      End column index
-     * @return true if the rows can be merged
-     */
-    private boolean canMergeVertically(List<Head> headList, int row1, int row2, int startCol, int endCol) {
-        // Check if there's a row above that provides context
-        if (row1 > 0) {
-            // Check if all cells in the range have the same context above
-            for (int col = startCol; col <= endCol; col++) {
-                boolean hasUpper1 = headList.get(col).getHeadNameList().size() > row1;
-                boolean hasUpper2 = headList.get(col).getHeadNameList().size() > row2;
-
-                // If one row has upper context but the other doesn't, don't merge
-                if (hasUpper1 != hasUpper2) {
-                    return false;
-                }
-
-                if (hasUpper1) {
-                    String upper1 = headList.get(col).getHeadNameList().get(row1 - 1);
-                    String upper2 = headList.get(col).getHeadNameList().get(row2 - 1);
-                    // If context (upper cells) is different, don't merge
-                    if (!Objects.equals(upper1, upper2)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     /**

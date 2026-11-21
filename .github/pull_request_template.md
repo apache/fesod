@@ -1,5 +1,5 @@
 <!--
-Thanks very much for contributing to Apache Fesod (Incubating)! Please make sure that your code changes
+Thanks very much for contributing to Apache Fesod! Please make sure that your code changes
 are covered with tests. And in case of new features or big changes
 remember to adjust the documentation.
 
@@ -25,3 +25,4 @@ Related: #ISSUE
 - [ ] I have read the [Contributor Guide](https://fesod.apache.org/community/contribution/).
 - [ ] I have written the necessary doc or comment.
 - [ ] I have added the necessary unit tests and all cases have passed.
+- [ ] My commits are signed and show as "Verified" on GitHub ([how to sign](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification)).

@@ -20,11 +20,11 @@ title: 'Join Community'
 - limitations under the License.
 -->
 
-Thank you very much for your interest in the Apache Fesod (Incubating). Every volunteer project obtains its strength from the people involved in it. We invite you to participate as much or as little as you choose.
+Thank you very much for your interest in Apache Fesod. Every volunteer project obtains its strength from the people involved in it. We invite you to participate as much or as little as you choose.
 
 ## Initial contact
 
-For the first time in Apache Fesod (Incubating) community, you can:
+For the first time in the Apache Fesod community, you can:
 
 * Use our project and provide feedback.
 * Provide us with the use-cases.

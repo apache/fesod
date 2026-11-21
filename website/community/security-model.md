@@ -20,37 +20,37 @@ title: 'Security Model'
 - limitations under the License.
 -->
 
-Apache Fesod (Incubating) runs as a library inside your Java application and builds on Apache POI for Excel processing. This security model describes the assumptions and responsibilities for reading and writing Excel and CSV files, including related conversion features.
+Apache Fesod runs as a library inside your Java application and builds on Apache POI for Excel processing. This security model describes the assumptions and responsibilities for reading and writing Excel and CSV files, including related conversion features.
 
 **Password protection of a completed XLSX file does not encrypt all data used while processing it.** Plaintext may exist in temporary files, caches, output locations, and JVM memory. Applications and operators must protect each of these locations.
 
 ## Scope and Trust Boundaries
 
-Apache Fesod (Incubating) performs file access, memory allocation, and enabled network operations with the privileges of its JVM process. It does not provide application authentication, business authorization, or tenant isolation. Use maintained versions of Apache Fesod (Incubating), the JDK, and dependencies, and check the capabilities and configuration of the version you deploy.
+Apache Fesod performs file access, memory allocation, and enabled network operations with the privileges of its JVM process. It does not provide application authentication, business authorization, or tenant isolation. Use maintained versions of Apache Fesod, the JDK, and dependencies, and check the capabilities and configuration of the version you deploy.
 
 | Resource or operation | Security expectation | Application and operator responsibility |
 | --- | --- | --- |
 | Application code, converters, listeners, and handlers | Extensions execute as trusted code in the same JVM | Do not execute extensions supplied by untrusted users; extensions can access resources available to the process |
 | Documents, templates, and cell data | Input may contain malicious or unexpected content; parsing and streaming APIs are not a sandbox | Validate business input, limit resource consumption, and isolate processing according to risk |
-| Local paths and streams | Apache Fesod (Incubating) reads and writes the paths or streams supplied by the caller | Authorize access, protect input, output, and template directories, and isolate tenants |
+| Local paths and streams | Apache Fesod reads and writes the paths or streams supplied by the caller | Authorize access, protect input, output, and template directories, and isolate tenants |
 | Temporary files and read caches | Intermediate data may contain unencrypted workbook or cell content | Prevent untrusted parties from reading, modifying, or replacing temporary storage and its contents |
 | JVM memory, dumps, and logs | Sensitive content or passwords may be present | Control debugging, dumps, logs, backups, and access to the service identity separately |
 | Network features such as URL images | Remote fetching is disabled by default and requires an explicit exact-host allowlist; requests originate from the JVM process | Keep the default deny policy or restrict destinations, apply network egress controls, and do not directly trust user-supplied URLs |
 | Password-protected XLSX output | Successfully completed output uses Apache POI workbook encryption | Protect passwords, intermediate plaintext, and failed output; publish only after successful completion |
 
-Apache Fesod (Incubating) does not promise to hide data from parties that already have access to the corresponding application files, temporary storage, or process memory. These are separate permissions: the ability to read a temporary file does not imply the ability to inspect JVM heap memory, or vice versa.
+Apache Fesod does not promise to hide data from parties that already have access to the corresponding application files, temporary storage, or process memory. These are separate permissions: the ability to read a temporary file does not imply the ability to inspect JVM heap memory, or vice versa.
 
 ## Relationship with Apache POI {#apache-poi}
 
-Apache POI's security guidance, supported behavior, and implementation limits must be considered when using Apache Fesod (Incubating)'s POI-based features. A higher-level Apache Fesod (Incubating) API does not remove POI's requirements for protected temporary storage and process memory, resource isolation, or the limitations of its document formats and encryption support. Review the [Apache POI security guidance](https://poi.apache.org/security.html) alongside this model for the POI version used by your application.
+Apache POI's security guidance, supported behavior, and implementation limits must be considered when using Apache Fesod's POI-based features. A higher-level Apache Fesod API does not remove POI's requirements for protected temporary storage and process memory, resource isolation, or the limitations of its document formats and encryption support. Review the [Apache POI security guidance](https://poi.apache.org/security.html) alongside this model for the POI version used by your application.
 
-Apache Fesod (Incubating) aims to respect POI's security model, API contracts, and protective checks. It does not aim to bypass POI's safeguards or promise stronger security properties than the underlying implementation provides. Applications should not disable or weaken POI's protections merely to accept a document that is rejected by those checks. Any necessary configuration change must follow POI's documented behavior and account for its security impact, including effects on other code sharing the same JVM.
+Apache Fesod aims to respect POI's security model, API contracts, and protective checks. It does not aim to bypass POI's safeguards or promise stronger security properties than the underlying implementation provides. Applications should not disable or weaken POI's protections merely to accept a document that is rejected by those checks. Any necessary configuration change must follow POI's documented behavior and account for its security impact, including effects on other code sharing the same JVM.
 
-This dependency does not remove Apache Fesod (Incubating)'s responsibility for its own code and integration. Unexpected behavior introduced by Apache Fesod (Incubating), or a bypass of security controls through its APIs, should still be reported privately for assessment. Support for a capability in POI does not by itself mean that every Apache Fesod (Incubating) API exposes or enables that capability.
+This dependency does not remove Apache Fesod's responsibility for its own code and integration. Unexpected behavior introduced by Apache Fesod, or a bypass of security controls through its APIs, should still be reported privately for assessment. Support for a capability in POI does not by itself mean that every Apache Fesod API exposes or enables that capability.
 
 ## Temporary Files and Caches {#temporary-files-and-caches}
 
-Apache Fesod (Incubating) and its dependencies may use temporary files or disk caches during reading, streaming writes, template processing, and encryption or decryption. Intermediate data may be unencrypted even when the final workbook is password-protected.
+Apache Fesod and its dependencies may use temporary files or disk caches during reading, streaming writes, template processing, and encryption or decryption. Intermediate data may be unencrypted even when the final workbook is password-protected.
 
 Operators must provide a protected temporary directory for the JVM and protect any separately configured cache, staging, or output locations. Untrusted parties must not be able to read, modify, or replace these directories or their contents. Random names and the sticky bit on a shared directory do not replace access controls.
 
@@ -85,7 +85,7 @@ When writing in batches with `ExcelWriter`, a successful `write()` call does not
 
 Treat output from a failed write or encryption operation as incomplete and sensitive. Do not assume that a failure leaves an encrypted file, an empty file, or no file. Where publication must be controlled, generate the result in protected staging storage and publish it only after success.
 
-An in-memory option is not a promise that every Apache Fesod (Incubating) or dependency execution path avoids disk storage. CSV has no workbook password encryption, and legacy XLS protection must not be assumed to provide the same confidentiality as XLSX encryption.
+An in-memory option is not a promise that every Apache Fesod or dependency execution path avoids disk storage. CSV has no workbook password encryption, and legacy XLS protection must not be assumed to provide the same confidentiality as XLSX encryption.
 
 Obtain passwords from controlled configuration or a secrets manager. Keep them out of source code, logs, and exception output. Password protection does not replace filesystem permissions, protected transport, or sensitive-data retention policies.
 
@@ -103,21 +103,21 @@ Do not treat partially imported data or incomplete exports as successful busines
 
 ## Paths, Networks, and Spreadsheet Clients
 
-Do not pass user input directly as an unrestricted local path. Restrict allowed roots, authorize the actual target, and account for symbolic links and concurrent replacement. Apache Fesod (Incubating) does not know which user or tenant a caller-supplied path belongs to.
+Do not pass user input directly as an unrestricted local path. Restrict allowed roots, authorize the actual target, and account for symbolic links and concurrent replacement. Apache Fesod does not know which user or tenant a caller-supplied path belongs to.
 
 For URL images and other network features, remote fetching is disabled by default and must be enabled with an explicit exact-host allowlist. Requests originate from the server. Allowing a domain does not authorize every location to which it might resolve or redirect. Network operations in custom converters require the same care.
 
-The URL fetch policy is process-wide, not per workbook or per reader. Any code in the JVM can change it, and a change affects every component using Apache Fesod (Incubating) in that process, including components that believed fetching was disabled. Set it once during application startup, do not let independent modules override each other at runtime, and confirm the effective policy where several libraries share a JVM.
+The URL fetch policy is process-wide, not per workbook or per reader. Any code in the JVM can change it, and a change affects every component using Apache Fesod in that process, including components that believed fetching was disabled. Set it once during application startup, do not let independent modules override each other at runtime, and confirm the effective policy where several libraries share a JVM.
 
-Apache Fesod (Incubating) does not provide a general sanitization policy for formulas, hyperlinks, external references, or CSV values. Spreadsheet applications may interpret exported content when a user opens the result. Distinguish text from intentionally supplied formulas and choose an output policy appropriate to the data source and target client. CSV quoting alone does not prevent formula injection.
+Apache Fesod does not provide a general sanitization policy for formulas, hyperlinks, external references, or CSV values. Spreadsheet applications may interpret exported content when a user opens the result. Distinguish text from intentionally supplied formulas and choose an output policy appropriate to the data source and target client. CSV quoting alone does not prevent formula injection.
 
 ## Reporting Vulnerabilities and Hardening Suggestions
 
-If behavior may cross these boundaries or cause unexpected data disclosure, file access, network requests, or code execution, report it privately to [security@apache.org](mailto:security@apache.org). Identify Apache Fesod (Incubating) and include the version, configuration, attacker prerequisites, impact, and a minimal reproduction. Do not first disclose potential vulnerability details in public issues, pull requests, or mailing lists.
+If behavior may cross these boundaries or cause unexpected data disclosure, file access, network requests, or code execution, report it privately to [security@apache.org](mailto:security@apache.org). Identify Apache Fesod and include the version, configuration, attacker prerequisites, impact, and a minimal reproduction. Do not first disclose potential vulnerability details in public issues, pull requests, or mailing lists.
 
 Use the private reporting channel when you are unsure whether an issue is a vulnerability. The project assesses actual behavior, affected versions, and applicable security expectations. Dependency advisories require analysis of the relevant usage path. Reports of bypassed security controls are not excluded solely because operators also have security responsibilities.
 
-The following are generally not vulnerabilities in Apache Fesod (Incubating) itself, because the boundary is on the application side. They are still worth reporting if the library could reasonably prevent the outcome:
+The following are generally not vulnerabilities in Apache Fesod itself, because the boundary is on the application side. They are still worth reporting if the library could reasonably prevent the outcome:
 
 - Passing an untrusted string to the library as a local path, which makes the application the origin of a path traversal
 - Supplying a replacement XML parser factory, or widening the URL fetch policy, and then relying on the library to restore protections the caller disabled
@@ -132,6 +132,6 @@ Security fixes are provided on the most recent release line. Older release lines
 
 ## Further Reading
 
-- [Apache Fesod (Incubating) security reporting and dependency advisories](./security.md)
+- [Apache Fesod security reporting and dependency advisories](./security.md)
 - [Apache POI security guidance](https://poi.apache.org/security.html)
 - [ASF Security Team](https://www.apache.org/security/)

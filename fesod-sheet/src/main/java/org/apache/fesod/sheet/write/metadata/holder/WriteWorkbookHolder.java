@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
@@ -193,6 +195,7 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         this.writeWorkbook = writeWorkbook;
         this.file = writeWorkbook.getFile();
         if (file != null) {
+            checkTemplateAndOutputFileAreDifferent(file, writeWorkbook.getTemplateFile());
             try {
                 this.outputStream = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
@@ -271,6 +274,34 @@ public class WriteWorkbookHolder extends AbstractWriteHolder {
         this.cellStyleIndexMap = MapUtils.newHashMap();
         this.fontMap = MapUtils.newHashMap();
         this.dataFormatMap = MapUtils.newHashMap();
+    }
+
+    private static void checkTemplateAndOutputFileAreDifferent(File outputFile, File templateFile) {
+        if (templateFile == null) {
+            return;
+        }
+        if (isSameFile(outputFile, templateFile)) {
+            throw new ExcelGenerateException("Template file and output file must be different: template="
+                    + templateFile.getAbsolutePath() + ", output=" + outputFile.getAbsolutePath());
+        }
+    }
+
+    private static boolean isSameFile(File outputFile, File templateFile) {
+        try {
+            return Files.isSameFile(outputFile.toPath(), templateFile.toPath());
+        } catch (NoSuchFileException e) {
+            // A new output file has no filesystem identity yet.
+            return outputFile
+                    .toPath()
+                    .toAbsolutePath()
+                    .normalize()
+                    .equals(templateFile.toPath().toAbsolutePath().normalize());
+        } catch (IOException e) {
+            throw new ExcelGenerateException(
+                    "Cannot compare template file and output file: template=" + templateFile.getAbsolutePath()
+                            + ", output=" + outputFile.getAbsolutePath(),
+                    e);
+        }
     }
 
     /**

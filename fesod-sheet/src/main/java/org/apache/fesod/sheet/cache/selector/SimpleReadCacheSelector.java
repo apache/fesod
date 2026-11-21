@@ -36,10 +36,12 @@ import org.apache.fesod.sheet.cache.ReadCache;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
- * Simple cache selector
+ * Default {@link ReadCacheSelector} that selects the cache implementation based on the size of the
+ * shared strings part.
  *
- *
- **/
+ * <p>Parts smaller than {@link #maxUseMapCacheSize} are kept in a {@link MapCache}; larger ones use
+ * an {@link Ehcache} so that memory usage stays bounded.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -80,15 +82,20 @@ public class SimpleReadCacheSelector implements ReadCacheSelector {
      */
     private Integer maxCacheActivateBatchCount;
 
+    /**
+     * Creates a selector with default settings.
+     */
     public SimpleReadCacheSelector() {}
 
     /**
-     * Parameter maxCacheActivateSize has already been abandoned
+     * Creates a selector with an explicit map-cache threshold.
      *
-     * @param maxUseMapCacheSize
-     * @param maxCacheActivateSize
-     * @deprecated use {@link #SimpleReadCacheSelector()} plus {@link #setMaxCacheActivateBatchCount(Integer)}
-     *             instead; {@code maxCacheActivateSize} is no longer honored
+     * @param maxUseMapCacheSize     the size threshold, in MB, below which a {@link MapCache} is
+     *                               used; {@code null} falls back to the default of 5 MB
+     * @param maxCacheActivateSize   ignored; retained only for backward compatibility
+     * @deprecated use {@link #SimpleReadCacheSelector()} together with
+     *             {@link #setMaxCacheActivateBatchCount(Integer)} instead;
+     *             {@code maxCacheActivateSize} is no longer honored
      */
     @Deprecated
     public SimpleReadCacheSelector(Long maxUseMapCacheSize, Integer maxCacheActivateSize) {
@@ -96,6 +103,17 @@ public class SimpleReadCacheSelector implements ReadCacheSelector {
         this.maxCacheActivateSize = maxCacheActivateSize;
     }
 
+    /**
+     * Select the cache for the given shared strings part.
+     *
+     * <p>If the part size cannot be determined, or if it is below {@link #maxUseMapCacheSize}, a
+     * {@link MapCache} is returned; otherwise an {@link Ehcache} bounded by
+     * {@link #maxCacheActivateBatchCount} is used.
+     *
+     * @param sharedStringsTablePackagePart the shared strings part of the workbook, never
+     *                                      {@code null}
+     * @return the cache used to read the shared strings; never {@code null}
+     */
     @Override
     public ReadCache readCache(PackagePart sharedStringsTablePackagePart) {
         long size = sharedStringsTablePackagePart.getSize();

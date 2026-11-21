@@ -36,10 +36,23 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for the BIFF {@code NUMBER} record, which carries the raw value of a numeric cell.
+ * <p>
+ * The value is stored as a {@link BigDecimal} together with the cell's resolved data format, so that date and
+ * formatted-number cells can be converted later by the converters.
  */
 public class NumberRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Builds a numeric {@link ReadCellData} for the resolved target column, attaches the
+     * {@link DataFormatData} looked up from the format tracking listener, stores it in the current row's cell map
+     * and marks the temp row type as {@link RowTypeEnum#DATA}. Rows whose column is filtered out are skipped.
+     *
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the {@link NumberRecord} to process, never {@code null}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         NumberRecord nr = (NumberRecord) record;

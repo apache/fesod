@@ -29,18 +29,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Putting temporary data directly into a map is a little more efficient but very memory intensive
- *
- *
+ * A {@link ReadCache} implementation that stores all values in memory.
+ * <p>
+ * Lookup is performed directly by index, which is slightly faster than a map-based cache, but it
+ * keeps every value resident and is therefore memory intensive.
  */
 public class MapCache implements ReadCache {
     private final List<String> cache = new ArrayList<>();
 
+    /**
+     * Append a value to the cache. The key is implicitly the position of the value in the internal
+     * list, starting from 0.
+     *
+     * @param value
+     *            The value to cache.
+     */
     @Override
     public void put(String value) {
         cache.add(value);
     }
 
+    /**
+     * Return the value stored at the given index.
+     *
+     * @param key
+     *            The zero-based index of the cached value.
+     * @return The cached value, or {@code null} if {@code key} is {@code null} or negative.
+     */
     @Override
     public String get(Integer key) {
         if (key == null || key < 0) {

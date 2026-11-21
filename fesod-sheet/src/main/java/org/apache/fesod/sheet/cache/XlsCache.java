@@ -28,18 +28,32 @@ package org.apache.fesod.sheet.cache;
 import org.apache.poi.hssf.record.SSTRecord;
 
 /**
+ * Read cache for XLS (BIFF8) files, backed by POI's {@link SSTRecord}.
  *
- * Use SSTRecord.
- *
- *
+ * <p>XLS files store shared strings in a single Shared String Table record, so this cache
+ * is read-only: lookups delegate directly to the {@link SSTRecord} and {@code put} is
+ * inherited as a no-op from {@link ReadCache}.
  */
 public class XlsCache implements ReadCache {
     private final SSTRecord sstRecord;
 
+    /**
+     * Construct a cache backed by the given Shared String Table record.
+     *
+     * @param sstRecord
+     *            The Shared String Table record parsed from the XLS file; must not be null.
+     */
     public XlsCache(SSTRecord sstRecord) {
         this.sstRecord = sstRecord;
     }
 
+    /**
+     * Look up a shared string by its index in the Shared String Table.
+     *
+     * @param key
+     *            The zero-based index into the shared string table.
+     * @return The string value at the given index, or null if the entry is empty.
+     */
     @Override
     public String get(Integer key) {
         return sstRecord.getString(key).toString();

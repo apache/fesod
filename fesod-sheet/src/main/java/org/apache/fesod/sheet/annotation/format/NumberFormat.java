@@ -33,14 +33,12 @@ import java.lang.annotation.Target;
 import java.math.RoundingMode;
 
 /**
- * Convert number format.
+ * Specifies the numeric format of a field for reading and writing.
  *
- * <p>
- * write: It can be used on classes that inherit {@link Number}
- * <p>
- * read: It can be used on classes {@link String}
+ * <p>When writing, it can be used on fields of any type that extends {@link Number};
+ * when reading, it can be used on fields of type {@link String}.
  *
- *
+ * @see java.text.DecimalFormat
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -48,17 +46,22 @@ import java.math.RoundingMode;
 public @interface NumberFormat {
 
     /**
+     * The numeric format pattern.
+     * <p>
+     * See {@link java.text.DecimalFormat} for the supported pattern syntax.
+     * When empty, the default format determined by the conversion logic is used.
      *
-     * Specific format reference {@link java.text.DecimalFormat}
-     *
-     * @return Format pattern
+     * @return the format pattern
      */
     String value() default "";
 
     /**
-     * Rounded by default
+     * The rounding mode used when writing numeric values.
+     * <p>
+     * Defaults to {@link RoundingMode#HALF_UP} (round half up, the common
+     * commercial rounding behavior).
      *
-     * @return RoundingMode
+     * @return the rounding mode
      */
     RoundingMode roundingMode() default RoundingMode.HALF_UP;
 }

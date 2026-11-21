@@ -44,7 +44,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- *
+ * SAX handler for the row-level XML of an XLSX worksheet. It dispatches each encountered tag to the
+ * corresponding {@link XlsxTagHandler} by tag name.
  */
 @Slf4j
 public class XlsxRowHandler extends DefaultHandler {
@@ -88,10 +89,25 @@ public class XlsxRowHandler extends DefaultHandler {
         XLSX_CELL_HANDLER_MAP.put(ExcelXmlConstants.NS2_ROW_TAG, rowTagHandler);
     }
 
+    /**
+     * Creates a handler bound to the given read context.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     */
     public XlsxRowHandler(XlsxReadContext xlsxReadContext) {
         this.xlsxReadContext = xlsxReadContext;
     }
 
+    /**
+     * Invoked when the start of an element is encountered. Pushes the tag onto the tag deque and delegates
+     * to the matching handler; tags without a handler or unsupported by the current context are ignored.
+     *
+     * @param uri        the namespace URI
+     * @param localName  the local name of the element
+     * @param name       the qualified name of the element
+     * @param attributes the attributes attached to the element
+     * @throws SAXException if any handler fails to process the element
+     */
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
         if (isPhoneticRun(name)) {
@@ -110,6 +126,15 @@ public class XlsxRowHandler extends DefaultHandler {
         handler.startElement(xlsxReadContext, name, attributes);
     }
 
+    /**
+     * Invoked when character data inside the current element is encountered. Delegates the text to the handler
+     * of the tag on top of the tag deque; does nothing when there is no current tag or no matching handler.
+     *
+     * @param ch     the characters
+     * @param start  the start position in the character array
+     * @param length the number of characters to use from the character array
+     * @throws SAXException if the handler fails to process the characters
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         // Phonetic runs annotate the inline text; they are not part of the cell value.
@@ -131,6 +156,15 @@ public class XlsxRowHandler extends DefaultHandler {
         handler.characters(xlsxReadContext, ch, start, length);
     }
 
+    /**
+     * Invoked when the end of an element is encountered. Delegates to the matching handler and then pops the
+     * tag from the tag deque; tags without a handler or unsupported by the current context are ignored.
+     *
+     * @param uri       the namespace URI
+     * @param localName the local name of the element
+     * @param name      the qualified name of the element
+     * @throws SAXException if the handler fails to process the end of the element
+     */
     @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
         if (isPhoneticRun(name)) {

@@ -21,19 +21,43 @@ package org.apache.fesod.common.util;
 
 public class BooleanUtils {
 
+    /**
+     * The text Excel writes into the value element of a boolean cell that holds {@code true}, which is
+     * the only input treated as {@code true} by {@link #valueOf(String)}.
+     */
     private static final String TRUE_NUMBER = "1";
 
+    /**
+     * Utility classes must never be instantiated.
+     */
     private BooleanUtils() {}
 
     /**
-     * String to boolean
+     * <p>Checks whether the text of an Excel boolean cell carries the {@code true} marker, returning a
+     * {@code Boolean} instead of a primitive.</p>
      *
-     * @param str
-     * @return
+     * <p>Only the exact string {@code "1"} is {@code true}; every other input — including {@code "0"},
+     * {@code "true"} and {@code null} — is {@code false}. Unlike {@link Boolean#parseBoolean(String)}
+     * the comparison is made against the constant, so a {@code null} argument is accepted silently and
+     * no exception is ever thrown.</p>
+     *
+     * <pre>
+     *   BooleanUtils.valueOf("1")    = Boolean.TRUE
+     *   BooleanUtils.valueOf("0")    = Boolean.FALSE
+     *   BooleanUtils.valueOf("true") = Boolean.FALSE
+     *   BooleanUtils.valueOf("")     = Boolean.FALSE
+     *   BooleanUtils.valueOf(null)   = Boolean.FALSE
+     * </pre>
+     *
+     * @param str the cell text to inspect, may be {@code null}
+     * @return {@link Boolean#TRUE} if {@code str} is the {@code true} marker {@code "1"},
+     * {@link Boolean#FALSE} otherwise (never {@code null})
      * @deprecated this only targets Excel's {@code 0}/{@code 1} boolean cell markers and is not a
      *     general-purpose string-to-boolean conversion; it should not be used outside that scenario and
      *     will be removed in a future release. Use
-     *     {@code org.apache.fesod.sheet.metadata.data.ReadCellData#setBooleanValueFromString(String)} instead.
+     *     {@code org.apache.fesod.sheet.metadata.data.ReadCellData#setBooleanValueFromString(String)}
+     *     instead.
+     * @see Boolean#parseBoolean(String)
      */
     @Deprecated
     public static Boolean valueOf(String str) {
@@ -59,6 +83,8 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code false}
      * @return {@code true} only if the input is non-null and true
+     * @see #isNotTrue(Boolean)
+     * @see #isFalse(Boolean)
      */
     public static boolean isTrue(final Boolean bool) {
         return Boolean.TRUE.equals(bool);
@@ -76,6 +102,7 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code true}
      * @return {@code true} if the input is null or false
+     * @see #isTrue(Boolean)
      */
     public static boolean isNotTrue(final Boolean bool) {
         return !isTrue(bool);
@@ -93,6 +120,8 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code false}
      * @return {@code true} only if the input is non-null and false
+     * @see #isNotFalse(Boolean)
+     * @see #isTrue(Boolean)
      */
     public static boolean isFalse(final Boolean bool) {
         return Boolean.FALSE.equals(bool);
@@ -110,6 +139,7 @@ public class BooleanUtils {
      *
      * @param bool the boolean to check, null returns {@code true}
      * @return {@code true} if the input is null or true
+     * @see #isFalse(Boolean)
      */
     public static boolean isNotFalse(final Boolean bool) {
         return !isFalse(bool);

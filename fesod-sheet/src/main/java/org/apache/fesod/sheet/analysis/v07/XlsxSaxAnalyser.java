@@ -79,13 +79,20 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
+ * Streaming SAX based analyser for the XLSX (OOXML) format.
  *
+ * <p>The workbook is opened as an {@link OPCPackage} and parsed part by part: the shared
+ * strings table, the styles table, the workbook properties and each worksheet are handled
+ * with a SAX {@link ContentHandler}, so sheet data is never fully loaded into memory.</p>
+ *
+ * <p>Instances are created by {@code ExcelAnalyserImpl} once the file type has been detected
+ * and implement {@link ExcelReadExecutor} to expose and read the sheets of the workbook.</p>
  */
 @Slf4j
 public class XlsxSaxAnalyser implements ExcelReadExecutor {
 
     /**
-     * Storage sheet SharedStrings
+     * The OPC part name of the workbook's shared strings table, {@code /xl/sharedStrings.xml}.
      */
     public static final PackagePartName SHARED_STRINGS_PART_NAME;
 
@@ -107,6 +114,19 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
      */
     private final Map<Integer, CommentsTable> commentsTableMap;
 
+    /**
+     * Opens the workbook described by {@code xlsxReadContext} and prepares it for reading.
+     *
+     * <p>The OPC package, the shared strings cache, the styles table, the {@code 1904} date windowing
+     * flag and the sheet metadata (including optional comment and hyperlink extras) are all resolved
+     * here, so that a later {@link #execute()} call only has to stream the matched sheets.</p>
+     *
+     * @param xlsxReadContext   the read context holding the workbook configuration and event processors
+     * @param decryptedStream   a stream of the decrypted workbook content, or {@code null} when the
+     *                          source stream is not encrypted
+     * @throws Exception if the package cannot be opened, a required part cannot be parsed, or the
+     *                   workbook contains no sheet
+     */
     public XlsxSaxAnalyser(XlsxReadContext xlsxReadContext, InputStream decryptedStream) throws Exception {
         this.xlsxReadContext = xlsxReadContext;
         // Initialize cache
@@ -181,6 +201,15 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * Loads the workbook's styles table into the read context.
+     *
+     * <p>Style information is optional: when it cannot be read the failure is logged as a warning
+     * and cell value analysis continues unaffected.</p>
+     *
+     * @param xlsxReadWorkbookHolder the workbook holder to receive the styles table
+     * @param xssfReader             the POI reader used to access the styles table
+     */
     private void setStylesTable(XlsxReadWorkbookHolder xlsxReadWorkbookHolder, XSSFReader xssfReader) {
         try {
             xlsxReadWorkbookHolder.setStylesTable(xssfReader.getStylesTable());
@@ -192,6 +221,12 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * Selects and initialises the cache used to store the shared strings table.
+     *
+     * @param xlsxReadWorkbookHolder           the workbook holder to receive the cache
+     * @param sharedStringsTablePackagePart    the shared strings part, used to size the cache
+     */
     private void defaultReadCache(
             XlsxReadWorkbookHolder xlsxReadWorkbookHolder, PackagePart sharedStringsTablePackagePart) {
         ReadCache readCache = xlsxReadWorkbookHolder.getReadCacheSelector().readCache(sharedStringsTablePackagePart);
@@ -199,6 +234,16 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         readCache.init(xlsxReadContext);
     }
 
+    /**
+     * Resolves the {@code date1904} windowing flag from the workbook part.
+     *
+     * <p>The value already present in the read configuration (for example set explicitly by the user)
+     * takes precedence and is left untouched.</p>
+     *
+     * @param xssfReader             the POI reader used to access the workbook part
+     * @param xlsxReadWorkbookHolder the workbook holder whose global configuration is updated
+     * @throws Exception if the workbook part cannot be parsed
+     */
     private void analysisUse1904WindowDate(XSSFReader xssfReader, XlsxReadWorkbookHolder xlsxReadWorkbookHolder)
             throws Exception {
         if (xlsxReadWorkbookHolder.getReadWorkbook().getUse1904windowing() != null) {
@@ -215,6 +260,12 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * Streams {@code sharedStrings.xml} into the read cache and marks the cache as fully populated.
+     *
+     * @param sharedStringsTableInputStream the stream of the shared strings part; closed when parsing ends
+     * @param xlsxReadWorkbookHolder        the workbook holder providing the target cache
+     */
     private void analysisSharedStringsTable(
             InputStream sharedStringsTableInputStream, XlsxReadWorkbookHolder xlsxReadWorkbookHolder) {
         ContentHandler handler = new SharedStringsTableHandler(xlsxReadWorkbookHolder.getReadCache());
@@ -222,6 +273,16 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         xlsxReadWorkbookHolder.getReadCache().putFinished();
     }
 
+    /**
+     * Collects the declared sheets, keyed by sheet name, from the workbook part.
+     *
+     * <p>Hidden and very hidden sheets are skipped when {@code ignoreHiddenSheet} is enabled, so that
+     * only the sheets allowed by the read configuration are later exposed to the callers.</p>
+     *
+     * @param xssfReader             the POI reader used to access the workbook part
+     * @param xlsxReadWorkbookHolder the workbook holder providing the hidden-sheet configuration
+     * @throws Exception if the workbook part cannot be parsed
+     */
     private void analysisCtSheetMap(XSSFReader xssfReader, XlsxReadWorkbookHolder xlsxReadWorkbookHolder)
             throws Exception {
         CTWorkbook wb =
@@ -235,6 +296,21 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * Opens the workbook as an {@link OPCPackage}.
+     *
+     * <p>When the source is a {@link File} it is opened directly. Otherwise the content is copied to a
+     * temporary file first, unless the configuration forces pure {@code InputStream} usage or the whole
+     * workbook can be kept in memory. The temporary file is registered on the holder so it is cleaned up
+     * when the read finishes.</p>
+     *
+     * @param xlsxReadWorkbookHolder the workbook holder providing the source and stream options
+     * @param decryptedStream        a stream of the decrypted workbook content, or {@code null} when the
+     *                               source stream is not encrypted
+     * @return the opened package, never {@code null}
+     * @throws ExcelCommonException if the content is not a valid OOXML/zip package
+     * @throws Exception            if the package cannot be opened or the temporary file cannot be written
+     */
     private OPCPackage readOpcPackage(XlsxReadWorkbookHolder xlsxReadWorkbookHolder, InputStream decryptedStream)
             throws Exception {
         try {
@@ -264,11 +340,28 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns the sheets discovered while opening the workbook, already filtered according to the
+     * hidden-sheet configuration.</p>
+     */
     @Override
     public List<ReadSheet> sheetList() {
         return sheetList;
     }
 
+    /**
+     * Parses an XML part of the workbook with a secured SAX parser.
+     *
+     * <p>Document Type Declarations and external entities are disabled to protect against XML external
+     * entity (XXE) attacks. A custom {@code SAXParserFactory} can be supplied through the workbook
+     * configuration; otherwise the platform default is used.</p>
+     *
+     * @param inputStream the XML part to parse; closed by this method once parsing ends
+     * @param handler     the content handler receiving the SAX events
+     * @throws ExcelAnalysisException if the XML cannot be parsed or the stream cannot be closed
+     */
     private void parseXmlSource(InputStream inputStream, ContentHandler handler) {
         InputSource inputSource = new InputSource(inputStream);
         try {
@@ -310,6 +403,13 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * Reads every sheet selected by the current read configuration.
+     *
+     * <p>Each matched sheet is streamed through {@link XlsxRowHandler}, its comments are emitted when
+     * requested, and {@code endSheet} is signalled afterwards. A listener may stop the current sheet by
+     * raising {@link ExcelAnalysisStopSheetException}; this is expected and is not reported as a failure.</p>
+     */
     @Override
     public void execute() {
         for (ReadSheet readSheet : sheetList) {
@@ -331,6 +431,13 @@ public class XlsxSaxAnalyser implements ExcelReadExecutor {
         }
     }
 
+    /**
+     * Emits the comments of a sheet as {@link CellExtra} events.
+     *
+     * <p>Does nothing when comment reading was not requested or when the sheet declares no comments.</p>
+     *
+     * @param readSheet the sheet whose comments are read
+     */
     private void readComments(ReadSheet readSheet) {
         if (!xlsxReadContext.readWorkbookHolder().getExtraReadSet().contains(CellExtraTypeEnum.COMMENT)) {
             return;

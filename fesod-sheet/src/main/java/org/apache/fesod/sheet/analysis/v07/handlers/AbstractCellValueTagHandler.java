@@ -28,11 +28,22 @@ package org.apache.fesod.sheet.analysis.v07.handlers;
 import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 
 /**
- * Cell Value Handler
+ * Abstract base handler for XLSX cell value tags (e.g. {@code <v>}).
  *
+ * <p>It accumulates the character content of the cell value element into the
+ * temporary data buffer of the current sheet holder, which is later parsed into
+ * the actual cell value.
  */
 public abstract class AbstractCellValueTagHandler extends AbstractXlsxTagHandler {
 
+    /**
+     * Append the character data of the cell value element to the temporary data buffer.
+     *
+     * @param xlsxReadContext the current XLSX read context, providing access to the sheet holder
+     * @param ch              the characters from the XML document
+     * @param start           the starting position in the character array
+     * @param length          the number of characters to read
+     */
     @Override
     public void characters(XlsxReadContext xlsxReadContext, char[] ch, int start, int length) {
         xlsxReadContext.xlsxReadSheetHolder().getTempData().append(ch, start, length);

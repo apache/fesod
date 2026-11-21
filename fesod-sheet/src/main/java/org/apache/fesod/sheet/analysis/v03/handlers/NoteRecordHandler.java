@@ -33,15 +33,38 @@ import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handles the XLS {@code NOTE} record and exposes the attached cell comment as a {@link CellExtra} of type
+ * {@link CellExtraTypeEnum#COMMENT}, covering the comment's anchor row and column.
+ * <p>
+ * The {@code NOTE} record only carries the position; the comment text is taken from the object cache map, which is
+ * filled beforehand by the {@code TEXTOBJECT} record using the same shape id. When no text has been cached for the
+ * shape id, the extra's value will be {@code null}.
+ * <p>
+ * Only active when {@link CellExtraTypeEnum#COMMENT} is present in the extra read set; otherwise the record is
+ * skipped as an ignorable record.
  */
 public class NoteRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Determines whether this handler should process the record, i.e. whether comment extras are requested.
+     *
+     * @param xlsReadContext the current XLS read context, not {@code null}
+     * @param record         the record to test
+     * @return {@code true} if the extra read set contains {@link CellExtraTypeEnum#COMMENT}
+     */
     @Override
     public boolean support(XlsReadContext xlsReadContext, Record record) {
         return xlsReadContext.readWorkbookHolder().getExtraReadSet().contains(CellExtraTypeEnum.COMMENT);
     }
 
+    /**
+     * Resolves the comment text cached for the record's shape id, builds a {@link CellExtra} with the comment's
+     * cell position, stores it in the sheet read holder and notifies the analysis event processor.
+     *
+     * @param xlsReadContext the current XLS read context, not {@code null}
+     * @param record         the record to process, must be a {@link NoteRecord}
+     * @throws ClassCastException if {@code record} is not a {@link NoteRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         NoteRecord nr = (NoteRecord) record;

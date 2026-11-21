@@ -30,17 +30,25 @@ import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 
 /**
- * Excel file analyser
+ * Analyser that drives the streaming read pipeline of a single workbook.
  *
+ * <p>It is created by {@link org.apache.fesod.sheet.ExcelReader} and is not intended to be reused
+ * after {@link #finish()} has been called.
  */
 public interface ExcelAnalyser {
+
     /**
-     * parse the sheet
+     * Read the workbook, delivering the parsed data to the registered read listeners.
      *
-     * @param readSheetList
-     *            Which sheets you need to read.
-     * @param readAll
-     *            The <code>readSheetList</code> parameter is ignored, and all sheets are read.
+     * <p>On any failure the resources held by this analyser are released before the exception is
+     * propagated, so calling {@link #finish()} afterwards is not required.
+     *
+     * @param readSheetList the sheets to read; may be {@code null} when {@code readAll} is {@code true}
+     * @param readAll       {@code true} to read every sheet in the workbook, in which case
+     *                      {@code readSheetList} is ignored; must not be {@code null}
+     * @throws IllegalArgumentException              if {@code readAll} is {@code false} and
+     *                                               {@code readSheetList} contains no sheet
+     * @throws org.apache.fesod.sheet.exception.ExcelAnalysisException if the workbook cannot be parsed
      */
     void analysis(List<ReadSheet> readSheetList, Boolean readAll);
 

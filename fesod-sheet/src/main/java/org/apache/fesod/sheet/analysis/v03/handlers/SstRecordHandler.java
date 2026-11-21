@@ -32,9 +32,21 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 
 /**
- * Record handler
+ * Handler for the BIFF {@link SSTRecord} (Shared String Table), which contains all strings
+ * used in the worksheet cells.
+ * <p>
+ * Builds an {@link XlsCache} from the shared string table and installs it on the workbook holder
+ * so that subsequent cell references can resolve string values by index.
  */
 public class SstRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * Casts the record to {@link SSTRecord}, wraps it in an {@link XlsCache}, and sets it as
+     * the shared-strings cache on {@link XlsReadContext#readWorkbookHolder()}.
+     *
+     * @param xlsReadContext the current XLS reading context
+     * @param record         the {@link SSTRecord} to process
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         xlsReadContext.readWorkbookHolder().setReadCache(new XlsCache((SSTRecord) record));

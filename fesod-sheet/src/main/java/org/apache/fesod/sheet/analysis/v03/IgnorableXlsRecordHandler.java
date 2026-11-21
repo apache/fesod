@@ -26,8 +26,9 @@
 package org.apache.fesod.sheet.analysis.v03;
 
 /**
- * Need to ignore the current handler without reading the current sheet.
- *
- *
+ * A marker interface for {@link XlsRecordHandler} implementations whose records can be skipped.
+ * <p>
+ * When {@code ignoreRecord} is enabled in the read context (for example after the current sheet
+ * has finished reading), handlers implementing this interface are not invoked.
  */
 public interface IgnorableXlsRecordHandler extends XlsRecordHandler {}

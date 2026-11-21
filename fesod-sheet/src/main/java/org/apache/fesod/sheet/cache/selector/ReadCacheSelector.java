@@ -29,17 +29,21 @@ import org.apache.fesod.sheet.cache.ReadCache;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
- * Select the cache
+ * Strategy for choosing the {@link ReadCache} implementation used to hold the shared strings
+ * of a spreadsheet.
  *
- *
- **/
+ * <p>Implementations may pick a cache based on the size or nature of the package part, or always
+ * return a single predefined cache instance. The default choice is
+ * {@link SimpleReadCacheSelector}.
+ */
 public interface ReadCacheSelector {
 
     /**
-     * Select a cache
+     * Select the cache to use for the given shared strings part.
      *
      * @param sharedStringsTablePackagePart
-     * @return
+     *            the shared strings part of the workbook, never {@code null}
+     * @return the cache used to read the shared strings; must not be {@code null}
      */
     ReadCache readCache(PackagePart sharedStringsTablePackagePart);
 }

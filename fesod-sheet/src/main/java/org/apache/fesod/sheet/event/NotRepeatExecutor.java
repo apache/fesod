@@ -26,16 +26,21 @@
 package org.apache.fesod.sheet.event;
 
 /**
- * There are multiple interceptors that execute only one of them when fired once.If you want to control which one to
- * execute please use {@link Order}
+ * Marks an executor (typically a write handler) that must run at most once per event, even when
+ * several instances of the same logical handler are registered.
  *
- *
- **/
+ * <p>Executors implementing this interface are deduplicated by the value returned from
+ * {@link #uniqueValue()}: among all registered executors sharing the same unique value, only one
+ * will be executed for a given event. Use {@link Order} to control which one wins.</p>
+ */
 public interface NotRepeatExecutor {
+
     /**
-     * To see if it's the same executor
+     * Returns the identifier used to deduplicate executors. Executors that report the same value
+     * are considered equivalent and only one of them will be executed.
      *
-     * @return
+     * @return a non-{@code null} unique identifier for this executor; two executors returning the
+     *         same value will be treated as the same executor
      */
     String uniqueValue();
 }

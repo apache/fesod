@@ -33,14 +33,12 @@ import java.lang.annotation.Target;
 import org.apache.fesod.sheet.enums.BooleanEnum;
 
 /**
- * Convert date format.
+ * Specifies the date/time format of a field for reading and writing.
  *
- * <p>
- * write: It can be used on classes {@link java.util.Date}
- * <p>
- * read: It can be used on classes {@link String}
+ * <p>When writing, it can be used on fields of type {@link java.util.Date};
+ * when reading, it can be used on fields of type {@link String}.
  *
- *
+ * @see java.text.SimpleDateFormat
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -48,17 +46,25 @@ import org.apache.fesod.sheet.enums.BooleanEnum;
 public @interface DateTimeFormat {
 
     /**
+     * The date/time format pattern.
+     * <p>
+     * See {@link java.text.SimpleDateFormat} for the supported pattern syntax.
+     * When empty, the default format determined by the conversion logic is used.
      *
-     * Specific format reference {@link java.text.SimpleDateFormat}
-     *
-     * @return Format pattern
+     * @return the format pattern
      */
     String value() default "";
 
     /**
-     * True if date uses 1904 windowing, or false if using 1900 date windowing.
+     * Whether the date uses the 1904 windowing base ({@link BooleanEnum#TRUE})
+     * or the 1900 windowing base ({@link BooleanEnum#FALSE}).
+     * <p>
+     * When {@link BooleanEnum#DEFAULT}, the windowing base is automatically
+     * detected from the workbook being processed.
      *
-     * @return True if date uses 1904 windowing, or false if using 1900 date windowing.
+     * @return {@code true} if the 1904 windowing base is used, {@code false}
+     *         if the 1900 windowing base is used, or {@code DEFAULT} for
+     *         automatic detection
      */
     BooleanEnum use1904windowing() default BooleanEnum.DEFAULT;
 }

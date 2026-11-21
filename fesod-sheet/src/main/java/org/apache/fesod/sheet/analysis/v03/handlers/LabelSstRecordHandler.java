@@ -38,10 +38,29 @@ import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for {@link LabelSSTRecord} entries encountered while streaming an XLS (BIFF v03) workbook.
+ * <p>
+ * A {@code LabelSSTRecord} represents a text cell whose value is stored as an index into the shared
+ * string table (SST). This handler resolves the string from the {@link ReadCache} and stores it in the
+ * current row's cell map as a {@link ReadCellData}, applying the configured auto-strip or auto-trim
+ * whitespace handling when enabled. When the cache or the string is missing, an empty cell is emitted.
+ * If the physical column is filtered out by the current column resolver, the record is skipped.
  */
 public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Process the shared-string label record and register its value into the current row's cell map,
+     * marking the temporary row type as {@link RowTypeEnum#DATA}.
+     * <p>
+     * An empty cell is written instead of the value when the {@link ReadCache} is unavailable or when
+     * the SST index resolves to no string.
+     *
+     * @param xlsReadContext the active XLS read context, used to access the shared string cache, resolve
+     *                       the target column index, read the global whitespace configuration, and access
+     *                       the current sheet's cell map
+     * @param record         the record to process, expected to be a {@link LabelSSTRecord}
+     * @throws ClassCastException if {@code record} is not a {@link LabelSSTRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         LabelSSTRecord lsrec = (LabelSSTRecord) record;

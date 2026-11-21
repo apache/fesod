@@ -32,9 +32,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Ignore convert excel
+ * Marks a field to be ignored when reading from or writing to an Excel/CSV file.
  *
+ * <p>
+ * A field annotated with this annotation will not participate in header matching, data
+ * conversion, or cell writing, even if it is a valid JavaBean property.
  *
+ * @see ExcelProperty
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

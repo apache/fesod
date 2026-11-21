@@ -26,7 +26,10 @@
 package org.apache.fesod.sheet.constant;
 
 /**
+ * XML tag and attribute constants used when streaming XLSX (SpreadsheetML) files.
  *
+ * <p>Each logical tag has three variants: the plain form (default namespace), the {@code x:} prefixed form,
+ * and the {@code ns2:} prefixed form, which are emitted by different producers of the OOXML format.</p>
  */
 public class ExcelXmlConstants {
     public static final String DIMENSION_TAG = "dimension";

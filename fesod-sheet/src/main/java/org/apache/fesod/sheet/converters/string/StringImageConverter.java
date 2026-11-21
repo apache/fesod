@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -37,6 +37,8 @@ import org.apache.fesod.sheet.util.FileUtils;
  * String and image converter
  *
  * @see StringPathnameImageConverter
+ * @deprecated use {@link StringPathnameImageConverter} instead, which has the same behaviour under a
+ *             name that reflects it
  */
 @Deprecated
 public class StringImageConverter implements Converter<String> {

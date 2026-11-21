@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -186,6 +186,8 @@ public class ReadCellData<T> extends CellData<T> {
     public ReadCellData<Object> clone() {
         ReadCellData<Object> readCellData = new ReadCellData<>();
         readCellData.setType(getType());
+        readCellData.setRowIndex(getRowIndex());
+        readCellData.setColumnIndex(getColumnIndex());
         readCellData.setNumberValue(getNumberValue());
         readCellData.setOriginalNumberValue(getOriginalNumberValue());
         readCellData.setStringValue(getStringValue());

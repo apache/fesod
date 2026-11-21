@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -53,7 +53,7 @@ public class ByteNumberConverter implements Converter<Byte> {
     @Override
     public Byte convertToJavaData(
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        return cellData.getNumberValue().byteValue();
+        return NumberUtils.toByte(cellData.getNumberValue());
     }
 
     @Override

@@ -316,6 +316,7 @@ For example, to release version `2.0.0-incubating`, follow these steps:
 
 - Create a new branch `2.0.0-incubating` as the release branch.
 - Update the version number in `pom.xml` to `2.0.0-incubating`.
+- Set a fixed `project.build.outputTimestamp` in `pom.xml` to ensure [reproducible builds](https://maven.apache.org/guides/mini/guide-reproducible-builds.html).
 - Push the RC (Release Candidate) version tag.
 
 ```bash
@@ -329,12 +330,21 @@ git tag -s 2.0.0-incubating-rc1 -m "release: release for 2.0.0-incubating RC1"
 git push origin 2.0.0-incubating-rc1
 ```
 
+When the version is updated, also set a fixed build timestamp:
+
+```bash
+# Set a fixed build timestamp so every build produces identical artifacts
+mvn versions:set-property -Dproperty=project.build.outputTimestamp -DnewVersion=2026-09-10T00:00:00Z
+# Or edit pom.xml directly:
+#   <project.build.outputTimestamp>2026-09-10T00:00:00Z</project.build.outputTimestamp>
+```
+
 #### 3.3.2 Push Binary Packages
 
 Compile the source code of the pre-release RC branch and push the binary packages to the [staging repository](https://repository.apache.org/#stagingRepositories).
 
 ```bash
-mvn clean deploy -Papache-release -DskipTests -Dgpg.skip=false
+mvn clean deploy -Papache-release -Dgpg.skip=false
 ```
 
 Log in to the ASF Nexus repository with your Apache ID, locate the released version, and click **Close**.
@@ -466,7 +476,7 @@ which can be found in the keys file:
 https://downloads.apache.org/incubator/fesod/KEYS
 
 Build Environment: JDK 8+, Apache Maven 3.6.0+.
-./mvnw clean package -DskipTests
+./mvnw clean package
 
 The vote will be open for at least 72 hours.
 
@@ -598,7 +608,7 @@ to [ xxxx@apache.org ] which can be found in the keys file:
 https://downloads.apache.org/incubator/fesod/KEYS
 
 Build Environment: JDK 8+, Apache Maven 3.6.0+.
-./mvnw clean package -DskipTests
+./mvnw clean package
 
 The vote will be open for at least 72 hours.
 
@@ -699,10 +709,10 @@ Hello everyone,
 
 The Apache Fesod(Incubating) ${RELEASE_VERSION} has been released!
 
-Apache Fesod is an easy-to-use, high-performance, open source distributed transaction solution.
+Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing spreadsheet files, designed to simplify development and ensure reliability.
 
 Download Links:
-https://fesod.apache.org/download/fesod/
+https://fesod.apache.org/docs/download
 
 Release Notes:
 https://github.com/apache/fesod/releases/tag/x.x.x/

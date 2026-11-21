@@ -19,8 +19,6 @@
 
 package org.apache.fesod.sheet.head;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONWriter;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.context.AnalysisContext;
@@ -38,7 +36,7 @@ public class MaxHeadReadListener extends AnalysisEventListener<Map<Integer, Stri
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        log.info("origin head : {}", JSON.toJSONString(headTitleMap, JSONWriter.Feature.WriteMapNullValue));
+        log.info("origin head : {}", headTitleMap);
         log.info("max not empty head size : {}", context.readSheetHolder().getMaxNotEmptyDataHeadSize());
     }
 

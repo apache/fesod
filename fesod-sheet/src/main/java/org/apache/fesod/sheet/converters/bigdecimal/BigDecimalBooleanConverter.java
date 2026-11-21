@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -93,7 +93,7 @@ public class BigDecimalBooleanConverter implements Converter<BigDecimal> {
     @Override
     public WriteCellData<?> convertToExcelData(
             BigDecimal value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (BigDecimal.ONE.equals(value)) {
+        if (BigDecimal.ONE.compareTo(value) == 0) {
             return new WriteCellData<>(Boolean.TRUE);
         }
         return new WriteCellData<>(Boolean.FALSE);

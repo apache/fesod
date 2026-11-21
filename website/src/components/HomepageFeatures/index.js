@@ -29,7 +29,7 @@ const FeatureList = [
                 id: 'homepage.feature.quick.title',
             },
         ),
-        Svg: require('@site/static/img/index/undraw_spreadsheet.svg').default,
+        Svg: require('@site/static/img/index/fesod_quick.svg').default,
         description: translate(
             {
                 id: 'homepage.feature.quick.description',
@@ -42,7 +42,7 @@ const FeatureList = [
                 id: 'homepage.feature.simple.title',
             },
         ),
-        Svg: require('@site/static/img/index/undraw_programming.svg').default,
+        Svg: require('@site/static/img/index/fesod_simple.svg').default,
         description: translate(
             {
                 id: 'homepage.feature.simple.description',
@@ -55,7 +55,7 @@ const FeatureList = [
                 id: 'homepage.feature.bigdata',
             },
         ),
-        Svg: require('@site/static/img/index/undraw_files.svg').default,
+        Svg: require('@site/static/img/index/fesod_bigfile.svg').default,
         description: translate(
             {
                 id: 'homepage.feature.bigdata.description',

@@ -39,23 +39,23 @@
 
 ## 简介
 
-**Apache Fesod (Incubating)** 是一个高性能、内存高效的 Java 库，用于读写电子表格文件，旨在简化开发并确保可靠性。
+**Apache Fesod** 是一个高性能、内存高效的 Java 库，用于读写电子表格文件，旨在简化开发并确保可靠性。
 
-Apache Fesod (Incubating) 可以为开发者和企业提供极大的自由度和灵活性。我们计划在未来引入更多新功能，以持续提升用户体验和工具可用性。Apache Fesod (Incubating) 致力于成为您处理电子表格文件的最佳选择。
+Apache Fesod 可以为开发者和企业提供极大的自由度和灵活性。我们计划在未来引入更多新功能，以持续提升用户体验和工具可用性。Apache Fesod 致力于成为您处理电子表格文件的最佳选择。
 
 名称 fesod（发音为 `/ˈfɛsɒd/`），是 "fast easy spreadsheet and other documents"（快速简单的电子表格和其他文档）的首字母缩写，表达了项目的起源、背景和愿景。
 
 ### 特性
 
-- **高性能读写**：Apache Fesod (Incubating) 专注于性能优化，能够高效处理大规模电子表格数据。与一些传统的电子表格处理库相比，它可以显著减少内存消耗。
+- **高性能读写**：Apache Fesod 专注于性能优化，能够高效处理大规模电子表格数据。与一些传统的电子表格处理库相比，它可以显著减少内存消耗。
 - **简单易用**：该库提供了简单直观的 API，使开发者能够轻松将其集成到项目中，无论是简单的电子表格操作还是复杂的数据处理。
-- **流式操作**：Apache Fesod (Incubating) 支持流式读取，最大程度地减少一次性加载大量数据的问题。这一设计在处理数十万甚至数百万行数据时尤其重要。
+- **流式操作**：Apache Fesod 支持流式读取，最大程度地减少一次性加载大量数据的问题。这一设计在处理数十万甚至数百万行数据时尤其重要。
 
 ## 安装
 
-Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最新的 LTS 版本的 Java。我们强烈建议使用最新版本的 Apache Fesod (Incubating)，因为最新版本中的性能优化、错误修复和新功能将提升您的使用体验。
+Apache Fesod 需要 **Java 1.8** 或更高版本。建议使用最新的 LTS 版本的 Java。我们强烈建议使用最新版本的 Apache Fesod，因为最新版本中的性能优化、错误修复和新功能将提升您的使用体验。
 
-> 目前，Apache Fesod (Incubating) 使用 POI 作为底层包。如果您的项目已包含 POI 相关组件，您需要手动排除 POI 相关的 jar 文件。
+> 目前，Apache Fesod 使用 POI 作为底层包。如果您的项目已包含 POI 相关组件，您需要手动排除 POI 相关的 jar 文件。
 
 ### Maven
 
@@ -65,7 +65,7 @@ Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最�
 <dependency>
     <groupId>org.apache.fesod</groupId>
     <artifactId>fesod-sheet</artifactId>
-    <version>version</version>
+    <version>2.1.0-incubating</version>
 </dependency>
 ```
 
@@ -75,9 +75,11 @@ Apache Fesod (Incubating) 需要 **Java 1.8** 或更高版本。建议使用最�
 
 ```gradle
 dependencies {
-    implementation 'org.apache.fesod:fesod-sheet:version'
+    implementation 'org.apache.fesod:fesod-sheet:2.1.0-incubating'
 }
 ```
+
+最新版本见 [Maven Central](https://search.maven.org/artifact/org.apache.fesod/fesod-sheet)。
 
 ## 快速开始
 
@@ -91,7 +93,7 @@ public class DemoDataListener implements ReadListener<DemoData> {
 
     @Override
     public void invoke(DemoData data, AnalysisContext context) {
-        System.out.println("解析了一条数据" + JSON.toJSONString(data));
+        System.out.println("解析了一条数据" + data);
     }
 
     @Override
@@ -152,9 +154,9 @@ public static void main(String[] args) {
 
 ### 贡献者
 
-欢迎贡献者加入 Apache Fesod (Incubating)。请查看[贡献指南](./CONTRIBUTING.md)了解如何为该项目做出贡献。
+欢迎贡献者加入 Apache Fesod。请查看[贡献指南](./CONTRIBUTING.md)了解如何为该项目做出贡献。
 
-感谢所有已经为 Apache Fesod (Incubating) 做出贡献的人们！
+感谢所有已经为 Apache Fesod 做出贡献的人们！
 
 <a href="https://github.com/apache/fesod/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=apache/fesod"/>
@@ -170,7 +172,11 @@ public static void main(String[] args) {
 |:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------|
 | [dev@fesod.apache.org](mailto:dev@fesod.apache.org) | [订阅](mailto:dev-subscribe@fesod.apache.org)  ｜  [取消订阅](mailto:dev-unsubscribe@fesod.apache.org) |
 
+### Star 历史
+
+[![Star History Chart](https://api.star-history.com/chart?repos=apache/fesod&type=date&legend=top-left)](https://www.star-history.com/?repos=apache%2Ffesod&type=date)
+
 ## 许可证
 
-Apache Fesod (Incubating) 项目采用 [Apache License 2.0](LICENSE) 许可证。
+Apache Fesod 项目采用 [Apache License 2.0](LICENSE) 许可证。
 

@@ -18,14 +18,13 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
 
 package org.apache.fesod.sheet.cache;
 
-import org.apache.fesod.sheet.context.AnalysisContext;
 import org.apache.poi.hssf.record.SSTRecord;
 
 /**
@@ -42,19 +41,7 @@ public class XlsCache implements ReadCache {
     }
 
     @Override
-    public void init(AnalysisContext analysisContext) {}
-
-    @Override
-    public void put(String value) {}
-
-    @Override
     public String get(Integer key) {
         return sstRecord.getString(key).toString();
     }
-
-    @Override
-    public void putFinished() {}
-
-    @Override
-    public void destroy() {}
 }

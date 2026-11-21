@@ -1,0 +1,127 @@
+<!--
+- Licensed to the Apache Software Foundation (ASF) under one or more
+- contributor license agreements.  See the NOTICE file distributed with
+- this work for additional information regarding copyright ownership.
+- The ASF licenses this file to You under the Apache License, Version 2.0
+- (the "License"); you may not use this file except in compliance with
+- the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
+# Apache Fesod AI Agent Instructions
+
+This file provides guidance for AI coding agents working with the Apache Fesod codebase.
+
+## Project Overview
+
+Apache Fesod is a Java library for processing spreadsheets (XLS/XLSX/CSV) without OOM, derived from Alibaba EasyExcel. It uses Apache POI under the hood with streaming SAX-based reading. The project is an Apache project and must follow ASF conventions.
+
+- **Language**: Java 8+ (source/target = 1.8; CI builds on JDK 8, 11, 17, 21, 25 — JDK 17+ is recommended for local development)
+- **Build**: Maven 3.6.3 via `./mvnw` wrapper (project docs require 3.9+, but wrapper currently pins 3.6.3; both work)
+- **CI matrix**: JDK 8, 11, 17, 21, 25
+
+## Build & Test Commands
+
+```bash
+# Build (runs tests by default, per Maven/Apache convention)
+./mvnw clean install
+
+# Fast build without running tests
+./mvnw clean install -DskipTests
+
+# Run tests for the library modules only
+./mvnw clean package -pl fesod-common,fesod-shaded,fesod-sheet
+
+# Format check / auto-format
+./mvnw spotless:check
+./mvnw spotless:apply
+
+# Run tests by tag
+./mvnw test -Dtest.groups=unit          # fast unit tests only
+./mvnw test -Dtest.excludedGroups=fuzz  # exclude slow fuzz tests
+
+# Full install with javadoc (CI validation)
+./mvnw install -B -V
+./mvnw javadoc:javadoc
+```
+
+## Code Style & Conventions
+
+- **Formatter**: Palantir Java Format (enforced by Spotless); Checkstyle checks import restrictions during Maven's `validate` phase
+- **Imports**: Static imports first, then regular imports; no unused imports (enforced by Spotless `importOrder` with `\#|` separator)
+- **Import restrictions**: Checkstyle allows named static imports from JUnit `Assertions`/`Assumptions`, Mockito `Mockito`/`ArgumentMatchers`, and AssertJ `Assertions` through `AvoidStaticImport.excludes`. These libraries have Maven `test` scope and are unavailable to production compilation. Other static imports and all wildcard imports remain forbidden by Checkstyle.
+- **Indent**: 4 spaces
+- **License header**: ASF Apache 2.0 header required on all `.java`, `.xml`, `.yml`, `.toml` files. Header template at `tools/spotless/license-header.txt`; enforced by the Hawkeye workflow (`.github/workflows/license-check.yml`), not Spotless
+- **Lombok**: Allowed; config in `lombok.config` (`toString.callSuper = CALL`, `equalsAndHashCode.callSuper = CALL`)
+- **Commits**: English, format `type: description` (types: `fix`, `feat`, `refactor`, `test`, `docs`, `chore`, `style`, `dependency`)
+
+## Module Structure
+
+```
+(root)                 # Root POM (artifactId: fesod-parent), dependency & plugin management
+├── fesod-common/      # Zero-dependency utilities (org.apache.fesod.common.util)
+├── fesod-shaded/      # Relocated Spring ASM/cglib (org.apache.fesod.shaded)
+├── fesod-bom/         # BOM for downstream consumers
+└── fesod-sheet/       # Core library: read/write XLS/XLSX/CSV via POI
+    ├── src/main/java/org/apache/fesod/sheet/
+    │   ├── FesodSheet.java    # Main entry: FesodSheet.read() / FesodSheet.write()
+    │   ├── analysis/          # Read pipeline (v03=XLS BIFF, v07=XLSX SAX, csv)
+    │   ├── write/             # Write pipeline (builder, executor, handler chains)
+    │   ├── metadata/          # Data models, builders, csv/ property/
+    │   ├── converters/        # Type conversion framework (by Java type)
+    │   └── util/              # DateUtils, NumberUtils, WorkBookUtil, etc.
+    └── src/test/java/org/apache/fesod/sheet/
+        └── testkit/           # Test infrastructure (NOT a separate module)
+            ├── Tags.java      # @Tag constants: unit, windows, round-trip, read, write, format, fuzz
+            ├── base/          # AbstractExcelTest (round-trip base)
+            ├── assertions/    # ExcelAssertions fluent API
+            └── builders/      # TestDataBuilder
+
+```
+
+## Testing Conventions
+
+- **JUnit 5** with `PER_CLASS` lifecycle and `ReplaceUnderscores` display name generator (configured globally in `fesod-sheet/src/test/resources/junit-platform.properties`, not via per-class annotations)
+- **Tags** (use `@Tag(Tags.XXX)`):
+  - `unit` — pure logic, no file I/O
+  - `windows` — Windows-only tests; pair with `@EnabledOnOs(OS.WINDOWS)` (see below)
+  - `round-trip` — write-then-read via `AbstractExcelTest`
+  - `read` / `write` — single-direction tests
+  - `format` — CSV/charset/date format tests
+  - `fuzz` — Jazzer property-based (slow, excluded in PR CI)
+- **OS-specific tests**:
+  - Windows-only tests must carry both markers: `@EnabledOnOs(OS.WINDOWS)` (built-in JUnit condition, skips the test on other platforms) and `@Tag(Tags.WINDOWS)` (lets the `Test Windows` CI job select it via `-Dtest.groups=windows`).
+  - No custom annotation is needed. Surefire can only filter by tag, so without `@Tag(Tags.WINDOWS)` the test would not be selected by the Windows job; without `@EnabledOnOs` it would also run on Linux/macOS when the full suite runs.
+  - Add the functional tag as well (e.g. `@Tag(Tags.UNIT)`) so the Linux matrix runs it where applicable; `@EnabledOnOs` keeps it skipped there.
+  - When the capability may be unavailable even on the matching OS (e.g. no privilege to create symbolic links), guard the body with `Assumptions.assumeTrue(...)` instead of an early `return`; unsupported environments then report the test as skipped rather than passed.
+  - Assume an unprivileged user: prefer operations that need no elevation (e.g. `mklink /J` junctions, unlike symbolic links, need no admin rights or developer mode).
+  - Use `@TempDir` or `FileUtils.getTempFilePrefix()` for scratch space; never delete or operate on the shared `java.io.tmpdir` root.
+  - Example:
+
+    ```java
+    @Test
+    @Tag(Tags.UNIT)
+    @Tag(Tags.WINDOWS)
+    @EnabledOnOs(OS.WINDOWS)
+    void deleteDoesNotFollowDirectoryJunction() throws IOException {
+        // create the junction with: cmd /c mklink /J <link> <target>
+    }
+    ```
+- **Real-file tests**: Prefer `AbstractExcelTest.createTempFile()` + `ExcelAssertions` for integration tests
+- **Test data**: Use `TestDataBuilder.simpleData(n)` or model classes in `testkit/models/`
+
+## CI Checks (must pass before merge)
+
+1. `spotless:check` — format
+2. License header (hawkeye)
+3. Multi-JDK test matrix (8/11/17/21/25)
+4. Windows-only tests (`Test Windows` job: `-Dtest.groups=windows`, paired with `@EnabledOnOs`)
+5. `mvn install` + `mvn javadoc:javadoc`
+6. CodeQL security scan

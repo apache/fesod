@@ -109,6 +109,7 @@ const sidebars = {
                     label: 'help',
                     items: [
                         'sheet/help/annotation',
+                        'sheet/help/built-in-converters',
                         'sheet/help/core-class',
                         'sheet/help/parameter',
                         'sheet/help/large-data',

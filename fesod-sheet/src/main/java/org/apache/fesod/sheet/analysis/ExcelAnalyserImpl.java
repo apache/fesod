@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.analysis;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -341,7 +342,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
     protected static final class NoopExcelReadExecutor implements ExcelReadExecutor {
         @Override
         public List<ReadSheet> sheetList() {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
 
         @Override

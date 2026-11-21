@@ -26,7 +26,9 @@ title: '代码贡献指南'
 
 ### 开发环境
 
-需要 **3.8.1及以上版本的Maven** 和 **17及以上版本的JDK (Java Development Kit)** 。目前，开发环境推荐 **3.9.0** 及以上版本的Maven和 **21** 及以上的版本Java，但在编译过程中必须使用 **Java 1.8** 兼容的语言特性，保证能在 Java 1.8 及以上版本环境中运行。
+需要 **8 及以上版本的 JDK (Java Development Kit)** 和 Maven。项目可在 JDK 8、11、17、21 和 25 上构建与测试，这也是 CI 的测试矩阵。本地开发推荐使用 **17 及以上版本的 JDK**，运行代码格式化工具（`./mvnw spotless:apply` / `./mvnw spotless:check`）时必须使用 JDK 17 及以上版本。无论使用哪个版本的 JDK，都必须只使用 **Java 1.8** 兼容的语言特性，保证项目能在 Java 1.8 及以上版本环境中运行。
+
+请使用项目自带的 Maven Wrapper（`./mvnw`，Windows 下为 `mvnw.cmd`），它会下载项目固定的 Maven 版本（目前为 **Maven 3.6.3**），无需另外安装 Maven。如果希望使用本地安装的 Maven，请使用 **3.6.3 及以上版本**。
 
 > 您可以使用 [SDKMAN](https://sdkman.io/) 等工具配置多版本的 Java 工具链。
 

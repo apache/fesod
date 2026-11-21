@@ -494,48 +494,21 @@ public class WriteContextImpl implements WriteContext {
         }
         finished = true;
 
-        // executes the callback after all sheets has been fully written.
-        boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();
-        Map<Integer, WriteSheetHolder> writeSheetHolderMap =
-                shouldSkip ? null : writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
-        if (MapUtils.isNotEmpty(writeSheetHolderMap)) {
-            if (MapUtils.size(writeSheetHolderMap) == 1) {
-                SheetWriteHandlerContext sheetWriteHandlerContext =
-                        WriteHandlerUtils.createSheetWriteHandlerContext(this);
-                WriteHandlerUtils.afterSheetDispose(sheetWriteHandlerContext);
-            } else {
-                List<Integer> sheetNos = writeSheetHolderMap.keySet().stream()
-                        .filter(Objects::nonNull)
-                        .sorted()
-                        .collect(Collectors.toList());
-
-                for (Integer sheetNo : sheetNos) {
-                    WriteSheetHolder holder = writeSheetHolderMap.get(sheetNo);
-                    if (Objects.nonNull(holder)) {
-                        // switch context
-                        this.writeSheetHolder = holder;
-                        this.writeTableHolder = null;
-                        this.currentWriteHolder = holder;
-
-                        SheetWriteHandlerContext sheetWriteHandlerContext =
-                                WriteHandlerUtils.createSheetWriteHandlerContext(this);
-                        WriteHandlerUtils.afterSheetDispose(sheetWriteHandlerContext);
-                    }
-                }
-            }
-        }
-
-        WriteHandlerUtils.afterWorkbookDispose(writeWorkbookHolder.getWorkbookWriteHandlerContext());
         if (writeWorkbookHolder == null) {
             return;
         }
         Throwable throwable = null;
+        Throwable callbackFailure = null;
+        try {
+            finishCallbacks(onException);
+        } catch (RuntimeException | Error e) {
+            callbackFailure = e;
+            throwable = e;
+        }
         boolean isOutputStreamEncrypt = false;
         // Determine if you need to write excel
-        boolean writeExcel = !onException;
-        if (writeWorkbookHolder.getWriteExcelOnException()) {
-            writeExcel = Boolean.TRUE;
-        }
+        boolean writeExcel =
+                callbackFailure == null && (!onException || writeWorkbookHolder.getWriteExcelOnException());
         // No data is written if an exception is thrown
         if (writeExcel) {
             try {
@@ -549,6 +522,10 @@ public class WriteContextImpl implements WriteContext {
                 if (writeExcel) {
                     writeWorkbookHolder.getWorkbook().write(writeWorkbookHolder.getOutputStream());
                 }
+            } catch (Throwable t) {
+                throwable = recordFailure(throwable, t);
+            }
+            try {
                 writeWorkbookHolder.getWorkbook().close();
             } catch (Throwable t) {
                 throwable = recordFailure(throwable, t);
@@ -583,14 +560,66 @@ public class WriteContextImpl implements WriteContext {
         } catch (Throwable t) {
             throwable = recordFailure(throwable, t);
         }
-        clearEncrypt03();
-        removeThreadLocalCache();
+        try {
+            clearEncrypt03();
+        } catch (Throwable t) {
+            throwable = recordFailure(throwable, t);
+        }
+        try {
+            removeThreadLocalCache();
+        } catch (Throwable t) {
+            throwable = recordFailure(throwable, t);
+        }
+        if (callbackFailure instanceof RuntimeException) {
+            throw (RuntimeException) callbackFailure;
+        }
+        if (callbackFailure instanceof Error) {
+            throw (Error) callbackFailure;
+        }
         if (throwable != null) {
             throw new ExcelGenerateException("Can not close IO.", throwable);
         }
         if (log.isDebugEnabled()) {
             log.debug("Finished write.");
         }
+    }
+
+    /**
+     * Invokes completion callbacks before writing the workbook.
+     */
+    private void finishCallbacks(boolean onException) {
+        // Execute callbacks after all sheets have been fully written.
+        boolean shouldSkip = onException && !writeWorkbookHolder.getWriteExcelOnException();
+        Map<Integer, WriteSheetHolder> writeSheetHolderMap =
+                shouldSkip ? null : writeWorkbookHolder.getHasBeenInitializedSheetIndexMap();
+        if (MapUtils.isNotEmpty(writeSheetHolderMap)) {
+            if (MapUtils.size(writeSheetHolderMap) == 1) {
+                SheetWriteHandlerContext sheetWriteHandlerContext =
+                        WriteHandlerUtils.createSheetWriteHandlerContext(this);
+                WriteHandlerUtils.afterSheetDispose(sheetWriteHandlerContext);
+            } else {
+                List<Integer> sheetNos = writeSheetHolderMap.keySet().stream()
+                        .filter(Objects::nonNull)
+                        .sorted()
+                        .collect(Collectors.toList());
+
+                for (Integer sheetNo : sheetNos) {
+                    WriteSheetHolder holder = writeSheetHolderMap.get(sheetNo);
+                    if (Objects.nonNull(holder)) {
+                        // switch context
+                        this.writeSheetHolder = holder;
+                        this.writeTableHolder = null;
+                        this.currentWriteHolder = holder;
+
+                        SheetWriteHandlerContext sheetWriteHandlerContext =
+                                WriteHandlerUtils.createSheetWriteHandlerContext(this);
+                        WriteHandlerUtils.afterSheetDispose(sheetWriteHandlerContext);
+                    }
+                }
+            }
+        }
+
+        WriteHandlerUtils.afterWorkbookDispose(writeWorkbookHolder.getWorkbookWriteHandlerContext());
     }
 
     /**

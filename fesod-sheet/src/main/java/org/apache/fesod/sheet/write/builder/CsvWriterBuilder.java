@@ -25,6 +25,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.fesod.sheet.ExcelWriter;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.metadata.csv.CsvConstant;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
 import org.apache.fesod.sheet.write.metadata.WriteSheet;
 import org.apache.fesod.sheet.write.metadata.WriteWorkbook;
@@ -61,6 +62,10 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
 
     /**
      * Sets the quote character
+     * <p>
+     * If set to {@link CsvConstant#NONE_QUOTE}, quoting is disabled and values are
+     * always written unquoted. This is equivalent to setting {@code quote} to {@code null} in Apache Commons CSV.
+     * </p>
      *
      * @param quote the quote character
      * @return Returns a CsvWriterBuilder object, enabling method chaining
@@ -78,7 +83,7 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
      */
     public CsvWriterBuilder quote(Character quote, QuoteMode quoteMode) {
         if (quote != null) {
-            this.csvFormatBuilder.setQuote(quote);
+            this.csvFormatBuilder.setQuote(CsvConstant.NONE_QUOTE == quote ? null : quote);
         }
         if (quoteMode != null) {
             this.csvFormatBuilder.setQuoteMode(quoteMode);
@@ -126,9 +131,15 @@ public class CsvWriterBuilder extends AbstractExcelWriterParameterBuilder<CsvWri
     }
 
     private ExcelWriter buildExcelWriter() {
-        this.csvFormatBuilder.setTrim(this.writeWorkbook.getAutoTrim() == null
-                || this.writeWorkbook.getAutoTrim()
-                || Boolean.TRUE.equals(this.writeWorkbook.getAutoStrip()));
+        // The builder's parameter is the sheet, so flags set after .csv() land on the sheet and must
+        // take precedence over the workbook flags; a null sheet flag inherits from the workbook.
+        Boolean autoTrim = this.writeSheet.getAutoTrim() != null
+                ? this.writeSheet.getAutoTrim()
+                : this.writeWorkbook.getAutoTrim();
+        Boolean autoStrip = this.writeSheet.getAutoStrip() != null
+                ? this.writeSheet.getAutoStrip()
+                : this.writeWorkbook.getAutoStrip();
+        this.csvFormatBuilder.setTrim(autoTrim == null || autoTrim || Boolean.TRUE.equals(autoStrip));
         if (this.writeWorkbook.getNeedHead() != null) {
             this.csvFormatBuilder.setSkipHeaderRecord(!this.writeWorkbook.getNeedHead());
         }

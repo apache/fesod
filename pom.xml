@@ -37,21 +37,10 @@ under the License.
     <version>${revision}</version>
 
     <packaging>pom</packaging>
-    <name>fesod-parent</name>
+    <name>Fesod Parent</name>
     <description>
-        Apache Fesod (Incubating) is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
+        Apache Fesod is a high-performance and memory-efficient Java library for reading and writing Excel files, designed to
         simplify development and ensure reliability.
-
-        Apache Fesod (incubating) is an effort undergoing incubation at The Apache
-        Software Foundation (ASF), sponsored by the Apache Incubator PMC.
-
-        Incubation is required of all newly accepted projects until a further review
-        indicates that the infrastructure, communications, and decision making process
-        have stabilized in a manner consistent with other successful ASF projects.
-
-        While incubation status is not necessarily a reflection of the completeness
-        or stability of the code, it does indicate that the project has yet to be
-        fully endorsed by the ASF.
     </description>
     <url>https://github.com/apache/fesod</url>
     <inceptionYear>2025</inceptionYear>
@@ -98,9 +87,9 @@ under the License.
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/apache/fesod.git</connection>
-        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/fesod.git</developerConnection>
-        <url>scm:git:git@github.com:apache/fesod.git</url>
+        <connection>scm:git:https://github.com/apache/fesod.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/fesod.git</developerConnection>
+        <url>https://github.com/apache/fesod</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -108,6 +97,17 @@ under the License.
         <name>The Apache Software Foundation</name>
         <url>https://www.apache.org</url>
     </organization>
+
+    <developers>
+        <developer>
+            <id>fesod</id>
+            <name>The Apache Fesod Team</name>
+            <email>dev@fesod.apache.org</email>
+            <url>https://fesod.apache.org</url>
+            <organization>The Apache Software Foundation</organization>
+            <organizationUrl>https://www.apache.org</organizationUrl>
+        </developer>
+    </developers>
 
     <issueManagement>
         <system>GitHub</system>
@@ -280,15 +280,6 @@ under the License.
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -348,13 +339,6 @@ under the License.
                     <include>**/*.properties</include>
                 </includes>
                 <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>${maven.multiModuleProjectDirectory}</directory>
-                <includes>
-                    <include>DISCLAIMER</include>
-                </includes>
-                <targetPath>META-INF</targetPath>
             </resource>
         </resources>
         <pluginManagement>
@@ -442,30 +426,6 @@ under the License.
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-disclaimer-into-jar</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${maven.multiModuleProjectDirectory}</directory>
-                                    <includes>
-                                        <include>DISCLAIMER</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${maven.compiler.source}</source>
@@ -499,8 +459,6 @@ under the License.
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>oss</flattenMode>
                     <pomElements>
-                        <url>remove</url>
-                        <scm>remove</scm>
                         <distributionManagement>remove</distributionManagement>
                         <repositories>remove</repositories>
                     </pomElements>
@@ -612,6 +570,12 @@ under the License.
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>apache-release</id>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+            </properties>
+        </profile>
         <profile>
             <id>jdk9plus</id>
             <activation>

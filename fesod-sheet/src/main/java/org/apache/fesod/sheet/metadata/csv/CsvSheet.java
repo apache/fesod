@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -27,12 +27,12 @@ package org.apache.fesod.sheet.metadata.csv;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.csv.CSVFormat;
@@ -75,7 +75,6 @@ import org.apache.poi.ss.util.PaneInformation;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CsvSheet implements Sheet, Closeable {
 
     /**
@@ -122,8 +121,12 @@ public class CsvSheet implements Sheet, Closeable {
         // Initialize the data when the row is first created
         initSheet();
 
-        lastRowIndex++;
-        assert rownum == lastRowIndex : "csv create row must be in order.";
+        int newLastRowIndex = lastRowIndex + 1;
+        if (newLastRowIndex != rownum) {
+            throw new IllegalArgumentException("CSV rows must be created in sequential order: expected row index "
+                    + newLastRowIndex + ", but was " + rownum);
+        }
+        lastRowIndex = newLastRowIndex;
         printData();
         CsvRow csvRow = new CsvRow(csvWorkbook, this, rownum);
         rowCache.add(csvRow);
@@ -165,7 +168,7 @@ public class CsvSheet implements Sheet, Closeable {
 
     @Override
     public int getPhysicalNumberOfRows() {
-        return lastRowIndex - rowCache.size();
+        return lastRowIndex + 1;
     }
 
     @Override
@@ -662,7 +665,12 @@ public class CsvSheet implements Sheet, Closeable {
 
         flushData();
         csvPrinter.flush();
-        csvPrinter.close();
+        // The PrintWriter wrapping the caller's output stream never throws IOException, so pending output errors
+        // surface only through checkError. Closing the printer would close the caller's stream even when the writer
+        // was configured with autoCloseStream(false) - WriteContextImpl owns that decision.
+        if (out instanceof PrintWriter && ((PrintWriter) out).checkError()) {
+            throw new ExcelGenerateException("CSV write failed on the underlying output stream.");
+        }
     }
 
     public void printData() {

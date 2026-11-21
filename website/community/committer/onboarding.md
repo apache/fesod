@@ -20,7 +20,7 @@ title: 'Onboarding'
 - limitations under the License.
 -->
 
-Upon receiving an invitation email from Apache Fesod (Incubating) PPMC, a new committer should consider whether accepting.
+Upon receiving an invitation email from the Apache Fesod PMC, a new committer should consider whether accepting.
 
 If they decide in favor, they should select "Reply All" and express their decision. Please provide the reference content of this reply email:
 

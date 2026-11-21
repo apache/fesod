@@ -25,6 +25,7 @@ import org.apache.commons.csv.QuoteMode;
 import org.apache.fesod.sheet.ExcelReader;
 import org.apache.fesod.sheet.event.SyncReadListener;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.metadata.csv.CsvConstant;
 import org.apache.fesod.sheet.read.metadata.ReadSheet;
 import org.apache.fesod.sheet.read.metadata.ReadWorkbook;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
@@ -83,7 +84,7 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
      */
     public CsvReaderBuilder quote(Character quote, QuoteMode quoteMode) {
         if (quote != null) {
-            this.csvFormatBuilder.setQuote(quote);
+            this.csvFormatBuilder.setQuote(CsvConstant.NONE_QUOTE == quote ? null : quote);
         }
         if (quoteMode != null) {
             this.csvFormatBuilder.setQuoteMode(quoteMode);
@@ -142,9 +143,14 @@ public class CsvReaderBuilder extends AbstractExcelReaderParameterBuilder<CsvRea
     }
 
     private ExcelReader buildExcelReader() {
-        this.csvFormatBuilder.setTrim(this.readWorkbook.getAutoTrim() == null
-                || this.readWorkbook.getAutoTrim()
-                || Boolean.TRUE.equals(this.readWorkbook.getAutoStrip()));
+        // The inherited autoTrim()/autoStrip() setters land on the ReadSheet, so the sheet-level
+        // flags must take precedence over the workbook-level ones here.
+        Boolean autoTrim =
+                this.readSheet.getAutoTrim() != null ? this.readSheet.getAutoTrim() : this.readWorkbook.getAutoTrim();
+        Boolean autoStrip = this.readSheet.getAutoStrip() != null
+                ? this.readSheet.getAutoStrip()
+                : this.readWorkbook.getAutoStrip();
+        this.csvFormatBuilder.setTrim(autoTrim == null || autoTrim || Boolean.TRUE.equals(autoStrip));
         if (this.readWorkbook.getIgnoreEmptyRow() != null) {
             this.csvFormatBuilder.setIgnoreEmptyLines(this.readWorkbook.getIgnoreEmptyRow());
         }

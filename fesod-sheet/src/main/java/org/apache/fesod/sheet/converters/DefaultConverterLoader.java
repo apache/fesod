@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -72,6 +72,7 @@ import org.apache.fesod.sheet.converters.localtime.LocalTimeStringConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongBooleanConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongNumberConverter;
 import org.apache.fesod.sheet.converters.longconverter.LongStringConverter;
+import org.apache.fesod.sheet.converters.monthday.MonthDayStringConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeDateConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeNumberConverter;
 import org.apache.fesod.sheet.converters.offsetdatetime.OffsetDateTimeStringConverter;
@@ -138,6 +139,7 @@ public class DefaultConverterLoader {
 
         putAllConverter(new LocalTimeNumberConverter());
         putAllConverter(new LocalTimeStringConverter());
+        putAllConverter(new MonthDayStringConverter());
         putAllConverter(new SqlTimeNumberConverter());
         putAllConverter(new SqlTimeStringConverter());
         putAllConverter(new TimestampNumberConverter());
@@ -190,6 +192,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
         putWriteConverter(new InstantStringConverter());
+        putWriteConverter(new MonthDayStringConverter());
         putWriteConverter(new SqlTimeDateConverter());
         putWriteConverter(new TimestampDateConverter());
         putWriteConverter(new OffsetDateTimeDateConverter());
@@ -220,6 +223,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());
         putWriteStringConverter(new InstantStringConverter());
+        putWriteStringConverter(new MonthDayStringConverter());
         putWriteStringConverter(new SqlTimeStringConverter());
         putWriteStringConverter(new TimestampStringConverter());
         putWriteStringConverter(new OffsetDateTimeStringConverter());

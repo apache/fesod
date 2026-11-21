@@ -62,7 +62,7 @@ Fill in the following columns in English.
 
 - (optional) notify project:
 
-  Apache Fesod (Incubating)
+  Apache Fesod
 
 Refer to this case
 

@@ -20,28 +20,27 @@ title: '团队'
 - limitations under the License.
 -->
 
-Apache Fesod (Incubating) 团队由成员和贡献者组成。我们秉持开放和协作的社区理念，欢迎更多的人加入我们，与社区共同成长。
+Apache Fesod 团队由成员和贡献者组成。我们秉持开放和协作的社区理念，欢迎更多的人加入我们，与社区共同成长。
 
 > 数据并非实时更新，成员的官方数据列表位于 [ASF Committers by auth group](https://people.apache.org/committers-by-project.html#fesod).
 
-## Podling Project Management Committee(PPMC)
+## Project Management Committee (PMC)
 
 <div class="team">
 
 | 姓名         | GitHub                                                           | Apache ID                                                                 | 角色      |
 |--------------|------------------------------------------------------------------|---------------------------------------------------------------------------|-----------|
-| Dave Fisher  | [@dave2wave](https://github.com/dave2wave)                       | [wave](https://people.apache.org/committer-index.html#wave)               | PPMC 成员 |
-| Huajie Wang  | [@wolfboys](https://github.com/wolfboys)                         | [benjobs](https://people.apache.org/committer-index.html#benjobs)         | PPMC 成员 |
-| PJ Fanning   | [@pjfanning](https://github.com/pjfanning)                       | [fanningpj](https://people.apache.org/committer-index.html#fanningpj)     | PPMC 成员 |
-| Zili Chen    | [@tisonkun](https://github.com/tisonkun)                         | [tison](https://people.apache.org/committer-index.html#tison)             | PPMC 成员 |
-| Jiaju Zhuang | [@zhuangjiaju](https://github.com/zhuangjiaju)                   | [zhuangjiaju](https://people.apache.org/committer-index.html#zhuangjiaju) | PPMC 成员 |
-| Pengfei Ji   | [@jipengfei-jpf](https://github.com/jipengfei-jpf)               | [jipengfei](https://people.apache.org/committer-index.html#jipengfei)     | PPMC 成员 |
-| Shuxin Pan   | [@psxjoy](https://github.com/psxjoy)                             | [psxjoy](https://people.apache.org/committer-index.html#psxjoy)           | PPMC 成员 |
-| Xin Yan      | [@tmlx1990](https://github.com/tmlx1990)                         | [yanxin](https://people.apache.org/committer-index.html#yanxin)           | PPMC 成员 |
-| Zhe Zhang    | [@alaahong](https://github.com/alaahong)                         | [zhangzhe](https://people.apache.org/committer-index.html#zhangzhe)       | PPMC 成员 |
-| Ziqiu Guo    | [@delei](https://github.com/delei)                               | [delei](https://people.apache.org/committer-index.html#delei)             | PPMC 成员 |
-| Jing Yang    | [@bengbengbalabalabeng](https://github.com/bengbengbalabalabeng) | [benbala](https://people.apache.org/committer-index.html#benbala)         | PPMC 成员 |
-| Zhongqiang Gong | [@GOODBOY008](https://github.com/GOODBOY008)                  | [gongzhongqiang](https://people.apache.org/committer-index.html#gongzhongqiang) | PPMC 成员 |
+| Huajie Wang  | [@wolfboys](https://github.com/wolfboys)                         | [benjobs](https://people.apache.org/committer-index.html#benjobs)         | PMC 成员  |
+| PJ Fanning   | [@pjfanning](https://github.com/pjfanning)                       | [fanningpj](https://people.apache.org/committer-index.html#fanningpj)     | PMC 成员  |
+| Zili Chen    | [@tisonkun](https://github.com/tisonkun)                         | [tison](https://people.apache.org/committer-index.html#tison)             | PMC 成员  |
+| Jiaju Zhuang | [@zhuangjiaju](https://github.com/zhuangjiaju)                   | [zhuangjiaju](https://people.apache.org/committer-index.html#zhuangjiaju) | PMC 成员  |
+| Pengfei Ji   | [@jipengfei-jpf](https://github.com/jipengfei-jpf)               | [jipengfei](https://people.apache.org/committer-index.html#jipengfei)     | PMC 成员  |
+| Shuxin Pan   | [@psxjoy](https://github.com/psxjoy)                             | [psxjoy](https://people.apache.org/committer-index.html#psxjoy)           | PMC 主席  |
+| Xin Yan      | [@tmlx1990](https://github.com/tmlx1990)                         | [yanxin](https://people.apache.org/committer-index.html#yanxin)           | PMC 成员  |
+| Zhe Zhang    | [@alaahong](https://github.com/alaahong)                         | [zhangzhe](https://people.apache.org/committer-index.html#zhangzhe)       | PMC 成员  |
+| Ziqiu Guo    | [@delei](https://github.com/delei)                               | [delei](https://people.apache.org/committer-index.html#delei)             | PMC 成员  |
+| Jing Yang    | [@bengbengbalabalabeng](https://github.com/bengbengbalabalabeng) | [benbala](https://people.apache.org/committer-index.html#benbala)         | PMC 成员  |
+| Zhongqiang Gong | [@GOODBOY008](https://github.com/GOODBOY008)                  | [gongzhongqiang](https://people.apache.org/committer-index.html#gongzhongqiang) | PMC 成员  |
 
 </div>
 
@@ -54,6 +53,10 @@ Apache Fesod (Incubating) 团队由成员和贡献者组成。我们秉持开放
 | Nikita Kuprins  | [@nkuprins](https://github.com/nkuprins)                         | [nkuprins](https://people.apache.org/committer-index.html#nkuprins)             | Committer |
 
 </div>
+
+## Incubator Mentors
+
+感谢 Apache 孵化器导师 Huajie Wang、Dave Fisher、PJ Fanning 和 Zili Chen（Champion）在孵化期间给予的指导。
 
 ## Contributors
 

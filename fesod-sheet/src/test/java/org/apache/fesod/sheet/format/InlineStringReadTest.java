@@ -52,7 +52,7 @@ class InlineStringReadTest extends AbstractExcelTest {
             "<rPh sb=\"0\" eb=\"1\"><t>とう</t></rPh><rPh sb=\"1\" eb=\"2\"><t>きょう</t></rPh>";
 
     @ParameterizedTest(name = "prefix={0}, chunked={1}")
-    @CsvSource({"'', false", "'', true", "x, false", "x, true", "ns2, false", "ns2, true"})
+    @CsvSource({"'', false", "'', true", "x, false", "x, true", "ns2, false", "ns2, true", "p, false", "p, true"})
     void readInlineStrings(String prefix, boolean chunked) throws IOException {
         File file = createWorkbook(prefix);
         List<Map<Integer, String>> rows;
@@ -107,7 +107,18 @@ class InlineStringReadTest extends AbstractExcelTest {
             while ((entry = input.getNextEntry()) != null) {
                 output.putNextEntry(new ZipEntry(entry.getName()));
                 if ("xl/worksheets/sheet1.xml".equals(entry.getName())) {
-                    output.write(withPrefix(sheet, prefix).getBytes(StandardCharsets.UTF_8));
+                    String textTag = prefix.isEmpty() ? "t" : prefix + ":t";
+                    String valueTag = prefix.isEmpty() ? "v" : prefix + ":v";
+                    String xml = withPrefix(sheet, prefix)
+                            .replace(
+                                    "<" + textTag + ">base</" + textTag + ">",
+                                    "<" + textTag + ">ba<foreign:t xmlns:foreign=\"urn:fesod:test:foreign\">ignored<"
+                                            + textTag + ">nested</" + textTag + "></foreign:t>se</" + textTag + ">")
+                            .replace(
+                                    "<" + valueTag + ">42</" + valueTag + ">",
+                                    "<" + valueTag + ">42<foreign:v xmlns:foreign=\"urn:fesod:test:foreign\">999"
+                                            + "</foreign:v></" + valueTag + ">");
+                    output.write(xml.getBytes(StandardCharsets.UTF_8));
                 } else if ("xl/sharedStrings.xml".equals(entry.getName())) {
                     output.write(withPrefix(sharedStrings, prefix).getBytes(StandardCharsets.UTF_8));
                 } else {

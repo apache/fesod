@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -26,6 +26,7 @@
 package org.apache.fesod.sheet.analysis.v07.handlers;
 
 import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.common.util.PositionUtils;
 import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.constant.ExcelXmlConstants;
@@ -43,6 +44,7 @@ import org.xml.sax.Attributes;
  * Cell Handler
  *
  */
+@Slf4j
 public class CellTagHandler extends AbstractXlsxTagHandler {
 
     private static final int DEFAULT_FORMAT_INDEX = 0;
@@ -74,7 +76,18 @@ public class CellTagHandler extends AbstractXlsxTagHandler {
         if (StringUtils.isEmpty(dateFormatIndex)) {
             dateFormatIndexInteger = DEFAULT_FORMAT_INDEX;
         } else {
-            dateFormatIndexInteger = Integer.parseInt(dateFormatIndex);
+            try {
+                dateFormatIndexInteger = Integer.parseInt(dateFormatIndex);
+            } catch (NumberFormatException e) {
+                // A malformed style index (e.g. produced by third-party tools) must not abort the
+                // whole file read. Treat it like a missing style index and use the default format.
+                log.warn(
+                        "Invalid style index '{}'; falling back to default format index {}.",
+                        dateFormatIndex,
+                        DEFAULT_FORMAT_INDEX,
+                        e);
+                dateFormatIndexInteger = DEFAULT_FORMAT_INDEX;
+            }
         }
 
         xlsxReadSheetHolder

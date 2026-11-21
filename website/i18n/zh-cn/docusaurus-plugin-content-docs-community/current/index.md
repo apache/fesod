@@ -20,11 +20,11 @@ title: '加入社区'
 - limitations under the License.
 -->
 
-非常感谢您对 Apache Fesod (Incubating) 的关注。每个志愿者项目的力量都源于参与其中的人们。我们诚邀您根据自身意愿参与其中，无论贡献多少，我们都深表欢迎。
+非常感谢您对 Apache Fesod 的关注。每个志愿者项目的力量都源于参与其中的人们。我们诚邀您根据自身意愿参与其中，无论贡献多少，我们都深表欢迎。
 
 ## 初次接触
 
-初次来到 Apache Fesod (Incubating) 社区，您可以：
+初次来到 Apache Fesod 社区，您可以：
 
 * 使用我们的项目并提供反馈。
 * 向我们提供使用案例。

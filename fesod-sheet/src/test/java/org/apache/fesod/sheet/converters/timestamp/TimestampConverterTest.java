@@ -204,7 +204,7 @@ class TimestampConverterTest {
 
         Assertions.assertTrue(DefaultConverterLoader.loadDefaultWriteConverter()
                 .containsKey(ConverterKeyBuild.buildKey(Timestamp.class)));
-        Assertions.assertTrue(DefaultConverterLoader.loadDefaultWriteConverter()
-                .containsKey(ConverterKeyBuild.buildKey(Timestamp.class, CellDataTypeEnum.STRING)));
+        Assertions.assertTrue(DefaultConverterLoader.loadDefaultWriteStringConverter()
+                .containsKey(ConverterKeyBuild.buildKey(Timestamp.class)));
     }
 }

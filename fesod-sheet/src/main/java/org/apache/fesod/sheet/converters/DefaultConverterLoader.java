@@ -100,6 +100,7 @@ import org.apache.fesod.sheet.converters.year.YearStringConverter;
  */
 public class DefaultConverterLoader {
     private static Map<ConverterKey, Converter<?>> defaultWriteConverter;
+    private static Map<ConverterKey, Converter<?>> defaultWriteStringConverter;
     private static Map<ConverterKey, Converter<?>> allConverter;
 
     static {
@@ -208,8 +209,10 @@ public class DefaultConverterLoader {
         putWriteConverter(new BoxingByteArrayImageConverter());
         putWriteConverter(new UrlImageConverter());
         putWriteConverter(new UUIDStringConverter());
+        defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
 
         // In some cases, it must be converted to string
+        defaultWriteStringConverter = MapUtils.newHashMapWithExpectedSize(40);
         putWriteStringConverter(new BigDecimalStringConverter());
         putWriteStringConverter(new BigIntegerStringConverter());
         putWriteStringConverter(new BooleanStringConverter());
@@ -232,7 +235,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new StringStringConverter());
         putWriteStringConverter(new UUIDStringConverter());
         putWriteStringConverter(new YearStringConverter());
-        defaultWriteConverter = Collections.unmodifiableMap(defaultWriteConverter);
+        defaultWriteStringConverter = Collections.unmodifiableMap(defaultWriteStringConverter);
     }
 
     /**
@@ -253,13 +256,19 @@ public class DefaultConverterLoader {
         return new HashMap<>(loadDefaultWriteConverter());
     }
 
+    /**
+     * Returns default write converter for string (without cellDataTypeEnum).
+     */
+    public static Map<ConverterKey, Converter<?>> loadDefaultWriteStringConverter() {
+        return defaultWriteStringConverter;
+    }
+
     private static void putWriteConverter(Converter<?> converter) {
         defaultWriteConverter.put(ConverterKeyBuild.buildKey(converter.supportJavaTypeKey()), converter);
     }
 
     private static void putWriteStringConverter(Converter<?> converter) {
-        defaultWriteConverter.put(
-                ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()), converter);
+        defaultWriteStringConverter.put(ConverterKeyBuild.buildKey(converter.supportJavaTypeKey()), converter);
     }
 
     /**

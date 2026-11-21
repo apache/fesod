@@ -83,6 +83,9 @@ public class XlsxReadWorkbookHolder extends ReadWorkbookHolder {
         super(readWorkbook);
         this.saxParserFactoryName = readWorkbook.getXlsxSAXParserFactoryName();
         setExcelType(ExcelTypeEnum.XLSX);
+
+        initDefaultConverters(ExcelTypeEnum.XLSX, true);
+
         dataFormatDataCache = MapUtils.newHashMap();
     }
 

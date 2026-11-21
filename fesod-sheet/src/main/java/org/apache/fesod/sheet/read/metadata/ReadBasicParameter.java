@@ -30,6 +30,7 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.fesod.sheet.converters.ReadConverter;
 import org.apache.fesod.sheet.metadata.BasicParameter;
 import org.apache.fesod.sheet.read.listener.ReadListener;
 
@@ -57,8 +58,13 @@ public class ReadBasicParameter extends BasicParameter {
      * Custom type listener run after default
      */
     private List<ReadListener<?>> customReadListenerList;
+    /**
+     * Custom type converters for reading.
+     */
+    private List<ReadConverter<?>> customConverterList;
 
     public ReadBasicParameter() {
         customReadListenerList = new ArrayList<>();
+        customConverterList = new ArrayList<>();
     }
 }

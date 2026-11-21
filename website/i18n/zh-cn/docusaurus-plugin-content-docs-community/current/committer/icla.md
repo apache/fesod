@@ -62,7 +62,7 @@ Apache CLA 是 Apache贡献者许可协议的缩写，该协议旨在明确界�
 
 - （可选）通知项目
 
-  固定填写: Apache Fesod (Incubating)
+  固定填写: Apache Fesod
 
 参考此案例
 

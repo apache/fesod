@@ -20,7 +20,7 @@ title: 'Become A Committer'
 - limitations under the License.
 -->
 
-Anyone being supportive of the community and working in any of the CoPDoC areas can become an Apache Fesod (Incubating) committer. The CoPDoC is an acronym from ASF to describe how we recognize your contributions not only by code.
+Anyone being supportive of the community and working in any of the CoPDoC areas can become an Apache Fesod committer. The CoPDoC is an acronym from ASF to describe how we recognize your contributions not only by code.
 
 - **(Co)mmunity** - You can join us via our mailing list, issue
   trackers, discussions page to interact with community members, and
@@ -30,11 +30,11 @@ Anyone being supportive of the community and working in any of the CoPDoC areas 
   of the authors
 - **(C)ode** - discussion goes nowhere without code
 
-Apache Fesod (Incubating) community strives to be meritocratic. Thus, once someone has contributed sufficiently to any area of CoPDoC they can be a candidate for committer-ship and at last voted in as an Apache Fesod (Incubating) committer. Being an Apache Fesod (Incubating) committer does not necessarily mean you must commit code with your commit privilege to the codebase, it means you are committed to the Apache Fesod (Incubating) project and are productively contributing to our community's success.
+Apache Fesod community strives to be meritocratic. Thus, once someone has contributed sufficiently to any area of CoPDoC they can be a candidate for committer-ship and at last voted in as an Apache Fesod committer. Being an Apache Fesod committer does not necessarily mean you must commit code with your commit privilege to the codebase, it means you are committed to the Apache Fesod project and are productively contributing to our community's success.
 
 ## Committer requirements
 
-There are no strict rules for becoming a committer or PPMC member.
+There are no strict rules for becoming a committer or PMC member.
 Candidates for new committers are typically people that are active
 contributors and community members. Anyway, if the rules can be
 clarified a little bit, it can somehow clear the doubts in the minds
@@ -46,12 +46,12 @@ and fair.
 Committer candidates should have a decent amount of continuous
 engagements and contributions (fixing bugs, adding new features,
 writing documentation, maintaining issues boards, code review, or answering
-community questions) to Apache Fesod (Incubating).
+community questions) to Apache Fesod.
 
 ### Quality of contributions
 
 - A solid general understanding of the project
-- Well tested, well-designed, following Apache Fesod (Incubating) coding
+- Well tested, well-designed, following Apache Fesod coding
   standards, and simple patches.
 - Well-organized and detailed user-oriented documentation.
 
@@ -83,6 +83,6 @@ community questions) to Apache Fesod (Incubating).
 
 Every Apache Committer is eligible for a free license that grants them access to all the JetBrains IDEs such as IntelliJ IDEA, PyCharm, and other desktop tools.
 
-If you are an Apache Fesod (Incubating) Committer and still haven’t received a free JetBrains license, please use your `@apache.org` email address to [All Products Packs for Apache committers](https://www.jetbrains.com/shop/eform/apache?product=ALL) now for the subsequent development of Apache Fesod (Incubating).
+If you are an Apache Fesod Committer and still haven’t received a free JetBrains license, please use your `@apache.org` email address to [All Products Packs for Apache committers](https://www.jetbrains.com/shop/eform/apache?product=ALL) now for the subsequent development of Apache Fesod.
 
 If you have obtained a free JetBrains subscription but it has expired, you can reactivate all product packs for free using your `@apache.org` email address by this link and click `Refresh license list` in your JetBrains desktop tools (e.g. IntelliJ IDEA) to refresh the subscription.

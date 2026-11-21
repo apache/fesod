@@ -24,7 +24,7 @@ title: '概述'
 
 ## 贡献方向
 
-对 Apache Fesod (Incubating) 贡献，贡献方向有很多:
+对 Apache Fesod 贡献，贡献方向有很多:
 
 - 修复错别字
 - 修复 Bug
@@ -84,14 +84,14 @@ title: '概述'
 
 ## 贡献文档
 
-文档是 Apache Fesod (Incubating) 官方网站的重要构建内容，是项目与社区之间的重要桥梁。请参考[文档贡献指南](./contribution/contribute-doc.md)了解如何贡献文档。
+文档是 Apache Fesod 官方网站的重要构建内容，是项目与社区之间的重要桥梁。请参考[文档贡献指南](./contribution/contribute-doc.md)了解如何贡献文档。
 
 ## 其他参与方式
 
-除了直接贡献代码，以下方式同样是对 Apache Fesod (Incubating) 的宝贵支持：
+除了直接贡献代码，以下方式同样是对 Apache Fesod 的宝贵支持：
 
 - 回答其他用户的问题。
 - 帮助审阅他人的 PR。
 - 提出改进建议。
-- 撰写技术博客，宣传 Apache Fesod (Incubating)。
+- 撰写技术博客，宣传 Apache Fesod。
 - 在社区中分享项目相关知识。

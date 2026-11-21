@@ -24,7 +24,7 @@ This guide is for all committers and contributors that want to help with reviewi
 
 - Contributors have a good contribution experience.
 - Our reviews are structured and check all important aspects of a contribution.
-- We make sure to keep a high code quality in Apache Fesod (Incubating).
+- We make sure to keep a high code quality in Apache Fesod.
 - We avoid situations where contributors and reviewers spend a lot of time refining a contribution that gets rejected later.
 
 ## Code Review Guidelines

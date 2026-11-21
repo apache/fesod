@@ -48,11 +48,12 @@ public interface Converter<T> {
     /**
      * Excel data type this converter supports.
      *
-     * <p>Returning {@code null} declares the wildcard key {@code (JavaType, null)}: the converter matches
-     * every target cell data type. The xlsx write path looks converters up with a {@code null} target type,
-     * and a custom converter declaring {@code null} is additionally registered under the
-     * {@link CellDataTypeEnum#STRING} key so that it is honored by the CSV write path, which forces the
-     * lookup key to {@code (JavaType, STRING)}.
+     * <p>Returning {@code null} registers the converter under the wildcard key {@code (JavaType, null)},
+     * which applies to every write target cell data type. The xlsx write path looks converters up with a
+     * {@code null} target type directly; when the write path forces a concrete target type (CSV writes and
+     * fill composition use {@link CellDataTypeEnum#STRING}), the wildcard converter is used as a fallback
+     * unless a converter is explicitly registered for that exact target type. An explicit registration
+     * always takes precedence over a wildcard one, regardless of registration order.
      *
      * @return Support for {@link CellDataTypeEnum}
      */

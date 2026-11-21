@@ -1,6 +1,6 @@
 ---
 id: 'onboarding'
-title: 'PPMC 成员须知'
+title: 'PMC 成员须知'
 ---
 
 <!--
@@ -20,26 +20,34 @@ title: 'PPMC 成员须知'
 - limitations under the License.
 -->
 
-本文件主要作为 Apache Fesod (Incubating)项目新 PPMC 成员的入门指南。
+本文件主要作为 Apache Fesod 新 PMC 成员的入门指南。
 
-收到 Apache Fesod (Incubating) PPMC 发出的邀请邮件后，新成员应考虑是否接受邀请。
-若决定接受，应选择**“回复所有”**并明确表达接受意向。
+收到 Apache Fesod PMC 发出的邀请邮件后，新成员应考虑是否接受邀请。若决定接受，应选择**“回复所有”**并明确表达接受意向。
 
-## 订阅私人邮件列表
+## 订阅私有邮件列表
 
 - 发送邮件至 [private-subscribe@fesod.apache.org](mailto:private-subscribe@fesod.apache.org)
 - 您将收到一封主题为 `confirm subscribe to private@fesod.apache.org` 的邮件
 - 回复该邮件并在正文中输入“Confirm”
 
-若收到主题为 `WELCOME to private@fesod.apache.org`, 的邮件，即表示您已成功订阅该私有邮件列表。
+若收到主题为 `WELCOME to private@fesod.apache.org` 的邮件，即表示您已成功订阅该私有邮件列表。
 
-PPMC 成员必须订阅此私有邮件列表。该列表仅用于保密讨论，涉及内容不得公开，例如评估特定人员是否适合成为提交者或 PPMC 成员等事项。
+PMC 成员必须订阅此私有邮件列表。该列表仅用于不得公开的保密讨论，例如评估特定人员是否适合成为 committer 或 PMC 成员等事项。
 
-### 请勿在混用私人列表和公共列表
+### 请勿混用私有和公共邮件列表
 
-- 请勿同时向开发邮件列表和私有邮件列表发送邮件。PPMC的每位成员都应订阅开发邮件列表，因此仅向开发列表发送邮件即可。
-- 同理，请勿同时向孵化器通用邮件列表和孵化器私有邮件列表发送邮件。IPMC的每位成员都订阅了孵化器通用邮件列表，因此仅向通用列表发送邮件即可。
+- 请勿同时向 dev 邮件列表和 private 邮件列表发送邮件。PMC 的每位成员都应订阅 dev 邮件列表，因此仅向 dev 列表发送邮件即可。
+- 可以公开的讨论请留在 dev 列表，只有必须保密的事项才使用 private 列表。
 
-## ASF 孵化器 PPMC 成员指南
+## 了解 PMC 的运作方式
 
-请阅读 ASF 孵化器官方[PPMC指南](https://incubator.apache.org/guides/ppmc.html)，了解项目 PPMC 成员在管理本项目中的基本职责，以及日常维护的通用操作流程。
+请阅读 [Apache PMC 指南](https://www.apache.org/dev/pmc.html)，了解 PMC 成员的职责以及顶级项目（TLP）的日常运作。
+
+作为 Apache Fesod 的 PMC 成员，你需要：
+
+- 在 dev 和 private 邮件列表保持活跃；
+- 对新的 committer、新的 PMC 成员和版本发布进行投票；
+- 参与贡献审查并指导项目路线图；
+- 确保项目符合 ASF 的品牌、法律和发布政策。
+
+PMC Chair 是由董事会任命的 ASF 官员（Apache Fesod 副总裁），负责在 [Whimsy](https://whimsy.apache.org/roster/committee/fesod) 维护项目成员名单，并向董事会提交项目健康状况报告。项目按季度报告；新 PMC 在第一个季度需要按月报告。Chair 可参阅 [PMC Chair 指南](https://www.apache.org/dev/pmc-chair) 获取更多指导。

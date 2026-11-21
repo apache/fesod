@@ -20,7 +20,7 @@ title: '提名新 Committer'
 - limitations under the License.
 -->
 
-本文件主要介绍PPMC成员如何提名新提交者。
+本文件主要介绍 PMC 成员如何提名新的 committer。
 
 ## 模板
 
@@ -28,11 +28,17 @@ title: '提名新 Committer'
 
 - CANDIDATE_NAME: 候选人英文真实姓名，而非 Github 名称或 Id
 - CANDIDATE_GITHUB_ID: 候选人 Github ID
-- NOMINATOR: 提名者
+- NOMINATOR: 提名者的完整公开姓名
+
+:::note
+
+CANDIDATE_NAME 必须是公开姓名，而不是 Github 用户名或 Id。
+
+:::
 
 ## 讨论
 
-如果任何 PPMC 成员认为某人符合我们的要求并且可以成为潜在的提交者，
+如果任何 PMC 成员认为某人符合我们的要求并且可以成为潜在的 committer，
 请通过发送电子邮件的方式发起对该候选人的讨论，邮箱地址为： <private@fesod.apache.org>:
 
 主题：
@@ -107,7 +113,7 @@ https://community.apache.org/pmc/adding-committers.html
 
 ## 关闭投票
 
-在至少获得 3 次 +1 赞成票且无人投反对票的情况下，宣布投票结果：
+在至少获得 3 个 +1 有效票（binding vote）且无人投 -1 否决票的情况下，宣布投票结果：
 
 主题：
 
@@ -144,7 +150,7 @@ ${NOMINATOR}
 主题：
 
 ```text
-Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
+Invitation to become Apache Fesod Committer: ${CANDIDATE_NAME}
 ```
 
 内容：
@@ -152,7 +158,7 @@ Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
 ```text
 Hello ${CANDIDATE_NAME},
 
-The Apache Fesod (Incubating) (PPMC) hereby offers you 
+The Apache Fesod PMC hereby offers you 
 committer privileges to the project.
 
 These privileges are offered on the understanding that
@@ -207,7 +213,7 @@ B. If there is not already an ICLA on file, you need to submit an ICLA:
     that should be kept private.
 
     3. When you complete the ICLA form, be sure to include in the form
-    the Apache [Project] project and choose a
+    the Apache Fesod project and choose a
     unique Apache ID. Look to see if your preferred
     ID is already taken at
     https://people.apache.org/committer-index.html
@@ -219,7 +225,7 @@ receive a follow-up message with the next steps for
 establishing you as a committer.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```
 
 ## 候选人接受邀请
@@ -229,7 +235,7 @@ On behalf of Apache Fesod (Incubating) PPMC
 主题：
 
 ```text
-Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
+Invitation to become Apache Fesod Committer: ${CANDIDATE_NAME}
 ```
 
 内容：
@@ -259,12 +265,16 @@ We generally discuss everything there and keep the
 private@fesod.apache.org list for occasional matters which must be private.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```
+
+## 申请账号
+
+ICLA 记录完成后，由 PMC Chair（若 Chair 无法操作，则由 ASF 成员）提交 Apache 账号申请，并附上 [lists.apache.org](https://lists.apache.org/) 上最终投票结果的链接。账号申请只接受 PMC Chair 和 ASF 成员提交。在基础设施团队明确确认账号已创建之后，再授予相应权限。
 
 ## 将候选人添加至提交者名单
 
-候选人接受邀请并完成iCLA记录后，请通过[whimsy roster tools](https://whimsy.apache.org/roster/committee/fesod)将其添加至提交者名单。
+候选人接受邀请并完成 ICLA 记录后，请通过 [whimsy roster tools](https://whimsy.apache.org/roster/committee/fesod) 将其添加至提交者名单。
 
 ![Roster](/img/community/roster-add-committer.png)
 
@@ -297,10 +307,8 @@ provides other resources:
   https://www.apache.org/foundation/how-it-works.html
   https://www.apache.org/dev/
 
-The incubator also has some useful information for new committers
-in incubating projects:
-  https://incubator.apache.org/guides/committer.html
-  https://incubator.apache.org/guides/ppmc.html
+The Apache PMC guide describes how the project is governed:
+  https://www.apache.org/dev/pmc.html
 
 You now have expanded access to portions of the Whimsy toolset
 specific to committers: https://whimsy.apache.org/
@@ -319,18 +327,18 @@ If you have any questions during this phase, then please
 see the following resources:
 
 Apache developer's pages: https://www.apache.org/dev/
-Incubator committer guide: https://incubator.apache.org/guides/committer.html
+Apache PMC guide: https://www.apache.org/dev/pmc.html
 
 Naturally, if you don't understand anything be sure to ask us on the 
 Fesod dev mailing list. Documentation is maintained by volunteers 
 and hence can be out-of-date and incomplete - of course you can now
 help fix that.
 
-A PPMC member will announce your election to the dev list, and we
+A PMC member will announce your election to the dev list, and we
 encourage you to introduce yourself there.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```
 
 ## 公告
@@ -346,7 +354,7 @@ On behalf of Apache Fesod (Incubating) PPMC
 内容:
 
 ```text
-The Podling Project Management Committee (PPMC) for Apache Fesod (Incubating)
+The Project Management Committee (PMC) of Apache Fesod
 has invited ${CANDIDATE_NAME} to become a committer and we are pleased
 to announce that they have accepted.
 
@@ -356,5 +364,5 @@ Please join us in welcoming ${CANDIDATE_NAME} to their new role and
 responsibility in our project community.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```

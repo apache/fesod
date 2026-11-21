@@ -20,7 +20,7 @@ title: 'Nominate Committer'
 - limitations under the License.
 -->
 
-This document mainly introduces how a PPMC member nominates a new committer.
+This document mainly introduces how a PMC member nominates a new committer.
 
 ## Template
 
@@ -28,7 +28,7 @@ Note that, there are three placeholder in template should be replaced before usi
 
 - CANDIDATE_NAME: The full name of the candidate.
 - CANDIDATE_GITHUB_ID: The GitHub id of the candidate.
-- NOMINATOR: The GitHub id of the candidate.
+- NOMINATOR: The full public name of the nominator.
 
 :::note
 
@@ -38,7 +38,7 @@ CANDIDATE_NAME This Must Be Public Name, Not Github Name Or Id.
 
 ## Discuss
 
-If any PPMC member recognize someone has met our requirements and can be the potential committer, please start a
+If any PMC member recognize someone has met our requirements and can be the potential committer, please start a
 discussion about the candidate via sending email to: <private@fesod.apache.org>:
 
 Title:
@@ -153,7 +153,7 @@ If the vote result is positive, send an invitation to the candidate and cc <priv
 Title:
 
 ```text
-Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
+Invitation to become Apache Fesod Committer: ${CANDIDATE_NAME}
 ```
 
 Content:
@@ -161,7 +161,7 @@ Content:
 ```text
 Hello ${CANDIDATE_NAME},
 
-The Apache Fesod (Incubating) (PPMC) hereby offers you 
+The Apache Fesod PMC hereby offers you 
 committer privileges to the project.
 
 These privileges are offered on the understanding that
@@ -216,11 +216,11 @@ B. If there is not already an ICLA on file, you need to submit an ICLA:
     that should be kept private.
 
     3. When you complete the ICLA form, be sure to include in the form
-    the Apache [Project] project and choose a
+    the Apache Fesod project and choose a
     unique Apache ID. Look to see if your preferred
     ID is already taken at
     https://people.apache.org/committer-index.html
-    This will allow the Secretary to notify the PPMC
+    This will allow the Secretary to notify the PMC
     when your ICLA has been recorded.
 
 When recording of your ICLA is noted, you will
@@ -228,7 +228,7 @@ receive a follow-up message with the next steps for
 establishing you as a committer.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```
 
 ## The candidate accepts the invitation
@@ -238,7 +238,7 @@ If the invitation is accepted, the candidate will receive an email from the ASF.
 Title:
 
 ```text
-Invitation to become Apache Fesod (Incubating) Committer: ${CANDIDATE_NAME}
+Invitation to become Apache Fesod Committer: ${CANDIDATE_NAME}
 ```
 
 Content:
@@ -268,12 +268,16 @@ We generally discuss everything there and keep the
 private@fesod.apache.org list for occasional matters which must be private.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```
+
+## Request the account
+
+After the ICLA has been recorded, the PMC chair (or an ASF member if the chair is unavailable) submits the Apache account request, including a link to the final vote tally on [lists.apache.org](https://lists.apache.org/). New account requests are only accepted from PMC chairs and ASF members. Wait for explicit confirmation from the Infrastructure team that the account exists before granting access.
 
 ## Add the candidate to the committer list
 
-After the candidate accepts the invitation and the iCLA is recorded, add the candidate to the committer list
+After the candidate accepts the invitation and the ICLA is recorded, add the candidate to the committer list
 by [whimsy roster tools](https://whimsy.apache.org/roster/committee/fesod)
 
 ![Roster](/img/community/roster-add-committer.png)
@@ -307,10 +311,8 @@ provides other resources:
   https://www.apache.org/foundation/how-it-works.html
   https://www.apache.org/dev/
 
-The incubator also has some useful information for new committers
-in incubating projects:
-  https://incubator.apache.org/guides/committer.html
-  https://incubator.apache.org/guides/ppmc.html
+The Apache PMC guide describes how the project is governed:
+  https://www.apache.org/dev/pmc.html
 
 You now have expanded access to portions of the Whimsy toolset
 specific to committers: https://whimsy.apache.org/
@@ -329,18 +331,18 @@ If you have any questions during this phase, then please
 see the following resources:
 
 Apache developer's pages: https://www.apache.org/dev/
-Incubator committer guide: https://incubator.apache.org/guides/committer.html
+Apache PMC guide: https://www.apache.org/dev/pmc.html
 
 Naturally, if you don't understand anything be sure to ask us on the 
 Fesod dev mailing list. Documentation is maintained by volunteers 
 and hence can be out-of-date and incomplete - of course you can now
 help fix that.
 
-A PPMC member will announce your election to the dev list, and we
+A PMC member will announce your election to the dev list, and we
 encourage you to introduce yourself there.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```
 
 ## Announcement
@@ -356,7 +358,7 @@ Title:
 Content:
 
 ```text
-The Podling Project Management Committee (PPMC) for Apache Fesod (Incubating)
+The Project Management Committee (PMC) of Apache Fesod
 has invited ${CANDIDATE_NAME} to become a committer and we are pleased
 to announce that they have accepted.
 
@@ -366,5 +368,5 @@ Please join us in welcoming ${CANDIDATE_NAME} to their new role and
 responsibility in our project community.
 
 ${NOMINATOR}
-On behalf of Apache Fesod (Incubating) PPMC
+On behalf of the Apache Fesod PMC
 ```

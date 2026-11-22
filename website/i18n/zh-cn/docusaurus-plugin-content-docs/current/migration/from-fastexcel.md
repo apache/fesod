@@ -26,7 +26,7 @@ keywords: [fesod, 迁移, fastexcel, apache, excel, 升级]
 
 ## 概述
 
-本指南为从 cn.idev FastExcel 迁移到 Apache Fesod 提供全面的迁移路线。Apache Fesod 是该项目的演进版本，现已成为 Apache 软件基金会的顶级项目（Top-Level Project，TLP），提供同样的高性能 Excel 处理能力，并具有更强的社区支持和长期可持续性。
+本指南为从 cn.idev FastExcel 迁移到 Apache Fesod 提供全面的迁移路线。Apache Fesod 是该项目的演进版本，现已成为 Apache 软件基金会的顶级项目，提供同样的高性能 Excel 处理能力，并具有更强的社区支持和长期可持续性。
 
 ### 为什么要迁移?
 

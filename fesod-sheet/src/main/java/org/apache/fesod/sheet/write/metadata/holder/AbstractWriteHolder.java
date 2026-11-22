@@ -273,11 +273,7 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
             setConverterMap(new HashMap<>(parentAbstractWriteHolder.getConverterMap()));
             if (CollectionUtils.isNotEmpty(parentAbstractWriteHolder.getCustomConverterList())) {
                 for (Converter<?> converter : parentAbstractWriteHolder.getCustomConverterList()) {
-                    getConverterMap()
-                            .put(
-                                    ConverterKeyBuild.buildKey(
-                                            converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                    converter);
+                    putCustomConverter(converter);
                 }
             }
         }
@@ -285,13 +281,25 @@ public abstract class AbstractWriteHolder extends AbstractHolder implements Writ
                 && !writeBasicParameter.getCustomConverterList().isEmpty()) {
             this.customConverterList = writeBasicParameter.getCustomConverterList();
             for (Converter<?> converter : writeBasicParameter.getCustomConverterList()) {
-                getConverterMap()
-                        .put(
-                                ConverterKeyBuild.buildKey(
-                                        converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
-                                converter);
+                putCustomConverter(converter);
             }
         }
+    }
+
+    /**
+     * Registers a custom converter under the key it declares.
+     *
+     * <p>A converter declaring a {@code null} excel type key is registered under the wildcard key
+     * {@code (JavaType, null)} only. The write path falls back to that key when a concrete target cell data
+     * type is forced (CSV writes, fill composition), see {@code AbstractExcelWriteExecutor#resolveConverter}.
+     * Keeping the registration to the declared key leaves a single wildcard converter per Java type, so the
+     * last registration wins consistently across formats.
+     */
+    private void putCustomConverter(Converter<?> converter) {
+        getConverterMap()
+                .put(
+                        ConverterKeyBuild.buildKey(converter.supportJavaTypeKey(), converter.supportExcelTypeKey()),
+                        converter);
     }
 
     protected void initHandler(WriteBasicParameter writeBasicParameter, AbstractWriteHolder parentAbstractWriteHolder) {

@@ -48,10 +48,13 @@ import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.WriteDirectionEnum;
 import org.apache.fesod.sheet.enums.WriteTemplateAnalysisCellTypeEnum;
 import org.apache.fesod.sheet.exception.ExcelGenerateException;
+import org.apache.fesod.sheet.metadata.data.DataFormatData;
+import org.apache.fesod.sheet.metadata.data.RichTextStringData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.util.BeanMapUtils;
 import org.apache.fesod.sheet.util.ClassUtils;
+import org.apache.fesod.sheet.util.DateUtils;
 import org.apache.fesod.sheet.util.FieldUtils;
 import org.apache.fesod.sheet.util.PoiUtils;
 import org.apache.fesod.sheet.util.WriteHandlerUtils;
@@ -61,6 +64,7 @@ import org.apache.fesod.sheet.write.metadata.fill.AnalysisCell;
 import org.apache.fesod.sheet.write.metadata.fill.FillConfig;
 import org.apache.fesod.sheet.write.metadata.fill.FillWrapper;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
+import org.apache.fesod.sheet.write.metadata.style.WriteCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -310,6 +314,24 @@ public class ExcelWriteFillExecutor extends AbstractExcelWriteExecutor {
                                 break;
                             case NUMBER:
                                 cellValueBuild.append(cellData.getNumberValue());
+                                break;
+                            case DATE:
+                                cellValueBuild.append(DateUtils.format(
+                                        cellData.getDateValue(),
+                                        Optional.ofNullable(cellData.getWriteCellStyle())
+                                                .map(WriteCellStyle::getDataFormatData)
+                                                .map(DataFormatData::getFormat)
+                                                .orElse(null),
+                                        writeContext
+                                                .writeWorkbookHolder()
+                                                .globalConfiguration()
+                                                .getLocale()));
+                                break;
+                            case RICH_TEXT_STRING:
+                                RichTextStringData richTextStringData = cellData.getRichTextStringDataValue();
+                                if (richTextStringData != null) {
+                                    cellValueBuild.append(richTextStringData.getTextString());
+                                }
                                 break;
                             default:
                                 break;

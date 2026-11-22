@@ -24,7 +24,7 @@ title: '指南'
 
 ## 兼容说明
 
-下表列出了各版本 Apache Fesod(Incubating) 基础库对 Java 语言版本最低要求的情况：
+下表列出了各版本 Apache Fesod 基础库对 Java 语言版本最低要求的情况：
 
 | 版本               | jdk版本支持范围    | 备注           |
 |------------------|--------------|--------------|
@@ -33,11 +33,11 @@ title: '指南'
 | 2.0.1-incubating | jdk8 - jdk25 | Apache 孵化器版本 |
 | 2.0.0-incubating | jdk8 - jdk25 | NA(无效)       |
 
-我们强烈建议您使用最新版本的 Apache Fesod(Incubating)，因为最新版本中的性能优化、BUG 修复和新功能都会让您的使用更加方便。
+我们强烈建议您使用最新版本的 Apache Fesod，因为最新版本中的性能优化、BUG 修复和新功能都会让您的使用更加方便。
 
 ### 依赖说明
 
-Apache Fesod(Incubating) 使用了以下核心依赖：
+Apache Fesod 使用了以下核心依赖：
 
 - **Apache POI 5.5.1** - 用于 Excel 文件处理
 - **Apache Commons CSV 1.14.1** - 用于 CSV 文件支持

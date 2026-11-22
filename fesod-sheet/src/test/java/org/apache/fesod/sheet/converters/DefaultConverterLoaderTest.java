@@ -92,9 +92,10 @@ public class DefaultConverterLoaderTest {
         Map<ConverterKey, Converter<?>> writeConverter = DefaultConverterLoader.loadDefaultWriteConverter();
         Assertions.assertInstanceOf(
                 MonthDayStringConverter.class, writeConverter.get(ConverterKeyBuild.buildKey(MonthDay.class)));
+
+        Map<ConverterKey, Converter<?>> writeStringConverter = DefaultConverterLoader.loadDefaultWriteStringConverter();
         Assertions.assertInstanceOf(
-                MonthDayStringConverter.class,
-                writeConverter.get(ConverterKeyBuild.buildKey(MonthDay.class, CellDataTypeEnum.STRING)));
+                MonthDayStringConverter.class, writeStringConverter.get(ConverterKeyBuild.buildKey(MonthDay.class)));
     }
 
     @Test

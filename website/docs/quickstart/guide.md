@@ -24,8 +24,8 @@ title: 'Guide'
 
 ## Compatibility Information
 
-The following table lists the minimum Java language version requirements for each version of the Apache Fesod(
-Incubating) library:
+The following table lists the minimum Java language version requirements for each version of the Apache Fesod
+library:
 
 | Version          | JDK Version Support Range | Notes                    |
 |------------------|---------------------------|--------------------------|
@@ -34,13 +34,13 @@ Incubating) library:
 | 2.0.1-incubating | JDK8 - JDK25              | Apache Incubator release |
 | 2.0.0-incubating | JDK8 - JDK25              | NA(not available)        |
 
-We strongly recommend using the latest version of Apache Fesod(Incubating), as performance optimizations, bug fixes, and
+We strongly recommend using the latest version of Apache Fesod, as performance optimizations, bug fixes, and
 new features
 in the latest version will enhance your experience.
 
 ### Dependencies
 
-Apache Fesod(Incubating) uses the following key dependencies:
+Apache Fesod uses the following key dependencies:
 
 - **Apache POI 5.5.1** - For Excel file processing
 - **Apache Commons CSV 1.14.1** - For CSV file support

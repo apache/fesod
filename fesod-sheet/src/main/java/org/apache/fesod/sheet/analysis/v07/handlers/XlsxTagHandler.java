@@ -29,47 +29,45 @@ import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.xml.sax.Attributes;
 
 /**
- * Tag handler
+ * Handler for a specific XLSX XML tag during SAX-based streaming reading.
+ * <p>
+ * Implementations are selected by {@link #support(XlsxReadContext)} and then receive the SAX
+ * lifecycle callbacks for the matched tag.
  */
 public interface XlsxTagHandler {
 
     /**
-     * Whether to support
+     * Determine whether this handler should handle the tag in the current reading context.
      *
-     * @param xlsxReadContext
-     * @return
+     * @param xlsxReadContext the current XLSX reading context, never {@code null}
+     * @return {@code true} if this handler supports the current tag, {@code false} otherwise
      */
     boolean support(XlsxReadContext xlsxReadContext);
 
     /**
-     * Start handle
+     * Handle the start of the matched XML element.
      *
-     * @param xlsxReadContext
-     *            xlsxReadContext
-     * @param name
-     *            Tag name
-     * @param attributes
-     *            Tag attributes
+     * @param xlsxReadContext the current XLSX reading context, never {@code null}
+     * @param name            the qualified name of the tag
+     * @param attributes      the attributes of the tag, never {@code null}
      */
     void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes);
 
     /**
-     * End handle
+     * Handle the end of the matched XML element.
      *
-     * @param xlsxReadContext
-     *            xlsxReadContext
-     * @param name
-     *            Tag name
+     * @param xlsxReadContext the current XLSX reading context, never {@code null}
+     * @param name            the qualified name of the tag
      */
     void endElement(XlsxReadContext xlsxReadContext, String name);
 
     /**
-     * Read data
+     * Handle the character data contained in the matched XML element.
      *
-     * @param xlsxReadContext
-     * @param ch
-     * @param start
-     * @param length
+     * @param xlsxReadContext the current XLSX reading context, never {@code null}
+     * @param ch              the characters from the XML document
+     * @param start           the start position in the character array
+     * @param length          the number of characters to read from the character array
      */
     void characters(XlsxReadContext xlsxReadContext, char[] ch, int start, int length);
 }

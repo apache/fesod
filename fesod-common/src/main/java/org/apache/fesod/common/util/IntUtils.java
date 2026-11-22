@@ -26,25 +26,39 @@
 package org.apache.fesod.common.util;
 
 /**
- * Int utils
+ * Utilities for working with {@code int} values.
  *
- *
- **/
+ * <p>All methods in this class are static and the class cannot be instantiated.
+ */
 public class IntUtils {
+
+    /**
+     * Utility classes must never be instantiated.
+     */
     private IntUtils() {}
 
     /**
-     * The largest power of two that can be represented as an {@code int}.
+     * The largest power of two that can be represented as an {@code int}, namely
+     * {@code 2^30 = 1073741824}.
      */
     public static final int MAX_POWER_OF_TWO = 1 << (Integer.SIZE - 2);
 
     /**
-     * Returns the {@code int} nearest in value to {@code value}.
+     * <p>Returns the {@code int} value nearest in value to {@code value}, clamping the result
+     * to the range of the {@code int} type ("saturating" the conversion) instead of silently
+     * truncating high-order bits.</p>
      *
-     * @param value any {@code long} value
+     * <pre>
+     *   IntUtils.saturatedCast(0L)                     = 0
+     *   IntUtils.saturatedCast(Integer.MAX_VALUE + 1L) = Integer.MAX_VALUE
+     *   IntUtils.saturatedCast(Integer.MIN_VALUE - 1L) = Integer.MIN_VALUE
+     * </pre>
+     *
+     * @param value any {@code long} value to convert
      * @return the same value cast to {@code int} if it is in the range of the {@code int} type,
      * {@link Integer#MAX_VALUE} if it is too large, or {@link Integer#MIN_VALUE} if it is too
      * small
+     * @see Math#toIntExact(long)
      */
     public static int saturatedCast(long value) {
         if (value > Integer.MAX_VALUE) {

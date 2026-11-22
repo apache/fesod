@@ -32,9 +32,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Ignore all unannotated fields.
+ * Ignores all fields that are not annotated with {@link ExcelProperty}, applying only to the
+ * class it is declared on.
  *
+ * <p>When this annotation is present, a field without {@link ExcelProperty} is excluded from both
+ * reading and writing, so only explicitly annotated fields participate in the spreadsheet. Fields
+ * marked with {@link ExcelIgnore} are always skipped, and static final or transient fields are
+ * ignored regardless of this annotation.
  *
+ * <p>This annotation is applicable to types and is retained at runtime, so it can be discovered
+ * reflectively by the read/write pipeline. It is inherited by subclasses.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

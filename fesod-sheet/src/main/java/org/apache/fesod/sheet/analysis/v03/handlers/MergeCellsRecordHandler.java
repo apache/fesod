@@ -34,15 +34,35 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * Record handler
+ * Handles the XLS {@code MERGEDCELLS} record and exposes each merged region as a {@link CellExtra} of type
+ * {@link CellExtraTypeEnum#MERGE}, covering the region's row and column bounds.
+ * <p>
+ * Only active when {@link CellExtraTypeEnum#MERGE} is present in the extra read set; otherwise the record is
+ * skipped as an ignorable record.
  */
 public class MergeCellsRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Determines whether this handler should process the record, i.e. whether merge extras are requested.
+     *
+     * @param xlsReadContext the current XLS read context, not {@code null}
+     * @param record         the record to test
+     * @return {@code true} if the extra read set contains {@link CellExtraTypeEnum#MERGE}
+     */
     @Override
     public boolean support(XlsReadContext xlsReadContext, Record record) {
         return xlsReadContext.readWorkbookHolder().getExtraReadSet().contains(CellExtraTypeEnum.MERGE);
     }
 
+    /**
+     * Builds one {@link CellExtra} per merged area in the record, stores it in the sheet read holder and notifies
+     * the analysis event processor for each area. The extra's value is {@code null}, since only the region
+     * coordinates are relevant.
+     *
+     * @param xlsReadContext the current XLS read context, not {@code null}
+     * @param record         the record to process, must be a {@link MergeCellsRecord}
+     * @throws ClassCastException if {@code record} is not a {@link MergeCellsRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         MergeCellsRecord mcr = (MergeCellsRecord) record;

@@ -45,10 +45,28 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.CellType;
 
 /**
- * Record handler
+ * Handler for XLS (BIFF8) {@link FormulaRecord}s, which carry the cached result and the parsed expression of a
+ * formula cell.
+ * <p>
+ * Each record is converted into a {@link ReadCellData} that holds the formula text (restored via
+ * {@link HSSFFormulaParser}) plus its cached value, whose data type comes from
+ * {@link FormulaRecord#getCachedResultType()}. Numeric, error, boolean and empty results are written to the current
+ * row immediately, while a string result is stashed as temporary cell data and finished by the following
+ * {@code STRING} record.
  */
 @Slf4j
 public class FormulaRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
+
+    /**
+     * Process a {@link FormulaRecord} and store the resulting cell data in the current sheet's cell map.
+     * <p>
+     * The record is skipped when the source column maps to no target column. If the formula text cannot be restored
+     * from the parsed expression, the failure is logged at debug level and the cell is still emitted with a
+     * {@code null} formula value.
+     *
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the record to process, a {@link FormulaRecord}, never {@code null}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         FormulaRecord frec = (FormulaRecord) record;

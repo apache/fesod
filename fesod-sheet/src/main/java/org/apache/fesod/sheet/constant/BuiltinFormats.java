@@ -39,16 +39,24 @@ import org.apache.fesod.common.util.StringUtils;
  *
  * <p>
  * Specific correspondence please see:
- * https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
- *
- *
+ * <a href="https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1">...</a>
  **/
 public class BuiltinFormats {
 
+    /**
+     * Prefix used to mark a reserved built-in format index that has no actual format string.
+     */
     private static final String RESERVED = "reserved-";
 
+    /**
+     * Index of the {@code "General"} built-in format.
+     */
     public static short GENERAL = 0;
 
+    /**
+     * Built-in format strings that are common across all languages, indexed by their built-in format index.
+     * A {@code null} entry means the index has no known correspondence in the official specification.
+     */
     public static final String[] BUILTIN_FORMATS_ALL_LANGUAGES = {
         // 0
         "General",
@@ -155,6 +163,10 @@ public class BuiltinFormats {
         "@",
     };
 
+    /**
+     * Built-in format strings used for the Chinese (default) locale, indexed by their built-in format index.
+     * A {@code null} entry means the index has no known correspondence in the official specification.
+     */
     public static final String[] BUILTIN_FORMATS_CN = {
         // 0
         "General",
@@ -327,6 +339,10 @@ public class BuiltinFormats {
         // end
     };
 
+    /**
+     * Built-in format strings used for the {@code en-US} locale, indexed by their built-in format index.
+     * A {@code null} entry means the index has no known correspondence in the official specification.
+     */
     public static final String[] BUILTIN_FORMATS_US = {
         // 0
         "General",
@@ -499,10 +515,41 @@ public class BuiltinFormats {
         // end
     };
 
+    /**
+     * Reverse lookup map from Chinese format string to its built-in format index.
+     */
     public static final Map<String, Short> BUILTIN_FORMATS_MAP_CN = buildMap(BUILTIN_FORMATS_CN);
+
+    /**
+     * Reverse lookup map from {@code en-US} format string to its built-in format index.
+     */
     public static final Map<String, Short> BUILTIN_FORMATS_MAP_US = buildMap(BUILTIN_FORMATS_US);
+
+    /**
+     * The smallest index available for user-defined custom data formats; indices below this value are reserved
+     * for built-in formats.
+     */
     public static final short MIN_CUSTOM_DATA_FORMAT_INDEX = 82;
 
+    /**
+     * Resolve the format string for a given built-in format index.
+     *
+     * <p>
+     * Resolution order:
+     * <ol>
+     *   <li>Return {@code defaultFormat} when {@code index} is {@code null} or non-positive.</li>
+     *   <li>Return the language-agnostic built-in format when the index maps to a non-null entry in
+     *       {@link #BUILTIN_FORMATS_ALL_LANGUAGES}.</li>
+     *   <li>Return {@code defaultFormat} when it is provided and is not a reserved placeholder.</li>
+     *   <li>Otherwise fall back to the locale-specific built-in format at {@code index}, or
+     *       {@code defaultFormat} if the index is out of range.</li>
+     * </ol>
+     *
+     * @param index         the built-in format index, may be {@code null}
+     * @param defaultFormat the caller-provided default format string, may be {@code null}
+     * @param locale        the locale used to select the built-in format table, may be {@code null}
+     * @return the resolved format string
+     */
     public static String getBuiltinFormat(Short index, String defaultFormat, Locale locale) {
         if (index == null || index <= 0) {
             return defaultFormat;
@@ -529,6 +576,12 @@ public class BuiltinFormats {
         return builtinFormat[index];
     }
 
+    /**
+     * Select the built-in format array matching the given locale.
+     *
+     * @param locale the target locale, may be {@code null}; defaults to the Chinese table
+     * @return the built-in format array for the resolved locale
+     */
     public static String[] switchBuiltinFormats(Locale locale) {
         if (locale != null && Locale.US.getCountry().equals(locale.getCountry())) {
             return BUILTIN_FORMATS_US;
@@ -536,6 +589,12 @@ public class BuiltinFormats {
         return BUILTIN_FORMATS_CN;
     }
 
+    /**
+     * Select the built-in format index map matching the given locale.
+     *
+     * @param locale the target locale, may be {@code null}; defaults to the Chinese map
+     * @return the format-string-to-index map for the resolved locale
+     */
     public static Map<String, Short> switchBuiltinFormatsMap(Locale locale) {
         if (locale != null && Locale.US.getCountry().equals(locale.getCountry())) {
             return BUILTIN_FORMATS_MAP_US;
@@ -543,6 +602,12 @@ public class BuiltinFormats {
         return BUILTIN_FORMATS_MAP_CN;
     }
 
+    /**
+     * Build a reverse lookup map from format string to its array index.
+     *
+     * @param builtinFormats the built-in format array to index
+     * @return a map keyed by format string with the built-in format index as value
+     */
     private static Map<String, Short> buildMap(String[] builtinFormats) {
         Map<String, Short> map = MapUtils.newHashMapWithExpectedSize(builtinFormats.length);
         for (int i = 0; i < builtinFormats.length; i++) {

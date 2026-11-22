@@ -88,23 +88,22 @@ import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 
 /**
- * A text extractor for Excel files.
+ * SAX-based streaming analyser for XLS (BIFF8) files.
  * <p>
- * Returns the textual content of the file, suitable for indexing by something like Lucene, but not really intended for
- * display to the user.
- * </p>
+ * Listens to POI HSSF record events and dispatches each record to the matching {@link XlsRecordHandler}
+ * for incremental parsing, avoiding loading the entire workbook into memory.
  *
- * <p>
- * To turn an excel file into a CSV or similar, then see the XLS2CSVmra example
- * </p>
- *
- * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
+ * @see ExcelReadExecutor
  */
 @Slf4j
 public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
 
     private static final short DUMMY_RECORD_SID = -1;
     private final XlsReadContext xlsReadContext;
+
+    /**
+     * Registry mapping a BIFF record SID to the handler that processes it.
+     */
     private static final Map<Short, XlsRecordHandler> XLS_RECORD_HANDLER_MAP = new HashMap<Short, XlsRecordHandler>(32);
 
     static {
@@ -221,6 +220,9 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
         }
     }
 
+    /**
+     * Sets the current user password on {@link Biff8EncryptionKey} if the workbook is password-protected.
+     */
     private void setCurrentUserPassword() {
         String password = xlsReadContext.readWorkbookHolder().getPassword();
         if (password != null) {
@@ -228,12 +230,22 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
         }
     }
 
+    /**
+     * Clears the current user password previously set by {@link #setCurrentUserPassword()}.
+     */
     private void clearCurrentUserPassword() {
         if (xlsReadContext.readWorkbookHolder().getPassword() != null) {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
 
+    /**
+     * Checks whether the throwable chain indicates an unsupported old Excel BIFF format,
+     * possibly wrapped by other runtime exceptions.
+     *
+     * @param t the throwable to inspect
+     * @return {@code true} if an old BIFF format is detected within the cause chain
+     */
     protected boolean isOldExcelFormat(Throwable t) {
         for (int i = 0; i < 6 && t != null; i++, t = t.getCause()) {
             if (t instanceof OldExcelFormatException) {
@@ -251,12 +263,13 @@ public class XlsSaxAnalyser implements HSSFListener, ExcelReadExecutor {
     }
 
     /**
-     * Processes a single Excel record.
+     * Processes a single BIFF record by dispatching it to the matching {@link XlsRecordHandler}.
      * <p>
-     * This method retrieves the appropriate handler for the given record and processes it. If the record is ignorable or
-     * unsupported, it skips processing.
+     * Records with no registered handler, ignorable records when {@code ignoreRecord} is set, and
+     * records unsupported by their handler are skipped. Throwing
+     * {@link ExcelAnalysisStopSheetException} inside a handler stops the current sheet gracefully.
      *
-     * @param record The Excel record to be processed.
+     * @param record the BIFF record to process
      */
     @Override
     public void processRecord(Record record) {

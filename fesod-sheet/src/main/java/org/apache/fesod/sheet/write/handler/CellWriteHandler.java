@@ -38,14 +38,22 @@ import org.apache.poi.ss.usermodel.Row;
 /**
  * intercepts handle cell creation
  *
+ * <p>Four callback points are exposed: before a cell is created, right after a cell is created,
+ * after the cell data has been converted, and after all operations on the cell have been
+ * completed.</p>
  *
+ * <p>Implementations may override either the {@code *Context} variants or the fine-grained
+ * parameter variants of each callback. The default {@code *Context} methods delegate to the
+ * fine-grained ones, so overriding the fine-grained method is enough for most cases.</p>
  */
 public interface CellWriteHandler extends WriteHandler {
 
     /**
      * Called before create the cell
      *
-     * @param context
+     * @param context the context that carries the sheet holder, table holder, row, head data,
+     *                column index, relative row index and the {@code isHead} flag for the cell
+     *                about to be created
      */
     default void beforeCellCreate(CellWriteHandlerContext context) {
         beforeCellCreate(
@@ -61,13 +69,18 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called before create the cell
      *
-     * @param writeSheetHolder
-     * @param writeTableHolder Nullable.It is null without using table writes.
-     * @param row
-     * @param head             Nullable.It is null in the case of fill data and without head.
-     * @param columnIndex
-     * @param relativeRowIndex Nullable.It is null in the case of fill data.
-     * @param isHead           It will always be false when fill data.
+     * @param writeSheetHolder the holder of the sheet that the cell belongs to; never {@code null}
+     * @param writeTableHolder the holder of the table that the cell belongs to; {@code null} when
+     *                         writing without using tables
+     * @param row              the row that the cell will belong to; may be {@code null} when the
+     *                         row has not been created yet
+     * @param head             the head metadata of the cell; {@code null} when filling data or
+     *                         writing without a header
+     * @param columnIndex      the absolute column index within the row, starting from {@code 0}
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
+     * @param isHead           whether the cell belongs to a header row; always {@code false} when
+     *                         filling data
      */
     default void beforeCellCreate(
             WriteSheetHolder writeSheetHolder,
@@ -81,7 +94,9 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called after the cell is created
      *
-     * @param context
+     * @param context the context that carries the newly created cell together with the sheet
+     *                holder, table holder, head data, relative row index and the {@code isHead}
+     *                flag
      */
     default void afterCellCreate(CellWriteHandlerContext context) {
         afterCellCreate(
@@ -96,12 +111,16 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called after the cell is created
      *
-     * @param writeSheetHolder
-     * @param writeTableHolder Nullable.It is null without using table writes.
-     * @param cell
-     * @param head             Nullable.It is null in the case of fill data and without head.
-     * @param relativeRowIndex Nullable.It is null in the case of fill data.
-     * @param isHead           It will always be false when fill data.
+     * @param writeSheetHolder the holder of the sheet that the cell belongs to; never {@code null}
+     * @param writeTableHolder the holder of the table that the cell belongs to; {@code null} when
+     *                         writing without using tables
+     * @param cell             the cell that has just been created
+     * @param head             the head metadata of the cell; {@code null} when filling data or
+     *                         writing without a header
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
+     * @param isHead           whether the cell belongs to a header row; always {@code false} when
+     *                         filling data
      */
     default void afterCellCreate(
             WriteSheetHolder writeSheetHolder,
@@ -114,7 +133,8 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called after the cell data is converted
      *
-     * @param context
+     * @param context the context that carries the converted {@link WriteCellData} together with
+     *                the cell, head data, relative row index and the {@code isHead} flag
      */
     default void afterCellDataConverted(CellWriteHandlerContext context) {
         WriteCellData<?> writeCellData = CollectionUtils.isNotEmpty(context.getCellDataList())
@@ -133,13 +153,20 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called after the cell data is converted
      *
-     * @param writeSheetHolder
-     * @param writeTableHolder Nullable.It is null without using table writes.
-     * @param cell
-     * @param head             Nullable.It is null in the case of fill data and without head.
-     * @param cellData         Nullable.It is null in the case of add header.
-     * @param relativeRowIndex Nullable.It is null in the case of fill data.
-     * @param isHead           It will always be false when fill data.
+     * @param writeSheetHolder the holder of the sheet that the cell belongs to; never {@code null}
+     * @param writeTableHolder the holder of the table that the cell belongs to; {@code null} when
+     *                         writing without using tables
+     * @param cellData         the converted cell data; {@code null} when writing a header. When
+     *                         filling data a cell may produce multiple {@link WriteCellData}
+     *                         entries, in which case only the first one is passed here — override
+     *                         the {@link CellWriteHandlerContext} variant to see all of them
+     * @param cell             the cell whose data has just been converted
+     * @param head             the head metadata of the cell; {@code null} when filling data or
+     *                         writing without a header
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
+     * @param isHead           whether the cell belongs to a header row; always {@code false} when
+     *                         filling data
      */
     default void afterCellDataConverted(
             WriteSheetHolder writeSheetHolder,
@@ -153,7 +180,8 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called after all operations on the cell have been completed
      *
-     * @param context
+     * @param context the context that carries the cell being disposed together with the resulting
+     *                cell data list, head data, relative row index and the {@code isHead} flag
      */
     default void afterCellDispose(CellWriteHandlerContext context) {
         afterCellDispose(
@@ -169,13 +197,19 @@ public interface CellWriteHandler extends WriteHandler {
     /**
      * Called after all operations on the cell have been completed
      *
-     * @param writeSheetHolder
-     * @param writeTableHolder Nullable.It is null without using table writes.
-     * @param cell
-     * @param head             Nullable.It is null in the case of fill data and without head.
-     * @param cellDataList     Nullable.It is null in the case of add header.There may be several when fill the data.
-     * @param relativeRowIndex Nullable.It is null in the case of fill data.
-     * @param isHead           It will always be false when fill data.
+     * @param writeSheetHolder the holder of the sheet that the cell belongs to; never {@code null}
+     * @param writeTableHolder the holder of the table that the cell belongs to; {@code null} when
+     *                         writing without using tables
+     * @param cellDataList     the list of {@link WriteCellData} produced for this cell;
+     *                         {@code null} when writing a header, and may contain several entries
+     *                         when filling data
+     * @param cell             the cell whose write operations have been completed
+     * @param head             the head metadata of the cell; {@code null} when filling data or
+     *                         writing without a header
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
+     * @param isHead           whether the cell belongs to a header row; always {@code false} when
+     *                         filling data
      */
     default void afterCellDispose(
             WriteSheetHolder writeSheetHolder,

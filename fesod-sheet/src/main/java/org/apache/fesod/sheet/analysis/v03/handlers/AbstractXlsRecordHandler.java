@@ -30,12 +30,18 @@ import org.apache.fesod.sheet.context.xls.XlsReadContext;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Abstract xls record handler
- *
- *
- **/
+ * Base class for {@link XlsRecordHandler} implementations.
+ * <p>
+ * Defaults {@link #support(XlsReadContext, Record)} to {@code true}, so subclasses only need to implement
+ * {@link #processRecord(XlsReadContext, Record)} unless they require custom filtering.
+ */
 public abstract class AbstractXlsRecordHandler implements XlsRecordHandler {
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return always {@code true}; override in subclasses to filter records
+     */
     @Override
     public boolean support(XlsReadContext xlsReadContext, Record record) {
         return true;

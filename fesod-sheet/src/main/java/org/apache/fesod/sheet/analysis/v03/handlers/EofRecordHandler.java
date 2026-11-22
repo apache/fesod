@@ -35,10 +35,25 @@ import org.apache.fesod.sheet.read.metadata.holder.xls.XlsReadSheetHolder;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for the XLS {@link org.apache.poi.hssf.record.EOFRecord} (end of file), which marks the end of a
+ * worksheet's binary stream.
+ * <p>
+ * It finalizes the sheet by closing any pending row and then invoking the {@code endSheet} event, so that
+ * listeners receive complete data even when the file lacks the termination records of the last row.
  */
 public class EofRecordHandler extends AbstractXlsRecordHandler {
 
+    /**
+     * Processes the EOF record of the current worksheet.
+     * <p>
+     * If reading was stopped early or the sheet is ignored, only the pending {@code endSheet} event (when the
+     * sheet was manually stopped) is emitted. Otherwise, when the sheet lacks the termination record of the last
+     * row, a synthetic row is forged and flushed via the {@code endRow} event before the {@code endSheet} event
+     * is triggered.
+     *
+     * @param xlsReadContext the context of the current XLS read operation
+     * @param record         the EOF record being processed; not inspected directly
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         if (xlsReadContext.readSheetHolder() == null) {

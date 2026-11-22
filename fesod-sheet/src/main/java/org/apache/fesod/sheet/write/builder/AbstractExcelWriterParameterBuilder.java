@@ -33,18 +33,28 @@ import org.apache.fesod.sheet.write.handler.WriteHandler;
 import org.apache.fesod.sheet.write.metadata.WriteBasicParameter;
 
 /**
- * Build ExcelBuilder
+ * Fluent base builder for the write-side parameter objects shared by all {@code ExcelWriter}
+ * entry points (workbook, sheet and table builders).
  *
+ * <p>Each setter stores its value into the underlying {@link C} via {@code parameter()} and
+ * returns {@code self()} so calls can be chained. This class only exposes write-specific options;
+ * cross-cutting options such as {@code head(Class)} live in
+ * {@link AbstractParameterBuilder}.</p>
  *
+ * @param <T> the concrete builder type, used for fluent self-chaining
+ * @param <C> the concrete {@link WriteBasicParameter} subtype this builder mutates
  */
 public abstract class AbstractExcelWriterParameterBuilder<
                 T extends AbstractExcelWriterParameterBuilder, C extends WriteBasicParameter>
         extends AbstractParameterBuilder<T, C> {
+
     /**
-     * Writes the head relative to the existing contents of the sheet. Indexes are zero-based.
+     * Shifts the header block (and therefore all data) down by the given number of rows so that
+     * content can be written below rows that already exist in the sheet. Indexes are zero-based.
      *
-     * @param relativeHeadRowIndex
-     * @return
+     * @param relativeHeadRowIndex the number of blank rows to leave above the header; {@code null}
+     *                             or {@code 0} starts writing at row 0
+     * @return this builder instance, for chaining
      */
     public T relativeHeadRowIndex(Integer relativeHeadRowIndex) {
         parameter().setRelativeHeadRowIndex(relativeHeadRowIndex);
@@ -52,7 +62,10 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Need Head
+     * Controls whether a header row should be emitted at all.
+     *
+     * @param needHead {@code true} (default) to write the header; {@code false} to skip it
+     * @return this builder instance, for chaining
      */
     public T needHead(Boolean needHead) {
         parameter().setNeedHead(needHead);
@@ -60,10 +73,13 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Custom write handler
+     * Registers a custom {@link WriteHandler} that will be invoked during the write pipeline.
+     * Handlers are appended to the existing list and executed in registration order, subject to
+     * any {@code Order} the handler implements.
      *
-     * @param writeHandler
-     * @return
+     * @param writeHandler the handler to register; ignored at runtime if {@code null} is passed,
+     *                     but callers should not rely on that
+     * @return this builder instance, for chaining
      */
     public T registerWriteHandler(WriteHandler writeHandler) {
         if (parameter().getCustomWriteHandlerList() == null) {
@@ -74,10 +90,11 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Use the default style.Default is true.
+     * Enables or disables Fesod's built-in default style. The default value is {@code true}.
      *
-     * @param useDefaultStyle
-     * @return
+     * @param useDefaultStyle {@code true} to apply the default style, {@code false} to leave cells
+     *                        unstyled unless an explicit style handler is registered
+     * @return this builder instance, for chaining
      */
     public T useDefaultStyle(Boolean useDefaultStyle) {
         parameter().setUseDefaultStyle(useDefaultStyle);
@@ -85,10 +102,13 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Whether to automatically merge headers.Default is true.
+     * Whether adjacent equal header cells should be merged automatically. The default value is
+     * {@code true}. Ignored when a {@link HeaderMergeStrategy} is set explicitly via
+     * {@link #headerMergeStrategy(HeaderMergeStrategy)}.
      *
-     * @param automaticMergeHead
-     * @return
+     * @param automaticMergeHead {@code true} to enable automatic header merging, {@code false} to
+     *                           disable it
+     * @return this builder instance, for chaining
      */
     public T automaticMergeHead(Boolean automaticMergeHead) {
         parameter().setAutomaticMergeHead(automaticMergeHead);
@@ -96,11 +116,12 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Set header merge strategy.
-     * If not set, the behavior is determined by {@link #automaticMergeHead} for backward compatibility.
+     * Sets the header merge strategy explicitly. If not set, the merge behavior falls back to
+     * {@link #automaticMergeHead(Boolean)} for backward compatibility.
      *
-     * @param strategy Header merge strategy
-     * @return this
+     * @param strategy the {@link HeaderMergeStrategy} to apply to header cells; {@code null} to
+     *                 fall back to the {@link #automaticMergeHead(Boolean)} behavior
+     * @return this builder instance, for chaining
      */
     public T headerMergeStrategy(HeaderMergeStrategy strategy) {
         parameter().setHeaderMergeStrategy(strategy);
@@ -108,7 +129,11 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Ignore the custom columns.
+     * Excludes the columns with the given zero-based indexes from the output.
+     *
+     * @param excludeColumnIndexes the indexes of columns to skip; {@code null} or empty means no
+     *                             column is excluded by index
+     * @return this builder instance, for chaining
      */
     public T excludeColumnIndexes(Collection<Integer> excludeColumnIndexes) {
         parameter().setExcludeColumnIndexes(excludeColumnIndexes);
@@ -116,17 +141,25 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Ignore the custom columns.
+     * Excludes the columns whose field names are in the given collection from the output.
      *
-     * @deprecated use {@link #excludeColumnFieldNames(Collection)}
+     * @param excludeColumnFieldNames the field names of columns to skip; {@code null} or empty
+     *                                means no column is excluded by field name
+     * @return this builder instance, for chaining
+     * @deprecated misspelled; use {@link #excludeColumnFieldNames(Collection)} instead
      */
+    @Deprecated
     public T excludeColumnFiledNames(Collection<String> excludeColumnFieldNames) {
         parameter().setExcludeColumnFieldNames(excludeColumnFieldNames);
         return self();
     }
 
     /**
-     * Ignore the custom columns.
+     * Excludes the columns whose field names are in the given collection from the output.
+     *
+     * @param excludeColumnFieldNames the field names of columns to skip; {@code null} or empty
+     *                                means no column is excluded by field name
+     * @return this builder instance, for chaining
      */
     public T excludeColumnFieldNames(Collection<String> excludeColumnFieldNames) {
         parameter().setExcludeColumnFieldNames(excludeColumnFieldNames);
@@ -134,7 +167,11 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Only output the custom columns.
+     * Restricts the output to the columns with the given zero-based indexes.
+     *
+     * @param includeColumnIndexes the indexes of columns to keep; {@code null} or empty means no
+     *                             inclusion filter is applied by index
+     * @return this builder instance, for chaining
      */
     public T includeColumnIndexes(Collection<Integer> includeColumnIndexes) {
         parameter().setIncludeColumnIndexes(includeColumnIndexes);
@@ -142,9 +179,12 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Only output the custom columns.
+     * Restricts the output to the columns whose field names are in the given collection.
      *
-     * @deprecated use {@link  #includeColumnFieldNames(Collection)} spelling mistake
+     * @param includeColumnFieldNames the field names of columns to keep; {@code null} or empty
+     *                                means no inclusion filter is applied by field name
+     * @return this builder instance, for chaining
+     * @deprecated misspelled; use {@link #includeColumnFieldNames(Collection)} instead
      */
     @Deprecated
     public T includeColumnFiledNames(Collection<String> includeColumnFieldNames) {
@@ -153,7 +193,11 @@ public abstract class AbstractExcelWriterParameterBuilder<
     }
 
     /**
-     * Only output the custom columns.
+     * Restricts the output to the columns whose field names are in the given collection.
+     *
+     * @param includeColumnFieldNames the field names of columns to keep; {@code null} or empty
+     *                                means no inclusion filter is applied by field name
+     * @return this builder instance, for chaining
      */
     public T includeColumnFieldNames(Collection<String> includeColumnFieldNames) {
         parameter().setIncludeColumnFieldNames(includeColumnFieldNames);

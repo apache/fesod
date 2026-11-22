@@ -34,11 +34,26 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
 
 /**
- * Record handler
+ * Handles {@link StringRecord} in the XLS (BIFF) reading pipeline.
+ * <p>
+ * A {@code StringRecord} immediately follows a {@code FormulaRecord} whose cached result type is
+ * {@code STRING}. It carries the formula's string value, which is assigned to the temporary cell data
+ * stashed by {@link FormulaRecordHandler} and then committed to the current row's cell map.
  */
 @Slf4j
 public class StringRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Completes a pending string-type formula cell by setting its string value and storing it in the
+     * current sheet's cell map.
+     * <p>
+     * If no temporary cell data exists (i.e. no preceding {@code FormulaRecord} was encountered), a
+     * warning is logged and the record is skipped.
+     *
+     * @param xlsReadContext the current XLS read context, never {@code null}
+     * @param record         the record to process, expected to be a {@link StringRecord}
+     * @throws ClassCastException if {@code record} is not a {@link StringRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         // String for formula

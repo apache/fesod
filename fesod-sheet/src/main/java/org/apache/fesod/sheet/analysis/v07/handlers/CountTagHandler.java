@@ -31,11 +31,23 @@ import org.apache.fesod.sheet.context.xlsx.XlsxReadContext;
 import org.xml.sax.Attributes;
 
 /**
- * Cell Handler
- *
+ * Handler for the {@code dimension} tag of an XLSX worksheet. The tag's {@code ref}
+ * attribute holds the used range of the sheet (for example {@code A1:C10}), whose
+ * ending row is used to estimate the total number of rows before the rows themselves
+ * are streamed. The estimate is stored on the sheet holder and is typically used to
+ * drive progress reporting.
  */
 public class CountTagHandler extends AbstractXlsxTagHandler {
 
+    /**
+     * Reads the {@code ref} range from the {@code dimension} tag, extracts the end cell
+     * after the {@code ':'} separator, and records its zero-based row plus one as the
+     * sheet's approximate total row number.
+     *
+     * @param xlsxReadContext the current XLSX read context
+     * @param name            the tag name, always the {@code dimension} tag
+     * @param attributes      the tag attributes, from which {@code ref} is read
+     */
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         String d = attributes.getValue(ExcelXmlConstants.ATTRIBUTE_REF);

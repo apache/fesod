@@ -32,10 +32,23 @@ import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.Record;
 
 /**
- * Record handler
+ * Handler for {@link BlankRecord} entries encountered while streaming an XLS (BIFF v03) workbook.
+ * <p>
+ * A {@code BlankRecord} represents a cell that carries formatting but no value. This handler stores
+ * it in the current row's cell map as an empty {@link ReadCellData}, so downstream listeners can
+ * still observe the cell's position. If the physical column is filtered out by the current column
+ * resolver, the record is skipped.
  */
 public class BlankRecordHandler extends AbstractXlsRecordHandler implements IgnorableXlsRecordHandler {
 
+    /**
+     * Register the blank cell described by {@code record} into the current row's cell map.
+     *
+     * @param xlsReadContext the active XLS read context, used to resolve the target column index and
+     *                       to access the current sheet's cell map
+     * @param record         the record to process, expected to be a {@link BlankRecord}
+     * @throws ClassCastException if {@code record} is not a {@link BlankRecord}
+     */
     @Override
     public void processRecord(XlsReadContext xlsReadContext, Record record) {
         BlankRecord br = (BlankRecord) record;

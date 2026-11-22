@@ -32,12 +32,20 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- * Merge strategy
+ * Base class for cell-merge strategies driven by {@link CellWriteHandler}.
  *
- *
+ * <p>Subclasses decide, for each freshly written cell, which surrounding cells should be merged
+ * into it. The framework invokes {@link #merge(Sheet, Cell, Head, Integer)} after every non-header
+ * cell has been fully disposed, so subclasses only need to implement the merge logic itself.</p>
  */
 public abstract class AbstractMergeStrategy implements CellWriteHandler {
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This implementation skips header cells and delegates the actual merge to
+     * {@link #merge(Sheet, Cell, Head, Integer)} for the current data cell.</p>
+     */
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
         if (context.getHead()) {
@@ -51,12 +59,16 @@ public abstract class AbstractMergeStrategy implements CellWriteHandler {
     }
 
     /**
-     * merge
+     * Performs the merge for a single data cell that has just been written.
+     * Called by {@link #afterCellDispose(CellWriteHandlerContext)} once for every non-header cell.
      *
-     * @param sheet
-     * @param cell
-     * @param head
-     * @param relativeRowIndex
+     * @param sheet            the sheet that owns the cell; never {@code null}
+     * @param cell             the cell that has just been fully written and may act as the anchor
+     *                         of a merged region; never {@code null}
+     * @param head             the head metadata associated with the cell's column; may be
+     *                         {@code null} when writing without a header or when filling data
+     * @param relativeRowIndex the row index relative to the current write batch; {@code null} when
+     *                         filling data
      */
     protected abstract void merge(Sheet sheet, Cell cell, Head head, Integer relativeRowIndex);
 }

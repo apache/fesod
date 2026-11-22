@@ -26,7 +26,7 @@ This chapter introduces how to read and write password-protected Excel files.
 
 ## Overview
 
-Apache Fesod (Incubating) supports Excel's built-in password protection for both reading and writing. Use `.password("xxx")` on the builder to configure the password. Successfully completed `.xlsx` output with a non-empty password uses Apache POI's encryption (AES-based), which can be memory-intensive for large workbooks. Legacy `.xls` protection differs from `.xlsx` encryption and must not be assumed to provide equivalent confidentiality.
+Apache Fesod supports Excel's built-in password protection for both reading and writing. Use `.password("xxx")` on the builder to configure the password. Successfully completed `.xlsx` output with a non-empty password uses Apache POI's encryption (AES-based), which can be memory-intensive for large workbooks. Legacy `.xls` protection differs from `.xlsx` encryption and must not be assumed to provide equivalent confidentiality.
 
 ## Writing with Password
 

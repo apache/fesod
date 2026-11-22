@@ -235,6 +235,13 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
             throwable = recordFailure(throwable, t);
         }
         try {
+            if (excelReadExecutor != null) {
+                excelReadExecutor.close();
+            }
+        } catch (Throwable t) {
+            throwable = t;
+        }
+        try {
             if ((readWorkbookHolder instanceof XlsxReadWorkbookHolder)
                     && ((XlsxReadWorkbookHolder) readWorkbookHolder).getOpcPackage() != null) {
                 ((XlsxReadWorkbookHolder) readWorkbookHolder).getOpcPackage().revert();

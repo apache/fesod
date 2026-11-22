@@ -30,7 +30,6 @@ import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CacheLocationEnum;
 
 /**
@@ -50,10 +49,6 @@ public class BasicParameter {
      * You can only choose one of the {@link BasicParameter#head} and {@link BasicParameter#clazz}
      */
     private Class<?> clazz;
-    /**
-     * Custom type conversions override the default
-     */
-    private List<Converter<?>> customConverterList;
     /**
      * Automatic trim includes sheet name and content
      */

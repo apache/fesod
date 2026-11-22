@@ -27,6 +27,9 @@ package org.apache.fesod.sheet.write.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.apache.fesod.common.util.ListUtils;
+import org.apache.fesod.sheet.converters.Converter;
+import org.apache.fesod.sheet.converters.WriteConverter;
 import org.apache.fesod.sheet.enums.HeaderMergeStrategy;
 import org.apache.fesod.sheet.metadata.AbstractParameterBuilder;
 import org.apache.fesod.sheet.write.handler.WriteHandler;
@@ -70,6 +73,27 @@ public abstract class AbstractExcelWriterParameterBuilder<
             parameter().setCustomWriteHandlerList(new ArrayList<WriteHandler>());
         }
         parameter().getCustomWriteHandlerList().add(writeHandler);
+        return self();
+    }
+
+    /**
+     * Registers a custom converter.
+     *
+     * @see #registerWriteConverter(WriteConverter)
+     */
+    @Override
+    public T registerConverter(Converter<?> converter) {
+        return registerWriteConverter(converter);
+    }
+
+    /**
+     * Registers a custom write converter.
+     */
+    public T registerWriteConverter(WriteConverter<?> converter) {
+        if (parameter().getCustomConverterList() == null) {
+            parameter().setCustomConverterList(ListUtils.newArrayList());
+        }
+        parameter().getCustomConverterList().add(converter);
         return self();
     }
 

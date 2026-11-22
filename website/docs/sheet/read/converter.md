@@ -20,16 +20,13 @@ title: 'Converter'
 - limitations under the License.
 -->
 
-# Format Conversion
+# Read Data Conversion
 
-Fesod supports date, number, and custom format conversions.
+Fesod supports format conversion during data reading, allowing users to define custom data conversion rules to meet various business requirements.
 
-## Overview
+## Per-Field Converter
 
-During usage, we may need to convert read or written data into specific formats. Fesod provides a flexible converter
-mechanism that allows users to define custom data conversion rules to meet various business requirements.
-
-## Example
+Apply a converter to a specific field using the `@ExcelProperty(converter = ...)` annotation. The annotation requires the combined `Converter` interface due to backward compatibility.
 
 ### POJO Class
 
@@ -37,7 +34,7 @@ mechanism that allows users to define custom data conversion rules to meet vario
 @Getter
 @Setter
 @EqualsAndHashCode
-public class ConverterData {
+public class DemoData {
     @ExcelProperty(converter = CustomStringStringConverter.class)
     private String string;
 
@@ -70,7 +67,7 @@ public class CustomStringStringConverter implements Converter<String> {
 
     @Override
     public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
-        return new WriteCellData<>(context.getValue());
+        return new WriteCellData<>("Custom: " + context.getValue());
     }
 }
 ```
@@ -80,10 +77,111 @@ public class CustomStringStringConverter implements Converter<String> {
 ```java
 @Test
 public void converterRead() {
-    String fileName = "path/to/demo.xlsx";
+    String fileName = "path/from/demo.xlsx";
 
-    FesodSheet.read(fileName, ConverterData.class, new DemoDataListener())
-            .registerConverter(new CustomStringStringConverter()) // Register custom converter
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .sheet()
+            .doRead();
+}
+```
+
+---
+
+## Global Converter Registration
+
+Register a converter on the builder to apply it across all fields matching the Java type and Spreadsheet cell type.
+
+For read-only, implementing `ReadConverter<T>` is recommended.
+
+### POJO Class
+
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class DemoData {
+    @ExcelProperty("String Title")
+    private String string;
+}
+```
+
+### Converter
+
+```java
+public class CustomStringReadConverter implements ReadConverter<String> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return CellDataTypeEnum.STRING;
+    }
+
+    @Override
+    public String convertToJavaData(ReadConverterContext<?> context) {
+        return "Custom: " + context.getReadCellData().getStringValue();
+    }
+}
+```
+
+### Code Example
+
+```java
+@Test
+public void globalConverterRead() {
+    String fileName = "path/from/demo.xlsx";
+
+    FesodSheet.read(fileName, DemoData.class, new DemoDataListener())
+            .registerReadConverter(new CustomStringReadConverter())
+            .sheet()
+            .doRead();
+}
+```
+
+---
+
+## Column-Bound Converter
+
+In no-bean scenarios where annotations cannot be used, implement `ColumnBinding` to restrict a read converter to specific columns (0-based):
+
+### Converter
+
+```java
+public class ColumnZeroStringReadConverter implements ReadConverter<String>, ColumnBinding {
+    @Override
+    public Integer columnIndex() {
+        return 0; // Only applies to column 0
+    }
+
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return CellDataTypeEnum.STRING;
+    }
+
+    @Override
+    public String convertToJavaData(ReadConverterContext<?> context) {
+        return "Col0: " + context.getReadCellData().getStringValue();
+    }
+}
+```
+
+### Code Example
+
+```java
+@Test
+public void columnBoundRead() {
+    String fileName = "path/from/demo.xlsx";
+
+    FesodSheet.read(fileName, new NoModelDataListener())
+            .head(HeadBuilder.forSimple("Custom String Title", "String Title"))
+            .registerReadConverter(new ColumnZeroStringReadConverter())
             .sheet()
             .doRead();
 }

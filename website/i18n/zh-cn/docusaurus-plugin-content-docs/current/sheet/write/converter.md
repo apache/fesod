@@ -1,6 +1,6 @@
 ---
 id: 'converter'
-title: '转换器'
+title: '写入数据转换'
 ---
 
 <!--
@@ -20,19 +20,33 @@ title: '转换器'
 - limitations under the License.
 -->
 
-# 转换器
+# 写入数据转换
 
-本章节介绍写入数据时如何使用自定义转换器。
-
-## 概述
-
-Fesod 支持写入操作的自定义数据转换器。您可以在 Java 字段值写入 Excel 单元格之前进行转换，实现自定义格式化、加密或任何数据转换逻辑。
+Fesod 支持写入数据过程中的格式转换，允许用户自定义数据转换规则，以满足各种业务需求。
 
 ## 字段级转换器
 
-### 概述
+通过 `@ExcelProperty(converter = ...)` 注解对特定字段应用转换器。出于向后兼容的考虑，该注解要求实现组合的 `Converter` 接口。
 
-通过 `@ExcelProperty(converter = ...)` 注解对特定字段应用转换器。
+### POJO 类
+
+```java
+@Getter
+@Setter
+@EqualsAndHashCode
+public class DemoData {
+    @ExcelProperty(value = "字符串标题", converter = CustomStringStringConverter.class)
+    private String string;
+
+    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
+    @ExcelProperty("日期标题")
+    private Date date;
+
+    @NumberFormat("#.##%")
+    @ExcelProperty("数字标题")
+    private Double doubleData;
+}
+```
 
 ### 转换器
 
@@ -60,33 +74,14 @@ public class CustomStringStringConverter implements Converter<String> {
 }
 ```
 
-### POJO 类
-
-```java
-@Getter
-@Setter
-@EqualsAndHashCode
-public class ConverterData {
-    @ExcelProperty(value = "字符串标题", converter = CustomStringStringConverter.class)
-    private String string;
-
-    @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
-    @ExcelProperty("日期标题")
-    private Date date;
-
-    @NumberFormat("#.##%")
-    @ExcelProperty("数字标题")
-    private Double doubleData;
-}
-```
-
 ### 代码示例
 
 ```java
 @Test
 public void converterWrite() {
-    String fileName = "converterWrite" + System.currentTimeMillis() + ".xlsx";
-    FesodSheet.write(fileName, ConverterData.class)
+    String fileName = "path/to/demo.xlsx";
+
+    FesodSheet.write(fileName, DemoData.class)
         .sheet()
         .doWrite(data());
 }
@@ -96,31 +91,47 @@ public void converterWrite() {
 
 ## 全局转换器注册
 
-### 概述
+在构建器上注册 `WriteConverter<T>`，使其全局应用于所有匹配 Java 类型的字段。
 
-在构建器级别注册转换器，将其应用于所有匹配 Java 类型和 Excel 类型的字段。当您希望对所有字段统一应用相同的转换逻辑时非常有用，无需逐一注解。
+仅写入场景推荐实现 `WriteConverter<T>`。
 
-普通 XLSX/XLS 写入按 Java 类型和 `null` Excel 类型键查找全局转换器，因此需要使用上述转换器的以下变体。输出单元格类型仍由返回的 `WriteCellData` 决定；此处返回 `null` 仅改变查找键。
+### POJO 类
 
 ```java
-public class GlobalStringWriteConverter extends CustomStringStringConverter {
-    @Override
-    public CellDataTypeEnum supportExcelTypeKey() {
-        return null;
-    }
+@Getter
+@Setter
+@EqualsAndHashCode
+public class DemoData {
+    @ExcelProperty("字符串标题")
+    private String string;
 }
 ```
 
-写入 CSV 或读取字符串单元格时，请注册返回 `CellDataTypeEnum.STRING` 的原始 `CustomStringStringConverter`。
+### 转换器
+
+```java
+public class CustomStringWriteConverter implements WriteConverter<String> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
+        return new WriteCellData<>("自定义：" + context.getValue());
+    }
+}
+```
 
 ### 代码示例
 
 ```java
 @Test
 public void globalConverterWrite() {
-    String fileName = "globalConverterWrite" + System.currentTimeMillis() + ".xlsx";
+    String fileName = "path/to/demo.xlsx";
+
     FesodSheet.write(fileName, DemoData.class)
-        .registerConverter(new GlobalStringWriteConverter())
+        .registerWriteConverter(new CustomStringWriteConverter())
         .sheet()
         .doWrite(data());
 }
@@ -128,10 +139,42 @@ public void globalConverterWrite() {
 
 ---
 
-## 转换器解析优先级
+## 列绑定转换器
 
-当多个转换器可能应用于某个字段时，Fesod 按以下顺序进行解析：
+在无法使用字段注解的无实体类场景下，实现 `ColumnBinding` 可以将写入转换器限定到特定列（从 0 开始）：
 
-1. 字段级转换器（`@ExcelProperty(converter = ...)`）— 最高优先级
-2. 查找键匹配的构建器级转换器（`.registerConverter(...)`）
-3. 内置默认转换器 — 最低优先级
+### 转换器
+
+```java
+public class ColumnZeroStringWriteConverter implements WriteConverter<String>, ColumnBinding {
+    @Override
+    public Integer columnIndex() {
+        return 0; // 仅应用于第 0 列
+    }
+
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return String.class;
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<String> context) {
+        return new WriteCellData<>("第0列：" + context.getValue());
+    }
+}
+```
+
+### 代码示例
+
+```java
+@Test
+public void columnBoundWrite() {
+    String fileName = "path/to/demo.xlsx";
+
+    FesodSheet.write(fileName)
+            .head(HeadBuilder.forSimple("自定义字符串标题", "字符串标题"))
+            .registerWriteConverter(new ColumnZeroStringWriteConverter())
+            .sheet()
+            .doWrite(data());
+}
+```

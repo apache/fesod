@@ -149,7 +149,7 @@ public class BooleanYesNoConverter implements Converter<Boolean> {
 }
 ```
 
-通配转换器作为回退使用:xlsx 直接以 `(JavaType, null)` 作为查找键;CSV 与模板填充组合则强制使用 `(JavaType, STRING)` 查找键,仅当该键下没有显式注册的转换器时才使用通配转换器。显式注册的转换器始终优先,与注册顺序无关;同一 Java 类型下,最后注册的通配转换器生效。若希望转换器仅作用于单一目标单元格数据类型,请返回明确的 `CellDataTypeEnum`。
+通配转换器作为回退使用:xlsx/xls 直接以 `(JavaType, null)` 作为查找键;CSV 与模板填充组合则强制使用 `(JavaType, STRING)` 查找键,仅当该键下没有显式注册的转换器时才使用通配转换器。显式注册的转换器始终优先,与注册顺序无关;同一 Java 类型下,最后注册的通配转换器生效。若希望转换器仅作用于单一目标单元格数据类型,请返回明确的 `CellDataTypeEnum`。
 
 ---
 

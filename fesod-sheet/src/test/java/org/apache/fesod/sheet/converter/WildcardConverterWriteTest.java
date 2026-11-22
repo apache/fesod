@@ -23,6 +23,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,21 +40,24 @@ import org.apache.fesod.sheet.metadata.data.RichTextStringData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
 import org.apache.fesod.sheet.support.ExcelTypeEnum;
+import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for custom converters registered with {@code supportExcelTypeKey() == null} (the wildcard key).
  *
- * <p>The wildcard key {@code (JavaType, null)} is looked up directly by the xlsx write path, which uses
+ * <p>The wildcard key {@code (JavaType, null)} is looked up directly by the XLSX/XLS write path, which uses
  * {@code null} as the target cell data type. CSV writes and fill composition force the target to
  * {@link CellDataTypeEnum#STRING}, so the write executor falls back to the wildcard key when the exact key
  * only holds a built-in default; an explicitly registered converter still wins. See issues #1045 and #1056.
  */
+@Tag(Tags.WRITE)
 public class WildcardConverterWriteTest extends AbstractExcelTest {
 
     @Test
@@ -261,7 +265,7 @@ public class WildcardConverterWriteTest extends AbstractExcelTest {
     }
 
     private static List<List<Boolean>> booleans(Boolean... values) {
-        List<List<Boolean>> rows = new java.util.ArrayList<>();
+        List<List<Boolean>> rows = new ArrayList<>();
         for (Boolean value : values) {
             rows.add(Collections.singletonList(value));
         }

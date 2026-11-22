@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: From FastExcel
-description: Complete migration guide for transitioning from cn.idev FastExcel to Apache Fesod (Incubating)
+description: Complete migration guide for transitioning from cn.idev FastExcel to Apache Fesod
 keywords: [fesod, migration, fastexcel, apache, excel, upgrade]
 ---
 
@@ -22,17 +22,17 @@ keywords: [fesod, migration, fastexcel, apache, excel, upgrade]
 - limitations under the License.
 -->
 
-# Migration Guide: FastExcel to Apache Fesod (Incubating)
+# Migration Guide: FastExcel to Apache Fesod
 
 ## Overview
 
-This guide provides a comprehensive roadmap for migrating applications from cn.idev FastExcel library to Apache Fesod (Incubating). Apache Fesod (Incubating) is the evolution of this project, now under the Apache Software Foundation (Incubating), offering the same high-performance Excel processing capabilities with enhanced community support and long-term sustainability.
+This guide provides a comprehensive roadmap for migrating applications from cn.idev FastExcel library to Apache Fesod. Apache Fesod is the evolution of this project, now a Top-Level Project of the Apache Software Foundation, offering the same high-performance Excel processing capabilities with enhanced community support and long-term sustainability.
 
 ### Why Migrate?
 
-- **Apache Software Foundation Support**: Apache Fesod (Incubating) is now part of the Apache Software Foundation, ensuring long-term maintenance and community-driven development
+- **Apache Software Foundation Support**: Apache Fesod is now a Top-Level Project of the Apache Software Foundation, ensuring long-term maintenance and community-driven development
 - **Seamless Transition**: The API remains virtually identical, requiring minimal code changes
-- **Enhanced Branding**: Unified naming conventions under the Apache Fesod (Incubating) umbrella
+- **Enhanced Branding**: Unified naming conventions under the Apache Fesod umbrella
 - **Continued Innovation**: Access to future enhancements and features under active Apache governance
 - **Backward Compatibility**: Deprecated aliases (FastExcel) are temporarily maintained for gradual migration
 
@@ -53,12 +53,12 @@ The core API, annotations, and processing logic remain unchanged, ensuring a low
 
 ### Step 1: Update Dependencies
 
-Replace your existing dependency with Apache Fesod (Incubating):
+Replace your existing dependency with Apache Fesod:
 
 | Source                          | GroupId          | ArtifactId  | Version           |
 |---------------------------------|------------------|-------------|-------------------|
 | **cn.idev FastExcel**           | cn.idev.excel    | fastexcel   | 1.3.0             |
-| **Apache Fesod (Incubating)** ✅ | org.apache.fesod | fesod-sheet | 2.1.0-incubating+ |
+| **Apache Fesod** ✅              | org.apache.fesod | fesod-sheet | 2.1.0-incubating+ |
 
 **Maven:**
 
@@ -100,7 +100,7 @@ implementation 'org.apache.fesod:fesod-sheet:2.1.0-incubating'
 
 ### Step 2: Package Import Updates
 
-Update all import statements to use the new Apache Fesod (Incubating) package structure.
+Update all import statements to use the new Apache Fesod package structure.
 
 **Core Entry Classes Replacements:**
 
@@ -356,7 +356,7 @@ Utilize the deprecated alias classes for a phased migration approach.
 
 **Phase 1: Dependency Update Only**
 
-- Update Maven/Gradle dependency to Apache Fesod (Incubating)
+- Update Maven/Gradle dependency to Apache Fesod
 - Keep using FastExcel classes (now deprecated aliases)
 - Update package imports only
 - Run comprehensive tests to verify compatibility
@@ -385,8 +385,8 @@ Utilize the deprecated alias classes for a phased migration approach.
 
 ## Conclusion
 
-Migrating from cn.idev FastExcel to Apache Fesod (Incubating) is a straightforward process due to the high degree of API compatibility and backward-compatible deprecated aliases. The primary effort involves updating dependency declarations and package imports, with minimal to no logic changes required.
+Migrating from cn.idev FastExcel to Apache Fesod is a straightforward process due to the high degree of API compatibility and backward-compatible deprecated aliases. The primary effort involves updating dependency declarations and package imports, with minimal to no logic changes required.
 
 The gradual migration strategy, supported by the temporary deprecated aliases (FastExcel, FastExcelFactory), allows teams to migrate at their own pace while maintaining full functionality.
 
-By following this guide, organizations can seamlessly transition to Apache Fesod (Incubating) and benefit from the long-term sustainability and community support of the Apache Software Foundation ecosystem.
+By following this guide, organizations can seamlessly transition to Apache Fesod and benefit from the long-term sustainability and community support of the Apache Software Foundation ecosystem.

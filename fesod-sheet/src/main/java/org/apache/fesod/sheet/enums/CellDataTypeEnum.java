@@ -78,6 +78,10 @@ public enum CellDataTypeEnum {
         TYPE_ROUTING_MAP.put("e", ERROR);
         TYPE_ROUTING_MAP.put("b", BOOLEAN);
         TYPE_ROUTING_MAP.put("n", NUMBER);
+        // "d" is an ISO-8601 date string cell (ST_CellType value "d", supported since ECMA-376 2nd
+        // edition; from the 4th edition on it only remains in the Strict schema). The value is kept
+        // as the raw text, matching the other non-shared-string text forms.
+        TYPE_ROUTING_MAP.put("d", DIRECT_STRING);
     }
 
     /**

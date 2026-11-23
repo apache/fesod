@@ -239,7 +239,7 @@ public class ExcelAnalyserImpl implements ExcelAnalyser {
                 excelReadExecutor.close();
             }
         } catch (Throwable t) {
-            throwable = t;
+            throwable = recordFailure(throwable, t);
         }
         try {
             if ((readWorkbookHolder instanceof XlsxReadWorkbookHolder)

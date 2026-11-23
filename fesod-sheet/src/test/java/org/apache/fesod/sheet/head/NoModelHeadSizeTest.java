@@ -20,6 +20,7 @@
 package org.apache.fesod.sheet.head;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +30,10 @@ import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.testkit.Tags;
 import org.apache.fesod.sheet.testkit.base.AbstractExcelTest;
 import org.apache.fesod.sheet.testkit.enums.ExcelFormat;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -113,15 +118,14 @@ public class NoModelHeadSizeTest extends AbstractExcelTest {
     }
 
     private void writeRowsWithEmptyGaps(File file) throws Exception {
-        try (org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
-            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("S");
+        try (Workbook workbook = new XSSFWorkbook();
+                FileOutputStream out = new FileOutputStream(file)) {
+            Sheet sheet = workbook.createSheet("S");
             sheet.createRow(0);
-            org.apache.poi.ss.usermodel.Row dataRow = sheet.createRow(1);
+            Row dataRow = sheet.createRow(1);
             dataRow.createCell(0).setCellValue("value0");
             sheet.createRow(2);
-            try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
-                workbook.write(out);
-            }
+            workbook.write(out);
         }
     }
 

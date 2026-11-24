@@ -20,9 +20,9 @@ title: 'Download'
 - limitations under the License.
 -->
 
-# Download Apache Fesod (Incubating)
+# Download Apache Fesod
 
-Here is the Apache Fesod (Incubating) official download page. Apache Fesod provides source releases that can be downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
+Here is the Apache Fesod official download page. Apache Fesod provides source releases that can be downloaded from the ASF distribution site. Binary artifacts are available through Maven Central.
 
 ## The Latest Stable Release
 

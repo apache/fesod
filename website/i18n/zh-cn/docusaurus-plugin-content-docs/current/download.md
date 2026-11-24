@@ -20,9 +20,9 @@ title: '下载'
 - limitations under the License.
 -->
 
-# 下载 Apache Fesod (Incubating)
+# 下载 Apache Fesod
 
-这是 Apache Fesod (Incubating) 的官方下载页面。提供可从 ASF 发布站点下载的源码发布。二进制构件可通过 Maven
+这是 Apache Fesod 的官方下载页面。提供可从 ASF 发布站点下载的源码发布。二进制构件可通过 Maven
 中央仓库获取。
 
 ## 最新版本

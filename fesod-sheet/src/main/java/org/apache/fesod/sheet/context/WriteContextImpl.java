@@ -377,8 +377,13 @@ public class WriteContextImpl implements WriteContext {
 
             WriteHandlerUtils.afterCellCreate(cellWriteHandlerContext);
 
-            WriteCellData<String> writeCellData =
-                    new WriteCellData<>(head.getHeadNameList().get(relativeRowIndex));
+            // An empty name list is a legal unnamed head column (Head stores it like a null list), and the
+            // row-number padding in ExcelHeadProperty only extends non-empty lists: take missing rows as an
+            // empty header cell instead of crashing on get().
+            String headName = head.getHeadNameList().size() > relativeRowIndex
+                    ? head.getHeadNameList().get(relativeRowIndex)
+                    : StringUtils.EMPTY;
+            WriteCellData<String> writeCellData = new WriteCellData<>(headName);
             cell.setCellValue(writeCellData.getStringValue());
             cellWriteHandlerContext.setCellDataList(ListUtils.newArrayList(writeCellData));
             cellWriteHandlerContext.setFirstCellData(writeCellData);

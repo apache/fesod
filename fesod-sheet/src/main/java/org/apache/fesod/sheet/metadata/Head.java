@@ -102,7 +102,9 @@ public class Head {
         if (headNameList == null) {
             this.headNameList = new ArrayList<>();
         } else {
-            this.headNameList = headNameList;
+            // Own a mutable copy: the row-count padding extends short columns, and the caller's list
+            // (which may be immutable, and must never be rewritten in place) is not ours to modify.
+            this.headNameList = new ArrayList<>(headNameList);
             for (String headName : headNameList) {
                 if (headName == null) {
                     throw new ExcelGenerateException("head name can not be null.");

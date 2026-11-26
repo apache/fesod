@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.compress.utils.Lists;
@@ -60,7 +59,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 public class CsvWorkbook implements Workbook {
     /**
      * output
@@ -284,7 +282,11 @@ public class CsvWorkbook implements Workbook {
 
     @Override
     public void write(OutputStream stream) throws IOException {
-        csvSheet.close();
+        // A writer finished without any sheet written has no CsvSheet to flush - like xlsx, that
+        // simply produces an empty output instead of failing.
+        if (csvSheet != null) {
+            csvSheet.close();
+        }
     }
 
     @Override

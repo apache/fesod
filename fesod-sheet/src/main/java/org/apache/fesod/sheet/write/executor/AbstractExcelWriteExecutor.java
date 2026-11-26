@@ -18,7 +18,7 @@
  */
 
 /*
- * This file is part of the Apache Fesod (Incubating) project, which was derived from Alibaba EasyExcel.
+ * This file is part of the Apache Fesod project, which was derived from Alibaba EasyExcel.
  *
  * Copyright (C) 2018-2024 Alibaba Group Holding Ltd.
  */
@@ -26,11 +26,13 @@
 package org.apache.fesod.sheet.write.executor;
 
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.fesod.common.util.ListUtils;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.converters.ConverterKeyBuild;
+import org.apache.fesod.sheet.converters.DefaultConverterLoader;
 import org.apache.fesod.sheet.converters.NullableObjectConverter;
 import org.apache.fesod.sheet.converters.WriteConverterContext;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -347,12 +349,8 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
             if (writeContext.writeWorkbookHolder().getExcelType() == ExcelTypeEnum.CSV) {
                 cellWriteHandlerContext.setTargetCellDataType(CellDataTypeEnum.STRING);
             }
-            converter = writeContext
-                    .currentWriteHolder()
-                    .converterMap()
-                    .get(ConverterKeyBuild.buildKey(
-                            cellWriteHandlerContext.getOriginalFieldClass(),
-                            cellWriteHandlerContext.getTargetCellDataType()));
+            converter = resolveConverter(
+                    cellWriteHandlerContext.getOriginalFieldClass(), cellWriteHandlerContext.getTargetCellDataType());
         }
         if (cellWriteHandlerContext.getOriginalValue() == null && !(converter instanceof NullableObjectConverter)) {
             return new WriteCellData<>(CellDataTypeEnum.EMPTY);
@@ -383,5 +381,39 @@ public abstract class AbstractExcelWriteExecutor implements ExcelWriteExecutor {
                             + cellWriteHandlerContext.getRowIndex());
         }
         return cellData;
+    }
+
+    /**
+     * Resolves the converter for a field class and target cell data type.
+     *
+     * <p>A converter explicitly registered for the exact key always wins. When the write path forces a
+     * concrete target cell data type (CSV writes to {@code STRING}, fill composition) and the exact key only
+     * holds a built-in default, a custom converter registered under the wildcard key
+     * {@code (JavaType, null)} takes over. This keeps a single wildcard converter per Java type, so the last
+     * wildcard registration wins consistently for both xlsx and CSV output. See issues #1045 and #1056.
+     */
+    private Converter<?> resolveConverter(Class<?> fieldClass, CellDataTypeEnum targetCellDataType) {
+        Map<ConverterKeyBuild.ConverterKey, Converter<?>> converterMap =
+                writeContext.currentWriteHolder().converterMap();
+        ConverterKeyBuild.ConverterKey exactKey = ConverterKeyBuild.buildKey(fieldClass, targetCellDataType);
+        Converter<?> exactConverter = converterMap.get(exactKey);
+        if (targetCellDataType == null) {
+            // Regular xlsx cells already look up the wildcard key itself, nothing to fall back to.
+            return exactConverter;
+        }
+        Map<ConverterKeyBuild.ConverterKey, Converter<?>> defaultConverterMap =
+                DefaultConverterLoader.loadDefaultWriteConverter();
+        if (exactConverter != null && exactConverter != defaultConverterMap.get(exactKey)) {
+            // An explicitly registered converter always wins over a wildcard one.
+            return exactConverter;
+        }
+        ConverterKeyBuild.ConverterKey wildcardKey = ConverterKeyBuild.buildKey(fieldClass, null);
+        Converter<?> wildcardConverter = converterMap.get(wildcardKey);
+        if (wildcardConverter != null && wildcardConverter != defaultConverterMap.get(wildcardKey)) {
+            // Only a custom (non built-in) wildcard converter may take over a forced cell data type.
+            return wildcardConverter;
+        }
+        // No custom wildcard converter: keep the exact (possibly default) converter.
+        return exactConverter;
     }
 }

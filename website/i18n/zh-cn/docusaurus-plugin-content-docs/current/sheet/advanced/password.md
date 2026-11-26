@@ -26,7 +26,7 @@ title: '密码保护'
 
 ## 概述
 
-Apache Fesod (Incubating) 支持 Excel 内置的密码保护功能，适用于读取和写入操作。在构建器上使用 `.password("xxx")` 配置密码。对于 `.xlsx` 输出，设置非空密码并成功完成写入后，Apache Fesod (Incubating) 使用 Apache POI 的加密实现（基于 AES），大文件加密时内存开销较高。旧版 `.xls` 的保护行为与 `.xlsx` 加密不同，不应假定其具有相同的保密性。
+Apache Fesod 支持 Excel 内置的密码保护功能，适用于读取和写入操作。在构建器上使用 `.password("xxx")` 配置密码。对于 `.xlsx` 输出，设置非空密码并成功完成写入后，Apache Fesod 使用 Apache POI 的加密实现（基于 AES），大文件加密时内存开销较高。旧版 `.xls` 的保护行为与 `.xlsx` 加密不同，不应假定其具有相同的保密性。
 
 ## 带密码写入
 

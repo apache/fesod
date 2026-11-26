@@ -102,11 +102,16 @@ Other date/time types have their own defaults:
 |:---|:---|
 | `LocalTime`, `java.sql.Time` | `HH:mm:ss` or `HH:mm` |
 | `OffsetDateTime` | ISO-8601 with an explicit offset, e.g. `2024-01-02T03:04:05+08:00` |
+| `Instant` | ISO-8601 with a UTC offset, e.g. `2024-01-02T03:04:05Z`; other offsets are rejected |
 | `Year` | `yyyy` |
 
-Values that do not match these patterns are not parsed, for example ISO-8601 values with a `T` separator or
-milliseconds, and non-zero-padded values such as `2024/1/2`. When the input uses another format, declare the
-pattern explicitly:
+`Instant` only accepts ISO-8601 strings with a UTC offset, and this rule cannot be customized with
+`@DateTimeFormat`.
+
+Values that do not match these patterns fail to parse with an exception: the length-based lookup throws
+when the string length is not listed, and the parser throws when the content does not match the selected
+pattern. For example, ISO-8601 values with a `T` separator or milliseconds, and non-zero-padded values
+such as `2024/1/2` are rejected. When the input uses another format, declare the pattern explicitly:
 
 ```java
 @DateTimeFormat("yyyy-MM-dd'T'HH:mm:ss")

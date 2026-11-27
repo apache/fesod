@@ -192,8 +192,9 @@ public class StringUtils {
             }
 
             // The same check as in String.regionMatches():
-            if (Character.toUpperCase(c1) != Character.toUpperCase(c2)
-                    && Character.toLowerCase(c1) != Character.toLowerCase(c2)) {
+            final char upper1 = Character.toUpperCase(c1);
+            final char upper2 = Character.toUpperCase(c2);
+            if (upper1 != upper2 && Character.toLowerCase(upper1) != Character.toLowerCase(upper2)) {
                 return false;
             }
         }

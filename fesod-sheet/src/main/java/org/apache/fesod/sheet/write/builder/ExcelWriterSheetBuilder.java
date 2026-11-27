@@ -118,15 +118,15 @@ public class ExcelWriterSheetBuilder extends AbstractExcelWriterParameterBuilder
     }
 
     public void doWrite(Supplier<Collection<?>> supplier) {
-        doWrite(supplier.get());
+        doWrite(SupplierWriteSupport.get(excelWriter, supplier));
     }
 
     public void doFill(Supplier<Object> supplier) {
-        doFill(supplier.get());
+        doFill(supplier, null);
     }
 
     public void doFill(Supplier<Object> supplier, FillConfig fillConfig) {
-        doFill(supplier.get(), fillConfig);
+        doFill(SupplierWriteSupport.get(excelWriter, supplier), fillConfig);
     }
 
     public ExcelWriterTableBuilder table() {

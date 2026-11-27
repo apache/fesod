@@ -75,37 +75,40 @@ class ConverterUtilsTest {
         Mockito.lenient().when(context.readSheetHolder()).thenReturn(readSheetHolder);
         Mockito.lenient().when(context.readRowHolder()).thenReturn(readRowHolder);
         Mockito.lenient().when(readSheetHolder.converterMap()).thenReturn(converterMap);
+        Mockito.lenient().when(context.currentReadHolder()).thenReturn(readSheetHolder);
         Mockito.lenient().when(readRowHolder.getRowIndex()).thenReturn(1);
     }
 
     @Test
     void test_convertToStringMap_normal() throws Exception {
-        // {0: "A", 1: "B"}
+        // {0: "A", 1: "B"} — header cells resolve against the built-in converters only: even with
+        // a user registration under the same key, the map in the holder is not consulted (#1098).
         Map<Integer, ReadCellData<?>> cellDataMap = new TreeMap<>();
         cellDataMap.put(0, new ReadCellData<>("A"));
         cellDataMap.put(1, new ReadCellData<>("B"));
 
         ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
         converterMap.put(key, stringConverter);
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("A", "B");
+        Mockito.lenient().when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("MOCK");
 
         Map<Integer, String> result = ConverterUtils.convertToStringMap(cellDataMap, context);
 
         Assertions.assertEquals(2, result.size());
         Assertions.assertEquals("A", result.get(0));
         Assertions.assertEquals("B", result.get(1));
+        Mockito.verify(stringConverter, Mockito.never()).convertToJavaData(Mockito.any());
     }
 
     @Test
     void test_convertToStringMap_withGap() throws Exception {
-        // {0: "A", 2: "C"}
+        // {0: "A", 2: "C"} — gap filling is unaffected by the built-in-only resolution (#1098).
         Map<Integer, ReadCellData<?>> cellDataMap = new TreeMap<>();
         cellDataMap.put(0, new ReadCellData<>("A"));
         cellDataMap.put(2, new ReadCellData<>("C"));
 
         ConverterKeyBuild.ConverterKey key = ConverterKeyBuild.buildKey(String.class, CellDataTypeEnum.STRING);
         converterMap.put(key, stringConverter);
-        Mockito.when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("A", "C");
+        Mockito.lenient().when(stringConverter.convertToJavaData(Mockito.any())).thenReturn("MOCK");
 
         Map<Integer, String> result = ConverterUtils.convertToStringMap(cellDataMap, context);
 
@@ -114,6 +117,7 @@ class ConverterUtilsTest {
         Assertions.assertEquals("A", result.get(0));
         Assertions.assertNull(result.get(1));
         Assertions.assertEquals("C", result.get(2));
+        Mockito.verify(stringConverter, Mockito.never()).convertToJavaData(Mockito.any());
     }
 
     @Test
@@ -123,14 +127,17 @@ class ConverterUtilsTest {
 
         Map<Integer, String> result = ConverterUtils.convertToStringMap(cellDataMap, context);
 
+        // Empty cells short-circuit to null without consulting any converter.
         Assertions.assertNull(result.get(0));
-        Mockito.verify(stringConverter, Mockito.never()).convertToJavaData(Mockito.any());
     }
 
     @Test
     void test_convertToStringMap_noConverter() {
+        // DATE is not covered by a built-in (String, DATE) converter, so the header path reports
+        // the missing converter instead of falling back to a user registration (#1098). BOOLEAN
+        // would be converted by StringBooleanConverter, so it no longer exercises this path.
         Map<Integer, ReadCellData<?>> cellDataMap = new HashMap<>();
-        cellDataMap.put(0, new ReadCellData<>(CellDataTypeEnum.BOOLEAN));
+        cellDataMap.put(0, new ReadCellData<>(CellDataTypeEnum.DATE));
 
         Assertions.assertThrows(ExcelDataConvertException.class, () -> {
             ConverterUtils.convertToStringMap(cellDataMap, context);

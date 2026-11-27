@@ -88,3 +88,15 @@ public void converterRead() {
             .doRead();
 }
 ```
+
+## Converter Resolution Priority
+
+### Converter resolution across read and write
+
+Registered converters are looked up by the key `(JavaType, CellDataType)`, but the two directions build that key differently, and both give priority to explicit registrations over wildcard ones.
+
+**Write.** The target cell type is `null` for xlsx/xls (the converter decides the cell type it produces) and forced to `STRING` for CSV. A converter registered with `supportExcelTypeKey() == null` (the wildcard key `(JavaType, null)`) therefore wins on xlsx/xls writes directly, and is additionally registered under `(JavaType, STRING)` so CSV honors it too. That extra registration only takes over the `STRING` slot when it is still held by the built-in default, so an explicitly registered converter is never displaced, regardless of registration order.
+
+**Read.** Cells carry a concrete type from the file, so every format resolves `(JavaType, cellData.getType())` - e.g. `(Boolean, STRING)` for a text cell. A wildcard read registration is expanded under every concrete cell-type key (overwriting built-in defaults, skipping `EMPTY`), while keys already held by an explicitly registered converter are left untouched - again, explicit wins.
+
+**In short:** one wildcard registration covers every format and every cell type, an explicit registration always beats the wildcard, and user registrations always beat built-ins.

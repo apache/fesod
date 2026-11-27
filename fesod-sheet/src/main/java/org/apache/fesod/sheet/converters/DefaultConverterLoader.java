@@ -92,6 +92,9 @@ import org.apache.fesod.sheet.converters.timestamp.TimestampStringConverter;
 import org.apache.fesod.sheet.converters.url.UrlImageConverter;
 import org.apache.fesod.sheet.converters.uuid.UUIDStringConverter;
 import org.apache.fesod.sheet.converters.year.YearStringConverter;
+import org.apache.fesod.sheet.converters.zoneddatetime.ZonedDateTimeDateConverter;
+import org.apache.fesod.sheet.converters.zoneddatetime.ZonedDateTimeNumberConverter;
+import org.apache.fesod.sheet.converters.zoneddatetime.ZonedDateTimeStringConverter;
 
 /**
  * Load default handler
@@ -138,6 +141,8 @@ public class DefaultConverterLoader {
 
         putAllConverter(new LocalTimeNumberConverter());
         putAllConverter(new LocalTimeStringConverter());
+        putAllConverter(new ZonedDateTimeNumberConverter());
+        putAllConverter(new ZonedDateTimeStringConverter());
         putAllConverter(new MonthDayStringConverter());
         putAllConverter(new SqlTimeNumberConverter());
         putAllConverter(new SqlTimeStringConverter());
@@ -190,6 +195,7 @@ public class DefaultConverterLoader {
         putWriteConverter(new LocalDateTimeDateConverter());
         putWriteConverter(new LocalDateDateConverter());
         putWriteConverter(new LocalTimeDateConverter());
+        putWriteConverter(new ZonedDateTimeDateConverter());
         putWriteConverter(new InstantStringConverter());
         putWriteConverter(new MonthDayStringConverter());
         putWriteConverter(new SqlTimeDateConverter());
@@ -219,6 +225,7 @@ public class DefaultConverterLoader {
         putWriteStringConverter(new LocalDateStringConverter());
         putWriteStringConverter(new LocalDateTimeStringConverter());
         putWriteStringConverter(new LocalTimeStringConverter());
+        putWriteStringConverter(new ZonedDateTimeStringConverter());
         putWriteStringConverter(new InstantStringConverter());
         putWriteStringConverter(new MonthDayStringConverter());
         putWriteStringConverter(new SqlTimeStringConverter());

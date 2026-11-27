@@ -224,11 +224,48 @@ public class StyleUtil {
         return Units.toEMU(coordinate);
     }
 
+    /**
+     * Resolves a cell coordinate for hyperlinks and comments.
+     *
+     * <p>An absolute coordinate is only honored when it is greater than zero. Index {@code 0} falls back
+     * to the relative coordinate or the current cell, because the hyperlink and comment write paths do
+     * not yet support anchoring at row or column {@code 0}. Images use
+     * {@link #getImageCellCoordinate(Integer, Integer, Integer)} instead.
+     *
+     * @param currentCoordinate  the row or column index of the cell being written
+     * @param absoluteCoordinate the configured absolute index, may be {@code null}
+     * @param relativeCoordinate the configured offset from the current cell, may be {@code null}
+     * @return the resolved zero-based index
+     */
     public static int getCellCoordinate(
             Integer currentCoordinate, Integer absoluteCoordinate, Integer relativeCoordinate) {
         if (absoluteCoordinate != null && absoluteCoordinate > 0) {
             return absoluteCoordinate;
         }
+        return resolveRelativeCoordinate(currentCoordinate, relativeCoordinate);
+    }
+
+    /**
+     * Resolves a cell coordinate for an image anchor.
+     *
+     * <p>Any non-negative absolute coordinate, including {@code 0} (row 1 / column A), is honored and
+     * takes precedence over the relative coordinate. A {@code null} or negative absolute coordinate
+     * falls back to the relative coordinate or the current cell.
+     *
+     * @param currentCoordinate  the row or column index of the cell being written
+     * @param absoluteCoordinate the configured absolute index, may be {@code null}
+     * @param relativeCoordinate the configured offset from the current cell, may be {@code null}
+     * @return the resolved zero-based index
+     */
+    public static int getImageCellCoordinate(
+            Integer currentCoordinate, Integer absoluteCoordinate, Integer relativeCoordinate) {
+        if (absoluteCoordinate != null && absoluteCoordinate >= 0) {
+            return absoluteCoordinate;
+        }
+        return resolveRelativeCoordinate(currentCoordinate, relativeCoordinate);
+    }
+
+    private static int resolveRelativeCoordinate(Integer currentCoordinate, Integer relativeCoordinate) {
         if (relativeCoordinate != null) {
             return currentCoordinate + relativeCoordinate;
         }

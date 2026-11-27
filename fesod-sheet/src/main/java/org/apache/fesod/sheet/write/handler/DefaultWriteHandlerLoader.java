@@ -32,6 +32,7 @@ import org.apache.fesod.sheet.write.handler.impl.DefaultRowWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.DimensionWorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.EscapeHexCellWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.FillStyleCellWriteHandler;
+import org.apache.fesod.sheet.write.handler.impl.StructuredTableWorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.impl.WriteSheetWorkbookWriteHandler;
 import org.apache.fesod.sheet.write.style.DefaultStyle;
 
@@ -59,6 +60,7 @@ public class DefaultWriteHandlerLoader {
         List<WriteHandler> handlerList = new ArrayList<>();
         switch (excelType) {
             case XLSX:
+                handlerList.add(new StructuredTableWorkbookWriteHandler());
                 handlerList.add(new DimensionWorkbookWriteHandler());
                 handlerList.add(new DefaultRowWriteHandler());
                 handlerList.add(new EscapeHexCellWriteHandler());

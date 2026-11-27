@@ -49,6 +49,44 @@ Escaping stops the braces from being parsed, but the `\` characters are only rem
 cell also holds a real placeholder. In a cell that contains nothing else, `\{name\}` is written out
 exactly as typed, backslashes included.
 
+## Native Excel Tables
+
+Collection fills recognize existing Excel Tables created with **Insert → Table** in an XLSX
+template. These native tables are separate from Fesod's `WriteTable` API. At writer finish,
+Fesod synchronizes their ranges and AutoFilter references with the filled rows, including
+repeated fills and tables shifted by inserted rows. Both `inMemory(true)` and the default
+`inMemory(false)` template mode are supported.
+
+Place list placeholders in the table's data rows. To preserve a totals row or content below
+the list, enable row insertion:
+
+```java
+FillConfig config = FillConfig.builder().forceNewRow(true).build();
+excelWriter.fill(data, config, writeSheet);
+```
+
+The table range includes its totals row; the AutoFilter range excludes it. Without row
+insertion, a table can grow into unused rows, and a fill that would overwrite another table
+or a totals row is rejected. Row insertion moves entire worksheet rows, so every table
+intersected by that movement shifts or expands accordingly. Tables on other sheets and
+tables outside the affected rows retain their ranges. An empty collection leaves tables unchanged.
+
+Table names, column metadata, styles, calculated-column definitions and totals definitions
+are preserved. Structured-reference syntax is retained when ordinary A1 references in the
+same formula move. Fesod preserves native calculated-column definitions and requests
+recalculation when Excel opens the result; it does not evaluate those formulas or populate
+every generated row's formula cache.
+
+This support covers row growth in tables with one header row and at most one totals row.
+Horizontal expansion, inconsistent column metadata, overlapping tables, duplicate table
+names and growth beyond worksheet limits are rejected. It does not create new native
+tables or add native table support to XLS files.
+
+For sheet cloning through POI, clone a pristine template before filling, using
+`inMemory(true)`. POI creates independent table parts and names; subsequent fills track the
+clone separately. Cloning an already-filled runtime sheet and advanced formula remapping
+are outside this behavior.
+
 ## Simple Fill
 
 ### Overview

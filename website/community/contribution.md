@@ -89,10 +89,10 @@ Documentation is an important component of the project official website and serv
 
 ## Other Ways to Contribute
 
-Apart from directly contributing code, the following ways are also valuable support for Apache Fesod (Incubating):
+Apart from directly contributing code, the following ways are also valuable support for Apache Fesod:
 
 - Answering other users' questions.
 - Assisting in reviewing others' PRs.
 - Providing improvement suggestions.
-- Writing technical blogs to promote Apache Fesod (Incubating).
+- Writing technical blogs to promote Apache Fesod.
 - Sharing project-related knowledge in the community.

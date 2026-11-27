@@ -15,13 +15,13 @@
 - limitations under the License.
 -->
 
-# Apache Fesod (Incubating) AI Agent Instructions
+# Apache Fesod AI Agent Instructions
 
-This file provides guidance for AI coding agents working with the Apache Fesod (Incubating) codebase.
+This file provides guidance for AI coding agents working with the Apache Fesod codebase.
 
 ## Project Overview
 
-Apache Fesod (Incubating) is a Java library for processing spreadsheets (XLS/XLSX/CSV) without OOM, derived from Alibaba EasyExcel. It uses Apache POI under the hood with streaming SAX-based reading. The project is an Apache incubator project and must follow ASF conventions.
+Apache Fesod is a Java library for processing spreadsheets (XLS/XLSX/CSV) without OOM, derived from Alibaba EasyExcel. It uses Apache POI under the hood with streaming SAX-based reading. The project is an Apache project and must follow ASF conventions.
 
 - **Language**: Java 8+ (source/target = 1.8; CI builds on JDK 8, 11, 17, 21, 25 — JDK 17+ is recommended for local development)
 - **Build**: Maven 3.6.3 via `./mvnw` wrapper (project docs require 3.9+, but wrapper currently pins 3.6.3; both work)

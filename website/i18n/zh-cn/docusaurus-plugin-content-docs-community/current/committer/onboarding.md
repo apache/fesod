@@ -20,7 +20,7 @@ title: 'Committer 须知'
 - limitations under the License.
 -->
 
-收到 Apache Fesod (Incubating) PPMC 的邀请邮件后，新的 Committer 应考虑是否接受邀请。
+收到 Apache Fesod PMC 的邀请邮件后，新的 Committer 应考虑是否接受邀请。
 
 若决定接受，请选择 **回复所有** 并表明最终决定。回复邮件请包含以下参考内容：
 

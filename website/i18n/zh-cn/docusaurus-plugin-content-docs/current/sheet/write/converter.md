@@ -126,6 +126,31 @@ public void globalConverterWrite() {
 }
 ```
 
+### 通配键
+
+`supportExcelTypeKey()` 返回 `null` 表示声明通配键 `(JavaType, null)`,匹配所有目标单元格数据类型:
+
+```java
+public class BooleanYesNoConverter implements Converter<Boolean> {
+    @Override
+    public Class<?> supportJavaTypeKey() {
+        return Boolean.class;
+    }
+
+    @Override
+    public CellDataTypeEnum supportExcelTypeKey() {
+        return null; // 通配键: (Boolean, null), 匹配所有目标单元格数据类型
+    }
+
+    @Override
+    public WriteCellData<?> convertToExcelData(WriteConverterContext<Boolean> context) {
+        return new WriteCellData<>(Boolean.TRUE.equals(context.getValue()) ? "YES" : "NO");
+    }
+}
+```
+
+通配转换器作为回退使用:xlsx/xls 直接以 `(JavaType, null)` 作为查找键;CSV 与模板填充组合则强制使用 `(JavaType, STRING)` 查找键,仅当该键下没有显式注册的转换器时才使用通配转换器。显式注册的转换器始终优先,与注册顺序无关;同一 Java 类型下,最后注册的通配转换器生效。若希望转换器仅作用于单一目标单元格数据类型,请返回明确的 `CellDataTypeEnum`。
+
 ---
 
 ## 转换器解析优先级

@@ -21,30 +21,30 @@ slug: /
 - limitations under the License.
 -->
 
-# Apache Fesod (Incubating)
+# Apache Fesod
 
 ## Introduction
 
-**Apache Fesod (Incubating)** is a high-performance and memory-efficient Java library for reading and writing
+**Apache Fesod** is a high-performance and memory-efficient Java library for reading and writing
 spreadsheet
 files, designed to simplify development and ensure reliability.
 
-Apache Fesod (Incubating) can provide developers and enterprises with great freedom and flexibility. We plan to
-introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod (
-Incubating) is committed to being your best choice for handling spreadsheet files.
+Apache Fesod can provide developers and enterprises with great freedom and flexibility. We plan to
+introduce more new features in the future to continually enhance user experience and tool usability. Apache Fesod
+is committed to being your best choice for handling spreadsheet files.
 
 The name fesod(pronounced `/ˈfɛsɒd/`), an acronym for "fast easy spreadsheet and other documents" expresses the
 project's origin, background and vision.
 
 ### Features
 
-- **High-performance Reading and Writing**: Apache Fesod (Incubating) focuses on performance optimization, capable of
+- **High-performance Reading and Writing**: Apache Fesod focuses on performance optimization, capable of
   efficiently handling large-scale spreadsheet data. Compared to some traditional spreadsheet processing libraries, it
   can
   significantly reduce memory consumption.
 - **Simplicity and Ease of Use**: The library offers a simple and intuitive API, allowing developers to easily integrate
   it into projects, whether for simple spreadsheet operations or complex data processing.
-- **Stream Operations**: Apache Fesod (Incubating) supports stream reading, minimizing the problem of loading large
+- **Stream Operations**: Apache Fesod supports stream reading, minimizing the problem of loading large
   amounts of data at once. This design is especially important when dealing with hundreds of thousands or even millions
   of rows of data.
 

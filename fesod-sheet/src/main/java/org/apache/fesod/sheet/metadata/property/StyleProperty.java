@@ -25,9 +25,7 @@
 
 package org.apache.fesod.sheet.metadata.property;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.fesod.sheet.annotation.write.style.ContentStyle;
 import org.apache.fesod.sheet.annotation.write.style.HeadStyle;
 import org.apache.fesod.sheet.metadata.data.DataFormatData;
@@ -46,8 +44,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  *
  */
 @Getter
-@Setter
-@EqualsAndHashCode
 public class StyleProperty {
     /**
      * Set the data format (must be a valid format). Built in formats are defined at {@link BuiltinFormats}.
@@ -174,44 +170,44 @@ public class StyleProperty {
         if (headStyle.dataFormat() >= 0) {
             DataFormatData dataFormatData = new DataFormatData();
             dataFormatData.setIndex(headStyle.dataFormat());
-            styleProperty.setDataFormatData(dataFormatData);
+            styleProperty.dataFormatData = dataFormatData;
         }
-        styleProperty.setHidden(headStyle.hidden().getBooleanValue());
-        styleProperty.setLocked(headStyle.locked().getBooleanValue());
-        styleProperty.setQuotePrefix(headStyle.quotePrefix().getBooleanValue());
-        styleProperty.setHorizontalAlignment(headStyle.horizontalAlignment().getPoiHorizontalAlignment());
-        styleProperty.setWrapped(headStyle.wrapped().getBooleanValue());
-        styleProperty.setVerticalAlignment(headStyle.verticalAlignment().getPoiVerticalAlignmentEnum());
+        styleProperty.hidden = headStyle.hidden().getBooleanValue();
+        styleProperty.locked = headStyle.locked().getBooleanValue();
+        styleProperty.quotePrefix = headStyle.quotePrefix().getBooleanValue();
+        styleProperty.horizontalAlignment = headStyle.horizontalAlignment().getPoiHorizontalAlignment();
+        styleProperty.wrapped = headStyle.wrapped().getBooleanValue();
+        styleProperty.verticalAlignment = headStyle.verticalAlignment().getPoiVerticalAlignmentEnum();
         if (headStyle.rotation() >= 0) {
-            styleProperty.setRotation(headStyle.rotation());
+            styleProperty.rotation = headStyle.rotation();
         }
         if (headStyle.indent() >= 0) {
-            styleProperty.setIndent(headStyle.indent());
+            styleProperty.indent = headStyle.indent();
         }
-        styleProperty.setBorderLeft(headStyle.borderLeft().getPoiBorderStyle());
-        styleProperty.setBorderRight(headStyle.borderRight().getPoiBorderStyle());
-        styleProperty.setBorderTop(headStyle.borderTop().getPoiBorderStyle());
-        styleProperty.setBorderBottom(headStyle.borderBottom().getPoiBorderStyle());
+        styleProperty.borderLeft = headStyle.borderLeft().getPoiBorderStyle();
+        styleProperty.borderRight = headStyle.borderRight().getPoiBorderStyle();
+        styleProperty.borderTop = headStyle.borderTop().getPoiBorderStyle();
+        styleProperty.borderBottom = headStyle.borderBottom().getPoiBorderStyle();
         if (headStyle.leftBorderColor() >= 0) {
-            styleProperty.setLeftBorderColor(headStyle.leftBorderColor());
+            styleProperty.leftBorderColor = headStyle.leftBorderColor();
         }
         if (headStyle.rightBorderColor() >= 0) {
-            styleProperty.setRightBorderColor(headStyle.rightBorderColor());
+            styleProperty.rightBorderColor = headStyle.rightBorderColor();
         }
         if (headStyle.topBorderColor() >= 0) {
-            styleProperty.setTopBorderColor(headStyle.topBorderColor());
+            styleProperty.topBorderColor = headStyle.topBorderColor();
         }
         if (headStyle.bottomBorderColor() >= 0) {
-            styleProperty.setBottomBorderColor(headStyle.bottomBorderColor());
+            styleProperty.bottomBorderColor = headStyle.bottomBorderColor();
         }
-        styleProperty.setFillPatternType(headStyle.fillPatternType().getPoiFillPatternType());
+        styleProperty.fillPatternType = headStyle.fillPatternType().getPoiFillPatternType();
         if (headStyle.fillBackgroundColor() >= 0) {
-            styleProperty.setFillBackgroundColor(headStyle.fillBackgroundColor());
+            styleProperty.fillBackgroundColor = headStyle.fillBackgroundColor();
         }
         if (headStyle.fillForegroundColor() >= 0) {
-            styleProperty.setFillForegroundColor(headStyle.fillForegroundColor());
+            styleProperty.fillForegroundColor = headStyle.fillForegroundColor();
         }
-        styleProperty.setShrinkToFit(headStyle.shrinkToFit().getBooleanValue());
+        styleProperty.shrinkToFit = headStyle.shrinkToFit().getBooleanValue();
         return styleProperty;
     }
 
@@ -223,44 +219,44 @@ public class StyleProperty {
         if (contentStyle.dataFormat() >= 0) {
             DataFormatData dataFormatData = new DataFormatData();
             dataFormatData.setIndex(contentStyle.dataFormat());
-            styleProperty.setDataFormatData(dataFormatData);
+            styleProperty.dataFormatData = dataFormatData;
         }
-        styleProperty.setHidden(contentStyle.hidden().getBooleanValue());
-        styleProperty.setLocked(contentStyle.locked().getBooleanValue());
-        styleProperty.setQuotePrefix(contentStyle.quotePrefix().getBooleanValue());
-        styleProperty.setHorizontalAlignment(contentStyle.horizontalAlignment().getPoiHorizontalAlignment());
-        styleProperty.setWrapped(contentStyle.wrapped().getBooleanValue());
-        styleProperty.setVerticalAlignment(contentStyle.verticalAlignment().getPoiVerticalAlignmentEnum());
+        styleProperty.hidden = contentStyle.hidden().getBooleanValue();
+        styleProperty.locked = contentStyle.locked().getBooleanValue();
+        styleProperty.quotePrefix = contentStyle.quotePrefix().getBooleanValue();
+        styleProperty.horizontalAlignment = contentStyle.horizontalAlignment().getPoiHorizontalAlignment();
+        styleProperty.wrapped = contentStyle.wrapped().getBooleanValue();
+        styleProperty.verticalAlignment = contentStyle.verticalAlignment().getPoiVerticalAlignmentEnum();
         if (contentStyle.rotation() >= 0) {
-            styleProperty.setRotation(contentStyle.rotation());
+            styleProperty.rotation = contentStyle.rotation();
         }
         if (contentStyle.indent() >= 0) {
-            styleProperty.setIndent(contentStyle.indent());
+            styleProperty.indent = contentStyle.indent();
         }
-        styleProperty.setBorderLeft(contentStyle.borderLeft().getPoiBorderStyle());
-        styleProperty.setBorderRight(contentStyle.borderRight().getPoiBorderStyle());
-        styleProperty.setBorderTop(contentStyle.borderTop().getPoiBorderStyle());
-        styleProperty.setBorderBottom(contentStyle.borderBottom().getPoiBorderStyle());
+        styleProperty.borderLeft = contentStyle.borderLeft().getPoiBorderStyle();
+        styleProperty.borderRight = contentStyle.borderRight().getPoiBorderStyle();
+        styleProperty.borderTop = contentStyle.borderTop().getPoiBorderStyle();
+        styleProperty.borderBottom = contentStyle.borderBottom().getPoiBorderStyle();
         if (contentStyle.leftBorderColor() >= 0) {
-            styleProperty.setLeftBorderColor(contentStyle.leftBorderColor());
+            styleProperty.leftBorderColor = contentStyle.leftBorderColor();
         }
         if (contentStyle.rightBorderColor() >= 0) {
-            styleProperty.setRightBorderColor(contentStyle.rightBorderColor());
+            styleProperty.rightBorderColor = contentStyle.rightBorderColor();
         }
         if (contentStyle.topBorderColor() >= 0) {
-            styleProperty.setTopBorderColor(contentStyle.topBorderColor());
+            styleProperty.topBorderColor = contentStyle.topBorderColor();
         }
         if (contentStyle.bottomBorderColor() >= 0) {
-            styleProperty.setBottomBorderColor(contentStyle.bottomBorderColor());
+            styleProperty.bottomBorderColor = contentStyle.bottomBorderColor();
         }
-        styleProperty.setFillPatternType(contentStyle.fillPatternType().getPoiFillPatternType());
+        styleProperty.fillPatternType = contentStyle.fillPatternType().getPoiFillPatternType();
         if (contentStyle.fillBackgroundColor() >= 0) {
-            styleProperty.setFillBackgroundColor(contentStyle.fillBackgroundColor());
+            styleProperty.fillBackgroundColor = contentStyle.fillBackgroundColor();
         }
         if (contentStyle.fillForegroundColor() >= 0) {
-            styleProperty.setFillForegroundColor(contentStyle.fillForegroundColor());
+            styleProperty.fillForegroundColor = contentStyle.fillForegroundColor();
         }
-        styleProperty.setShrinkToFit(contentStyle.shrinkToFit().getBooleanValue());
+        styleProperty.shrinkToFit = contentStyle.shrinkToFit().getBooleanValue();
         return styleProperty;
     }
 }

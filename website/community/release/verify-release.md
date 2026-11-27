@@ -20,7 +20,9 @@ title: 'How to Verify Release'
 - limitations under the License.
 -->
 
-For a detailed checklist, please refer to the official [Incubator Release Checklist](https://cwiki.apache.org/confluence/display/INCUBATOR/Incubator+Release+Checklist).
+For the ASF requirements behind this checklist, see the
+[Apache Release Policy](https://www.apache.org/legal/release-policy.html) and the
+[Release Creation Process](https://infra.apache.org/release-publishing.html).
 
 ## 1. Download the Release Candidate
 
@@ -44,10 +46,10 @@ Download the artifacts:
 
 ```shell
 # Option 1: SVN checkout (Recommended)
-svn co https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-${RC_VERSION}/ fesod-dist-dev
+svn co https://dist.apache.org/repos/dist/dev/fesod/${RELEASE_VERSION}-${RC_VERSION}/ fesod-dist-dev
 
 # Option 2: Wget individual files
-wget https://dist.apache.org/repos/dist/dev/incubator/fesod/${RELEASE_VERSION}-${RC_VERSION}/apache-fesod-${RELEASE_VERSION}-src.tar.gz
+wget https://dist.apache.org/repos/dist/dev/fesod/${RELEASE_VERSION}-${RC_VERSION}/apache-fesod-${RELEASE_VERSION}-src.tar.gz
 
 ```
 
@@ -67,22 +69,24 @@ The uploaded artifacts must contain:
 
 ```shell
 # Download KEYS (kept in the release directory)
-curl https://downloads.apache.org/incubator/fesod/KEYS > KEYS
+curl https://downloads.apache.org/fesod/KEYS > KEYS
 
 # Import KEYS locally
 gpg --import KEYS
 
 ```
 
-**2.2.2 Trust the Public Key (Optional but Recommended)**
+**2.2.2 Verify the Signing-Key Fingerprint**
 
 ```shell
-# Find the Key ID used for this release
-gpg --edit-key <KEY_ID>
-
-# Type 'trust', select '5' (ultimate), confirm with 'y', then type 'quit'
+# Display the fingerprints in the project KEYS file
+gpg --show-keys --with-fingerprint KEYS
 
 ```
+
+Compare the full fingerprint of the key named in the vote email with the fingerprint in `KEYS` and,
+when available, the release manager's Apache profile. Importing a key does not establish trust, so do
+not assign ownertrust merely to suppress a GPG warning.
 
 **2.2.3 Verify the Signature**
 
@@ -92,7 +96,8 @@ gpg --verify apache-fesod-${RELEASE_VERSION}-src.tar.gz.asc apache-fesod-${RELEA
 
 ```
 
-> **Success Indicator:** The output must include **`Good signature`**.
+> **Success indicators:** The output must include **`Good signature`**, and the signing-key fingerprint
+> must match the fingerprint verified above. A `Good signature` alone proves integrity, not identity.
 
 ### 2.3 Verify SHA512 Checksum
 
@@ -125,11 +130,7 @@ cd apache-fesod-${RELEASE_VERSION}-src
 
 ```
 
-### 3.1 Incubator Specific Checks
-
-* [ ] **DISCLAIMER:** Ensure a `DISCLAIMER` (or `DISCLAIMER-WIP`) file exists in the root directory. This is mandatory for incubating projects.
-
-### 3.2 ASF License Header Check (RAT)
+### 3.1 ASF License Header Check (RAT)
 
 Run the Apache RAT (Release Audit Tool) check:
 
@@ -146,51 +147,51 @@ mvn apache-rat:check
 * **Unapproved Licenses:** Must be **0**.
 * **Binaries:** Should be **0** (Source packages should not contain compiled jars/classes).
 
-### 3.3 Compilation Verification
+### 3.2 Compilation Verification
 
-Ensure the source code compiles successfully.
+Build and test the source package using only its documented prerequisites. PMC members casting a
+binding `+1` must compile and test the candidate on hardware under their control.
 
 ```shell
 # This may take time depending on network to download dependencies
-./mvnw clean install -DskipTests
+./mvnw clean install
 
 ```
 
 **Checklist:**
 
-* [ ] Build Success.
+* [ ] Build and tests succeed.
 * [ ] No unexpected binary files in the source tree.
 
-### 3.4 License and Notice
+### 3.3 License and Notice
 
 Manually check the following files in the root directory:
 
 * [ ] **LICENSE:** Exists and contains the Apache License 2.0.
 * [ ] **NOTICE:**
 * * Exists.
-* * Copyright year is current (e.g., includes 2025/2026).
+* * Copyright year is current.
 * * Contains required attributions for bundled dependencies (if any).
-* [ ] **DISCLAIMER：** Exists.
 
 ## 4. Email Reply Templates
 
 After verification, reply to the vote thread on `dev@fesod.apache.org`.
 
 :::tip
-As a **PPMC member**, your vote is **binding**. Please include `(binding)` in your reply.
+As an **Apache Fesod PMC member**, your vote is **binding**. Please include `(binding)` in your reply.
 :::
 
-**Template for PPMC Members:**
+**Template for PMC Members:**
 
 ```text
 +1 (binding)
 
 [X] Download links are valid.
-[X] Checksums and signatures.
-[X] LICENSE/NOTICE files exist
-[X] No unexpected binary files
-[X] All source files have ASF headers
-[X] Can compile from source
+[X] Checksums and signatures are valid.
+[X] LICENSE and NOTICE files are correct.
+[X] No unexpected binary files are present.
+[X] All source files have ASF headers.
+[X] The source package builds and tests pass.
 
 My Environment:
 - OS: MacOS <Version> / Linux
@@ -199,7 +200,7 @@ My Environment:
 
 ```
 
-**Template for Contributors (Non-PPMC):**
+**Template for Committers and Contributors (Non-PMC):**
 
 ```text
 +1 (non-binding)

@@ -61,7 +61,7 @@ const sidebarsCommunity = {
         },
         {
             type: 'category',
-            label: 'PPMC Members',
+            label: 'PMC Members',
             items: [
                 'pmc/become-pmc-member',
                 'pmc/onboarding',

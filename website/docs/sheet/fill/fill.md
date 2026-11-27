@@ -24,6 +24,17 @@ title: 'Fill'
 
 This section explains how to use Fesod to fill data into files.
 
+## Template Memory Usage
+
+`withTemplate(...).build()` reads the template through a bounded buffer without first copying the
+entire file into a byte array. POI still loads the parsed template workbook into memory; template
+filling is not a row-by-row streaming operation, even with `inMemory(false)`. Large templates can
+therefore still require substantial heap space.
+
+Template input streams are consumed during `build()` and closed by default. Use
+`autoCloseStream(false)` to keep a caller-provided stream open; streams opened internally for
+template files are always closed after initialization.
+
 ## Placeholder Syntax
 
 A template marks the cells to fill with `{}` placeholders. What sits inside the braces decides how

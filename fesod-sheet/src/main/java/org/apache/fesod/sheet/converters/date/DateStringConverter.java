@@ -56,11 +56,12 @@ public class DateStringConverter implements Converter<Date> {
             ReadCellData<?> cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration)
             throws ParseException {
         if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return DateUtils.parseDate(cellData.getStringValue(), null);
+            return DateUtils.parseDate(cellData.getStringValue(), null, globalConfiguration.getLocale());
         } else {
             return DateUtils.parseDate(
                     cellData.getStringValue(),
-                    contentProperty.getDateTimeFormatProperty().getFormat());
+                    contentProperty.getDateTimeFormatProperty().getFormat(),
+                    globalConfiguration.getLocale());
         }
     }
 
@@ -68,10 +69,10 @@ public class DateStringConverter implements Converter<Date> {
     public WriteCellData<?> convertToExcelData(
             Date value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
         if (contentProperty == null || contentProperty.getDateTimeFormatProperty() == null) {
-            return new WriteCellData<>(DateUtils.format(value, null));
+            return new WriteCellData<>(DateUtils.format(value, null, globalConfiguration.getLocale()));
         } else {
             return new WriteCellData<>(DateUtils.format(
-                    value, contentProperty.getDateTimeFormatProperty().getFormat()));
+                    value, contentProperty.getDateTimeFormatProperty().getFormat(), globalConfiguration.getLocale()));
         }
     }
 }

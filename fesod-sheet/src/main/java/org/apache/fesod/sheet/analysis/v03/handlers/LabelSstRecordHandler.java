@@ -30,6 +30,7 @@ import org.apache.fesod.common.util.StringUtils;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.cache.ReadCache;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.Cell;
 import org.apache.fesod.sheet.metadata.GlobalConfiguration;
@@ -65,12 +66,16 @@ public class LabelSstRecordHandler extends AbstractXlsRecordHandler implements I
 
         GlobalConfiguration globalConfiguration =
                 xlsReadContext.currentReadHolder().globalConfiguration();
-        if (globalConfiguration.getAutoStrip()) {
+        if (Boolean.TRUE.equals(globalConfiguration.getAutoStrip())) {
             data = StringUtils.strip(data);
-        } else if (globalConfiguration.getAutoTrim()) {
+        } else if (Boolean.TRUE.equals(globalConfiguration.getAutoTrim())) {
             data = data.trim();
         }
-        cellMap.put(targetColumnIndex, ReadCellData.newInstance(data, lsrec.getRow(), targetColumnIndex));
-        xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
+        ReadCellData<?> cellData = ReadCellData.newInstance(data, lsrec.getRow(), targetColumnIndex);
+        cellData.checkEmpty();
+        cellMap.put(targetColumnIndex, cellData);
+        if (cellData.getType() != CellDataTypeEnum.EMPTY) {
+            xlsReadContext.xlsReadSheetHolder().setTempRowType(RowTypeEnum.DATA);
+        }
     }
 }

@@ -28,6 +28,7 @@ package org.apache.fesod.sheet.analysis.v03.handlers;
 import java.util.LinkedHashMap;
 import org.apache.fesod.sheet.analysis.v03.IgnorableXlsRecordHandler;
 import org.apache.fesod.sheet.context.xls.XlsReadContext;
+import org.apache.fesod.sheet.enums.CellDataTypeEnum;
 import org.apache.fesod.sheet.enums.RowTypeEnum;
 import org.apache.fesod.sheet.metadata.Cell;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
@@ -48,9 +49,27 @@ public class DummyRecordHandler extends AbstractXlsRecordHandler implements Igno
             // End of this row
             LastCellOfRowDummyRecord lcrdr = (LastCellOfRowDummyRecord) record;
             xlsReadSheetHolder.setRowIndex(lcrdr.getRow());
+            RowTypeEnum rowType = xlsReadSheetHolder.getTempRowType();
+            if (rowType == RowTypeEnum.DATA) {
+                boolean hasData = false;
+                for (Cell cell : xlsReadSheetHolder.getCellMap().values()) {
+                    if (!(cell instanceof ReadCellData)) {
+                        hasData = true;
+                        break;
+                    }
+                    ReadCellData<?> readCellData = (ReadCellData<?>) cell;
+                    if (readCellData.getType() != CellDataTypeEnum.EMPTY) {
+                        hasData = true;
+                        break;
+                    }
+                }
+                if (!hasData) {
+                    rowType = RowTypeEnum.EMPTY;
+                }
+            }
             xlsReadContext.readRowHolder(new ReadRowHolder(
                     lcrdr.getRow(),
-                    xlsReadSheetHolder.getTempRowType(),
+                    rowType,
                     xlsReadContext.readSheetHolder().getGlobalConfiguration(),
                     xlsReadSheetHolder.getCellMap()));
             xlsReadContext.analysisEventProcessor().endRow(xlsReadContext);

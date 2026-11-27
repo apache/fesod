@@ -34,11 +34,20 @@ the cell is filled:
 | `{name}` | a single variable | `doFill(object)`, `doFill(map)` |
 | `{.name}` | the `name` property of every item of a list | `doFill(list)`, `fill(list, ...)` |
 | `{data1.name}` | the same, for the list named `data1` | `fill(new FillWrapper("data1", list), ...)` |
+| `{.child.name}` | a nested property of each list item | `doFill(list)` |
+| `{data1.child.name}` | a nested property of each item in the list named `data1` | `fill(new FillWrapper("data1", list), ...)` |
 | `\{name\}` | escaped with `\`, never parsed | nothing |
 
 The leading `.` is what makes a cell repeat once per item - downwards by default, or across the
 columns with `FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL)`. The text before the
 `.` names which list the items come from, so one template can hold several lists side by side.
+
+After the list prefix, additional dots traverse JavaBean properties or Map entries. For example,
+`{.child.name}` reads `item.getChild().getName()`. A missing property or null intermediate value is
+filled as empty. A Map entry matching the complete remaining path, such as `"child.name"`, takes
+precedence over traversal, including when its value is null. Format annotations and converters on
+the final JavaBean field are applied as usual. The first dot still identifies a list: use a
+`FillWrapper` for named lists rather than `{child.name}` for a single object.
 
 A cell may mix several placeholders with ordinary text, as in `{name} is {number} years old this
 year`. A placeholder the fill does not supply is cleared rather than left in the sheet: filling a

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import org.apache.commons.io.output.BrokenOutputStream;
@@ -172,24 +173,19 @@ public class EncryptDataTest extends AbstractExcelTest {
     @Test
     void xlsxFilePasswordWrite_encryptionFails_leavesNoFile() throws Exception {
         File file = createTempFile("enc-readonly", ExcelFormat.XLSX);
-        Assertions.assertTrue(file.setReadOnly());
-        // Root and some file systems ignore the flag, so the encryption would not fail there
-        Assumptions.assumeFalse(file.canWrite());
-        Assertions.assertTrue(file.setWritable(true));
-        // Once the write stream is open, making the file read-only makes the encrypt-in-place step fail
-        WorkbookWriteHandler makeReadOnly = new WorkbookWriteHandler() {
+        WorkbookWriteHandler invalidWorkbook = swapWorkbook(new SXSSFWorkbook() {
             @Override
-            public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
-                Assertions.assertTrue(file.setReadOnly());
+            public void write(OutputStream stream) throws IOException {
+                stream.write("not an xlsx file".getBytes(StandardCharsets.UTF_8));
             }
-        };
+        });
 
         List<SimpleData> data = TestDataBuilder.simpleData(10);
         ExcelWriterSheetBuilder sheet = FesodSheet.write(file, SimpleData.class)
                 .excelType(ExcelTypeEnum.XLSX)
                 .password(PASSWORD)
-                .registerWriteHandler(makeReadOnly)
-                .sheet();
+                .registerWriteHandler(invalidWorkbook)
+                .sheet("s");
 
         Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
         assertThat(file).doesNotExist();

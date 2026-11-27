@@ -25,8 +25,8 @@
 
 package org.apache.fesod.sheet.read.metadata.holder.xlsx;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,7 +67,9 @@ public class XlsxReadSheetHolder extends ReadSheetHolder {
 
     public XlsxReadSheetHolder(ReadSheet readSheet, ReadWorkbookHolder readWorkbookHolder) {
         super(readSheet, readWorkbookHolder);
-        this.tagDeque = new LinkedList<String>();
+        // ArrayDeque reuses its internal array across push/pop; LinkedList would allocate one node
+        // per XML tag on the read hot path.
+        this.tagDeque = new ArrayDeque<String>();
         packageRelationshipCollection = ((XlsxReadWorkbookHolder) readWorkbookHolder)
                 .getPackageRelationshipCollectionMap()
                 .get(readSheet.getSheetNo());

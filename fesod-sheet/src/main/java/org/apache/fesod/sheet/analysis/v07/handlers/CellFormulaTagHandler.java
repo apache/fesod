@@ -39,7 +39,14 @@ public class CellFormulaTagHandler extends AbstractXlsxTagHandler {
     @Override
     public void startElement(XlsxReadContext xlsxReadContext, String name, Attributes attributes) {
         XlsxReadSheetHolder xlsxReadSheetHolder = xlsxReadContext.xlsxReadSheetHolder();
-        xlsxReadSheetHolder.setTempFormula(new StringBuilder());
+        // Reuse the per-sheet builder: the previous formula was fully consumed (toString) at its
+        // endElement, so setLength(0) equals a fresh builder without the per-cell allocation.
+        StringBuilder tempFormula = xlsxReadSheetHolder.getTempFormula();
+        if (tempFormula == null) {
+            xlsxReadSheetHolder.setTempFormula(new StringBuilder());
+        } else {
+            tempFormula.setLength(0);
+        }
     }
 
     @Override

@@ -47,7 +47,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
  */
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"parentWriteWorkbookHolder", "hasBeenInitializedTable"})
+@EqualsAndHashCode(exclude = {"parentWriteWorkbookHolder", "hasBeenInitializedTable", "columnWidthCache"})
 @NoArgsConstructor
 public class WriteSheetHolder extends AbstractWriteHolder {
     /**
@@ -87,6 +87,11 @@ public class WriteSheetHolder extends AbstractWriteHolder {
      * has been initialized table
      */
     private Map<Integer, WriteTableHolder> hasBeenInitializedTable;
+
+    /***
+     * Per-sheet-holder cache of maximum column widths, keyed by column index.
+     */
+    private Map<Integer, Integer> columnWidthCache;
 
     /**
      * last column type

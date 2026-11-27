@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import org.apache.commons.io.output.BrokenOutputStream;
@@ -48,6 +49,7 @@ import org.apache.fesod.sheet.testkit.models.SimpleData;
 import org.apache.fesod.sheet.testkit.params.ExcelFormatSource;
 import org.apache.fesod.sheet.util.FileUtils;
 import org.apache.fesod.sheet.write.builder.ExcelWriterBuilder;
+import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.handler.WorkbookWriteHandler;
 import org.apache.fesod.sheet.write.handler.context.WorkbookWriteHandlerContext;
 import org.apache.poi.EncryptedDocumentException;
@@ -149,6 +151,44 @@ public class EncryptDataTest extends AbstractExcelTest {
                 .sheet()
                 .doReadSync();
         Assertions.assertEquals(10, dataList.size());
+    }
+
+    /**
+     * Verifies that when encrypting an XLSX stream write fails, the stream stays empty instead of receiving the
+     * unencrypted workbook.
+     */
+    @Test
+    void xlsxStreamPasswordWrite_encryptionFails_writesNothing() throws Exception {
+        // A temp directory under a regular file cannot be created, so the encryption step fails
+        File regularFile = createTempFile("enc-blocker", ExcelFormat.XLSX);
+        File tempFileDir = new File(regularFile, "sub");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Assertions.assertThrows(ExcelGenerateException.class, () -> writeWithPassword(tempFileDir, out, null));
+        assertThat(out.size()).isZero();
+    }
+
+    /**
+     * Verifies that when encrypting an XLSX file write fails, the unencrypted file is not left behind.
+     */
+    @Test
+    void xlsxFilePasswordWrite_encryptionFails_leavesNoFile() throws Exception {
+        File file = createTempFile("enc-readonly", ExcelFormat.XLSX);
+        WorkbookWriteHandler invalidWorkbook = swapWorkbook(new SXSSFWorkbook() {
+            @Override
+            public void write(OutputStream stream) throws IOException {
+                stream.write("not an xlsx file".getBytes(StandardCharsets.UTF_8));
+            }
+        });
+
+        List<SimpleData> data = TestDataBuilder.simpleData(10);
+        ExcelWriterSheetBuilder sheet = FesodSheet.write(file, SimpleData.class)
+                .excelType(ExcelTypeEnum.XLSX)
+                .password(PASSWORD)
+                .registerWriteHandler(invalidWorkbook)
+                .sheet("s");
+
+        Assertions.assertThrows(ExcelGenerateException.class, () -> sheet.doWrite(data));
+        assertThat(file).doesNotExist();
     }
 
     /**
